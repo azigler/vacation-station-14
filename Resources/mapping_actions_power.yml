@@ -1,0 +1,31 @@
+- entity: APCBasic
+  assignments:
+  - 0: 1
+- entity: CableApcExtension
+  assignments:
+  - 0: 2
+- entity: CableMV
+  assignments:
+  - 0: 3
+- entity: CableHV
+  assignments:
+  - 0: 4
+- entity: SubstationBasic
+  assignments:
+  - 0: 5
+- entity: SMESBasic
+  assignments:
+  - 0: 6
+- entity: CableTerminal
+  assignments:
+  - 0: 7
+- entity: Poweredlight
+  assignments:
+  - 0: 8
+- entity: PoweredSmallLightMaintenance
+  assignments:
+  - 0: 9
+- action: ActionMappingEraser
+  assignments:
+  - 0: 0
+...

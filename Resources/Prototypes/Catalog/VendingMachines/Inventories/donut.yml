@@ -1,0 +1,16 @@
+- type: vendingMachineInventory
+  id: DonutInventory
+  startingInventory:
+    FoodDonutChocolate: 5
+    FoodDonutApple: 3
+    FoodDonutPink: 3
+    FoodDonutBungo: 3
+    # Begin DeltaV additions
+    FoodDonutPlain: 3
+    FoodDonutHomer: 2
+    FoodDonutMeat: 3
+    # End DeltaV additions
+  contrabandInventory:
+    FoodBagel: 2
+    FoodBagelPoppy: 2
+    FoodDonutPoison: 1

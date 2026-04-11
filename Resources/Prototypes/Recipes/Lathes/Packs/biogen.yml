@@ -1,0 +1,39 @@
+## Static
+
+- type: latheRecipePack
+  id: BioGenIngredientsStatic
+  recipes:
+  - BioGenMilk
+  - BioGenMilkSoy
+  - BioGenEthanol
+  - BioGenCream
+  - BioGenBlackpepper
+  - BioGenEnzyme
+  - BioGenFlour
+  - BioGenSugar
+  - BioGenMonkeyCube
+  - BioGenKoboldCube
+  - BioGenCandle
+  - BioGenPlantBGone
+  - BioGenWeedKiller
+  - BioGenPestKiller
+  - BioGenLeft4Zed
+  - BioGenEZNutrient
+  - BioGenRobustHarvest
+  - BioGenDiseaseSwab
+
+- type: latheRecipePack
+  id: BioGenMaterialsStatic
+  recipes:
+  - BioGenMaterialCloth1
+  - BioGenMaterialCardboard1
+  - BioGenPaper
+  - BioGenPaperRolling1
+  - BioGenSheetPlastic1 # DeltaV
+  - BioGenSheetPlastic10 # DeltaV
+  - BioGenSheetPlastic30 # DeltaV
+
+- type: latheRecipePack
+  id: BioGenEmagStatic
+  recipes:
+  - BioGenUnstableMutagen

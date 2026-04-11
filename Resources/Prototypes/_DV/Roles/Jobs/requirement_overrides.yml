@@ -1,0 +1,216 @@
+# Define job overrides here instead of editing upstream files
+# Remember that 2 hours is roughly one shift
+- type: jobRequirementOverride
+  id: DeltaV
+  jobs:
+    # Civilian
+    Bartender:
+    - !type:DepartmentTimeRequirement
+      department: Civilian
+      time: 1h
+    Boxer:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+    Chef:
+    - !type:DepartmentTimeRequirement
+      department: Civilian
+      time: 1h
+    Clown:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+    Librarian:
+    - !type:OverallPlaytimeRequirement
+      time: 1h
+    Mime:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+    Musician:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+    Reporter:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+    Zookeeper:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+
+    # Command
+    Captain:
+    - !type:DepartmentTimeRequirement
+      department: Logistics
+      time: 5h
+    - !type:DepartmentTimeRequirement
+      department: Engineering
+      time: 5h
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 5h
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 5h
+    - !type:DepartmentTimeRequirement
+      department: Epistemics
+      time: 5h
+    - !type:DepartmentTimeRequirement
+      department: Command
+      time: 30h
+    ChiefEngineer:
+    - !type:RoleTimeRequirement
+      role: JobAtmosphericTechnician
+      time: 20h
+    - !type:DepartmentTimeRequirement
+      department: Engineering
+      time: 30h
+    ChiefMedicalOfficer:
+    - !type:RoleTimeRequirement
+      role: JobChemist
+      time: 6h
+    - !type:RoleTimeRequirement
+      role: JobSurgeon
+      time: 3h
+    - !type:RoleTimeRequirement
+      role: JobMedicalDoctor
+      time: 12h
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 35h
+    HeadOfPersonnel:
+    - !type:RoleTimeRequirement
+      role: JobChef
+      time: 4h
+    - !type:RoleTimeRequirement
+      role: JobBartender
+      time: 4h
+    - !type:RoleTimeRequirement
+      role: JobJanitor
+      time: 4h
+    - !type:DepartmentTimeRequirement
+      department: Civilian
+      time: 20h
+    - !type:OverallPlaytimeRequirement
+      time: 25h
+    HeadOfSecurity:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 20h
+    - !type:RoleTimeRequirement
+      role: JobWarden
+      time: 10h
+    - !type:DepartmentTimeRequirement
+      department: Command
+      time: 10h
+    - !type:OverallPlaytimeRequirement
+      time: 25h
+    ResearchDirector: # (MG)
+    - !type:RoleTimeRequirement
+      role: JobForensicMantis
+      time: 2h
+    - !type:DepartmentTimeRequirement
+      department: Epistemics
+      time: 25h
+
+    # Engineering
+    AtmosphericTechnician:
+    - !type:DepartmentTimeRequirement
+      department: Engineering
+      time: 10h
+    TechnicalAssistant:
+    - !type:OverallPlaytimeRequirement
+      time: 2h
+
+    # Epistemics
+    Chaplain:
+    - !type:DepartmentTimeRequirement
+      department: Epistemics
+      time: 4h
+    ResearchAssistant:
+    - !type:OverallPlaytimeRequirement
+      time: 1h
+    Scientist:
+    - !type:DepartmentTimeRequirement
+      department: Epistemics
+      time: 4h
+
+    # Justice
+    Lawyer: # (Attorney)
+    - !type:OverallPlaytimeRequirement
+      time: 10h
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 4h
+
+    # Logistics
+    Quartermaster: # (LO)
+    - !type:RoleTimeRequirement
+      role: JobCargoTechnician
+      time: 6h
+    - !type:RoleTimeRequirement
+      role: JobSalvageSpecialist
+      time: 3h
+    - !type:RoleTimeRequirement
+      role: JobCourier
+      time: 2h
+    - !type:DepartmentTimeRequirement
+      department: Logistics
+      time: 25h
+    - !type:OverallPlaytimeRequirement
+      time: 40h
+    SalvageSpecialist:
+    - !type:DepartmentTimeRequirement
+      department: Logistics
+      time: 6h
+    CargoTechnician:
+    - !type:DepartmentTimeRequirement
+      department: Logistics
+      time: 6h
+
+    # Medical
+    Chemist:
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 8h
+    MedicalIntern:
+    - !type:OverallPlaytimeRequirement
+      time: 1h
+    Paramedic:
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 8h
+    Psychologist:
+    - !type:OverallPlaytimeRequirement
+      time: 10h
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 4h
+    MedicalDoctor:
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 7h
+
+    # Security
+    Detective:
+    - !type:RoleTimeRequirement
+      role: JobSecurityOfficer
+      time: 6h
+    SecurityCadet:
+    - !type:OverallPlaytimeRequirement
+      time: 6h
+    SecurityOfficer:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 10h
+    Warden:
+    - !type:RoleTimeRequirement # Make them experienced in proper officer work.
+      role: JobSecurityOfficer
+      time: 10h
+    - !type:RoleTimeRequirement # Give them an understanding of basic forensics.
+      role: JobDetective
+      time: 6h
+  antags:
+    NukeopsMedic:
+    - !type:RoleTimeRequirement # They should be able to make advanced brutes + pyra quickly
+      role: JobChemist
+      time: 10h
+    - !type:RoleTimeRequirement # Give them a good understanding of how medical works
+      role: JobMedicalDoctor
+      time: 2h

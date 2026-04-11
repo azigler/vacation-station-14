@@ -1,0 +1,110 @@
+- type: vessel
+  id: PTS
+  name: NTCI-TR Private Transport Shuttle
+  description: A private transport vessel for up to 6 passengers.
+  price: 25000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_pts.yml
+  categories:
+  - Civilian
+  - Small
+  - Transport
+
+- type: vessel
+  id: Barge
+  name: NTCI-MI Barge
+  description: A large shipping vessel repurposed into a salvage bar.
+  price: 59000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_barge.yml
+  categories:
+  - Civilian
+  - Large
+  - Shipping
+  - Mining
+
+- type: vessel
+  id: Helix
+  name: NTCI-ME Helix
+  description: A large mobile health clinic for servicing distant outposts.
+  price: 58500
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_helix.yml
+  categories:
+  - Civilian
+  - Medium
+  - Medical
+
+- type: vessel
+  id: Eden
+  name: NTCI-ME Eden
+  description: A modestly sized botanical garden with a chemistry lab for pushing the bounds of hydroponics.
+  price: 77000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_eden.yml
+  categories:
+  - Civilian
+  - Medium
+  - Medical
+
+- type: vessel
+  id: Orit
+  name: NTCI-ME Orit
+  description: A small medical vessel designed for the fast search and retrieval of patients in deep space.
+  price: 36000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_orit.yml
+  categories:
+  - Civilian
+  - Small
+  - Medical
+
+- type: vessel
+  id: Miriam
+  name: NTCI-ME Miriam
+  description: A modestly sized medical vessel with all the equipment to operate a cryogenics laboratory.
+  price: 61000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_miriam.yml
+  categories:
+  - Civilian
+  - Medium
+  - Medical
+
+- type: vessel
+  id: Prospector
+  name: NTCI-MI NT-7-Prospector
+  description: A small mining vessel designed to assist salvage operations.
+  price: 29000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_prospector.yml
+  categories:
+  - Civilian
+  - Small
+  - Mining
+
+- type: vessel
+  id: Nomad
+  name: NTCI-TR Nomad
+  description: A small shuttle for transporting up to 3 passengers with relative comfort.
+  price: 25500
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_nomad.yml
+  categories:
+  - Civilian
+  - Small
+  - Transport
+
+- type: vessel
+  id: Tote
+  name: NTCI-SH Tote
+  description: A small shipping vessel, adapted from the Nomad line of shuttles with room for 2 passengers.
+  price: 27000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_tote.yml
+  categories:
+  - Civilian
+  - Small
+  - Shipping
+
+- type: vessel
+  id: Pulse
+  name: NTCI-SH Pulse
+  description: A moderately sized shuttle intended for all-purpose use. It can comfortably accomodate a crew of up to ten people.
+  price: 62000
+  path: /Maps/_DV/Shuttles/Shipyard/ntsy_pulse.yml
+  categories:
+  - Civilian
+  - Medium
+  - Shipping

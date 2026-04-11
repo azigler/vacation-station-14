@@ -1,0 +1,46 @@
+- type: entity
+  parent: BaseChemistryBottleFilled
+  id: ChemistryBottleNapalm
+  suffix: napalm
+  components:
+  - type: Label
+    currentLabel: reagent-name-napalm
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        maxVol: 30
+        reagents:
+        - ReagentId: Napalm
+          Quantity: 30
+
+- type: entity
+  parent: BaseChemistryBottleFilled
+  id: ChemistryBottleChloralHydrate
+  suffix: chloral hydrate
+  components:
+  - type: Label
+    currentLabel: reagent-name-chloral-hydrate
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        maxVol: 30
+        reagents:
+        - ReagentId: ChloralHydrate
+          Quantity: 30
+
+- type: entity
+  parent: BaseChemistryBottleFilled
+  id: ChemistryBottleFirebugsFriend
+  suffix: firebug's friend
+  components:
+  - type: Label
+    currentLabel: chemistry-bottle-firebugs-friend
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        maxVol: 30
+        reagents:
+        - ReagentId: Tritium
+          Quantity: 28
+        - ReagentId: Phlogiston
+          Quantity: 2

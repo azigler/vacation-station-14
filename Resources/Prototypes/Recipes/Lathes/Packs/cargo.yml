@@ -1,0 +1,39 @@
+## Static
+
+- type: latheRecipePack
+  parent:
+  - CargoStaticDeltaV # DeltaV
+  id: CargoStatic
+  recipes:
+  - AppraisalTool
+  - Pickaxe
+  - UtilityKnife
+
+- type: latheRecipePack
+  id: CargoBoardsStatic
+  recipes:
+  - OreProcessorMachineCircuitboard
+  - SalvageMagnetMachineCircuitboard
+
+## Dynamic
+
+- type: latheRecipePack
+  parent:
+  - MiningDeltaV # DeltaV
+  id: Mining
+  recipes:
+  - MiningDrill
+  - MiningDrillDiamond
+  - MineralScannerEmpty
+  - AdvancedMineralScannerEmpty
+  - OreBagOfHolding
+  - ClothingShoesBootsJump # DV - Jump Boots since its mining research
+
+- type: latheRecipePack
+  parent:
+  - LogisticsBoards # DeltaV
+  id: CargoBoards
+  recipes:
+  - OreProcessorIndustrialMachineCircuitboard
+  - CargoTelepadMachineCircuitboard
+  - ShuttleGunKineticCircuitboard

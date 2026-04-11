@@ -1,0 +1,103 @@
+- type: entity
+  parent: MicrowaveMachineCircuitboard
+  id: AdvancedMicrowaveMachineCircuitBoard
+  name: advanced microwave machine board
+  components:
+  - type: MachineBoard
+    prototype: AdvancedMicrowave
+    stackRequirements:
+      Manipulator: 2
+      Glass: 4
+      Cable: 5
+
+- type: entity
+  parent: ExosuitFabricatorMachineCircuitboard
+  id: SyndieExosuitFabricatorMachineCircuitboard
+  name: syndicate exosuit fabricator machine board
+  components:
+  - type: MachineBoard
+    prototype: SyndicateExosuitFabricator
+    stackRequirements:
+      Manipulator: 2
+      Glass: 4
+      Cable: 5
+
+- type: entity
+  abstract: true
+  parent: BaseMachineCircuitboard
+  id: BaseTechFabCircuitboardDV
+  components:
+  - type: MachineBoard
+    stackRequirements:
+      Manipulator: 4
+    tagRequirements:
+      GlassBeaker:
+        amount: 2
+        defaultPrototype: Beaker
+
+- type: entity
+  parent: BaseTechFabCircuitboardDV
+  id: EngineeringTechFabCircuitboard
+  name: engineering techfab machine board
+  description: A machine printed circuit board for an engineering techfab.
+  components:
+  - type: Sprite
+    state: engineering
+  - type: MachineBoard
+    prototype: EngineeringTechFab
+  - type: StealTarget
+    stealGroup: EngineeringTechFabCircuitboard
+
+- type: entity
+  parent: BaseTechFabCircuitboardDV
+  id: LogisticsTechFabCircuitboard
+  name: logistics techfab machine board
+  description: A machine printed circuit board for a logistics techfab.
+  components:
+  - type: Sprite
+    state: supply
+  - type: MachineBoard
+    prototype: LogisticsTechFab
+  - type: StealTarget
+    stealGroup: LogisticsTechFabCircuitboard
+
+- type: entity
+  parent: BaseTechFabCircuitboardDV
+  id: ServiceTechFabCircuitboard
+  name: service techfab machine board
+  description: A machine printed circuit board for a service techfab.
+  components:
+  - type: Sprite
+    state: service
+  - type: MachineBoard
+    prototype: ServiceTechFab
+  - type: StealTarget
+    stealGroup: ServiceTechFabCircuitboard
+
+- type: entity
+  parent: BaseTechFabCircuitboardDV
+  id: EpistemicsTechFabCircuitboard
+  name: epistemics techfab machine board
+  description: A machine printed circuit board for a epistemics techfab.
+  components:
+  - type: Sprite
+    state: science
+  - type: MachineBoard
+    prototype: EpistemicsTechFab
+  - type: StealTarget
+    stealGroup: EpistemicsTechFabCircuitboard
+
+# Kitchen Freezer
+- type: entity
+  id: KitchenFreezerMachineCircuitBoard
+  parent: BaseMachineCircuitboard
+  name: kitchen freezer thermomachine machine board
+  description: Used to make a kitchen freezer thermomachine.
+  components:
+  - type: Sprite
+    state: engineering
+  - type: MachineBoard
+    prototype: GasThermoMachineKitchenFreezer
+    stackRequirements:
+      Manipulator: 4
+      Cable: 5

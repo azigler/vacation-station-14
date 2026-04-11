@@ -1,0 +1,121 @@
+- type: entity
+  parent: BasicHitscan
+  id: WispLash
+  name: wisp lash
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: muzzle_omni
+    travelFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: beam_omni
+    impactFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: impact_omni
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Shadow: 8
+        Shock: 8
+
+- type: entity
+  parent: BasicHitscan
+  id: ColdLaser
+  name: cold laser
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: muzzle_omni
+    travelFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: beam_omni
+    impactFlash:
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: impact_omni
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Cold: 20
+  - type: HitscanTemperature
+    heatChange: -50000 # This shoots hitscans that make you cold
+
+- type: entity
+  parent: BasicHitscan
+  id: BeamLaser
+  name: beam laser
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: muzzle_laser
+    travelFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: beam
+    impactFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: impact_laser
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 2
+
+- type: entity
+  parent: BasicHitscan
+  id: BeamDev
+  name: devastator beam
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: muzzle_laser
+    travelFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: beam
+    impactFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: impact_laser
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 6
+        Structural: 10
+
+- type: entity
+  parent: BasicHitscan
+  id: GamblagatorLaser
+  name: gamblagator laser
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/evil_projectile.rsi
+      state: evil_muzzle_flash
+    travelFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/evil_projectile.rsi
+      state: evil_laser
+    impactFlash:
+      sprite: _DV/Objects/Weapons/Guns/Projectiles/evil_projectile.rsi
+      state: evil_impact
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 100
+        Radiation: 20
+        Structural: 100
+
+- type: entity
+  parent: RedHeavyLaser
+  id: RedSniperLaser
+  name: red high-precision laser ray
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 42

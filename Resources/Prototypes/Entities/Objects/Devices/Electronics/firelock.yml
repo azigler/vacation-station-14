@@ -1,0 +1,21 @@
+﻿- type: entity
+  id: FirelockElectronics
+  parent: BaseElectronics
+  name: firelock electronics
+  description: An electronics board used to detect differences in pressure, temperature and gas concentrations between the two sides of the door.
+  components:
+    - type: Item
+      storedRotation: 0
+    - type: Sprite
+      sprite: Objects/Misc/module.rsi
+      state: mainboard
+    - type: Tag
+      tags:
+      - FirelockElectronics
+    - type: StaticPrice
+      price: 30 # DeltaV - was 14, made it worth less than it costs to buy ($38.8) to prevent factorio
+    - type: PhysicalComposition
+      materialComposition:
+        Glass: 0
+      chemicalComposition:
+        Silicon: 20

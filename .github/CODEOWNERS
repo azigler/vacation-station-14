@@ -1,0 +1,34 @@
+# Last match in file takes precedence.
+
+# C# code
+/Content.*/ @DeltaV-Station/maintainers
+
+# Any assets
+/Resources/ @DeltaV-Station/maintainers
+
+# Server config files
+/Resources/ConfigPresets/ @Toby222
+
+# Lobby art and music - automatically direction issues since its immediately visible to players
+/Resources/Audio/Lobby/ @DeltaV-Station/direction
+/Resources/Textures/LobbyScreens/ @DeltaV-Station/direction
+
+# Maps
+/Resources/Maps/ @DeltaV-Station/maptainers
+/Resources/Prototypes/Maps/ @DeltaV-Station/maptainers
+/Content.IntegrationTests/Tests/PostMapInitTest.cs @DeltaV-Station/maptainers
+
+# Server rules
+/Resources/ServerInfo/Guidebook/DeltaV/Rules/ @DeltaV-Station/head-administrators
+
+# Wiki
+/.wiki/ @DeltaV-Station/direction
+
+# Tools and scripts
+/Tools/ @Toby222
+
+# Workflows, codeowners, templates, etc.
+/.github/ @Toby222
+
+# Standalone files in the root repo
+/* @Toby222

@@ -1,0 +1,105 @@
+- type: entity
+  name: adjutant
+  parent: [BaseItem, BaseGunWieldable]
+  id: WeaponShotgunAdjutant
+  description: A semi-automatic magazine-fed shotgun manufactured by Nanotrasen. trading firerate for a compact and user-friendly design.
+  components:
+  - type: Sprite
+    sprite: _DV/Objects/Weapons/Guns/Shotguns/Adjutant.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Item
+    size: Large
+  - type: Clothing
+    sprite: _DV/Objects/Weapons/Guns/Shotguns/Adjutant.rsi
+    quickEquip: false
+    slots:
+    - Back
+    - suitStorage
+  - type: AmmoCounter
+  - type: GunRequiresWield
+  - type: Gun
+    fireRate: 1.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/shotgun.ogg
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: MagazineShotgun
+        priority: 2
+        whitelist:
+          tags:
+          - MagazineShotgun
+        whitelistFailPopup: gun-magazine-whitelist-fail
+        insertSound: /Audio/Weapons/Guns/MagIn/smg_magin.ogg
+        ejectSound: /Audio/Weapons/Guns/MagOut/smg_magout.ogg
+  - type: ContainerContainer
+    containers:
+      gun_magazine: !type:ContainerSlot
+      gun_chamber: !type:ContainerSlot
+  - type: MagazineAmmoProvider
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: true
+  - type: Appearance
+
+- type: entity
+  parent: WeaponShotgunKammerer
+  id: WeaponShotgunKammererNonLethal
+  suffix: Beanbag
+  components:
+  - type: BallisticAmmoProvider
+    proto: ShellShotgunBeanbag
+
+- type: entity
+  parent: BaseItem
+  id: WeaponRiotShotgunBorg
+  name: borg riot shotgun
+  description: A heavily modified shotgun for borgs, firing off beanbag rounds. Ammo replicates over time.
+  components:
+  - type: Sprite
+    sprite: _DV/Objects/Weapons/Guns/Shotguns/enforcer.rsi
+    layers:
+    - state: icon
+      map: [ "enum.GunVisualLayers.Base" ]
+  - type: Appearance
+  - type: Item
+    size: Huge
+  - type: Gun
+    minAngle: 0
+    maxAngle: 10
+    angleIncrease: 1
+    angleDecay: 16
+    fireRate: 1.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/shotgun.ogg
+    soundEmpty:
+      path: /Audio/Weapons/Guns/Empty/empty.ogg
+  - type: Battery
+    maxCharge: 400
+    startingCharge: 200
+  - type: BatteryAmmoProvider
+    proto: PelletShotgunBeanbag
+    fireCost: 100
+  - type: AmmoCounter
+  - type: BatterySelfRecharger
+    autoRechargeRate: 20
+
+- type: entity
+  parent: WeaponShotgunKammerer
+  id: WeaponShotgunKammererIncendiary
+  suffix: Incendiary
+  components:
+  - type: BallisticAmmoProvider
+    proto: ShellShotgunIncendiary

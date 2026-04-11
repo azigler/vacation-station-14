@@ -1,0 +1,31 @@
+- entity: WallSolid
+  assignments:
+  - 0: 1
+- entity: WallReinforced
+  assignments:
+  - 0: 2
+- entity: Window
+  assignments:
+  - 0: 3
+- entity: ReinforcedWindow
+  assignments:
+  - 0: 4
+- entity: Grille
+  assignments:
+  - 0: 5
+- tileId: FloorSteel
+  assignments:
+  - 0: 6
+- entity: Firelock
+  assignments:
+  - 0: 7
+- tileId: Plating
+  assignments:
+  - 0: 8
+- tileId: Space
+  assignments:
+  - 0: 9
+- action: ActionMappingEraser
+  assignments:
+  - 0: 0
+...

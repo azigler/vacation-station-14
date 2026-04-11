@@ -1,0 +1,43 @@
+- type: job
+  id: SecurityOfficer
+  name: job-name-security
+  description: job-description-security
+  playTimeTracker: JobSecurityOfficer
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 2.5h
+  startingGear: SecurityOfficerGear
+  icon: "JobIconSecurityOfficer"
+  supervisors: job-supervisors-hos
+  canBeAntag: false
+  access:
+  - Security
+  #- Brig # DeltaV - Removed brig access
+  - Maintenance
+  - External
+  #- Cryogenics # DeltaV - No looting cryo for basic sec
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+
+- type: startingGear
+  id: SecurityOfficerGear
+  equipment:
+    #eyes: ClothingEyesGlassesSecurity # DeltaV - loadouts
+    ears: ClothingHeadsetSecurity
+    #pocket1: WeaponPistolMk58Nonlethal # DeltaV - loadouts
+  storage:
+    back:
+    - Flash
+    #- MagazinePistol # DeltaV - loadouts
+
+- type: chameleonOutfit
+  id: SecurityOfficerChameleonOutfit
+  job: SecurityOfficer
+  hasMindShield: true
+  equipment:
+    head: ClothingHeadHatBeretSecurity
+    mask: ClothingMaskGasSecurity
+    neck: Dinkystar
+    gloves: ClothingHandsGlovesColorBlack

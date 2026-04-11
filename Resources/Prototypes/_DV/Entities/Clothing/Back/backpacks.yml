@@ -1,0 +1,93 @@
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackCentcom
+  name: central commander backpack
+  description: A special backpack for Central Commanders. The gold decorating it makes it feel heavy.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/centcom.rsi
+
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackHoP
+  name: HoP's Backpack
+  description: To store all your stamps and paperwork
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/hop.rsi
+    state: icon
+
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackAdvancedTactical
+  name: advanced tactical backpack
+  description: A spacious backpack with lots of pockets.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Backpacks/ertleader.rsi
+  - type: Storage
+    grid:
+    - 0,0,10,3
+
+- type: entity
+  parent: ClothingBackpackERTLeader
+  id: ClothingBackpackERTLeaderReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by the Commander of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertleaderreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTSecurity
+  id: ClothingBackpackERTSecurityReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Security Officers of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertsecreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTMedical
+  id: ClothingBackpackERTMedicalReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Medical Officers of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertmedreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTEngineer
+  id: ClothingBackpackERTEngineerReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Engineers of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertengreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTJanitor
+  id: ClothingBackpackERTJanitorReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Janitors of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertjanitorreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTClown
+  id: ClothingBackpackERTClownReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Clowns of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertclownreduced.rsi
+
+- type: entity
+  parent: ClothingBackpackERTChaplain
+  id: ClothingBackpackERTChaplainReducedVisual
+  suffix: Reduced Visual
+  description: A spacious backpack with lots of pockets, worn by Chaplains of an Emergency Response Team. This one seems to utilise magnets to stay on
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Back/Backpacks/ertchaplainreduced.rsi

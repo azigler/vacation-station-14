@@ -1,0 +1,21 @@
+# DO NOT ADD ANY NEW STATUS EFFECTS HERE.
+
+# Use the new status effects system.
+
+- type: statusEffect
+  id: Addicted
+
+- type: statusEffect
+  id: SuppressAddiction
+
+- type: statusEffect
+  id: Anesthesia
+
+- type: statusEffect
+  id: PainNumbness
+
+- type: statusEffect
+  id: ScrambledSpeech
+
+- type: statusEffect
+  id: RepeatingTelepath

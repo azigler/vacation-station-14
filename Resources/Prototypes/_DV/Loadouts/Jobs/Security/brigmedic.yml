@@ -1,0 +1,70 @@
+# Head
+- type: loadout
+  id: CorpsmanBeret
+  equipment:
+      head: ClothingHeadHatBeretCorpsman
+
+- type: loadout
+  id: BrigMedicalBeret
+  equipment:
+      head: ClothingHeadHatBeretBrigmedic
+
+# Jumpsuit
+- type: loadout
+  id: BrigMedicJumpsuit
+  equipment:
+      jumpsuit: ClothingUniformJumpsuitBrigmedic
+
+- type: loadout
+  id: BrigMedicJumpskirt
+  equipment:
+      jumpsuit: ClothingUniformJumpskirtBrigmedic
+
+- type: loadout
+  id: BrigMedicTurtlesuit
+  equipment:
+      jumpsuit: ClothingUniformJumpsuitBrigmedicTurtle
+
+- type: loadout
+  id: BrigMedicTurtleskirt
+  equipment:
+      jumpsuit: ClothingUniformJumpskirtBrigmedicTurtle
+
+# Back
+- type: loadout
+  id: BrigMedicBackpack
+  equipment:
+      back: ClothingBackpackBrigmedic
+
+- type: loadout
+  id: BrigMedicSatchel
+  equipment:
+      back: ClothingBackpackSatchelBrigmedic
+
+- type: loadout
+  id: BrigMedicDuffel
+  equipment:
+      back: ClothingBackpackDuffelBrigmedic
+
+# OuterClothing
+
+- type: loadout
+  id: StasecWinterCoatCorpsman
+  equipment:
+    outerClothing: ClothingOuterCoatStasecCorpsman
+
+- type: loadout
+  id: LongcoatBrigmedic
+  equipment:
+    outerClothing: ClothingLongcoatBrigmedic
+
+# Eyewear
+- type: loadout
+  id: CorpsmanGlasses
+  equipment:
+    eyes: ClothingEyesGlassesCorpsman
+
+- type: loadout
+  id: PrescriptionCorpsmanGlasses
+  equipment:
+    eyes: ClothingEyesPrescriptionCorpsmanGlasses

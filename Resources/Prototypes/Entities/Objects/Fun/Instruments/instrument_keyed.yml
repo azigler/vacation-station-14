@@ -1,0 +1,85 @@
+- type: entity
+  parent: BaseHandheldInstrument
+  id: BaseKeyedInstrument
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - KeyedInstrument
+
+- type: entity
+  parent: BaseKeyedInstrument
+  id: SynthesizerInstrument
+  name: synthesizer
+  components:
+  - type: Instrument
+    program: 62
+  - type: SwappableInstrument
+    instrumentList:
+      "Electro": {62: 0} #i needed generic sounding synth presets, sue me
+      "Bubbles": {63: 0}
+  - type: Sprite
+    sprite: Objects/Fun/Instruments/h_synthesizer.rsi
+  - type: StaticPrice
+    price: 90
+
+- type: entity
+  parent: BaseKeyedInstrument
+  id: SuperSynthesizerInstrument
+  name: super synthesizer
+  description: Blasting the ghetto with Touhou MIDIs since 2020.
+  components:
+  - type: ActivatableUI #DeltaV - Allows Super Synths to be played while being worn on the neck.
+    inHandsOnly: false
+    requireActiveHand: false
+  - type: Instrument
+    allowPercussion: true
+    allowProgramChange: true
+    respectMidiLimits: true # DeltaV - Enables limits to prevent people from crashing the server with black midis.
+  - type: Sprite
+    sprite: Objects/Fun/Instruments/h_synthesizer.rsi
+    state: supersynth
+  - type: Clothing #DeltaV - The straps on the super synth have a use now. Makes the super synth wearable on the neck slot.
+    quickEquip: false
+    slots:
+    - neck
+    sprite: Objects/Fun/Instruments/h_synthesizer.rsi
+  - type: Item
+    heldPrefix: super
+    size: Normal #DeltaV - Ensures that the sprite properly renders, had to add this because it wouldn't render properly on the ground and in UI/bag UI otherwise.
+    sprite: Objects/Fun/Instruments/h_synthesizer.rsi
+
+- type: entity
+  parent: SuperSynthesizerInstrument
+  id: SuperSynthesizerNoLimitInstrument
+  suffix: NoLimits
+  components:
+  - type: Instrument
+    respectMidiLimits: false
+
+- type: entity
+  parent: BaseKeyedInstrument
+  id: AccordionInstrument
+  name: accordion
+  components:
+  - type: Instrument
+    program: 21
+  - type: SwappableInstrument
+    instrumentList:
+      "Standard": {21: 0}
+      "Tango": {23: 0}
+  - type: Sprite
+    sprite: Objects/Fun/Instruments/accordion.rsi
+
+- type: entity
+  parent: BaseKeyedInstrument
+  id: KalimbaInstrument
+  name: kalimba
+  description: The power of a piano right at your thumbs.
+  components:
+  - type: Instrument
+    program: 108
+  - type: Sprite
+    sprite: Objects/Fun/Instruments/kalimba.rsi
+  - type: Item
+    size: Small

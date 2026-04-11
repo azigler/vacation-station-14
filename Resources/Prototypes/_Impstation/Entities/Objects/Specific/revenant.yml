@@ -1,0 +1,25 @@
+- type: entity
+  parent: Crayon
+  id: CrayonBlood
+  categories: [ HideSpawnMenu ]
+  name: bloody crayon
+  description: A bloody crayon. Looks scary. Oooo...
+  components:
+  - type: Sprite
+    state: red
+  - type: Item
+    heldPrefix: bloody
+  - type: Crayon
+    color: '#a70000'
+  - type: LimitedCharges
+    maxCharges: 100
+  - type: AutoRecharge
+    rechargeDuration: 2
+  - type: BloodCrayon
+  - type: Tag
+    tags:
+    - Write
+    - Crayon
+    - CrayonRed
+    - Recyclable
+    - Trash

@@ -1,0 +1,927 @@
+﻿Entries:
+- author: ArtisticRoomba
+  changes:
+  - message: The mapping changelog has been added! This primarily serves as a way
+      to make players aware of large changes or important fixes to maps, without cluttering
+      the main changelog.
+    type: Add
+  id: 1
+  time: '2025-02-03T01:29:24.112Z'
+- author: ArtisticRoomba
+  changes:
+  - message: A chemical dispenser has been added to the nukie planet, allowing new
+      agents to work in a familiar environment.
+    type: Add
+  id: 2
+  time: '2025-01-27T07:10:24.000Z'
+- author: K-Dynamic
+  changes:
+  - message: Atmos air (6500 kPa) markers are available for mapping.
+    type: Add
+  id: 3
+  time: '2025-05-01T22:03:47.0000000+00:00'
+  url: https://github.com/space-wizards/space-station-14/pull/37061
+- author: Minemoder
+  changes:
+  - message: The ATS station anchor room was rebuilt to prevent stealing from the
+      room, and to add shuttle miners to repressurize the ATS.
+    type: Tweak
+  id: 4
+  time: '2025-05-18T08:12:47.0000000+00:00'
+  url: https://github.com/space-wizards/space-station-14/pull/37560
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Added the NTCS Duster for all of logistic''s transportation needs'
+    type: Add
+  - message: 'Arena: Added material silos to Engineering and Epistemics'
+    type: Add
+  id: 5
+  time: '2025-05-29T05:25:11.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3853
+- author: Field Command
+  changes:
+  - message: "By\u014Din: Latest mapping standards. The bar has been extended, alterations\
+      \ made to cargo, and solars got reconfigured."
+    type: Tweak
+  - message: "By\u014Din: Mail room and engineering outpost have been added to the\
+      \ station. So go forth and explore."
+    type: Add
+  id: 6
+  time: '2025-05-29T07:45:03.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3849
+- author: Velcroboy
+  changes:
+  - message: 'Hive: An additional solar array has been added off epistemics.'
+    type: Add
+  id: 7
+  time: '2025-05-30T06:08:10.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3861
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Added more AI turrets and roundstart material silos.'
+    type: Add
+  - message: 'Tortuga: Fixed Engineering disposals.'
+    type: Fix
+  id: 8
+  time: '2025-06-02T19:40:35.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3873
+- author: Radezolid
+  changes:
+  - message: 'Edge: Medbay got a medical records computer, new paramedic and chemistry
+      rooms, along with a mailing unit communicating chemistry to Botany.'
+    type: Tweak
+  - message: 'Edge: External airlocks are now properly linked.'
+    type: Fix
+  id: 9
+  time: '2025-06-06T20:05:42.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3840
+- author: Field Command, Densetsu
+  changes:
+  - message: 'Midpoint: New end-of-round station.'
+    type: Add
+  - message: Reverted end-of-round time back to 5 minutes.
+    type: Tweak
+  id: 10
+  time: '2025-06-13T18:14:58.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3894
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Prisoner has been re-enabled.'
+    type: Tweak
+  - message: 'Shoukou: Reporter can be selected roundstart.'
+    type: Tweak
+  id: 11
+  time: '2025-06-14T17:57:11.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3950
+- author: Radezolid
+  changes:
+  - message: Added materials silos to Shoukou.
+    type: Add
+  - message: Fixed the freezer at Shoukou.
+    type: Fix
+  id: 12
+  time: '2025-06-16T17:53:48.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3916
+- author: Radezolid
+  changes:
+  - message: Added two thrusters to the front of the syndicate evacuation pod.
+    type: Add
+  id: 13
+  time: '2025-06-16T18:05:18.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3920
+- author: Field Command
+  changes:
+  - message: 'Midpoint: Added two more exits from Midpoint arrival, one leading to
+      the brig and one leading to medical. Also moved AI to the center of the station.'
+    type: Tweak
+  id: 14
+  time: '2025-07-07T07:04:57.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3960
+- author: This_Is_Gray
+  changes:
+  - message: 'Elegance: There''s now a room in medical dedicated to paramedics. Now
+      you may fetch corpses... Lavishly~'
+    type: Add
+  - message: 'Elegance: Elegance has received a brand new cryogenics room which is
+      pre-set and closer to the exam room.'
+    type: Tweak
+  - message: 'Elegance: Several complaints and small grievances have been addressed.
+      Remember, you can always drop CONSTRUCTIVE feedback in this station''s designated
+      #mapping thread.'
+    type: Fix
+  id: 15
+  time: '2025-07-09T05:57:55.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/3971
+- author: Colin-Tel
+  changes:
+  - message: Updated Chibi Station with minor improvements.
+    type: Tweak
+  id: 16
+  time: '2025-07-27T02:45:28.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4087
+- author: Colin-Tel
+  changes:
+  - message: Updated Division Station with electric fence around atmos chambers, an
+      airlock for the TEG burn chamber, prettier vestibules, and swapping of telecoms
+      with camera routers.
+    type: Tweak
+  id: 17
+  time: '2025-07-31T06:26:15.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4095
+- author: Field Command
+  changes:
+  - message: "By\u014Din: Epistemics and justice has been reworked, and security now\
+      \ has a shooting range."
+    type: Tweak
+  id: 18
+  time: '2025-07-31T08:00:08.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4058
+- author: SirrRequiem
+  changes:
+  - message: 'Terra: Added some buttons for AI turrets, reinforced command techvault,
+      and gave surgery lil more supplies.'
+    type: Tweak
+  id: 19
+  time: '2025-08-05T02:56:38.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4112
+- author: Colin-Tel
+  changes:
+  - message: Division station has more decals, a door by the techvault maints, and
+      there are now more secoffs and less cadets.
+    type: Tweak
+  id: 20
+  time: '2025-08-12T01:50:20.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4165
+- author: Colin-Tel
+  changes:
+  - message: Added cameras to improve visibility on Division Station
+    type: Add
+  id: 21
+  time: '2025-08-23T06:29:30.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4215
+- author: Field Command
+  changes:
+  - message: 'Shuttels: The SRN and Lone Op shuttles has gotten an overhaul.'
+    type: Tweak
+  id: 22
+  time: '2025-08-25T18:12:32.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4174
+- author: Cepelinas1
+  changes:
+  - message: As a first event-styled map for eventing, a medieval themed Arena station
+      has been spotted in the sector. Nanotrasen are blaming on the Noosphere.
+    type: Add
+  id: 23
+  time: '2025-08-26T05:39:39.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4244
+- author: Field Command
+  changes:
+  - message: "By\u014Din: Surgery got a bit larger. Salvage now has a gun safe for\
+      \ self-defense when working, ask the LO to open the safe."
+    type: Tweak
+  id: 24
+  time: '2025-08-26T15:42:09.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4137
+- author: SirrRequiem
+  changes:
+  - message: 'Terra: Engi and Logi got a slight redesign, Epi got a bit larger one.
+      Firelocks are now linked to air alarms so they work for things other than just
+      spacings'
+    type: Tweak
+  id: 25
+  time: '2025-09-02T21:23:14.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4146
+- author: Field Command
+  changes:
+  - message: 'Midpoint: Spooky season have have come to Midpoint.'
+    type: Tweak
+  id: 26
+  time: '2025-10-12T21:20:31.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4512
+- author: Grey
+  changes:
+  - message: 'Elegance: Elegance has received a MAJOR overhaul to the Justice, Security,
+      and Service departments. New areas have replaced old ones, and existing ones
+      have been moved around. The station should feel a lot more lively, now. If you
+      find any issues, please report them in Elegance''s mapping thread.'
+    type: Tweak
+  - message: 'Elegance: The Pipe Layer-ening has begun...'
+    type: Fix
+  id: 27
+  time: '2025-10-13T04:06:48.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4200
+- author: turtlemutt
+  changes:
+  - message: 'Lighthouse: Made some changes to Engineering, Botany, and Kitchen. Added
+      the new AI turrets. Fixed that one damn light in Epistemics.'
+    type: Tweak
+  id: 28
+  time: '2025-11-04T01:26:08.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4565
+- author: Field Command
+  changes:
+  - message: 'Midpoint: Halloween is over CentCom wants you all back to work.'
+    type: Tweak
+  id: 29
+  time: '2025-11-04T12:39:41.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4600
+- author: Biddy Gelson
+  changes:
+  - message: 'Academy: Hotfix - fixed missing fan, fixed dorms doors, fixed epi brig
+      maint door'
+    type: Fix
+  id: 30
+  time: '2025-11-05T02:35:59.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4601
+- author: Colin-Tel
+  changes:
+  - message: 'Division: Replaces sentry turrets with new ones, adding a couple to
+      security, changed some sec airlocks to be security only so lawyers don''t get
+      blasted. Adds stuff to hallways to make them a little prettier. Added like more
+      content to maints.'
+    type: Add
+  - message: 'Division: added archivist stuff to library'
+    type: Add
+  - message: 'Division: fixed engineering maints hatch in reception to be public access'
+    type: Fix
+  - message: 'Division: Moved condenser from chemistry to atmosia. Replaced guns in
+      salvage with the salvage gun safe spawner. Moved holopads in logistics'
+    type: Tweak
+  id: 31
+  time: '2025-11-13T19:28:30.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4604
+- author: Colin-Tel
+  changes:
+  - message: 'Division: Added the Psychologist role that should''ve been there in
+      the first place.'
+    type: Add
+  id: 32
+  time: '2025-11-14T18:03:22.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4652
+- author: Velcroboy
+  changes:
+  - message: 'The Hive: Added Chef Vend and a recycler in perma.'
+    type: Add
+  - message: 'The Hive: Added archivist stuff.'
+    type: Add
+  - message: 'The Hive: Swapped in sentry turrets and indestructible tiles in AI satellite.'
+    type: Tweak
+  - message: 'The Hive:  Extended the epistemics silo to reach robotics'
+    type: Tweak
+  - message: 'The Hive: Fixed funny disposals outside justice.'
+    type: Fix
+  id: 33
+  time: '2025-11-16T09:28:30.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4657
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Added several public APCs, Archivist stuff, and Clippy!'
+    type: Add
+  - message: 'Tortuga: Swapped AI turrets to use sentry turrets, moved condenser to
+      atmos, and made adjustments to cryogenics piping.'
+    type: Tweak
+  id: 34
+  time: '2025-11-17T03:46:41.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4669
+- author: SirRequiem
+  changes:
+  - message: 'Terra: Newer AI turrets and expanded Library'
+    type: Add
+  - message: 'Terra: Signs and Buttons are no longer in a centered mess'
+    type: Fix
+  - message: 'Terra: Mirrors are now facing INTO the bathrooms instead of outside
+      of them.'
+    type: Fix
+  id: 35
+  time: '2025-11-20T01:46:35.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4685
+- author: Velcroboy
+  changes:
+  - message: 'Ruins: Added two new ruins.'
+    type: Add
+  id: 36
+  time: '2025-11-23T08:24:53.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4706
+- author: SirRequiem
+  changes:
+  - message: 'Terra: Changed burn chamber windows to reinforced plasma. Pressure damage
+      jumpscare'
+    type: Tweak
+  id: 37
+  time: '2025-11-25T03:18:50.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4741
+- author: Colin-Tel
+  changes:
+  - message: 'Chibi: Updated the burn chamber for the TEG.'
+    type: Tweak
+  id: 38
+  time: '2025-11-25T03:20:34.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4739
+- author: snowy_winter
+  changes:
+  - message: 'Asterisk: New ai turrets and a new armory'
+    type: Add
+  - message: 'Asterisk: A fishing spot west of kitchen and a lot more'
+    type: Add
+  - message: 'Asterisk: Fixed telecoms servers and other issues that where there'
+    type: Tweak
+  id: 39
+  time: '2025-11-27T04:05:33.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4758
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Updated with AI turrets and Archivist tools'
+    type: Add
+  - message: 'Arena: Gladiator gets some new toys'
+    type: Tweak
+  - message: 'Arena: Increased musician slots from 1 to 2'
+    type: Tweak
+  id: 40
+  time: '2025-11-27T11:07:23.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4729
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Adjusted TEG burn chamber to accommodate pressure changes'
+    type: Tweak
+  id: 41
+  time: '2025-11-27T12:02:28.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4773
+- author: Velcroboy
+  changes:
+  - message: Fixed tilewall command replacing some asteroid rocks with plating and
+      some rock walls not showing up on station maps
+    type: Fix
+  id: 42
+  time: '2025-11-28T08:26:53.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4777
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Pebble''s reincarnation, Rejoice. Pebble has now been fully
+      overhauled and should be up to the latest standards.'
+    type: Tweak
+  id: 43
+  time: '2025-12-02T05:33:03.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4807
+- author: FieldCommand
+  changes:
+  - message: 'Grids: Lots of edits to shuttle grids, e.g., shipyard, evac, and cargo
+      shuttles. Slight increase in shipyard pricing.'
+    type: Tweak
+  - message: Standardize shuttle naming convention further.
+    type: Tweak
+  id: 44
+  time: '2025-12-02T23:29:47.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4828
+- author: FieldCommand
+  changes:
+  - message: 'NTES BC20: Lighthouse evac shuttle has been updated to let command members
+      access shuttle bridge without the need for security to let them in. Public-facing
+      APC''s have been added'
+    type: Tweak
+  id: 45
+  time: '2025-12-04T05:06:14.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4842
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Increased min and max soft cap from 0 - 35 to 5 - 55'
+    type: Tweak
+  id: 46
+  time: '2025-12-04T05:06:46.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4850
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Added ore processor!'
+    type: Tweak
+  id: 47
+  time: '2025-12-06T01:24:55.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4874
+- author: SirRequiem
+  changes:
+  - message: 'Terra: Some kinda snowstorm blew through the station'
+    type: Tweak
+  id: 48
+  time: '2025-12-06T01:25:36.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4843
+- author: Velcroboy
+  changes:
+  - message: 'The Hive: Increased the amount of ammonia in jani''s tank and upgraded
+      some weak spots at the AI Satelite'
+    type: Tweak
+  id: 49
+  time: '2025-12-06T04:40:02.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4887
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Increased the amount of detective slots.'
+    type: Tweak
+  - message: 'Tortuga: Fixed some missing cable at TEG cold loop, redirected some
+      TEG pipes, and added a pressure siphon to the TEG burn chamber'
+    type: Fix
+  id: 50
+  time: '2025-12-06T05:33:40.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4878
+- author: FieldCommand
+  changes:
+  - message: Festive season have have come to Midpoint.
+    type: Tweak
+  id: 51
+  time: '2025-12-07T06:40:09.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4891
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Happy Holidays!'
+    type: Add
+  id: 52
+  time: '2025-12-08T06:08:37.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4893
+- author: turtlemutt
+  changes:
+  - message: 'Lighthouse: Gave Lighthouse a light dusting of snow.'
+    type: Tweak
+  id: 53
+  time: '2025-12-08T06:08:38.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4910
+- author: FieldCommand
+  changes:
+  - message: 'Byoin: The TEG burn chamber have been remade to lessen the chance of
+      superheating the station'
+    type: Tweak
+  - message: 'Byoin: The last beamdev has been called back, and CentCom has issued
+      an rpg in its stead.'
+    type: Tweak
+  id: 54
+  time: '2025-12-08T15:42:06.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4911
+- author: Colin-Tel
+  changes:
+  - message: 'Chibi: Added a fishing spot.'
+    type: Add
+  - message: 'Chibi: Redid Atmosia, now with a plasma miner, burn chamber, and two
+      total slots for atmos techs.'
+    type: Tweak
+  id: 55
+  time: '2025-12-09T19:44:27.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4914
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Some minor fixes, changed out surgeon, chemist and paramedic
+      lockers with wall lockers.'
+    type: Tweak
+  id: 56
+  time: '2025-12-10T15:48:49.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4924
+- author: Snowy
+  changes:
+  - message: 'Asterisk: Winter is here!'
+    type: Tweak
+  id: 57
+  time: '2025-12-13T06:21:25.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4925
+- author: Vape
+  changes:
+  - message: 'Glacier: is becoming colder, with the holiday snow on the way!'
+    type: Tweak
+  id: 58
+  time: '2025-12-13T06:31:35.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4936
+- author: FieldCommand
+  changes:
+  - message: Festive times at Byoin!
+    type: Tweak
+  id: 59
+  time: '2025-12-13T06:33:05.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4954
+- author: FieldCommand
+  changes:
+  - message: Festive times at Pebble!
+    type: Tweak
+  id: 60
+  time: '2025-12-13T06:39:50.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4955
+- author: Colin
+  changes:
+  - message: 'Division: Added a fishing spot east of arrivals.'
+    type: Add
+  id: 61
+  time: '2025-12-13T06:43:04.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4960
+- author: FieldCommand
+  changes:
+  - message: Added an event map of pebble.
+    type: Add
+  id: 62
+  time: '2025-12-16T05:54:10.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4890
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Hotfixes for pebble event map.'
+    type: Fix
+  id: 63
+  time: '2025-12-17T18:41:40.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4999
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Winter has finally come to the station. Fire up the snowblowers!'
+    type: Tweak
+  id: 64
+  time: '2025-12-24T03:59:36.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5020
+- author: biddygelson
+  changes:
+  - message: 'Academy: Cargo has complaint dock with bit of extra space. Robo has
+      IPC medbay. Wintermas is over but still cold outside baby.'
+    type: Tweak
+  - message: 'Academy: Robo has locked doors, justice intercom in law office, surgeon
+      hall has power, psych''s maint door is psych access.'
+    type: Fix
+  id: 65
+  time: '2025-12-31T06:48:36.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5036
+- author: FieldCommand
+  changes:
+  - message: 'Byoin: Festive times are over, back to work.'
+    type: Tweak
+  id: 66
+  time: '2025-12-31T06:50:25.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5039
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Festive times are over, back to work.'
+    type: Tweak
+  - message: added a medical request computer and some cell chargers plus some other
+      fixes.
+    type: Fix
+  id: 67
+  time: '2025-12-31T06:52:29.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5041
+- author: Velcroboy
+  changes:
+  - message: Added enabled versions of atmos pumps, filters, and mixers
+    type: Add
+  id: 68
+  time: '2025-12-31T18:35:45.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5015
+- author: FieldCommand
+  changes:
+  - message: 'Midpoint: Festive times are over, back to work.'
+    type: Tweak
+  id: 69
+  time: '2026-01-03T00:12:30.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5040
+- author: Vape
+  changes:
+  - message: 'Glacier: Removed "holidays"'
+    type: Remove
+  id: 70
+  time: '2026-01-05T21:05:01.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5139
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Removed the Christmas Spirit'
+    type: Remove
+  id: 71
+  time: '2026-01-06T16:59:32.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5147
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Added robotics and AI restoration consoles. Added public accessible
+      intercoms to every department'
+    type: Add
+  - message: 'Arena: Waste and Distro networks start enabled at roundstart. Gas condenser
+      was moved to atmos'
+    type: Tweak
+  - message: 'Arena: Removed winter'
+    type: Remove
+  - message: 'Arena: Fixed most of sec and parts of the service area not having emergency
+      lights'
+    type: Fix
+  id: 72
+  time: '2026-01-07T02:37:33.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5085
+- author: ThisIsNotGray
+  changes:
+  - message: Elegance; Elegance is no longer jolly. Billions must grinch.
+    type: Remove
+  id: 73
+  time: '2026-01-08T16:12:54.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5162
+- author: FieldCommand
+  changes:
+  - message: 'Asterisk: Winter map removed'
+    type: Remove
+  id: 74
+  time: '2026-01-08T16:15:04.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5156
+- author: SirRequiem
+  changes:
+  - message: 'Terra: All the snow got stolen!!'
+    type: Tweak
+  id: 75
+  time: '2026-01-12T09:13:15.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5089
+- author: Velcroboy
+  changes:
+  - message: 'The Hive: Added robotics and AI restoration consoles.'
+    type: Add
+  - message: 'The Hive: Waste and Distro networks start enabled at roundstart. Gas
+      condenser was moved to atmos'
+    type: Tweak
+  - message: 'The Hive: Removed winter'
+    type: Remove
+  id: 76
+  time: '2026-01-13T17:23:14.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5143
+- author: FieldCommand
+  changes:
+  - message: 'NTES Dart: Dart is now the newest EVAC ship in CentCom arsenal and is
+      being mass-produced to fill all needs.'
+    type: Add
+  id: 77
+  time: '2026-01-15T07:14:03.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4970
+- author: FieldCommand
+  changes:
+  - message: 'ATS: The ATS has been refurbished.'
+    type: Tweak
+  id: 78
+  time: '2026-01-15T13:52:04.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4825
+- author: ThisIsNotGray
+  changes:
+  - message: 'Elegance: Elegance''s cryogenics lab is no longer a black hole for  the
+      distro line.'
+    type: Fix
+  - message: 'Elegance: People will late join at cryosleep again instead of the nukie
+      outpost. Third or fourth time this has been fixed...'
+    type: Fix
+  id: 79
+  time: '2026-01-17T16:52:29.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5198
+- author: turtlemutt
+  changes:
+  - message: 'Lighthouse: Made some tweaks to Lighthouse. Fishers rejoice!'
+    type: Tweak
+  id: 80
+  time: '2026-01-19T02:21:31.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5154
+- author: Colin-Tel
+  changes:
+  - message: 'Division: Lowered surgeon count to 1 from 2.'
+    type: Tweak
+  - message: 'Division: Adjusted warp points to be in line with new requirements.'
+    type: Fix
+  - message: 'Chibi: Adjusted warp points to be in line with new requirements.'
+    type: Fix
+  id: 81
+  time: '2026-01-20T23:30:07.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5241
+- author: Colin-Tel
+  changes:
+  - message: 'Division: Added AI cameras on their own network, cyborg control computer,
+      a medical crash cart, and AI restoration computers.'
+    type: Add
+  - message: 'Division: Added more weapons to the armory.'
+    type: Add
+  - message: 'Division: Salvage''s gun safe is now in the LO office.'
+    type: Tweak
+  - message: 'Division: The arrivals area now fits the arrivals shuttle, and both
+      arrivals and evac have anti-meteor zones put on them.'
+    type: Tweak
+  id: 82
+  time: '2026-01-24T20:16:21.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5271
+- author: Fieldcommand
+  changes:
+  - message: 'Pebble: CJ has a bathroom, toilets have loot chance, and other small
+      tweaks.'
+    type: Tweak
+  id: 83
+  time: '2026-01-25T00:13:10.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5164
+- author: FieldCommand
+  changes:
+  - message: 'CentComm: Fixes to atmos, and added CC shipyard and mass scanner.'
+    type: Tweak
+  id: 84
+  time: '2026-01-31T02:56:11.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5321
+- author: FieldCommand, ShepardToTheStars
+  changes:
+  - message: The Reclaimer MK2 returns!
+    type: Add
+  id: 85
+  time: '2026-02-01T20:20:37.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5245
+- author: FieldCommand
+  changes:
+  - message: 'Midpoint: CC office has been added. Medical got some care. The pipe
+      network was redone to account for pipe layers.'
+    type: Tweak
+  id: 86
+  time: '2026-02-01T20:26:49.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5231
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: some small fixes, and the courier now has a mail cart.'
+    type: Tweak
+  id: 87
+  time: '2026-02-09T02:34:42.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5347
+- author: FieldCommand
+  changes:
+  - message: 'Byoin: Updated to the latest mapping standards. Extended the AME to
+      be 4 cores.'
+    type: Tweak
+  - message: 'NTES Basu: Updated Byoin evac shuttle pipe layers.'
+    type: Tweak
+  id: 88
+  time: '2026-02-09T02:35:15.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5232
+- author: Velcroboy
+  changes:
+  - message: 'The Hive: Fixed atmos distro mixer has the proper settings now.'
+    type: Fix
+  id: 89
+  time: '2026-02-11T04:14:19.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5368
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Obliterated the second LO locker.'
+    type: Fix
+  id: 90
+  time: '2026-02-11T17:06:02.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5371
+- author: Pharaz4
+  changes:
+  - message: 'Ruins: Added 4 new space ruins for Salvage!'
+    type: Add
+  id: 91
+  time: '2026-02-13T06:16:03.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5283
+- author: Pharaz4
+  changes:
+  - message: 'Shoko: Updated, again.'
+    type: Tweak
+  id: 92
+  time: '2026-02-19T22:24:21.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5401
+- author: FieldCommand
+  changes:
+  - message: 'Pebble: Fixed a small problem with the distro in the kitchen and some
+      other small changes.'
+    type: Fix
+  id: 93
+  time: '2026-02-22T16:58:11.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5415
+- author: turtlemutt
+  changes:
+  - message: More tweaks to Lighthouse, including a proper front desk for engineering.
+    type: Tweak
+  id: 94
+  time: '2026-02-22T17:17:59.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5246
+- author: snowy_winter
+  changes:
+  - message: 'Asterisk : Added AI subnet and cameras, epi eva suits, eng void suits,
+      vault and command turrets, mail carts, and medical crash carts'
+    type: Add
+  - message: 'Asterisk: Changed the west solar area have fun eng'
+    type: Tweak
+  - message: 'Asterisk : Fixed the door issue'
+    type: Fix
+  id: 95
+  time: '2026-02-24T17:04:50.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5373
+- author: biddygelson
+  changes:
+  - message: 'Academy: mail cart and crash carts!'
+    type: Add
+  - message: 'Academy: Winter is gone now, engineering finally opened the passage
+      betwixt Epi and Cargo, and botany has a window!'
+    type: Tweak
+  id: 96
+  time: '2026-02-24T17:26:22.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5412
+- author: Belisarius
+  changes:
+  - message: 'infested_frigate: Removed xeno ghost role'
+    type: Tweak
+  id: 97
+  time: '2026-02-27T01:31:05.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5431
+- author: IAmNotGray
+  changes:
+  - message: The AI Camera Subnet has been added to Elegance, *AND* the fabled Epistemics
+      EVA suits have been added.
+    type: Add
+  - message: For the __third__ time now, the psionic invisibility bedsheet has been
+      removed from Virology. Probably also another tiny fix or two as well. The Clerk
+      now has their stamp again, as well.
+    type: Fix
+  - message: Justice can no longer access perma.
+    type: Tweak
+  - message: For real this time, the cryo loop no longer has its frames subbed.
+    type: Fix
+  id: 98
+  time: '2026-02-27T22:35:13.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5387
+- author: Velcroboy
+  changes:
+  - message: 'The Hive: Added mail carts, toilet loot, guns for everyone! (one of
+      these is a lie)'
+    type: Add
+  - message: 'The Hive: Moved the TC server to engineering'
+    type: Tweak
+  id: 99
+  time: '2026-02-28T09:00:21.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5438
+- author: Velcroboy
+  changes:
+  - message: 'Arena: Updated to accommodate the arrivals shuttle.'
+    type: Tweak
+  id: 100
+  time: '2026-02-28T10:07:42.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5445
+- author: snowy_winter
+  changes:
+  - message: 'edge: Added turrets for ai, command, and sec with mail/crash carts and
+      epi softsuits'
+    type: Add
+  - message: 'edge: Ai core now runs off station power'
+    type: Tweak
+  - message: 'edge: Fixed up the air alarms and ai vision across the station'
+    type: Fix
+  id: 101
+  time: '2026-03-01T08:56:39.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5439
+- author: Velcroboy
+  changes:
+  - message: 'Tortuga: Added an atmos outpost! mail carts, medical carts and more!'
+    type: Add
+  - message: 'Tortuga: Rekajiggered some atmos pipes and pre-enabled distro/waste.
+      Swapped the kitchen and reading nook in perma'
+    type: Tweak
+  - message: 'Tortuga: Fixed the turret that was blocked in AI satellite and the air
+      canister hooked up to TEG cold loop'
+    type: Fix
+  id: 102
+  time: '2026-03-02T19:43:58.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5437
+- author: turtlemutt
+  changes:
+  - message: 'Lighthouse: Updated arrivals and made psych cozier.'
+    type: Tweak
+  id: 103
+  time: '2026-03-03T06:16:35.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5419
+- author: IAmNotGray
+  changes:
+  - message: 'Elegance: Engineering crates have been restocked.'
+    type: Fix
+  id: 104
+  time: '2026-03-05T01:32:43.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5468
+- author: Vape
+  changes:
+  - message: 'Glacier: Major Rework to Medical, Cargo, Engineering, Atmospherics,
+      Security, Perma and Many, Many others. Glacier Fans rejoice, for I have shoveled
+      snow for 4 MONTHS, and now it is time for spring'
+    type: Tweak
+  id: 105
+  time: '2026-03-09T14:27:42.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/4713
+- author: snowy_winter
+  changes:
+  - message: 'Asterisk: Added arrivals'
+    type: Add
+  id: 106
+  time: '2026-03-10T16:29:41.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5497
+- author: IAmNotGray
+  changes:
+  - message: 'Elegance: Elegance is now properly fitted for the arrivals shuttle.'
+    type: Fix
+  id: 107
+  time: '2026-03-21T16:28:20.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/5511
+Order: 3

@@ -1,0 +1,18 @@
+- type: entity
+  parent: BaseBarSign
+  id: BarSignKlubSkub
+  name: Klub Skub
+  description: Skub!
+  components:
+  - type: BarSign
+    current: KlubSkub
+
+- type: entity
+  categories: [ HideSpawnMenu ]
+  id: BarSignTheSunFake
+  name: The Sun
+  description: Ironically bright for such a shady bar.
+  components:
+  - type: Sprite
+    sprite: Structures/Wallmounts/barsign.rsi
+    state: thesun

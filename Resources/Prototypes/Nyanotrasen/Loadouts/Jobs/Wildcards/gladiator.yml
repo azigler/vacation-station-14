@@ -1,0 +1,11 @@
+# Jumpsuits
+- type: loadout
+  id: GladiatorJumpsuit
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitGladiator
+
+# OuterClothing
+- type: loadout
+  id: ClothingOuterArmorGladiator
+  equipment:
+    outerClothing: ClothingOuterArmorGladiator

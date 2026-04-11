@@ -1,0 +1,34 @@
+- type: entity
+  parent: ClothingHeadHelmetHardsuitRd
+  id: ClothingHeadHelmetHardsuitMystagogue
+  categories: [ HideSpawnMenu ]
+  name: mystagogue's hardsuit helmet
+  description: Lightweight hardsuit helmet that has a galaxy-first psionic passthrough system.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Head/Hardsuits/rd.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Head/Hardsuits/rd.rsi
+  - type: PointLight
+    color: "#d6adff"
+  - type: Psionic
+  - type: TinfoilHat
+    passthrough: true
+    destroyOnFry: false
+  - type: ClothingGrantPsionicPower
+    power: MetapsionicPower
+  - type: GuideHelp
+    guides:
+    - Psionics
+
+- type: entity
+  parent: ClothingHeadHelmetHardsuitERTLeader
+  id: ClothingHeadHelmetHardsuitERTCentcomm
+  name: CentComm hardsuit helmet
+  components:
+  - type: Sprite
+    sprite: Nyanotrasen/Clothing/Head/Hardsuits/ERThelmets/ertcentcomm.rsi
+  - type: Clothing
+    sprite: Nyanotrasen/Clothing/Head/Hardsuits/ERThelmets/ertcentcomm.rsi
+  - type: PointLight
+    color: "#00aa5c"

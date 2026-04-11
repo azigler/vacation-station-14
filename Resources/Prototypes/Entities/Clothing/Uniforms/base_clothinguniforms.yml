@@ -1,0 +1,76 @@
+- type: entity
+  abstract: true
+  parent: Clothing
+  id: UnsensoredClothingUniformBase
+  components:
+  - type: Sprite
+    state: icon
+  - type: Clothing
+    slots: [innerclothing]
+    equipSound:
+      path: /Audio/Items/jumpsuit_equip.ogg
+  - type: Butcherable
+    butcheringType: Knife
+    spawned:
+    - id: MaterialCloth1
+      amount: 3
+  - type: PhysicalComposition # 50% of the amount of cloth you'd obtain upon butchering
+    materialComposition:
+      Cloth: 150
+  - type: Edible
+    requiresSpecialDigestion: true
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 30
+        reagents:
+        - ReagentId: Fiber
+          Quantity: 30
+  - type: Tag
+    tags:
+    - ClothMade
+    - Recyclable
+    - WhitelistChameleon
+
+- type: entity
+  abstract: true
+  parent: UnsensoredClothingUniformBase
+  id: UnsensoredClothingUniformSkirtBase
+  components:
+  - type: Clothing
+    slots: [innerclothing]
+    femaleMask: UniformTop
+  - type: Tag #Delta-V : Adds tags to fix the Syndicate Jumpskirt, which is parented to this? this needs to be updated with *every* new tag given to UnsensoredClothingUniformBase, as tags aren't inherited
+    tags:
+    - Skirt # Delta-V : Harpies can wear this
+    - ClothMade # Delta-V : Moths can eat this
+    - WhitelistChameleon # Delta-V : You can set Chameleon clothes to this.
+
+
+- type: entity
+  abstract: true
+  parent: UnsensoredClothingUniformBase
+  id: ClothingUniformBase
+  components:
+  - type: SuitSensor
+  - type: DeviceNetwork
+    deviceNetId: Wireless
+    transmitFrequencyId: SuitSensor
+    savableAddress: false
+  - type: WirelessNetworkConnection
+    range: 1200
+  - type: StationLimitedNetwork
+
+- type: entity
+  abstract: true
+  parent: ClothingUniformBase
+  id: ClothingUniformSkirtBase
+  components:
+  - type: Clothing
+    slots: [innerclothing]
+    femaleMask: UniformTop
+  - type: Tag #Delta-V : Adds the Skirt tag so Harpies can wear this, this needs to be updated with *every* new tag given to UnsensoredClothingUniformBase, as tags aren't inherited
+    tags:
+    - Skirt # Delta-V : Harpies can wear this
+    - ClothMade # Delta-V : Moths can eat this
+    - WhitelistChameleon # Delta-V : You can set Chameleon clothes to this.

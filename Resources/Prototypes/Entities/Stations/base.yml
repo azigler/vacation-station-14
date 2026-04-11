@@ -1,0 +1,201 @@
+- type: entity
+  id: BaseStation
+  abstract: true
+  components:
+    - type: StationData
+
+- type: entity
+  id: BaseStationCargo
+  abstract: true
+  components:
+    - type: StationBankAccount
+    - type: StationCargoOrderDatabase
+      orders:
+        Cargo: [ ]
+        Engineering: [ ]
+        Medical: [ ]
+        Science: [ ]
+        Security: [ ]
+        Service: [ ]
+        Justice: [ ] # DeltaV - Justice
+    - type: StationCargoBountyDatabase
+
+- type: entity
+  id: BaseStationJobsSpawning
+  abstract: true
+  components:
+    - type: StationJobs
+      availableJobs: {}
+    - type: StationSpawning
+
+- type: entity
+  id: BaseStationRecords
+  abstract: true
+  components:
+    - type: StationRecords
+
+- type: entity
+  id: BaseStationArrivals
+  abstract: true
+  components:
+    - type: StationArrivals
+
+- type: entity
+  id: BaseStationGateway
+  abstract: true
+  components:
+    - type: GatewayGenerator
+
+- type: entity
+  id: BaseStationShuttles
+  abstract: true
+  components:
+    - type: StationCargoShuttle
+      path: /Maps/_DV/Shuttles/Cargo/ntcs_express.yml # DeltaV - Custom cargo shuttle
+    - type: GridSpawn
+      groups:
+#        trade: # DeltaV - trade station has its own map
+#          addComponents:
+#          - type: ProtectedGrid
+#          - type: TradeStation
+#          paths:
+#          - /Maps/Shuttles/trading_outpost.yml
+        # Spawn last
+        salvageShuttle: !type:GridSpawnGroup # DeltaV - salvage gets their own ship
+          paths:
+          - /Maps/_DV/Shuttles/Misc/reclaimer_mk2.yml
+          nameGrid: true
+          name: Reclaimer Mk2
+        ruins: !type:GridSpawnGroup
+          hide: true
+          nameGrid: true
+          minCount: 2
+          maxCount: 3
+          stationGrid: false
+          paths:
+          #- /Maps/Ruins/abandoned_outpost.yml #  DeltaV - Moved to _DV/Salvage pool
+          - /Maps/_DV/Ruins/atmos_interchange.yml  # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/chunked_tcomms.yml  # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/biodome_satellite.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/derelict.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/djstation.yml # DeltaV - Moved to DV folder
+          #- /Maps/Ruins/empty_flagship.yml # TODO
+          - /Maps/_DV/Ruins/hydro_outpost.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/old_ai_sat.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/relaystation.yml # DeltaV - upstream removed
+          #- /Maps/Ruins/ruined_prison_ship.yml # TODO
+          - /Maps/_DV/Ruins/destroyed_syndicate_dropship.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/whiteship_ancient.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/whiteship_bluespacejumper.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/mining_mostdestroyed.yml # DeltaV - Moved to DV folder
+          #- /Maps/Ruins/displaced_telescience.yml # TODO
+          # DeltaV - Added maps
+          - /Maps/_DV/Ruins/the_pond.yml # DeltaV - Moved to DV folder
+          - /Maps/_DV/Ruins/garbagetruck1.yml
+          - /Maps/_DV/Ruins/infested_frigate.yml
+          - /Maps/_DV/Ruins/mrow_thats_right.yml
+          - /Maps/_DV/Ruins/old_infiltrator.yml
+          - /Maps/_DV/Ruins/abandoned_dojo.yml
+          # DeltaV - End added maps
+        wrecks: !type:DungeonSpawnGroup
+          minimumDistance: 150
+          maximumDistance: 300
+          stationGrid: false
+          minCount: 12
+          maxCount: 16
+          addComponents:
+          - type: Gravity
+            enabled: true
+            inherent: true
+          - type: IFF
+            flags: HideLabel
+            color: "#88b0d1"
+          protos:
+          - ChunkDebrisSmall
+          - ChunkDebrisSmall
+          - ChunkDebrisSmall
+          - ChunkDebrisSmall
+          - ChunkDebris
+        vgroid: !type:DungeonSpawnGroup
+          minimumDistance: 500 # DeltaV - vgroid spawns farther out (TODO: until we fix it spawning in the station)
+          maximumDistance: 550 # DeltaV - vgroid spawns farther out (TODO: until we fix it spawning in the station)
+          nameDataset: NamesBorer
+          stationGrid: false
+          addComponents:
+          - type: Gravity
+            enabled: true
+            inherent: true
+          protos:
+          - VGRoid
+
+- type: entity
+  id: BaseStationCentcomm
+  abstract: true
+  components:
+    - type: StationCentcomm
+    - type: StationSecondaryCentcomm # DeltaV - midpoint station
+
+- type: entity
+  id: BaseStationEvacuation
+  abstract: true
+  components:
+    - type: StationEmergencyShuttle
+
+- type: entity
+  id: BaseStationAlertLevels
+  abstract: true
+  components:
+    - type: AlertLevel
+      alertLevelPrototype: stationAlerts
+
+- type: entity
+  id: BaseStationExpeditions
+  abstract: true
+  components:
+    - type: SalvageExpeditionData
+
+- type: entity
+  id: BaseStationMagnet
+  abstract: true
+  components:
+    - type: SalvageMagnetData
+
+- type: entity
+  id: BaseStationSalvageJobs
+  abstract: true
+  components:
+  - type: SalvageJobsData
+    rankThresholds:
+      0:
+        title: salvage-job-rank-title-0
+        bountyGroup: SalvageJobTier1
+      3:
+        title: salvage-job-rank-title-1
+        bountyGroup: SalvageJobTier2
+        unlockedMarket: SalvageJobReward2
+      6:
+        title: salvage-job-rank-title-2
+        bountyGroup: SalvageJobTier3
+        unlockedMarket: SalvageJobReward3
+    maxRank:
+      title: salvage-job-rank-title-MAX
+      unlockedMarket: SalvageJobRewardMAX
+
+- type: entity
+  id: BaseStationSiliconLawCrewsimov
+  abstract: true
+  components:
+  - type: SiliconLawProvider
+    laws: Crewsimov
+
+- type: entity
+  id: BaseStationNews
+  abstract: true
+  components:
+    - type: StationNews
+
+- type: entity
+  id: BaseStationAllEventsEligible
+  abstract: true
+  components:
+    - type: StationEventEligible # For when someone makes this more granular in the future.

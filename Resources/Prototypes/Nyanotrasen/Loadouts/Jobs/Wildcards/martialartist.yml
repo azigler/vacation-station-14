@@ -1,0 +1,17 @@
+# Jumpsuits
+- type: loadout
+  id: MartialArtistJumpsuit
+  equipment:
+    jumpsuit: ClothingUniformMartialGi
+
+# Belts
+- type: loadout
+  id: MartialBlackBelt
+  equipment:
+    belt: ClothingBeltMartialBlack
+
+# Shoes
+- type: loadout
+  id: MartialArtistShoes
+  equipment:
+    shoes: ClothingShoesGeta

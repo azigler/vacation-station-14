@@ -1,0 +1,24 @@
+- type: vendingMachineInventory
+  id: SciDrobeInventory
+  startingInventory:
+    ClothingBackpackScience: 3
+    ClothingBackpackSatchelScience: 3
+    ClothingBackpackDuffelScience: 3
+    ClothingUniformJumpsuitScientist: 3
+    ClothingUniformJumpskirtScientist: 3
+    ClothingUniformJumpsuitScientistFormal: 3
+    ClothingUniformJumpskirtScientistFormal: 3 # DeltaV - more jumpskirts
+    ClothingOuterCoatRnd: 3
+    ClothingOuterCoatLabLong: 3 # DeltaV
+    ClothingShoesColorWhite: 3
+    ClothingNeckTieSci: 3
+    ClothingHeadsetScience: 3
+    ClothingMaskGas: 3
+    ClothingOuterWinterSci: 2
+    ClothingNeckScarfStripedPurple: 3
+    ClothingHeadTinfoil: 2 # Nyanotrasen - Tinfoil hats for Epistemics
+    ClothingShoesBootsWinterSci: 2
+    ClothingOuterExplorerCoat: 3 # DeltaV
+  contrabandInventory:
+    ClothingUniformCybersunRND: 1 # DeltaV
+    ToyFigurineResearchDirector: 1  

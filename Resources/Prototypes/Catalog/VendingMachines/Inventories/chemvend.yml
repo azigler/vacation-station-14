@@ -1,0 +1,71 @@
+- type: vendingMachineInventory
+  id: ChemVendInventory
+  startingInventory:
+    Jug: 8 # Funkychem - lots more intermediates - was 4
+    BoxBottle: 1 # Funkychem - lots more intermediates
+    BoxBeaker: 1 # Funkychem - lots more intermediates
+    JugAluminium: 2
+    JugCarbon: 4
+    JugChlorine: 1
+    JugCopper: 2
+    JugEthanol: 2
+    JugFluorine: 1
+    JugHydrogen: 4 # Funkychem - more hydrogen consumed - was 3
+    JugIodine: 1
+    JugIron: 2
+    JugLithium: 2
+    JugMercury: 1
+    JugNitrogen: 3
+    JugOxygen: 3
+    JugPhosphorus: 1
+    JugPotassium: 2
+    JugRadium: 1
+    JugSilicon: 2
+    JugSodium: 2
+    JugSugar: 3
+    JugSulfur: 1
+    JugWeldingFuel: 1 # Funkychem - more welding fuel consumed
+  contrabandInventory:
+    DrinkLithiumFlask: 1
+    StrangePill: 3
+    ChemistryBottleToxin: 1
+  emaggedInventory: # DeltaV
+    ChemistryBottleLead: 2 # DeltaV - Added lead to standard chemvend
+    BluespaceBeaker: 1 # Funkychem - let traitor chemists make nefarious batches
+
+- type: vendingMachineInventory
+  id: ChemVendInventorySyndicate
+  startingInventory:
+    Jug: 8 # Funkychem - lots more intermediates - was 4
+    BoxBottle: 1 # Funkychem - lots more intermediates
+    BoxBeaker: 1 # Funkychem - lots more intermediates
+    JugAluminium: 2
+    JugCarbon: 4
+    JugChlorine: 1
+    JugCopper: 2
+    JugEthanol: 2
+    JugFluorine: 1
+    JugHydrogen: 4 # Funkychem - more hydrogen consumed - was 3
+    JugIodine: 1
+    JugIron: 2
+    JugLithium: 2
+    JugMercury: 1
+    JugNitrogen: 3
+    JugOxygen: 3
+    JugPhosphorus: 1
+    JugPotassium: 2
+    JugRadium: 1
+    JugSilicon: 2
+    JugSodium: 2
+    JugSugar: 3
+    JugSulfur: 1
+    JugWeldingFuel: 2 # DeltaV - raised to 2 from 1
+    PlasmaChemistryVial: 1
+  contrabandInventory:
+    DrinkLithiumFlask: 1
+    StrangePill: 3
+    ChemistryBottlePax: 3
+    ChemistryBottleMuteToxin: 3
+    ChemistryBottleLead: 2
+    ChemistryBottleToxin: 1
+

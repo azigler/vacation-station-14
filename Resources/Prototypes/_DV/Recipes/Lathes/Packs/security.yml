@@ -1,0 +1,123 @@
+## Static
+
+- type: latheRecipePack
+  id: SecurityEquipmentStaticDeltaV
+  recipes:
+  - ClothingNeckShockCollar
+  - ClothingOuterArmorPlateCarrier # plate carrier body armour
+  - ClothingOuterArmorDuraVest # stabproof vest body armour
+  - ClothingOuterArmorDuraVestK9 # k9 stabproof vest body armour
+  - ClothingOuterArmorReflective
+  - HoloprojectorSecurity
+  - RadioHandheldSecurity
+  - WeaponSwordSilver
+  - ClothingBeltBandolier
+  - ClothingMaskGasSecurityDV #Sec Gas Mask
+  - ClothingMaskGasSecurity #Sec Breath Mask
+
+- type: latheRecipePack
+  id: SecurityPracticeStaticDeltaV
+  recipes:
+  - MagazineBoxSpecialPractice
+  - SpeedLoaderSpecialPractice
+  - MagazinePistolHighCapacityPractice
+
+- type: latheRecipePack
+  id: SecurityAmmoStaticDeltaV
+  recipes:
+  - MagazineBoxSpecial
+  - SpeedLoaderSpecial
+  - SpeedLoaderSpecialEmpty
+  - MagazinePistolSpecial
+  - BoxBeanbag
+  - BoxShellTranquilizer
+  - MagazineShotgunBeanbag
+  - MagazineLaser
+  - MagazinePistolHighCapacity
+
+- type: latheRecipePack
+  id: SecurityShotgunDrumsStatic
+  recipes:
+  - MagazineShotgun
+  - MagazineShotgunEmpty
+  - MagazineShotgunSlug
+
+- type: latheRecipePack
+  id: SecurityRubberAmmoStatic
+  recipes:
+  - MagazinePistolRubber
+  - SpeedLoaderMagnumRubber
+  - SpeedLoaderSpecialRubber
+  - MagazineRifleRubber
+  - MagazineLightRifleRubber
+  - MagazineBoxPistolRubber
+  - MagazineBoxMagnumRubber
+  - MagazineBoxLightRifleRubber
+  - MagazineBoxRifleRubber
+  - MagazineBoxSpecialRubber
+  - MagazinePistolSubMachineGunRubber
+  - MagazinePistolHighCapacityRubber
+
+- type: latheRecipePack
+  parent: SecurityDisablers
+  id: SecurityWeaponsStaticDeltaV
+  recipes:
+  - Truncheon
+
+## Dynamic
+
+- type: latheRecipePack
+  id: SecurityAmmoDeltaV
+  recipes:
+  - BoxShellSoulbreaker
+  - SpeedLoaderSpecialUranium
+  - MagazineBoxSpecialIncendiary
+  - MagazineBoxSpecialUranium
+  - MagazineBoxSpecialHoly
+  - MagazineBoxSpecialMindbreaker
+  - MagazinePistolHighCapacityUranium
+  - MagazinePistolHighCapacityIncendiary
+
+- type: latheRecipePack
+  parent: SecurityHardsuits
+  id: SecurityEquipmentDeltaV
+  recipes:
+  - EncryptionKeySyndie # reverse engineered
+  - ClothingHeadHelmetInsulated
+  - ClothingHeadCage
+  - ClothingShoesBootsSecurityMagboots
+
+- type: latheRecipePack
+  parent: SalvageWeapons # crushers must be made in secfab
+  id: SecurityWeaponsDeltaV
+  recipes:
+  - WeaponEnergyGun
+  - WeaponEnergyGunMini
+  - WeaponEnergyGunPistol
+  - WeaponRifleLaser
+  - AdvancedTruncheon
+  - WeaponColdCannon
+  - WeaponBeamCannon
+  - WeaponEnergyGunAdvanced
+  - WeaponImmolator
+
+- type: latheRecipePack
+  id: SecurityHardsuits
+  recipes:
+  - ClothingOuterHardsuitJuggernautReverseEngineered
+  - ClothingOuterHardsuitSyndieReverseEngineered
+  - ClothingOuterHardsuitCombatOfficer
+  - ClothingOuterHardsuitCombatK9 # k9 combat suit
+  - ClothingOuterHardsuitCombatRiotK9 # k9 riot suit
+
+- type: latheRecipePack
+  id: PrisonerSoftsuits
+  recipes:
+  - ClothingOuterHardsuitEVAPrisoner
+  - ClothingHeadHelmetEVALarge
+
+- type: latheRecipePack
+  id: AdvancedPsionicProsthetics
+  recipes:
+  - PyroLeftArm
+  - ZapLeftArm

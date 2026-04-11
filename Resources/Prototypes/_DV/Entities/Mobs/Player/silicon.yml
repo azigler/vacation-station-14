@@ -1,0 +1,74 @@
+- type: entity
+  id: PlayerBorgMedical
+  parent: BorgChassisMedical
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      borg_brain:
+      - PositronicBrain
+      borg_id_chip:
+      - IdChipBorgAA
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellMedium
+  - type: RandomMetadata
+    nameSegments: [NamesBorg]
+
+- type: entity
+  parent: BorgChassisSecurity
+  id: PlayerBorgSecurity
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      borg_brain:
+      - PositronicBrain
+      borg_id_chip:
+      - IdChipBorgAA
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellMedium
+  - type: RandomMetadata
+    nameSegments: [NamesBorg] # TODO: Make good names, this is a stupid list.
+
+- type: entity
+  parent: BorgChassisSyndicateMedical
+  id: BorgChassisSyndicateMedicalBattery
+  suffix: Battery, Ghost Role
+  components:
+  - type: NukeOperative
+  - type: ContainerFill
+    containers:
+      borg_brain:
+      - SyndicateNeuroling
+      borg_module:
+      - BorgModuleTopicals
+      - BorgModuleAdvancedTopical
+      - BorgModuleAdvancedSurgery
+      borg_id_chip:
+      - IdChipSyndie
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellHyper
+  - type: RandomMetadata
+    nameSegments: [NamesDeathCommando]
+
+- type: entity
+  parent: BorgChassisSyndicateMedicalBattery
+  id: PlayerBorgSyndicateMedicalGhostRole
+  suffix: Ghost role
+  components:
+    - type: GhostRole
+      name: ghost-role-information-syndicate-cyborg-medical-name
+      description: ghost-role-information-syndicate-cyborg-description
+      rules: ghost-role-information-silicon-rules
+      raffle:
+        settings: default
+    - type: GhostTakeoverAvailable

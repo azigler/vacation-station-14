@@ -1,0 +1,22 @@
+- type: gameMapPool
+  id: DefaultMapPool
+  maps:
+# DeltaV
+  - Arena
+  - Academy
+  - Asterisk
+  - Byoin
+  - Chibi
+  - Division
+  - Edge
+  - Elegance
+  - Glacier
+#  - Hammurabi - undergoing extensive maintenance
+  - Lighthouse
+#  - Micro - to be revisited later ~Colin
+  - Pebble
+  - Shoukou
+  - Submarine
+  - Terra
+  - TheHive
+  - Tortuga

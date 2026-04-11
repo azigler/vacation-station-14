@@ -1,0 +1,45 @@
+- type: job
+  id: Chemist
+  name: job-name-chemist
+  description: job-description-chemist
+  playTimeTracker: JobChemist
+  antagAdvantage: 4 # DeltaV - Synthesize any chem you want with little oversight.
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 5h
+  startingGear: ChemistGear
+  icon: "JobIconChemist"
+  supervisors: job-supervisors-cmo
+  access:
+  - Medical
+  - Chemistry
+  - Maintenance
+  # Shitmed Change, DeltaV - role modifiers bad
+  # special:
+  # - !type:AddComponentSpecial
+  #   components:
+  #   - type: SurgerySpeedModifier
+  #    speedModifier: 1.75
+
+- type: startingGear
+  id: ChemistGear
+  equipment:
+    #id: ChemistryPDA # DeltaV - Choose a PDA from the loadouts
+    ears: ClothingHeadsetMedical
+    belt: ChemBag
+    pocket1: HandLabeler
+    eyes: ClothingEyesGlassesChemical
+  #storage:
+    #back:
+    #- Stuff
+
+- type: chameleonOutfit
+  id: ChemistChameleonOutfit
+  job: Chemist
+  equipment:
+    head: ClothingHeadHatBeretMedic
+    mask: ClothingMaskSterile
+    neck: ClothingNeckStethoscope
+    outerClothing: ClothingOuterCoatLabChem
+    gloves: ClothingHandsGlovesLatex

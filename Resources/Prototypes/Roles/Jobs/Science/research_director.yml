@@ -1,0 +1,65 @@
+- type: job
+  id: ResearchDirector
+  name: job-name-rd
+  description: job-description-rd
+  playTimeTracker: JobResearchDirector
+  antagAdvantage: 6 # DeltaV - Reduced TC: Head of Staff
+  requirements:
+  - !type:RoleTimeRequirement
+    role: JobScientist
+    time: 5h
+  - !type:DepartmentTimeRequirement
+    department: Epistemics # DeltaV
+    time: 10h
+  weight: 10
+  startingGear: ResearchDirectorGear
+  icon: "JobIconResearchDirector"
+  requireAdminNotify: true # DeltaV
+  supervisors: job-supervisors-captain
+  canBeAntag: false
+  access:
+  - Research
+  - Command
+  - Maintenance
+  - ResearchDirector
+  #- Brig # DeltaV - Removed brig access
+  - Cryogenics
+  # Begin DeltaV Additions
+  - Mantis
+  - Chapel # Chaplain is in Epistemics
+  - Robotics
+  - External # Needed to access the AI satellite
+  - Library # moved librarian to epistemics
+  # end DeltaV Additions
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+  - !type:AddComponentSpecial
+    components:
+      - type: CommandStaff
+      # Begin DeltaV Additions
+      - type: BibleUser # Lets them heal with bibles
+      - type: Psionic # They start with telepathic chat
+      - type: DispelPower # They get the Dispel psionic power on spawn
+      # End DeltaV Additions
+
+- type: startingGear
+  id: ResearchDirectorGear
+  equipment:
+    id: RnDPDA
+    ears: ClothingHeadsetRD
+  storage:
+    back:
+    - Flash
+
+- type: chameleonOutfit
+  id: ResearchDirectorChameleonOutfit
+  job: ResearchDirector
+  hasMindShield: true
+  equipment:
+    head: ClothingHeadHatBeretRND
+    eyes: ClothingEyesGlasses
+    mask: ClothingMaskGas
+    neck: ClothingNeckCloakRd
+    outerClothing: ClothingOuterCoatRD
+    gloves: ClothingHandsGlovesColorPurple

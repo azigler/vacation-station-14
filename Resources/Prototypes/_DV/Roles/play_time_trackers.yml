@@ -1,0 +1,56 @@
+- type: playTimeTracker
+  id: JobBrigmedic
+
+- type: playTimeTracker
+  id: JobMedicalBorg
+
+- type: playTimeTracker
+  id: JobChiefJustice
+
+- type: playTimeTracker
+  id: JobClerk
+
+- type: playTimeTracker
+  id: JobProsecutor
+
+- type: playTimeTracker
+  id: JobCourier
+
+- type: playTimeTracker
+  id: JobSecurityBorg
+
+- type: playTimeTracker
+  id: JobRoboticist
+
+- type: playTimeTracker
+  id: JobCargoAssistant
+
+- type: playTimeTracker
+  id: JobSurgeon
+
+- type: playTimeTracker
+  id: RoleLaika
+
+- type: playTimeTracker
+  id: RoleShiva
+
+- type: playTimeTracker
+  id: RoleSilvia
+
+- type: playTimeTracker
+  id: RoleIfrit
+
+- type: playTimeTracker
+  id: RoleCarpy
+
+- type: playTimeTracker
+  id: RolePunPun
+
+- type: playTimeTracker
+  id: JobCentralCommandIntern
+
+- type: playTimeTracker
+  id: JobBoxer
+
+- type: playTimeTracker
+  id: JobZookeeper

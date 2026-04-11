@@ -1,0 +1,21 @@
+- type: vendingMachineInventory
+  id: CuraDrobeInventory
+  startingInventory:
+    BooksBag: 2
+    BriefcaseBrown: 2
+    HandLabeler: 2
+    Cane: 3
+    ClothingEyesGlasses: 2
+    ClothingEyesGlassesJamjar: 2
+    ClothingNeckScarfStripedGreen: 2
+    ClothingUniformJumpsuitCurator: 3
+    ClothingUniformJumpskirtCurator: 3
+    ClothingUniformJumpsuitLibrarian: 3
+    ClothingUniformJumpskirtLibrarian: 3
+    ClothingUniformBrownSuit: 2 #imp
+    ClothingUniformBrownSuitSkirt: 2 #imp
+    ClothingShoesBootsLaceup: 2
+    ClothingHeadsetScience: 2 # DeltaV - moved to epi
+  contrabandInventory:
+    ToyFigurineLibrarian: 1
+

@@ -1,0 +1,31 @@
+- entity: DisposalUnit
+  assignments:
+  - 0: 1
+- entity: DisposalTrunk
+  assignments:
+  - 0: 2
+- entity: DisposalPipe
+  assignments:
+  - 0: 3
+- entity: DisposalBend
+  assignments:
+  - 0: 4
+- entity: DisposalJunction
+  assignments:
+  - 0: 5
+- entity: DisposalJunctionFlipped
+  assignments:
+  - 0: 6
+- entity: DisposalYJunction
+  assignments:
+  - 0: 7
+- entity: DisposalTagger
+  assignments:
+  - 0: 8
+- entity: SignDisposalSpace
+  assignments:
+  - 0: 9
+- action: ActionMappingEraser
+  assignments:
+  - 0: 0
+...

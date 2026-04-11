@@ -1,0 +1,32 @@
+- type: job
+  id: Prisoner
+  name: job-name-prisoner
+  description: job-description-prisoner
+  playTimeTracker: JobPrisoner
+  startingGear: PrisonerGear
+  alwaysUseSpawner: true
+  canBeAntag: false
+#  whitelistRequired: true
+  icon: "JobIconPrisoner"
+  supervisors: job-supervisors-security
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 6h
+  special:
+  - !type:AddImplantSpecial
+    implants: [ TrackingImplant ]
+
+- type: startingGear
+  id: PrisonerGear
+  equipment:
+    id: PrisonerPDA
+    ears: ClothingHeadsetPrison
+
+- type: chameleonOutfit
+  id: PrisonerChameleonOutfit
+  job: Prisoner
+  equipment:
+    id: PrisonerPDA
+    ears: ClothingHeadsetPrison
+    jumpsuit: ClothingUniformJumpsuitPrisoner

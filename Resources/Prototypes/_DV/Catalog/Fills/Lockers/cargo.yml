@@ -1,0 +1,102 @@
+# Added to LockerFillSalvageSpecialist with a nested selector
+- type: entityTable
+  id: LockerFillSalvageSpecialistDeltaV
+  table: !type:AllSelector
+    children:
+    - id: OreBag
+    - id: Pickaxe
+    - id: WeaponProtoKineticAccelerator
+    - id: FlashlightSeclite
+    - id: ClothingEyesGlassesMeson
+    # TODO: bluespace shelter capsule
+    - id: ClothingShoesBootsWinterMiner
+    - id: JetpackMiniFilled # replaces fire extinguisher
+    - id: ClothingNeckSalvager
+      prob: 0.2
+    - id: LunchboxLogisticsFilledRandom
+      prob: 0.3
+
+- type: entityTable
+  id: LockerFillQuarterMasterHardsuit
+  table: !type:AllSelector
+    children:
+    - id: ClothingOuterHardsuitRhino
+    - id: ClothingShoesBootsMag
+    - id: OxygenTankFilled
+    - id: NitrogenTankFilled
+    - id: ClothingMaskBreath
+
+- type: entity
+  parent: LockerQuarterMaster
+  id: LockerQuarterMasterFilledHardsuit # I know we don't use Quartermaster but I'm trying to be consistent with LockerQuarterMasterFilled
+  suffix: Filled, Hardsuit
+
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - !type:NestedSelector
+          tableId: LockerFillQuarterMaster
+        - !type:NestedSelector
+          tableId: LockerFillQuarterMasterHardsuit
+
+- type: entity
+  parent: [SalvageGunSafeBaseSecure, BaseSecurityCargoContraband]
+  id: SalvageGunSafeSniperGrand
+  name: mark 1 rifle salvage safe
+  suffix: DO NOT MAP
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: WeaponSniperGrand
+          amount: 2
+        - id: MagazineBoxLightRifle
+          amount: 2
+        - id: PaperSalvageGunSafeNotice
+
+- type: entity
+  parent: [SalvageGunSafeBaseSecure, BaseSecurityCargoContraband]
+  id: SalvageGunSafeShotgunDoubleBarreled
+  name: double-barreled shotgun salvage safe
+  suffix: DO NOT MAP
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: WeaponShotgunDoubleBarreled
+          amount: 2
+        - id: BoxLethalshot
+          amount: 2
+        - id: PaperSalvageGunSafeNotice
+
+- type: entity
+  parent: [SalvageGunSafeBaseSecure, BaseSecurityCargoContraband]
+  id: SalvageGunSafeRevolverSnub
+  name: Snubbed .45 salvage safe
+  suffix: DO NOT MAP
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: WeaponRevolverSnub
+        - id: MagazineBoxMagnum
+        - id: PaperSalvageGunSafeNotice
+
+- type: entity
+  parent: [SalvageGunSafeBaseSecure, BaseSecurityCargoContraband]
+  id: SalvageGunSafeVulcan
+  name: vulcan salvage safe
+  suffix: DO NOT MAP
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: WeaponRifleVulcan
+        - id: MagazineBoxLightRifle
+        - id: PaperSalvageGunSafeNotice

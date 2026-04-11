@@ -1,0 +1,40 @@
+- type: vendingMachineInventory
+  id: PietyVendInventory
+  startingInventory:
+    ClothingUniformJumpsuitChaplain: 2
+    ClothingUniformJumpskirtChaplain: 2
+    ClothingUniformFuneralSuit: 4 #imp
+    ClothingUniformFuneralSuitSkirt: 4 #imp
+    ClothingUniformJumpsuitMonasticRobeDark: 1
+    ClothingUniformJumpsuitMonasticRobeLight: 1
+    ClothingNeckStoleChaplain: 1
+    ClothingOuterHoodieChaplain: 1
+    ClothingOuterHoodieBlack: 1
+    ClothingHeadHatHoodNunHood: 1
+    ClothingOuterNunRobe: 1
+    ClothingHeadHatFez: 1
+    ClothingHeadHatPlaguedoctor: 1
+    ClothingHeadHatWitch: 1
+    ClothingHeadHatWitch1: 1
+    ClothingOuterPlagueSuit: 1
+    ClothingMaskPlague: 1
+    #ClothingHeadsetService: 2 # Delta-V - Chaplain is no longer service dept
+    BoxCandle: 2
+    BoxCandleSmall: 2
+    Urn: 5
+    Bible: 1
+    PurifyingSalts: 5 # DeltaV - holy & shadow healer
+    SilverRing: 2 # DeltaV
+    RingBox: 2 # DeltaV
+    CosmicCenser: 1 # DeltaV - Cosmic Cult
+    SilverSword: 1 # DeltaV - Most stations start them with a kitchen knife. They can have this.
+  contrabandInventory:
+    FoodBakedBunHotX: 2
+    DrinkWineBottleFull: 1
+    ToyFigurineChaplain: 1
+    ClothingNeckScarfStripedBlack: 3
+  emaggedInventory:
+    ClothingOuterRobesCult: 3
+    ClothingHeadHatHoodCulthood: 3
+    ClothingShoesCult: 4
+    BedsheetCult: 4

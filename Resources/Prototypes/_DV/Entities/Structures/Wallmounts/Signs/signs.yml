@@ -1,0 +1,81 @@
+# Directional Signs
+- type: entity
+  parent: BaseSignDirectional
+  id: SignDirectionalLogistics
+  name: logistics sign
+  description:  A direction sign, pointing out which way the Logistics department is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: direction_logi
+
+- type: entity
+  parent: BaseSignDirectional
+  id: SignDirectionalMail
+  name: mailroom sign
+  description:  A direction sign, pointing out which way the mailroom is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: direction_mail
+
+- type: entity
+  parent: BaseSignDirectional
+  id: SignDirectionalJustice
+  name: justice department sign
+  description:  A direction sign, pointing out which way the Justice department is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: direction_justice
+
+- type: entity
+  parent: BaseSignDirectional
+  id: SignDirectionaCourt
+  name: court room sign
+  description:  A direction sign, pointing out which way the court room is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: direction_court
+
+- type: entity
+  parent: BaseSignDirectional
+  id: SignDirectionaAI
+  name: AI sign
+  description:  A direction sign, pointing out which way the AI core is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: direction_aicore
+
+# Non-Directional Signs
+- type: entity
+  parent: BaseSign
+  id: SignPool
+  name: pool
+  description: A sign indicating where the pool is. Careful not to get a space sunburn!
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: pool
+
+- type: entity
+  parent: BaseSign
+  id: SignPark
+  name: park
+  description: A sign indicating where the park is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: park
+
+- type: entity
+  parent: BaseSign
+  id: SignEvidence
+  name: evidence room
+  description: A sign indicating where the evidence room is.
+  components:
+  - type: Sprite
+    sprite: _DV/Structures/Wallmounts/signs.rsi
+    state: evidence

@@ -1,0 +1,54 @@
+- type: job
+  id: Prosecutor
+  name: job-name-prosecutor
+  description: job-description-prosecutor
+  playTimeTracker: JobProsecutor
+  requirements:
+    - !type:OverallPlaytimeRequirement
+      time: 10h
+    - !type:DepartmentTimeRequirement # DeltaV - Security dept time requirement
+      department: Security
+      time: 6h
+  startingGear: ProsecutorGear
+  icon: "JobIconProsecutor"
+  supervisors: job-supervisors-cj
+  canBeAntag: false
+  access:
+  - Prosecutor
+  - Justice
+  - Maintenance
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+
+- type: startingGear
+  id: ProsecutorGear
+  equipment:
+    #jumpsuit: ClothingUniformJumpsuitProsecutor
+    #neck: ClothingNeckProsecutorbadge
+    #back: ClothingBackpackLawyerFilled
+    shoes: ClothingShoesBootsLaceup
+    id: ProsecutorPDA
+    ears: ClothingHeadsetJustice
+    # TODO add copy of space law
+  inhand:
+    - BriefcaseBrownFilled
+    #innerClothingSkirt: ClothingUniformJumpskirtProsecutor
+    #satchel: ClothingBackpackSatchelFilled
+    #duffelbag: ClothingBackpackDuffelFilled
+  storage:
+    back:
+    - RubberStampProsec
+    - BookSpaceLaw
+
+- type: chameleonOutfit
+  id: ProsecutorChameleonOutfit
+  job: Prosecutor
+  hasMindShield: true
+  equipment:
+    id: ProsecutorPDA
+    ears: ClothingHeadsetJustice
+    shoes: ClothingShoesBootsLaceup
+    jumpsuit: ClothingUniformJumpsuitProsecutor
+    neck: ClothingNeckProsecutorbadge
+    outerClothing: ClothingOuterCoatOvercoat

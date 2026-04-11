@@ -1,0 +1,40 @@
+- type: job
+  id: SalvageSpecialist
+  name: job-name-salvagespec
+  description: job-description-salvagespec
+  playTimeTracker: JobSalvageSpecialist
+  antagAdvantage: 8 # DeltaV - Reduced TC: External Access + Free hardsuit and weapons
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Logistics # DeltaV
+      time: 2.5h
+  icon: "JobIconShaftMiner"
+  startingGear: SalvageSpecialistGear
+  supervisors: job-supervisors-qm
+  access:
+  - Cargo
+  - Salvage
+  - Maintenance
+  - External
+
+- type: startingGear
+  id: SalvageSpecialistGear
+  equipment:
+    #jumpsuit: ClothingUniformJumpsuitSalvageSpecialist # DeltaV: salvage jumpskirt added
+    #id: SalvagePDA # DeltaV: different PDAs in loadouts
+    ears: ClothingHeadsetCargo
+  storage: # DeltaV: Add mining voucher
+    back:
+    - MiningVoucher
+
+- type: chameleonOutfit
+  id: SalvageSpecialistChameleonOutfit
+  job: SalvageSpecialist
+  equipment:
+    head: ClothingHeadHatCargosoft
+    eyes: ClothingEyesGlassesCheapSunglasses
+    mask: ClothingMaskGasExplorer
+    outerClothing: ClothingOuterWinterMiner
+    neck: ClothingNeckScarfStripedBrown
+    gloves: ClothingHandsGlovesColorBlack
+

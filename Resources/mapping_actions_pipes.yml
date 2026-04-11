@@ -1,0 +1,31 @@
+- entity: GasPipeStraight
+  assignments:
+  - 0: 1
+- entity: GasPipeBend
+  assignments:
+  - 0: 2
+- entity: GasPipeTJunction
+  assignments:
+  - 0: 3
+- entity: GasPipeFourway
+  assignments:
+  - 0: 4
+- entity: GasVentScrubber
+  assignments:
+  - 0: 5
+- entity: GasVentPump
+  assignments:
+  - 0: 6
+- entity: GasVolumePump
+  assignments:
+  - 0: 7
+- entity: GasPort
+  assignments:
+  - 0: 8
+- entity: GasPressurePump
+  assignments:
+  - 0: 9
+- action: ActionMappingEraser
+  assignments:
+  - 0: 0
+...

@@ -1,0 +1,30 @@
+- type: job
+  id: Passenger
+  name: job-name-passenger # DeltaV - This is used everywhere for fallbacks so I didnt want to change it, but it says Assistant now
+  description: job-description-assistant # DeltaV - Passenger to Assistant
+  playTimeTracker: JobPassenger
+  startingGear: PassengerGear
+  icon: "JobIconPassenger"
+  supervisors: job-supervisors-everyone
+  access:
+  - Maintenance
+
+- type: startingGear
+  id: PassengerGear
+  equipment:
+    #id: PassengerPDA # DeltaV: different PDAs in loadouts
+    ears: ClothingHeadsetGrey
+  #storage:
+    #back:
+    #- Stuff
+
+- type: chameleonOutfit
+  id: PassengerChameleonOutfit
+  job: Passenger
+  equipment:
+    head: ClothingHeadHatWelding
+    eyes: ClothingEyesGlassesCheapSunglasses
+    mask: ClothingMaskGas
+    neck: ClothingNeckMantle
+    outerClothing: ClothingOuterWinterCoat
+    gloves: ClothingHandsGlovesColorYellowBudget

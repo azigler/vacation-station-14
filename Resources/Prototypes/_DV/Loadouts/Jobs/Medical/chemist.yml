@@ -1,0 +1,100 @@
+# Jumpsuit
+- type: loadout
+  id: ChemistFormalSuit
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitChemShirt
+
+- type: loadout
+  id: ChemistFormalSkirt
+  equipment:
+    jumpsuit: ClothingUniformJumpskirtChemShirt
+
+- type: loadout
+  id: SeniorChemistJumpsuit
+  effects:
+   - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChemist
+      time: 216000
+  equipment:
+    jumpsuit: ClothingUniformChemistSenior
+
+- type: loadout
+  id: SeniorChemistJumpskirt
+  effects:
+   - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChemist
+      time: 216000
+  equipment:
+    jumpsuit: ClothingUniformJumpskirtChemistSenior
+
+# OuterClothing
+- type: loadout
+  id: ChemistApron
+  equipment:
+    outerClothing: ClothingOuterApronChemist
+
+- type: loadout
+  id: SeniorChemistLabCoat
+  effects:
+   - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChemist
+      time: 216000
+  equipment:
+    outerClothing: ClothingOuterCoatLabSeniorChemist
+
+- type: loadout
+  id: ChemistLongLabCoat
+  equipment:
+    outerClothing: ClothingOuterCoatLabLongChemist
+
+# Gloves
+- type: loadout
+  id: ChemistGloves
+  equipment:
+    gloves: ClothingHandsGlovesChemist
+
+# Shoes
+- type: loadout
+  id: ChemistWinterBoots
+  equipment:
+    shoes: ClothingShoesBootsWinterChem
+
+- type: loadout
+  id: ChemistShoes
+  equipment:
+    shoes: ClothingShoesEnclosedChem
+
+# Neck
+- type: loadout
+  id: ChemistTie
+  equipment:
+    neck: ClothingNeckTieChem
+
+# Chemist alt title
+- type: loadout
+  id: ChemistryPDA
+  equipment:
+    id: ChemistryPDA
+
+- type: loadout
+  id: PharmacistPDA
+  equipment:
+    id: PharmacistPDA
+
+# Head
+- type: loadout
+  id: SeniorChemistBeret
+  effects:
+   - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChemist
+      time: 216000
+  equipment:
+      head: ClothingHeadHatBeretSeniorChemistry

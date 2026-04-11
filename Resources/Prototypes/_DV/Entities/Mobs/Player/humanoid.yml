@@ -1,0 +1,530 @@
+## ERT Leader
+
+- type: entity
+  id: RandomHumanoidSpawnerERTLeaderAmber
+  name: ERT leader
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertleader
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirstLeader
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTLeaderAmber
+
+- type: randomHumanoidSettings
+  parent: EventHumanoidCentcomm
+  id: ERTLeaderAmber
+  randomizeName: false
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-leader-name
+    description: ghost-role-information-ert-leader-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTLeader
+  - type: Loadout
+    prototypes: [ ERTLeaderGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirstLeader
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTLeaderRed
+  name: ERT leader
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertleadereva
+  - type: RandomHumanoidSpawner
+    settings: ERTLeaderRed
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTLeaderRed
+  components:
+  - type: Loadout
+    prototypes: [ ERTLeaderGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTLeaderGamma
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: RandomHumanoidSpawner
+    settings: ERTLeaderGamma
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertleadergamma
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTLeaderGamma
+  components:
+  - type: Loadout
+    prototypes: [ ERTLeaderGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+## ERT Chaplain
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTChaplainAmber
+  name: ERT chaplain
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: chaplain #needs an ERT variant once a good suit it made.
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTChaplainAmber
+
+- type: randomHumanoidSettings
+  parent: ERTLeader
+  id: ERTChaplainAmber
+  components:
+  - type: BibleUser
+  - type: GhostRole
+    name: ghost-role-information-ert-chaplain-name
+    description: ghost-role-information-ert-chaplain-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTChaplain
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: Loadout
+    prototypes: [ ERTChaplainGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTChaplainAmber
+  id: RandomHumanoidSpawnerERTChaplainRed
+  name: ERT chaplain
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: chaplain #needs an ERT variant once a good suit it made.
+  - type: RandomHumanoidSpawner
+    settings: ERTChaplainRed
+
+- type: randomHumanoidSettings
+  parent: ERTChaplainAmber
+  id: ERTChaplainRed
+  components:
+  - type: Loadout
+    prototypes: [ ERTChaplainGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+  - type: BibleUser
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTChaplainAmber
+  id: RandomHumanoidSpawnerERTChaplainGamma
+  name: ERT chaplain
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertchaplaingamma
+  - type: RandomHumanoidSpawner
+    settings: ERTChaplainGamma
+
+- type: randomHumanoidSettings
+  parent: ERTChaplainAmber
+  id: ERTChaplainGamma
+  components:
+  - type: Loadout
+    prototypes: [ ERTChaplainGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+  - type: BibleUser
+
+## ERT Janitor
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTJanitorAmber
+  name: ERT janitor
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertjanitor
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTJanitorAmber
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTJanitorAmber
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-janitor-name
+    description: ghost-role-information-ert-janitor-description
+    rules: ghost-role-information-nonantagonist-rules
+
+    raffle:
+      settings: short
+    job: ERTJanitor
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: Loadout
+    prototypes: [ ERTJanitorGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTJanitorAmber
+  id: RandomHumanoidSpawnerERTJanitorRed
+  name: ERT janitor
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertjanitoreva
+  - type: RandomHumanoidSpawner
+    settings: ERTJanitorRed
+
+- type: randomHumanoidSettings
+  parent: ERTJanitorAmber
+  id: ERTJanitorRed
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-janitor-name
+    description: ghost-role-information-ert-janitor-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTJanitor
+  - type: Loadout
+    prototypes: [ ERTJanitorGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTJanitorAmber
+  id: RandomHumanoidSpawnerERTJanitorGamma
+  name: ERT janitor
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertjanitorgamma
+  - type: RandomHumanoidSpawner
+    settings: ERTJanitorGamma
+
+- type: randomHumanoidSettings
+  parent: ERTJanitorAmber
+  id: ERTJanitorGamma
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-janitor-name
+    description: ghost-role-information-ert-janitor-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTJanitor
+  - type: Loadout
+    prototypes: [ ERTJanitorGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+## ERT Engineer
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTEngineerAmber
+  name: ERT engineer
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertengineer
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTEngineerAmber
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTEngineerAmber
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-engineer-name
+    description: ghost-role-information-ert-engineer-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTEngineer
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: Loadout
+    prototypes: [ ERTEngineerGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTEngineerAmber
+  id: RandomHumanoidSpawnerERTEngineerRed
+  name: ERT engineer
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertengineereva
+  - type: RandomHumanoidSpawner
+    settings: ERTEngineerRed
+
+- type: randomHumanoidSettings
+  parent: ERTEngineerAmber
+  id: ERTEngineerRed
+  components:
+  - type: Loadout
+    prototypes: [ ERTEngineerGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTEngineerAmber
+  id: RandomHumanoidSpawnerERTEngineerGamma
+  name: ERT engineer
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertengineergamma
+  - type: RandomHumanoidSpawner
+    settings: ERTEngineerGamma
+
+- type: randomHumanoidSettings
+  parent: ERTEngineerAmber
+  id: ERTEngineerGamma
+  components:
+  - type: Loadout
+    prototypes: [ ERTEngineerGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+## ERT Security
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTSecurityAmber
+  name: ERT security
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertsecurity
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTSecurityAmber
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTSecurityAmber
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-security-name
+    description: ghost-role-information-ert-security-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTSecurity
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: Loadout
+    prototypes: [ ERTSecurityGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTSecurityAmber
+  id: RandomHumanoidSpawnerERTSecurityRed
+  name: ERT security
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertsecurityeva
+  - type: RandomHumanoidSpawner
+    settings: ERTSecurityRed
+
+- type: randomHumanoidSettings
+  parent: ERTSecurityAmber
+  id: ERTSecurityRed
+  components:
+  - type: Loadout
+    prototypes: [ ERTSecurityGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTSecurityAmber
+  id: RandomHumanoidSpawnerERTSecurityGamma
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertsecuritygamma
+  - type: RandomHumanoidSpawner
+    settings: ERTSecurityGamma
+
+- type: randomHumanoidSettings
+  parent: ERTSecurityAmber
+  id: ERTSecurityGamma
+  components:
+  - type: Loadout
+    prototypes: [ ERTSecurityGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+## ERT Medic
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTLeaderAmber
+  id: RandomHumanoidSpawnerERTMedicalAmber
+  name: ERT medic
+  suffix: DeltaV, Amber, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertmedical
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: RandomHumanoidSpawner
+    settings: ERTMedicalAmber
+
+- type: randomHumanoidSettings
+  parent: ERTLeaderAmber
+  id: ERTMedicalAmber
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ert-medical-name
+    description: ghost-role-information-ert-medical-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: short
+    job: ERTMedical
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryFirst
+    - NamesMilitaryLast
+    nameFormat: name-format-ert
+  - type: Loadout
+    prototypes: [ ERTMedicalGearAmber ]
+    roleLoadout: [ RoleSurvivalExtended ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTMedicalAmber
+  id: RandomHumanoidSpawnerERTMedicalRed
+  name: ERT medic
+  suffix: DeltaV, Red, ERTRole
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: ertmedicaleva
+  - type: RandomHumanoidSpawner
+    settings: ERTMedicalRed
+
+- type: randomHumanoidSettings
+  parent: ERTMedicalAmber
+  id: ERTMedicalRed
+  components:
+  - type: Loadout
+    prototypes: [ ERTMedicalGearRed ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+- type: entity
+  parent: RandomHumanoidSpawnerERTMedicalAmber
+  id: RandomHumanoidSpawnerERTMedicalGamma
+  name: ERT medic
+  suffix: DeltaV, Gamma, ERTRole
+  components:
+  - type: Sprite
+    sprite: _DV/Markers/jobs.rsi
+    state: ertmedicalgamma
+  - type: RandomHumanoidSpawner
+    settings: ERTMedicalGamma
+
+- type: randomHumanoidSettings
+  parent: ERTMedicalAmber
+  id: ERTMedicalGamma
+  components:
+  - type: Loadout
+    prototypes: [ ERTMedicalGearGamma ]
+    roleLoadout: [ RoleSurvivalERT ]
+
+## CBURN
+
+- type: randomHumanoidSettings
+  parent: CBURNAgent
+  id: CBURNAgentDeltaV
+  components:
+  - type: Loadout
+    prototypes: [CBURNGearDeltaV]
+    roleLoadout: [ RoleSurvivalEVA ]
+
+# CentComm
+
+- type: entity
+  name: centcomm intern
+  id: RandomHumanoidSpawnerCentcomIntern
+  components:
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    state: centcom
+  - type: RandomMetadata
+    nameSegments:
+    - NamesMilitaryLast
+    nameFormat: name-format-ccintern
+  - type: RandomHumanoidSpawner
+    settings: CentcommIntern
+
+- type: randomHumanoidSettings
+  id: CentcommIntern
+  parent: EventHumanoidCentcomm
+  components:
+  - type: GhostRole
+    name: ghost-role-information-centcom-intern-name
+    description: ghost-role-information-centcom-intern-description
+    rules: ghost-role-information-nonantagonist-rules
+    raffle:
+      settings: default
+    job: CentralCommandIntern
+  - type: Loadout
+    prototypes: [ CentcomInternGear ]
+    roleLoadout: [ RoleSurvivalStandard ]
