@@ -51,6 +51,12 @@ let
     pre-commit
     wayland
     nixfmt
+    # VS - ops validation tools (pinned for reproducible subagent/contributor env)
+    shellcheck
+    yamllint
+    prometheus # provides promtool
+    grafana-loki # provides loki + logcli
+    grafana # provides grafana-cli
   ];
 in
 pkgs.mkShell {

@@ -77,6 +77,19 @@ eval "$(direnv export bash)" 2>/dev/null; dotnet build
 This is belt-and-suspenders: safe no-op if already active, cheap on repeat
 invocations thanks to the local nix store cache.
 
+The flake now pins ops validation tools alongside the build toolchain:
+`shellcheck`, `yamllint`, `promtool` (via `prometheus`), `loki` + `logcli`
+(via `grafana-loki`), and `grafana-cli` (via `grafana`). Subagents and ops
+scripts should rely on these from the flake env instead of reaching for
+`apt-get install shellcheck` or `pip install yamllint` mid-run. To guarantee
+they're on PATH in a non-interactive agent shell, prepend the same direnv
+export pattern:
+
+```bash
+eval "$(direnv export bash)" 2>/dev/null; shellcheck script.sh
+eval "$(direnv export bash)" 2>/dev/null; promtool check config prometheus.yml
+```
+
 ## Upstream Sync
 
 Delta-V is the `upstream` remote. Periodic sync:
