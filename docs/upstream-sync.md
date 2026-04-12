@@ -55,10 +55,20 @@ the upstream author. Conflict resolution keeps our `_VS/` edits
 and respects the upstream author's intent.
 
 **deploy-as-is** — third-party services bundled alongside the game
-(SS14.Admin, SS14.MapServer, ss14-cookbook, Robust.Cdn, etc.) are
-tracked in `external/` as git submodules, configured via `ops/`,
-and not modified in place. See
+(SS14.Admin, SS14.MapServer, SS14.MapViewer, ss14-cookbook,
+Robust.Cdn, etc.) are tracked in `external/` as git submodules,
+configured via `ops/`, and not modified in place. See
 [HOSTING.md](HOSTING.md) + [OPERATIONS.md](OPERATIONS.md).
+
+### Deployed-as-is submodules
+
+Per the decision matrix in **vs-19h**. LICENSE files are retained
+inside each submodule directory, automatically satisfying MIT
+attribution + AGPL notice-retention requirements.
+
+| Service | Upstream | Path | Config | License | Landed via |
+|---|---|---|---|---|---|
+| MapViewer | [space-wizards/SS14.MapViewer](https://github.com/space-wizards/SS14.MapViewer) | `external/mapviewer/` | `ops/mapviewer/` | MIT | vs-236 |
 
 ## Adding a new upstream
 

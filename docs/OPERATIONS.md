@@ -746,6 +746,125 @@ shrunken dashboard on the next poll.
   `label_values(ss14_round_length{job="gameservers"}, server)`, defaulting
   to `vacation-station` to match the label set in `prometheus.yml`.
 
+## Maps (SS14.MapViewer)
+
+The player-facing interactive map browser at
+`https://ss14.zig.computer/maps/` is a static build of
+[SS14.MapViewer][mv-upstream], populated by tiles rendered locally
+via the `Content.MapRenderer` tool already in the repo. No backend,
+no DB — just a nightly-ish (weekly, Sunday 04:30 UTC) rebuild timer
+rsyncing a fresh bundle into the nginx serve root.
+
+[mv-upstream]: https://github.com/space-wizards/SS14.MapViewer
+
+### Layout
+
+| Concern | Where |
+|---|---|
+| Upstream source (pinned) | `external/mapviewer/` (git submodule) |
+| VS14-specific config + build glue | `ops/mapviewer/` |
+| Systemd unit + timer | `ops/mapviewer/systemd/vs14-mapviewer-build.{service,timer}` |
+| Scratch + staging | `/var/cache/vs14-mapviewer/` |
+| nginx serve root | `/var/www/vs14-maps/` (aliased under `/maps/`) |
+| Renderer entrypoint | `Content.MapRenderer/Content.MapRenderer.csproj` |
+
+The pipeline is fully documented in
+[`ops/mapviewer/README.md`](../ops/mapviewer/README.md); this section
+is the OPERATIONS-level runbook.
+
+### Install
+
+```bash
+cd /opt/vacation-station
+git submodule update --init --recursive external/mapviewer
+
+sudo install -d -o ss14 -g ss14 -m 0755 \
+    /var/www/vs14-maps /var/cache/vs14-mapviewer
+
+sudo cp ops/mapviewer/systemd/vs14-mapviewer-build.{service,timer} \
+    /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now vs14-mapviewer-build.timer
+```
+
+The nginx `/maps/` location is already committed in
+`ops/nginx/ss14.zig.computer.conf`; no vhost changes are needed to
+enable MapViewer.
+
+### Force-rebuild
+
+Trigger an immediate bundle refresh (useful after a map merge, or
+for an ad-hoc validation run):
+
+```bash
+sudo systemctl start vs14-mapviewer-build.service
+sudo journalctl -u vs14-mapviewer-build.service -f
+```
+
+Expected runtime: ~3–8 minutes depending on map count and whether
+`npm ci` can hit its cache. The old bundle keeps serving until the
+final `rsync --delete-after` swaps it out, so a failed build does
+not take the site down.
+
+### Subset rebuild (manual)
+
+For local debugging or when you only want to re-render a specific
+map, run the build script with `MAP_LIST` set — it short-circuits
+the auto-discovery step:
+
+```bash
+sudo -u ss14 MAP_LIST="box bagel saltern" \
+    /opt/vacation-station/ops/mapviewer/build.sh
+```
+
+Other env overrides (see `ops/mapviewer/build.sh` header):
+`OUTPUT_FORMAT=png`, `SKIP_NPM_INSTALL=1`, `SKIP_RENDER=1`,
+`STAGE_DIR=/tmp/...`, `SERVE_ROOT=/tmp/...`.
+
+### Troubleshooting
+
+**`/maps/` returns the nginx "coming soon" stub.** The build has
+never run successfully on this host. Check:
+```bash
+systemctl list-timers vs14-mapviewer-build.timer
+sudo journalctl -u vs14-mapviewer-build.service -n 200
+ls -la /var/www/vs14-maps/
+```
+If the serve root is empty, kick a manual build (see above).
+
+**Map selector empty.** `Content.MapRenderer` ran but produced no
+output. Inspect `/var/cache/vs14-mapviewer/rendered-maps/`; if the
+subdirs aren't there, the renderer errored. Re-run with verbose
+logging:
+```bash
+sudo -u ss14 dotnet run \
+    --project /opt/vacation-station/Content.MapRenderer \
+    -c Release -- --viewer --format webp --output /tmp/mr-test box
+```
+
+**Broken asset URLs in the browser (404 on `/maps/assets/...`).**
+The Vite `--base=/maps/` flag in `build.sh` and the nginx
+`location /maps/` must match. If we ever relocate the map viewer to
+a different sub-path, update both in the same commit — see
+`ops/mapviewer/README.md` for the split-knob warning.
+
+**Disk creep.** The staging dir under `/var/cache/vs14-mapviewer/`
+survives between runs (by design — npm + Vite caching). If disk gets
+tight:
+```bash
+sudo rm -rf /var/cache/vs14-mapviewer/{bundle,mapviewer-dist,rendered-maps}
+sudo -u ss14 /opt/vacation-station/external/mapviewer/node_modules  # keep or drop
+```
+Then re-run the service.
+
+### Dynamic-rendering deferred
+
+SS14.MapServer — the upstream webhook-driven render backend — is
+explicitly **not** deployed. See the "Dynamic rendering (deferred)"
+section of `ops/mapviewer/README.md` for the tradeoff and the
+trigger conditions for revisiting. Until then, weekly static
+rebuilds are the source of truth for rendered maps.
+
 ## CI Workflows
 
 VS14 inherits its CI workflow set from upstream SS14 at the Phase 1
