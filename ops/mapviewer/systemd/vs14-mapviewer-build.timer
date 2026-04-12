@@ -1,0 +1,15 @@
+[Unit]
+Description=Vacation Station 14 — SS14.MapViewer weekly rebuild timer
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+
+[Timer]
+# Sundays at 04:30 UTC — well after the 03:15 DB backup window so
+# the two don't fight over disk. Randomized delay smooths out burst
+# IO if other timers fire near the same minute.
+OnCalendar=Sun *-*-* 04:30:00 UTC
+RandomizedDelaySec=30min
+Persistent=true
+Unit=vs14-mapviewer-build.service
+
+[Install]
+WantedBy=timers.target

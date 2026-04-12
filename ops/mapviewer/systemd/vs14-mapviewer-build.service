@@ -1,0 +1,35 @@
+[Unit]
+Description=Vacation Station 14 — SS14.MapViewer build + deploy
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+# Build needs the checkout intact + network for `npm ci`. No hard
+# dependency on other units (no DB, no game server interaction).
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+
+# The build script is idempotent + self-contained; env overrides are
+# documented at the top of ops/mapviewer/build.sh.
+ExecStart=/opt/vacation-station/ops/mapviewer/build.sh
+
+# Build can take a few minutes (npm ci + dotnet run --project Content.MapRenderer
+# + rsync). Kill cleanly if it blows past 30 min.
+TimeoutStartSec=30min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+# Writable paths:
+#   /var/cache/vs14-mapviewer  — render + build scratch
+#   /var/www/vs14-maps         — nginx serve root (final rsync target)
+ReadWritePaths=/var/cache/vs14-mapviewer /var/www/vs14-maps
+
+# Environment overrides (uncomment + adjust as needed)
+# Environment=VS14_ROOT=/opt/vacation-station
+# Environment=OUTPUT_FORMAT=webp
+# Environment=MAP_LIST=box bagel saltern

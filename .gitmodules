@@ -3,3 +3,8 @@
 	url = https://github.com/space-wizards/RobustToolbox.git
 	branch = master
 	ignore = dirty
+[submodule "external/mapviewer"]
+	path = external/mapviewer
+	url = https://github.com/space-wizards/SS14.MapViewer
+	branch = main
+	ignore = dirty
