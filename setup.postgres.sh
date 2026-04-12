@@ -13,7 +13,9 @@
 
 set -euo pipefail
 
-PG_VERSION="16"
+# Default to 17 (matches dev flake pin + Ubuntu 25.10 native).
+# Override with PG_VERSION env var for older distros (Ubuntu 22.04 → 14 or 16, 24.04 → 16).
+PG_VERSION="${PG_VERSION:-17}"
 PG_ROLE="vs14"
 PG_DB="vacation_station"
 
