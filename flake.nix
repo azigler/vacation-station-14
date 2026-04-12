@@ -244,6 +244,15 @@
                 dataDir = "./.data/grafana";
                 datasources = grafanaDatasources;
                 providers = grafanaProviders;
+                # services-flake only passes `cfg:paths.plugins=<linkFarm>`
+                # when declarativePlugins is non-null. With the default
+                # `null`, grafana falls back to `<homepath>/data/plugins`,
+                # which doesn't exist and produces two startup log lines:
+                #   "Failed to get renderer plugin sources"
+                #   "Failed to load external plugins"
+                # Setting this to an empty list yields an empty linkFarm
+                # in /nix/store that grafana can scan cleanly. (vs-2kv)
+                declarativePlugins = [ ];
                 # Dev-only admin creds. Prod path reads admin password from
                 # a docker secret (see ops/observability/docker-compose.yml).
                 extraConf = {
