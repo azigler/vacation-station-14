@@ -56,17 +56,17 @@ echo ">>> Ensuring role '${PG_ROLE}' exists..."
 # Escape single quotes in password for SQL literal.
 ESCAPED_PASSWORD="${PG_PASSWORD//\'/\'\'}"
 
-# Use psql -v to pass values safely, avoiding interpolation of $ into SQL.
-sudo -u postgres psql -v ON_ERROR_STOP=1 \
-    -v role="${PG_ROLE}" \
-    -v password="${ESCAPED_PASSWORD}" <<'SQL'
-DO $do$
+# Shell-interpolate values into SQL; role and password are our own strings
+# (role is a constant, password is base64 or operator-provided) so there's
+# no injection surface. `format(... %L)` still quotes defensively.
+sudo -u postgres psql -v ON_ERROR_STOP=1 <<SQL
+DO \$do\$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'role') THEN
-        EXECUTE format('CREATE ROLE %I LOGIN PASSWORD %L', :'role', :'password');
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${PG_ROLE}') THEN
+        EXECUTE format('CREATE ROLE %I LOGIN PASSWORD %L', '${PG_ROLE}', '${ESCAPED_PASSWORD}');
     END IF;
 END
-$do$;
+\$do\$;
 SQL
 
 # --- Create database (idempotent) ---
