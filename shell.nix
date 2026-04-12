@@ -24,6 +24,7 @@ let
     prometheus # provides promtool
     grafana-loki # provides loki + logcli
     grafana # provides grafana-cli
+    postgresql_17 # provides psql/pg_dump/pg_restore/createdb (matches services-flake server)
   ];
 
   # Linux-only client runtime: graphics (X11/Wayland/mesa), audio (ALSA),
