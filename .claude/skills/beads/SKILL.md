@@ -58,6 +58,56 @@ EOF
 )"
 ```
 
+## Gotcha: values starting with `- ` (dash-space)
+
+When a flag value begins with `- ` (e.g., a markdown bullet list), `br`'s
+CLI parser interprets the dash as the start of another flag and errors
+out. Use the **equals form** to pass it as a literal value:
+
+```bash
+# FAILS (parser sees `- [ ] Item` and looks for a `- [ ]` flag):
+br update vs-abc --acceptance-criteria "$(cat <<'EOF'
+- [ ] Item 1
+- [ ] Item 2
+EOF
+)"
+
+# WORKS (equals-form isolates the value):
+br update vs-abc --acceptance-criteria="$(cat <<'EOF'
+- [ ] Item 1
+- [ ] Item 2
+EOF
+)"
+```
+
+Applies to any `br update` flag whose value may start with a dash:
+`--title`, `--description`, `--design`, `--acceptance-criteria`, `--notes`.
+When in doubt, use the `=` form — it costs nothing and prevents the
+error class entirely.
+
+Title with a leading `- ` is rare but possible; error message is:
+```
+error: unexpected argument '- ' found
+  tip: to pass '- ' as a value, use '-- - '
+```
+
+## Fields separate from description
+
+`br` stores `description` and `acceptance_criteria` as DISTINCT fields.
+Embedding an `## Acceptance` heading inside `--description` populates
+the description, NOT the structured `acceptance_criteria` field. If the
+bead tooling queries that field (downstream lint, reports), the two
+aren't the same. For canonical acceptance criteria, use the dedicated
+flag:
+
+```bash
+br update <id> --acceptance-criteria="$(cat <<'EOF'
+- Item 1
+- Item 2
+EOF
+)"
+```
+
 ## Agent Protocol
 
 ### At Start
