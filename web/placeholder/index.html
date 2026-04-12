@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacation Station 14</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0f1a;
+    --fg: #e8ecf4;
+    --dim: #9aa7c0;
+    --accent: #6ab0ff;
+    --card: #141b2d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+  }
+  main {
+    max-width: 42rem;
+    width: 100%;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .tag {
+    color: var(--dim);
+    margin: 0 0 2rem;
+    font-size: 1.1rem;
+  }
+  .connect {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 0 0 2rem;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+  .connect code {
+    color: var(--accent);
+    font-size: 1.1rem;
+    user-select: all;
+  }
+  .connect .label {
+    color: var(--dim);
+    display: block;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 2rem;
+  }
+  nav a {
+    display: block;
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    color: var(--fg);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  nav a:hover, nav a:focus {
+    background: #1a2340;
+    outline: 2px solid var(--accent);
+  }
+  nav a .title {
+    font-weight: 600;
+    margin: 0 0 0.15rem;
+  }
+  nav a .desc {
+    color: var(--dim);
+    font-size: 0.9rem;
+  }
+  footer {
+    color: var(--dim);
+    font-size: 0.9rem;
+    border-top: 1px solid #1f2740;
+    padding-top: 1rem;
+  }
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vacation Station 14</h1>
+  <p class="tag">A Space Station 14 server for hanging out. Built with AI-assisted development.</p>
+
+  <div class="connect">
+    <span class="label">Connect via SS14 launcher</span>
+    <code>ss14://ss14.zig.computer</code>
+  </div>
+
+  <nav>
+    <a href="/recipes/">
+      <div class="title">Recipes</div>
+      <div class="desc">Cooking, chemistry, and crafting reference</div>
+    </a>
+    <a href="/maps/">
+      <div class="title">Maps</div>
+      <div class="desc">Station layouts + map previews</div>
+    </a>
+  </nav>
+
+  <footer>
+    <p>
+      <a href="https://github.com/azigler/vacation-station-14">GitHub</a> ·
+      Based on <a href="https://github.com/space-wizards/space-station-14">Space Station 14</a> ·
+      AGPLv3
+    </p>
+    <p>This is a placeholder landing page. Full site coming soon.</p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,127 @@
+name: PR Changelog
+
+# When a PR lands on main, extract its :cl: block and append to
+# Resources/Changelog/Changelog.yml. No external tooling; runs a
+# Python script inline using SS14's upstream update_changelog.py
+# pattern (parts dir → Changelog.yml merge).
+#
+# Requires:
+#   secrets.CHANGELOG_BOT_TOKEN — a PAT with contents:write, so the
+#   commit-back step can push to main despite branch protection. The
+#   default GITHUB_TOKEN doesn't include permissions to push back to
+#   a protected branch.
+#
+# If you haven't set CHANGELOG_BOT_TOKEN yet, the workflow runs but
+# the final push step fails — entries accumulate in the repo but
+# don't land until the token is configured or the PR author manually
+# updates Changelog.yml.
+
+concurrency: changelog_commit
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  changelog:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CHANGELOG_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Append :cl: block to Changelog.yml
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: |
+          python3 - <<'EOF'
+          import os, re, yaml, sys
+          from datetime import datetime, timezone
+
+          body = os.environ.get("PR_BODY") or ""
+          pr_num = int(os.environ["PR_NUMBER"])
+          pr_author = os.environ["PR_AUTHOR"]
+          merged_at = os.environ.get("PR_MERGED_AT") or datetime.now(timezone.utc).isoformat()
+
+          # Strip HTML comments (SS14 PR template uses them heavily)
+          body = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL)
+
+          # Match :cl: [optional author] then subsequent - TYPE: MSG lines
+          header = re.search(r"(?::cl:|🆑)[ \t]*([^\n]*)", body, flags=re.IGNORECASE)
+          if not header:
+              print("No :cl: block in PR body; skipping.")
+              sys.exit(0)
+
+          author = header.group(1).strip() or pr_author
+
+          entry_re = re.compile(
+              r"^[ \t]*[*\-][ \t]*(add|remove|tweak|fix)[ \t]*:[ \t]*(.+?)[ \t]*$",
+              flags=re.IGNORECASE | re.MULTILINE,
+          )
+          changes = []
+          for m in entry_re.finditer(body[header.end():]):
+              kind = m.group(1).lower().capitalize()
+              msg = m.group(2).strip()
+              if msg:
+                  changes.append({"type": kind, "message": msg})
+
+          if not changes:
+              print(":cl: header found but no entries; skipping.")
+              sys.exit(0)
+
+          path = "Resources/Changelog/Changelog.yml"
+          with open(path, "r", encoding="utf-8-sig") as f:
+              data = yaml.safe_load(f) or {}
+          entries = data.get("Entries") or []
+          next_id = (max((e.get("id", 0) for e in entries), default=0)) + 1
+
+          # Normalize merged_at to match SS14's .NET-style timestamp
+          t = merged_at.rstrip("Z").rstrip("z") + ".0000000+00:00"
+
+          entry = {
+              "author": author,
+              "changes": changes,
+              "id": next_id,
+              "time": t,
+              "url": f"https://github.com/{os.environ.get('GITHUB_REPOSITORY', 'azigler/vacation-station-14')}/pull/{pr_num}",
+          }
+          entries.append(entry)
+          data["Entries"] = entries
+
+          # SS14's Changelog.yml uses flow-style keys; preserve formatting as best we can
+          with open(path, "w", encoding="utf-8") as f:
+              yaml.safe_dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+
+          print(f"Appended entry #{next_id} from {author} with {len(changes)} change(s).")
+          EOF
+
+      - name: Commit + push
+        run: |
+          if git diff --quiet Resources/Changelog/Changelog.yml; then
+            echo "No changelog change to commit."
+            exit 0
+          fi
+          git config user.name "vs14-changelog-bot"
+          git config user.email "noreply+changelog@vacation-station-14.invalid"
+          git add Resources/Changelog/Changelog.yml
+          git commit -m ":memo: changelog: automated from PR #${{ github.event.pull_request.number }}"
+          git push origin main
