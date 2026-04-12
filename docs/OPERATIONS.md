@@ -658,3 +658,67 @@ shrunken dashboard on the next poll.
 - The `$Server` template variable is rewritten to
   `label_values(ss14_round_length{job="gameservers"}, server)`, defaulting
   to `vacation-station` to match the label set in `prometheus.yml`.
+
+## CI Workflows
+
+VS14 inherits its CI workflow set from upstream SS14 at the Phase 1
+Flavor A reset. The post-reset audit (vs-1uk) classifies each workflow
+by suitability for a solo + AI maintainer.
+
+### Active — quality gates
+
+| Workflow | Purpose |
+|---|---|
+| `build-test-debug.yml` | Compile + unit tests |
+| `check-crlf.yml` | Line-ending sanity |
+| `yaml-linter.yml` | Prototype YAML validation |
+| `validate-rsis.yml` | RSI metadata integrity |
+| `validate-rgas.yml` | RGA schema validation |
+| `validate_mapfiles.yml` | Map file schema validation |
+| `rsi-diff.yml` | PR-comment visual sprite diffs |
+| `build-map-renderer.yml` | Map preview generation |
+| `no-submodule-update.yml` | Block accidental RobustToolbox bumps |
+| `test-packaging.yml` | Release packaging succeeds |
+
+### Active — publishing
+
+| Workflow | Purpose |
+|---|---|
+| `publish.yml` | Production release artifact |
+| `publish-testing.yml` | Testing / beta builds |
+
+### Active — PR bookkeeping
+
+| Workflow | Purpose |
+|---|---|
+| `labeler-pr.yml` | Auto-apply type labels |
+| `labeler-size.yml` | S/M/L/XL size labels |
+| `labeler-conflict.yml` | Merge-conflict detection |
+| `labeler-needsreview.yml` | Needs-review state |
+| `labeler-untriaged.yml` | Default state |
+| `labeler-stable.yml` / `labeler-staging.yml` | Branch channel tags (deferred — re-evaluate when we stand up channeled releases) |
+| `close-master-pr.yml` | Auto-close wrong-branch PRs |
+| `update-credits.yml` | Contributor list (repo-guarded; runs on fork as intended) |
+
+### Disabled
+
+Disabled via `gh workflow disable <id> -R azigler/vacation-station-14`.
+Re-enable with `gh workflow enable`.
+
+| Workflow | Why disabled |
+|---|---|
+| `benchmarks.yml` | SSHes to upstream Wizards Den centcomm; will never succeed on this fork. Custom bench infra is a separate scoped bead if needed. |
+| `build-docfx.yml` | VS14 does not run a DocFX docs site; player docs planned through website (vs-352) instead. |
+| `labeler-review.yml` | Requires a `LABELER_PAT` secret for cross-repo review-state updates; no benefit for a solo maintainer. |
+
+### Planned (per vs-f0l)
+
+- `pr-triage.yml` — scheduled PR classifier + summary comment
+- `auto-merge.yml` — trusted-author auto-merge with CI + soak gate
+- `pr-hygiene.yml` — advisory-only hygiene comments
+
+### Planned (potential adoption)
+
+- `prtitlecase.yml` from Einstein-Engines — PR title validation (low-risk; adopt if lightweight)
+- `changelog.yml` / `publish-changelog.yml` from Frontier — paired with SS14.Changelog webhook (vs-3v4); decide when webhook infrastructure exists
+- `discord-changelog.yml` — community announcement pipeline; paired with vs-2l2
