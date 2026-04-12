@@ -1,20 +1,30 @@
 # Vacation Station 14
 
-A hard fork of [Delta-V Station](https://github.com/DeltaV-Station/Delta-v), built
-with AI-assisted development. AGPL-3.0 for new code, MIT inherited from upstream.
+A curated [Space Station 14](https://github.com/space-wizards/space-station-14)
+derivative, built with AI-assisted development. The base is pure SS14;
+features from sibling forks are cherry-picked into directory-prefixed
+subsystems. AGPLv3 license boundary anchored at the Phase 1 "Flavor A"
+reset commit `86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12).
 
 ## Architecture
 
-- **Engine**: [RobustToolbox](https://github.com/space-wizards/RobustToolbox) (C# / .NET 10, ECS)
+- **Engine**: [RobustToolbox](https://github.com/space-wizards/RobustToolbox) (C# / .NET 10, ECS) — submodule pin
 - **Content split**: `Content.Server`, `Content.Client`, `Content.Shared`
-- **Custom code prefix**: `_VS` (all Vacation Station-original content)
-- **Upstream**: Delta-V as `upstream` remote, Space Wizards as engine submodule
+- **Subsystem prefixes** (one per upstream fork we cherry-pick from):
+  - `_VS/` — original Vacation Station 14 content (AGPL-3.0)
+  - `_DV/` — Delta-V Station cherry-picks (introduced during Phase 5)
+  - `_NF/` — Frontier Station cherry-picks (introduced during Phase 5)
+  - `_EE/`, `_Starlight/`, `_Corvax/`, … — other upstreams per curation plan
+  - Unprefixed `Content.*` = pure SS14 upstream, MIT
+- **Remotes**: `origin` (VS14), `upstream-sw` (space-wizards/space-station-14),
+  `upstream-dv` (DeltaV-Station/Delta-v), plus `upstream-nf` / `upstream-ee`
+  etc. added per Phase 5 cherry-pick campaign. No single remote is "the"
+  upstream.
 
 ## Code Conventions
 
-We follow [upstream SS14 conventions](https://docs.spacestation14.com/en/general-development/codebase-info/conventions.html)
-and [Delta-V contributing guidelines](https://github.com/DeltaV-Station/Delta-v/blob/master/CONTRIBUTING.md),
-adapted for our `_VS` prefix.
+We follow [upstream SS14 conventions](https://docs.spacestation14.com/en/general-development/codebase-info/conventions.html),
+adapted with our subsystem-prefix discipline.
 
 ### Style
 - File-scoped namespaces, Allman braces
@@ -30,11 +40,14 @@ All new content goes in `_VS` subdirectories:
 - `Resources/Textures/_VS/`, `Resources/Audio/_VS/`
 
 ### Upstream Modifications
-When modifying non-`_VS` files, annotate changes:
-- **C#**: `// VS - <explanation>` on changed lines
+When modifying non-`_<fork>/` files, annotate changes with the subsystem
+prefix corresponding to the author (VS for VS14, DV for Delta-V cherry-picks
+that edit an unprefixed file, NF for Frontier, etc.):
+- **C#**: `// VS - <explanation>` / `// DV - <explanation>` on changed lines
 - **YAML**: `# VS - <explanation>` on changed lines
 - **Blocks**: `// VS - start` ... `// VS - end`
-- **Fluent**: Move changed strings to `_VS` file, comment out originals
+- **Fluent**: Move changed strings to the corresponding `_<fork>/` file,
+  comment out originals
 - **Partial classes**: Preferred for substantial C# additions to upstream types
 
 ### Entity IDs
@@ -111,13 +124,20 @@ eval "$(direnv export bash)" 2>/dev/null; promtool check config prometheus.yml
 
 ## Upstream Sync
 
-Delta-V is the `upstream` remote. Periodic sync:
+Multiple remotes, per-upstream mode (submodule / cherry-pick / deploy-as-is).
+See [`docs/upstream-sync.md`](docs/upstream-sync.md) for the per-upstream
+table and [`.claude/skills/upstream-sync/SKILL.md`](.claude/skills/upstream-sync/SKILL.md)
+for the cherry-pick workflow.
+
+Quick per-remote fetch:
 ```bash
-git fetch upstream
-git merge upstream/master
-# Resolve conflicts: always keep _VS code, merge upstream carefully
-dotnet build && dotnet test Content.Tests --no-build
+git fetch upstream-sw     # engine + base content (checkout, not merge)
+git fetch upstream-dv     # Delta-V cherry-pick source
+# other upstreams added per Phase 5 curation
 ```
+
+Conflict bias when cherry-picking: keep our `_VS/` edits, merge
+`_<other-fork>/` carefully (preserve upstream author's intent).
 
 ## Commit Convention
 
@@ -152,10 +172,18 @@ See `.claude/skills/` for each workflow. `/orient` is the session entry point.
 
 ## License
 
-- **New `_VS` code**: AGPL-3.0
-- **Upstream SS14 code**: MIT + AGPL-3.0
-- **Delta-V `_DV` code**: AGPL-3.0
-- **Starlight `_Starlight` code**: Custom MIT-like, sublicensed to AGPL-3.0
-- **Assets**: CC-BY-SA 3.0 unless marked otherwise; some CC-BY-NC-SA 3.0
+AGPLv3 license boundary anchored at Flavor A clear commit
+`86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12) per the
+HardLight attribution pattern.
 
-See `LEGAL.md` for full details.
+- **`_VS/` code**: AGPL-3.0
+- **Unprefixed `Content.*` code**: MIT (SS14 upstream), sublicensed AGPLv3
+- **`_DV/` code** (Phase 5+): AGPL-3.0 (matches Delta-V post-boundary)
+- **Other `_<fork>/` subsystems** (Phase 5+): per-fork license per
+  README attribution table
+- **`RobustToolbox/`** (submodule): MIT
+- **Assets**: CC-BY-SA 3.0 unless noted; some CC-BY-NC-SA 3.0 (compliant
+  while VS14 remains non-monetized)
+
+See `README.md` (summary table) and `LEGAL.md` (authoritative detail +
+per-service deployment obligations).
