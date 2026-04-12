@@ -365,7 +365,6 @@ Quick pattern: new C# code goes in `Content.Server/_VS/FeatureName/`, new protot
 
 ## Additional Tools
 
-- **[RSIEdit](https://github.com/space-wizards/RSIEdit)** — GUI for editing sprite (.rsi) files. Needed if you're drawing or porting sprites.
 - **[Rider](https://www.jetbrains.com/rider/)** — Recommended IDE (free for non-commercial)
 - **[Robust YAML VS Code extension](https://marketplace.visualstudio.com/items?itemName=ss14.ss14-yaml)** — YAML validation for prototypes
 
