@@ -22,6 +22,7 @@ for historical / license-chain purposes.
 |---|---|---|---|---|---|
 | `upstream-sw` | [space-wizards/space-station-14](https://github.com/space-wizards/space-station-14) | engine + base content | MIT | `Content.*` unprefixed, `RobustToolbox/` (submodule) | monthly re-checkout of selected files; engine submodule bumped with care |
 | `upstream-dv` | [DeltaV-Station/Delta-v](https://github.com/DeltaV-Station/Delta-v) | cherry-pick | AGPL-3.0 + MIT (post-boundary split) | `_DV/` (Phase 5+) | ad-hoc per feature |
+| _(submodule)_ | [arimah/ss14-cookbook](https://github.com/arimah/ss14-cookbook) | deploy-as-is | AGPL-3.0 | `external/cookbook/` (config in `ops/cookbook/`) | submodule bump on demand |
 
 ### Planned (Phase 5)
 

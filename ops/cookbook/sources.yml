@@ -1,0 +1,65 @@
+# Vacation Station 14 — ss14-cookbook sources config
+#
+# Consumed by `npm run gen:recipes` inside `external/cookbook/` via
+# `ops/cookbook/build.sh`. The cookbook parses raw YAML prototypes +
+# PNG sprites directly out of VS14's Resources/ — so we point it at a
+# dedicated sibling clone maintained by build.sh, NOT at the live dev
+# repo. The sibling clone lives at /var/lib/vs14-cookbook-source/.
+#
+# Path resolves from the cookbook's cwd (external/cookbook/). Using
+# an absolute path is easiest — the sibling clone's location is
+# stable across deploys. Keep this in sync with COOKBOOK_SOURCE_DIR
+# in build.sh if you ever move it.
+
+vacation:
+  name: "Vacation Station 14"
+  description: "Chill SS14 fork — recipes from the live Vacation Station build."
+  path: "/var/lib/vs14-cookbook-source"
+  repo: "azigler/vacation-station-14"
+  default: true
+  methodEntities:
+    microwave: KitchenMicrowave
+    mix: LargeBeaker
+    cut: KitchenKnife
+    roll: RollingPin
+    heat: KitchenElectricGrill
+    heatMixture: ChemistryHotplate
+    stir: Spoon
+    shake: DrinkShaker
+    construct: ClothingHeadHatChef
+    # VS14 has not ported Frontier's deep-fry mechanic.
+    deepFry: null
+  mixFillState: beakerlarge4
+  specialDiets:
+    - organ: OrganReptilianStomach
+      color: "#2e6b2e"
+      hint: "Reptilians can eat this food."
+      filterName: "Reptilian-edible"
+      filterSummary: "reptilian-edible"
+    - organ: OrganMothStomach
+      color: "#e3c7aa"
+      hint: "Moths can eat this food."
+      filterName: "Moth-edible"
+      filterSummary: "moth-edible"
+  specialReagents:
+    - id: Theobromine
+      color: "#b9643b"
+      hint: "This food contains theobromine, poisonous to some species."
+      filterName: "Contains Theobromine"
+      filterSummary: "theobromine-containing"
+  # Upstream's base rewrites cover vanilla SS14 content. VS14-specific
+  # rewrites live in our own file, which build.sh copies into the
+  # cookbook checkout next to rewrites_base.yml before invoking
+  # `npm run gen:recipes` — so both paths are relative to the
+  # cookbook's cwd.
+  sortingIdRewrites:
+    - "rewrites_base.yml"
+    - "rewrites_vacation.yml"
+  ignoredSpecialRecipes:
+    - heat!FoodEggChickenFertilized
+    - heat!FoodEggDuckFertilized
+  ignoreSourcesOf:
+    - Water
+    - Blood
+    - Nutriment
+    - Vitamin

@@ -1,0 +1,11 @@
+# Vacation Station 14 — cookbook recipe ID rewrites
+#
+# Format: `OriginalRecipeID: ReplacementEntityID`.
+#
+# The cookbook uses this to improve sort order + dedupe visually-identical
+# recipes. Populate only when a VS14-specific recipe misrenders or clumps
+# oddly in the default listing — most vanilla cases are handled by
+# upstream's `rewrites_base.yml`.
+#
+# Empty is fine; the cookbook treats a missing / empty file as a no-op.
+{}

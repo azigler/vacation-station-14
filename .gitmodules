@@ -3,3 +3,8 @@
 	url = https://github.com/space-wizards/RobustToolbox.git
 	branch = master
 	ignore = dirty
+[submodule "external/cookbook"]
+	path = external/cookbook
+	url = https://github.com/arimah/ss14-cookbook
+	branch = main
+	ignore = dirty
