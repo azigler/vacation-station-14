@@ -65,17 +65,33 @@ passwords loaded from env files / docker secrets.
 
 | Task                                          | Use                                    |
 |-----------------------------------------------|----------------------------------------|
-| Local build / run / test                      | nix dev shell                          |
+| Local build / run / test (Linux)              | nix dev shell                          |
+| Local build / run / test (macOS)              | nix dev shell (server-only) + Linux VM for client |
+| Local build / run / test (Windows)            | WSL2 + nix dev shell (see `docs/DEVELOPMENT.md`) |
 | Contributor onboarding                        | nix + direnv                           |
 | CI on GH Actions                              | nix (reproducible)                     |
 | Validate `prometheus.yml` / `loki-config.yml` | `promtool` / `loki -verify-config` in the dev shell |
-| Spin up postgres for migration testing        | `nix run .#dev-services`               |
+| Spin up postgres for migration testing        | `nix run .#dev-services` (Linux; macOS uses docker-compose) |
 | Iterate on a Grafana dashboard                | `nix run .#dev-services`, edit JSON, restart stack |
 | Production host bring-up                      | `./setup.ubuntu.sh` + `setup.postgres.sh` + watchdog + docker-compose (see `docs/OPERATIONS.md`) |
 
-The flake is Linux-only (`x86_64-linux` + `aarch64-linux`). `shell.nix`
-pulls libdrm/mesa/xorg which don't build on darwin. macOS contributors fall
-back to `./setup.ubuntu.sh` on a Linux VM.
+## Platform support
+
+| Platform         | Native nix   | Dev shell                              | `nix run .#dev-services` | Notes |
+|------------------|--------------|----------------------------------------|--------------------------|-------|
+| x86_64-linux     | yes          | yes (client + server)                  | yes                      | Full stack.                                                       |
+| aarch64-linux    | yes          | yes (client + server)                  | yes                      | Full stack.                                                       |
+| x86_64-darwin    | yes          | yes (server-only)                      | no                       | Client needs a Linux VM; use docker-compose for dev observability. |
+| aarch64-darwin   | yes          | yes (server-only)                      | no                       | Client needs a Linux VM; use docker-compose for dev observability. |
+| Windows (WSL2)   | via WSL      | yes (server-only reliable; WSLg client experimental) | yes (inside WSL) | See `docs/DEVELOPMENT.md` "Windows (via WSL2)".                    |
+
+`shell.nix` branches on `stdenv` platform: Linux pulls the full client
+runtime (X11/Wayland/mesa/ALSA/gtk), darwin gets only the build toolchain
+and ops-validation tools. The `packages.dev-services` output (services-flake
+postgres + prom + loki + grafana) is gated to Linux via `lib.mkIf
+pkgs.stdenv.isLinux` — services-flake's supervision and some of the bundled
+service configs don't reliably evaluate on darwin. macOS contributors run
+the production docker-compose observability stack instead.
 
 ## Worktree subagents
 
@@ -94,8 +110,14 @@ When adding tools to `shell.nix`:
   `grafana-loki` (provides `loki` + `logcli`).
 - `grafana-cli` ships inside `grafana`, not a separate package.
 - `promtool` ships inside `prometheus`.
-- Grafana Postgres datasource is **built-in**, not a plugin — don't look for
-  it under `grafanaPlugins`.
+- `grafana-postgresql-datasource` is the canonical Grafana Postgres
+  datasource (SS14 upstream dashboards and our provisioning both use it).
+  It is NOT in nixpkgs `grafanaPlugins`, and services-flake's grafana
+  module has no runtime plugin-install hook. Prod grafana installs it at
+  container boot via `GF_INSTALL_PLUGINS`; the dev services-flake stack
+  omits the Postgres datasource entirely. Postgres-backed dashboard panels
+  render "no datasource" locally; Prometheus + Loki panels are unaffected.
+  See vs-3oe and `docs/DEVELOPMENT.md` "Parity with production".
 
 ## Working on the flake itself
 
