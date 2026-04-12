@@ -46,7 +46,7 @@ jobs:
       - name: Install PyYAML
         run: pip install pyyaml
 
-      - name: Append :cl: block to Changelog.yml
+      - name: "Append :cl: block to Changelog.yml"
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BODY: ${{ github.event.pull_request.body }}
