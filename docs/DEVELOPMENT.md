@@ -21,6 +21,36 @@ Connect via launcher → Direct Connect → `localhost`.
 
 See [setup.ubuntu.sh](../setup.ubuntu.sh) for the automated install.
 
+## Alternative: Nix / direnv
+
+The repo inherits a nix flake from Delta-V for reproducible dev environments.
+If you already use nix, this is the fastest setup:
+
+```bash
+# One-time: install direnv (if not already) and allow this repo
+sudo apt install direnv   # or your package manager
+# Add `eval "$(direnv hook bash)"` (or zsh equivalent) to your shell rc
+
+direnv allow              # one-time per-repo
+# Shell now auto-enters the dev shell when you cd into the repo
+```
+
+Without direnv:
+```bash
+nix develop               # enter dev shell manually
+```
+
+**Caveats:**
+- The flake pulls ~3-5 GB of deps including full client stack (X11, mesa,
+  gtk3, audio). For server-only hosts, prefer `./setup.ubuntu.sh --server`.
+- Nix flake is an alternative path, not required. Hooks and skills work with
+  system `dotnet` installed via apt.
+- Flake is maintained upstream (Delta-V) — we inherit changes through
+  `upstream-sync`.
+
+Nix contents (`shell.nix`): .NET 10 SDK, Python 3, pre-commit, glfw, openal,
+freetype, fluidsynth, X11/Wayland libs, and various audio stack packages.
+
 ## Repository Layout
 
 ```

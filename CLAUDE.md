@@ -52,6 +52,10 @@ dotnet test Content.IntegrationTests --no-build  # integration tests
 dotnet run --project Content.YAMLLinter     # validate prototypes
 ```
 
+Alternative: a nix flake (`flake.nix`/`shell.nix`/`.envrc`) is inherited from
+Delta-V for reproducible dev environments. Optional — not required by hooks or
+skills. See `docs/DEVELOPMENT.md` for details.
+
 ## Upstream Sync
 
 Delta-V is the `upstream` remote. Periodic sync:
