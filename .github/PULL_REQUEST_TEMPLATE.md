@@ -1,36 +1,71 @@
-<!-- Guidelines: https://docs.spacestation14.io/en/getting-started/pr-guideline -->
-
-## About the PR
-<!-- What did you change? -->
-
-## Why / Balance
-<!-- Discuss how this would affect game balance or explain why it was changed. Link any relevant discussions or issues. -->
-
-## Technical details
-<!-- Summary of code changes for easier review. -->
-
-## Media
-<!-- Attach media if the PR makes in-game changes (clothing, items, features, etc).
-Small fixes/refactors are exempt. Media may be used in SS14 progress reports with credit. -->
-
-## Requirements
-<!-- Confirm the following by placing an X in the brackets without spaces inside (for example: [X] ): -->
-- [ ] I have read and am following the [Pull Request and Changelog Guidelines](https://docs.spacestation14.com/en/general-development/codebase-info/pull-request-guidelines.html).
-- [ ] I have added media to this PR or it does not require an in-game showcase.
-<!-- You should understand that not following the above may get your PR closed at maintainer’s discretion -->
-
-## Breaking changes
-<!-- List any breaking changes, including namespaces, public class/method/field changes, prototype renames; and provide instructions for fixing them.
-This will be posted in #codebase-changes. -->
-
-**Changelog**
-<!-- Add a Changelog entry to make players aware of new features or changes that could affect gameplay.
-Make sure to read the guidelines and take this Changelog template out of the comment block in order for it to show up.
-Changelog must have a :cl: symbol, so the bot recognizes the changes and adds them to the game's changelog. -->
 <!--
-:cl:
-- add: Added fun!
-- remove: Removed fun!
-- tweak: Changed fun!
-- fix: Fixed fun!
+Thanks for contributing. See CONTRIBUTING.md for the hygiene rules.
+Short version: one logical change, rebased on main, annotate upstream
+edits with `// VS` / `// DV` / etc. comments. AI-assisted PRs are
+welcome — flag them below for transparency.
+-->
+
+## Summary
+
+<!-- 1-2 sentences. What does this change and why? -->
+
+## Bead
+
+<!-- Paste the bead ID if bead-tracked; otherwise "none". -->
+Bead: vs-xxx
+
+## Type
+
+<!-- Check one. -->
+- [ ] Feature (new `_VS/` content or capability)
+- [ ] Bugfix
+- [ ] Cherry-pick from sibling fork
+- [ ] Docs / CI / ops
+- [ ] Refactor (no behavior change)
+
+## Cherry-pick details
+
+<!-- Only if this is a cherry-pick. Otherwise delete this section.
+See CONTRIBUTING.md#cherry-pick-discipline and LEGAL.md for the
+attribution rules. -->
+- Upstream: <!-- e.g. new-frontiers-14/frontier-station-14 -->
+- Upstream commit SHA: <!-- full SHA, not short -->
+- Landed under: <!-- e.g. Content.Server/_NF/Bank -->
+- Original author preserved in commit `Author:` line: [ ]
+
+## Testing done
+
+<!-- What did you run? Paste relevant output if useful.
+At minimum, for code changes:
+  - dotnet build
+  - dotnet test Content.Tests --no-build
+  - dotnet test Content.IntegrationTests --no-build
+  - dotnet run --project Content.YAMLLinter   (for prototype/YAML changes)
+-->
+
+## Hygiene checklist
+
+- [ ] One logical change (see `CONTRIBUTING.md` - PR Hygiene)
+- [ ] Rebased on `main`, no merge bubbles
+- [ ] Upstream-file edits annotated inline (`// VS`, `# VS`, etc.)
+- [ ] New content lives under an `_<FORK>/` subdirectory
+- [ ] Build + tests pass locally
+
+## AI assistance
+
+<!-- Transparency only, not a gate. -->
+- [ ] This PR was AI-assisted (any non-trivial generation, drafting,
+      or refactor). If yes, add a `Co-Authored-By:` trailer to your
+      commit and mention the tool in the summary.
+
+## Changelog
+
+<!-- Include a `:cl:` block ONLY for player-facing changes.
+See .claude/skills/changelog/SKILL.md for the full format.
+Delete this section entirely for internal-only changes.
+
+:cl: YourName
+- add: Added a thing
+- tweak: Tuned a thing
+- fix: Fixed a thing
 -->
