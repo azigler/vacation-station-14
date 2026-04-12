@@ -239,7 +239,9 @@
 
               grafana.graf1 = {
                 enable = true;
-                http_port = 3000;
+                # 3200 matches prod docker-compose; 3000 collides with Node
+                # dev servers. Prometheus 9090, Loki 3100, Grafana 3200.
+                http_port = 3200;
                 domain = "localhost";
                 dataDir = "./.data/grafana";
                 datasources = grafanaDatasources;

@@ -53,7 +53,7 @@ nix run .#dev-services    # process-compose TUI; F10 to exit
 | Postgres   | `localhost:5432`        | `vs14 / dev-only-insecure`      |
 | Prometheus | `http://localhost:9090` | —                               |
 | Loki       | `http://localhost:3100` | —                               |
-| Grafana    | `http://localhost:3000` | `admin / admin`                 |
+| Grafana    | `http://localhost:3200` | `admin / admin`                 |
 
 State lives in `.data/` (gitignored). Reset with `rm -rf .data/`.
 

@@ -217,12 +217,12 @@ sudo ufw enable
 ## Fronting Grafana with Caddy (vs-2p3)
 
 The observability stack (`ops/observability/docker-compose.yml`) binds
-Grafana to `127.0.0.1:3000` by design — operators reach it over HTTPS via
+Grafana to `127.0.0.1:3200` by design — operators reach it over HTTPS via
 Caddy, never directly. The Caddyfile block:
 
 ```
 grafana.yourdomain.com {
-    reverse_proxy 127.0.0.1:3000
+    reverse_proxy 127.0.0.1:3200
 }
 ```
 

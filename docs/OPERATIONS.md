@@ -458,7 +458,7 @@ Sample Loki query (LogQL):
 Grafana login:
 
 ```bash
-xdg-open http://localhost:3000        # or reach via Caddy HTTPS
+xdg-open http://localhost:3200        # or reach via Caddy HTTPS
 # User: admin
 # Password: contents of ops/observability/secrets/grafana_admin_password.txt
 ```
@@ -491,7 +491,7 @@ On the host, only `127.0.0.1` is bound:
 |------------|--------------------|-------------------------------------|
 | Prometheus | `127.0.0.1:9090`   | Operator-only debug UI              |
 | Loki       | `127.0.0.1:3100`   | SS14 server + watchdog push         |
-| Grafana    | `127.0.0.1:3000`   | Dashboards; fronted by Caddy + TLS  |
+| Grafana    | `127.0.0.1:3200`   | Dashboards; fronted by Caddy + TLS  |
 
 Prometheus reaches the SS14 metrics endpoint via `host.docker.internal`, the
 Docker host-gateway alias — the container sees the host as a regular
@@ -508,7 +508,7 @@ Add to `/etc/caddy/Caddyfile` (and reload Caddy):
 
 ```
 grafana.yourdomain.com {
-    reverse_proxy 127.0.0.1:3000
+    reverse_proxy 127.0.0.1:3200
 }
 ```
 

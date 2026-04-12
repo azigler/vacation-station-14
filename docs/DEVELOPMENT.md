@@ -157,7 +157,7 @@ logs.
 | Postgres    | `localhost:5432`       | db `vacation_station`, user `vs14` |
 | Prometheus  | `http://localhost:9090` | scrapes `localhost:44880` (SS14 server) |
 | Loki        | `http://localhost:3100` | push + query API |
-| Grafana     | `http://localhost:3000` | provisioned datasources + dashboards |
+| Grafana     | `http://localhost:3200` | provisioned datasources + dashboards |
 
 ### Dev-only credentials (do NOT reuse in prod)
 
