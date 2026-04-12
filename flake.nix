@@ -59,6 +59,38 @@
               (builtins.readFile ./ops/observability/prometheus.yml)
           );
 
+          # Wrapper that swaps the services-flake-injected --config.file=...
+          # for our dev-overlay YAML. The module builds its flag list as
+          #   prometheus --config.file=<generated> --storage.tsdb.path=... ...
+          # and duplicate --config.file is a hard error, so we filter the
+          # module's flag and re-inject ours before exec. Everything else
+          # (--storage.tsdb.path, --web.listen-address, extraFlags) passes
+          # through untouched. The derivation pretends to be the prometheus
+          # package (it forwards `bin/prometheus` — the only binary the
+          # module references via runtimeInputs).
+          prometheusWrapped = pkgs.symlinkJoin {
+            name = "prometheus-vs14-dev";
+            paths = [ pkgs.prometheus ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              rm -f $out/bin/prometheus
+              cat > $out/bin/prometheus <<EOF
+              #!${pkgs.runtimeShell}
+              args=()
+              for a in "\$@"; do
+                case "\$a" in
+                  --config.file=*) ;;  # drop module's auto-injected flag
+                  *) args+=("\$a") ;;
+                esac
+              done
+              exec ${pkgs.prometheus}/bin/prometheus \\
+                --config.file=${prometheusConfigDev} \\
+                "\''${args[@]}"
+              EOF
+              chmod +x $out/bin/prometheus
+            '';
+          };
+
           # Loki prod config uses absolute /loki paths (container FS). In dev
           # we rewrite those to the services-flake dataDir so state lands in
           # ./.data/loki/. Same scoped-replace pattern.
@@ -161,8 +193,16 @@
                 # Dev-only credentials. Prod path uses a 32-byte random
                 # password loaded from /etc/vacation-station/postgres.env
                 # (see ops/postgres/ + vs-3ty).
+                #
+                # Split: CREATE USER runs `before` so the role exists when
+                # `initialDatabases` creates the DB, but `ALTER DATABASE
+                # ... OWNER TO` runs `after` — the DB doesn't exist yet in
+                # the before-hook, so chown would fail and the whole pg1
+                # service would tear down.
                 initialScript.before = ''
                   CREATE USER vs14 WITH PASSWORD '${devPostgresPassword}';
+                '';
+                initialScript.after = ''
                   ALTER DATABASE vacation_station OWNER TO vs14;
                 '';
               };
@@ -172,13 +212,19 @@
                 port = 9090;
                 listenAddress = "127.0.0.1";
                 dataDir = "./.data/prometheus";
-                # Feed the dev-overlay config in via --config.file. The
-                # upstream module also builds its own config from
-                # `extraConfig`; passing an extra flag overrides that with
-                # our committed file (verbatim minus the hostname rewrite).
-                extraFlags = [
-                  "--config.file=${prometheusConfigDev}"
-                ];
+                # services-flake's prometheus module auto-generates a
+                # --config.file flag from its `extraConfig` attrset. The
+                # committed prod config lives as YAML on disk (single
+                # source of truth) and we want to use it verbatim (minus
+                # the host.docker.internal → localhost overlay), so we
+                # can't round-trip through a nix attrset.
+                #
+                # Adding a second --config.file via extraFlags is rejected
+                # by prometheus ("flag 'config.file' cannot be repeated").
+                # Solution: wrap the prometheus binary so the module's
+                # auto-injected --config.file is swapped for ours before
+                # exec. The wrapper is a drop-in `prometheus` package.
+                package = prometheusWrapped;
               };
 
               loki.loki1 = {
@@ -207,6 +253,13 @@
                   };
                   analytics.reporting_enabled = false;
                   users.allow_sign_up = false;
+                  # Grafana 11+ ships a "preinstall" list that tries to
+                  # download bundled plugins (grafana-lokiexplore-app, etc.)
+                  # into paths.plugins on first boot. In nix that path lives
+                  # read-only under /nix/store, so the install fails noisily.
+                  # Disable preinstall — dashboards here don't depend on
+                  # those plugins. (Grafana 11.3+ setting.)
+                  plugins.preinstall_disabled = true;
                 };
               };
             };
