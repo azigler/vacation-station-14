@@ -318,3 +318,4 @@ package-lock.json
 
 # Nix services-flake dev stack data (postgres/prometheus/loki/grafana)
 .data/
+.claude/scheduled_tasks.lock

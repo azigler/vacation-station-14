@@ -234,7 +234,7 @@ committed YAML, etc.).
 - No auto-start across reboots (relaunch manually)
 - No backup / WAL archival
 - Insecure literal credentials
-- No TLS / Caddy reverse proxy in front of grafana
+- No TLS / nginx reverse proxy in front of grafana
 - Data in project `./.data/` instead of `/var/lib/*`
 - **No Postgres Grafana datasource.** Prod uses the
   `grafana-postgresql-datasource` plugin (installed at container boot via

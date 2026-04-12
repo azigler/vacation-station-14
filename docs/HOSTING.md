@@ -83,7 +83,7 @@ Requires ASP.NET Core 10 Runtime in addition to .NET Runtime.
 ## Level 5 — Big Production
 
 Everything above + operational hardening:
-- Reverse proxy with HTTPS (nginx/caddy)
+- Reverse proxy with HTTPS (nginx + certbot — see `docs/NETWORKING.md`)
 - PostgreSQL database (replaces SQLite for shared state)
 - Prometheus metrics (port 44880)
 - Loki structured logging

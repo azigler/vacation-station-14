@@ -1,7 +1,7 @@
 # Networking — Exposing Vacation Station 14
 
 Covers what ports the server uses, firewall setup, adding a domain name, and HTTPS
-via Caddy. Read this before opening your server to the public internet.
+via nginx. Read this before opening your server to the public internet.
 
 ## Default Ports
 
@@ -57,8 +57,8 @@ sudo ufw enable
 
 Add these if you use them:
 ```bash
-sudo ufw allow 80/tcp         # HTTP (Caddy, for ACME challenges)
-sudo ufw allow 443/tcp        # HTTPS (Caddy)
+sudo ufw allow 80/tcp         # HTTP (nginx, for ACME challenges)
+sudo ufw allow 443/tcp        # HTTPS (nginx)
 sudo ufw allow 44880/tcp      # Prometheus metrics (if enabled)
 ```
 
@@ -77,7 +77,7 @@ Rules to set (inbound):
 - `UDP 1212` from anywhere
 - `TCP 1212` from anywhere
 - `TCP 22` from your IP (ideally)
-- `TCP 80, 443` from anywhere (if using Caddy)
+- `TCP 80, 443` from anywhere (if using nginx)
 
 Check your provider's control panel:
 - **DigitalOcean**: Networking → Cloud Firewalls
@@ -136,66 +136,86 @@ The launcher shows `server_url` in hub listings. Without `connectaddress` the
 launcher uses whatever IP the client resolves the status API from, which is
 usually fine.
 
-## HTTPS via Caddy (Recommended for Public Servers)
+## HTTPS via nginx + certbot
 
-Caddy is a reverse proxy with automatic Let's Encrypt certificates. It's the
-simplest way to put HTTPS in front of the SS14 status API.
+This host runs a system-wide nginx edge for multiple projects (see
+`.claude/skills/nginx/SKILL.md` for the general handbook). Per-project
+vhosts live in each project's `ops/nginx/`; VS14's lives at
+`ops/nginx/ss14.zig.computer.conf` and installs into
+`/etc/nginx/sites-available/`.
 
-**Important: Caddy cannot proxy UDP.** The game port (UDP 1212) stays directly
-exposed. Caddy only fronts the TCP status API.
+**What nginx proxies (HTTP/HTTPS only):**
+- `/instances/<instance>/binaries/SS14.Client.zip` — launcher client download
+- `/client.zip` — short alias for manual testing
+- `/admin/` — watchdog admin API (Basic auth with ApiToken, HTTPS wire-wrap)
+- `/` — placeholder, reserved for the VS14 website (vs-2dr)
 
-### Install Caddy
+**What nginx does NOT proxy:**
+- UDP game traffic (Lidgren) on port 1212 — direct to Robust.Server
+- TCP `/info` on port 1212 — SS14 protocol expects `/info` on the game port,
+  not a proxied HTTPS endpoint. nginx has nothing to do here.
+
+### Install nginx + certbot (once per host)
 ```bash
-sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
-  | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
-  | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-sudo apt update
-sudo apt install caddy
+sudo apt install -y nginx certbot python3-certbot-nginx
+sudo ufw allow 'Nginx Full'
 ```
 
-### Configure Caddy
-
-Edit `/etc/caddy/Caddyfile`:
-
-```
-vs14.yourdomain.com {
-    reverse_proxy 127.0.0.1:1212
-}
-```
-
-Reload:
+### Install the VS14 vhost
 ```bash
-sudo systemctl reload caddy
+sudo install -m 0644 ops/nginx/ss14.zig.computer.conf \
+    /etc/nginx/sites-available/ss14.zig.computer.conf
+sudo ln -sf /etc/nginx/sites-available/ss14.zig.computer.conf \
+    /etc/nginx/sites-enabled/ss14.zig.computer.conf
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-Caddy will automatically obtain a Let's Encrypt cert on first request to that
-hostname. Make sure ports 80 and 443 are open (ACME HTTP-01 challenges use 80).
-
-### Update SS14 config
-
-Bind the status API to localhost (Caddy fronts it):
-
-```toml
-[status]
-bind = "127.0.0.1:1212"
-connectaddress = "udp://vs14.yourdomain.com:1212"
-
-[hub]
-advertise = true
-server_url = "ss14s://vs14.yourdomain.com"    # ss14s = TLS
+### Issue + install a Let's Encrypt cert
+```bash
+sudo certbot --nginx -d ss14.zig.computer
 ```
 
-Note `ss14s://` (with the `s`) in `server_url` — this signals to the launcher
-that the status API uses TLS. The UDP game port still uses plain `udp://` in
-`connectaddress` because UDP 1212 is still direct.
+certbot edits the live vhost at `/etc/nginx/sites-available/...` in place to
+add `listen 443 ssl`, cert paths, and an HTTP→HTTPS redirect. The repo copy
+stays HTTP-only so nothing sensitive ever reaches source control. Auto-
+renewal runs twice daily via the `certbot.timer` systemd unit.
+
+### Update watchdog appsettings.yml
+
+So the `build.download_url` the game server advertises is the HTTPS URL:
+
+```yaml
+# /opt/ss14-watchdog/appsettings.yml
+BaseUrl: https://ss14.zig.computer/
+Urls: http://127.0.0.1:5000   # loopback-only; nginx fronts it
+```
+
+Then `sudo systemctl restart ss14-watchdog` and confirm the advertised URL
+flipped: `curl http://localhost:1212/info | jq .build.download_url`.
+
+### Close the now-redundant port
+```bash
+sudo ufw delete allow 5000/tcp
+```
+
+### Hub advertising URL
+
+Players connect via:
+
+```
+ss14://ss14.zig.computer
+```
+
+That's the default `ss14://` scheme on port 1212. `ss14s://` (port 443, TLS-
+wrapped handshake) would require running Robust.Server on 443 or a
+non-trivial engine config and is not used here.
 
 ### Verify
 
 ```bash
-curl https://vs14.yourdomain.com/info
-# Should return the server's JSON info response
+curl -I https://ss14.zig.computer/client.zip         # 200 + TLS chain valid
+curl http://ss14.zig.computer:1212/info              # game-protocol /info, cleartext
+curl --max-time 3 http://51.81.33.136:5000/ || echo "refused (expected post-cutover)"
 ```
 
 ## Firewall Recipe for Public VS14 Server
@@ -205,26 +225,38 @@ curl https://vs14.yourdomain.com/info
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow 22/tcp       # SSH
-sudo ufw allow 80/tcp       # Caddy (ACME HTTP-01)
-sudo ufw allow 443/tcp      # Caddy (HTTPS status API)
+sudo ufw allow 80/tcp       # nginx (ACME HTTP-01)
+sudo ufw allow 443/tcp      # nginx (HTTPS status API)
 sudo ufw allow 1212/udp     # SS14 game (direct)
 sudo ufw enable
 
 # Cloud provider firewall: same rules as above.
-# SS14 status API on TCP 1212 stays localhost-only — Caddy fronts it.
+# SS14 status API on TCP 1212 stays localhost-only — nginx fronts it.
 ```
 
-## Fronting Grafana with Caddy (vs-2p3)
+## Fronting Grafana with nginx (vs-2p3)
 
 The observability stack (`ops/observability/docker-compose.yml`) binds
 Grafana to `127.0.0.1:3200` by design — operators reach it over HTTPS via
-Caddy, never directly. The Caddyfile block:
+nginx, never directly. Vhost pattern:
 
-```
-grafana.yourdomain.com {
-    reverse_proxy 127.0.0.1:3200
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name grafana.yourdomain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3200;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
 ```
+
+Then `sudo certbot --nginx -d grafana.yourdomain.com` to add TLS.
 
 Prerequisites:
 
@@ -232,7 +264,7 @@ Prerequisites:
 - `80/tcp` and `443/tcp` open in ufw and the cloud firewall (ACME HTTP-01
   plus HTTPS).
 - Prometheus (`127.0.0.1:9090`) and Loki (`127.0.0.1:3100`) are NOT exposed
-  externally and do NOT need a Caddy block — they stay on localhost for
+  externally and do NOT need a nginx block — they stay on localhost for
   operator-only debugging via SSH port-forward.
 - The SS14 metrics port (`44880/tcp`) stays closed to the public internet;
   Prometheus scrapes it from inside the container over
@@ -240,6 +272,49 @@ Prerequisites:
   the intended deployment leaves it firewalled.
 
 See `docs/OPERATIONS.md` "Observability" for the full bring-up runbook.
+
+## What `ss14://` does and doesn't protect
+
+The SS14 protocol is authenticated but **not encrypted**. Specifically:
+
+**Authenticated:**
+- The server's identity — `/info` publishes a `public_key`; the launcher pins
+  it and verifies the Lidgren handshake against it. An attacker can't
+  successfully impersonate the server without the matching private key.
+- Player identity — Wizards Den OAuth issues a signed token over HTTPS to the
+  launcher, which presents it during connect. The server verifies the
+  signature against Wizden's public key.
+
+**Not encrypted (cleartext on the wire):**
+- `/info` responses (HTTP on port 1212)
+- Game-state deltas, entity positions, chat messages (Lidgren UDP on 1212)
+- Admin commands issued from an in-game console
+
+**Practical implications:**
+- Someone sniffing the wire between a player and the server can read chat
+  (including OOC and radio), observe entity positions, and see admin commands
+  issued from in-game consoles.
+- They cannot impersonate the server, modify traffic in flight without
+  invalidating the Wizden-signed session, or extract a usable auth token
+  that would work against another server.
+- Wire sniffing requires a position on the network path — same Wi-Fi as a
+  player, a malicious VPN, or an ISP-level observer. Over the open internet
+  with TLS-everywhere norms, this is a narrow attack surface in practice.
+
+**Mitigation if it ever becomes a concern:**
+- `ss14s://` (TLS-wrapped SS14 handshake on port 443) exists as an engine
+  feature. It would require either running Robust.Server on 443 or a
+  non-trivial WebSocket-through-nginx config. Not currently deployed; file
+  a bead if this becomes necessary (e.g. if VS14 ever hosts sessions where
+  chat privacy materially matters).
+- Sensitive out-of-band channels (admin coordination, moderation discussions)
+  should go through Discord / signal / encrypted messaging, not in-game chat.
+
+This stance matches how most SS14 public servers run — `ss14://` cleartext
+game traffic is the community norm; the authentication layer is what players
+rely on. The HTTPS pieces (client download, watchdog admin API) we do wrap
+in TLS via nginx, because those paths aren't constrained by the game
+protocol.
 
 ## Common Issues
 
@@ -265,5 +340,6 @@ See `docs/OPERATIONS.md` "Observability" for the full bring-up runbook.
 ## Reference
 
 - [UFW manpage](https://manpages.ubuntu.com/manpages/noble/en/man8/ufw.8.html)
-- [Caddy docs](https://caddyserver.com/docs/)
+- [nginx docs](https://nginx.org/en/docs/)
+- [certbot docs](https://eff-certbot.readthedocs.io/)
 - [Let's Encrypt rate limits](https://letsencrypt.org/docs/rate-limits/) (relevant if you renew certs aggressively)

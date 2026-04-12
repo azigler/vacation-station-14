@@ -33,7 +33,8 @@ secret files, never committed. Reset is destructive surgery — see
 Flavor A (post-2026-04-12) status: prod is pure-SS14 game server + watchdog
 + observability; no external services yet. Coming:
 
-- **vs-2y8** — Caddy in front of the watchdog admin API (pending user setup)
+- **vs-2y8** — nginx in front of the watchdog admin API (DONE 2026-04-12;
+  system-wide nginx edge live on `ss14.zig.computer`)
 - **vs-1vy** — cookbook service
 - **vs-236** — mapserver
 - **vs-35d** — SS14.Admin
@@ -52,7 +53,7 @@ current state.
 | Watchdog    | — (don't run in dev)                    | systemd `ss14-watchdog.service`                 | `5000` (loopback)   | `ops/watchdog/ss14-watchdog.service`, `appsettings.yml.example` |
 | SS14 server | `dotnet run --project Content.Server`   | child of watchdog                               | `1212/tcp+udp`, `44880` metrics (loopback) | `instances/vacation-station/config.toml.example` |
 | DB backup   | —                                       | systemd `ss14-backup.timer` → `ss14-backup.service` | —               | `ops/postgres/backup.sh`, `ss14-backup.{service,timer}` |
-| Caddy       | —                                       | systemd `caddy.service` (vs-2y8, pending)       | `80`, `443`         | `/etc/caddy/Caddyfile`                             |
+| nginx       | —                                       | systemd `nginx.service`                         | `80`, `443`         | `ops/nginx/<host>.conf` → `/etc/nginx/sites-available/` (see `.claude/skills/nginx/SKILL.md`) |
 
 Dev + prod Grafana both bind `:3200`, so they cannot co-exist on the same
 host. This is a feature — pick one.
@@ -198,7 +199,7 @@ scripts is idempotent and will NOT clobber an existing populated config.
 - Don't edit `.example` files expecting a running service to pick up
   changes. Edit the populated copy.
 - Don't bind prod Prometheus / Loki / Grafana / watchdog admin API to a
-  public interface. Grafana goes out through Caddy (vs-2y8); everything
-  else stays loopback.
+  public interface. Grafana goes out through nginx (vs-2y8, live on
+  `ss14.zig.computer`); everything else stays loopback.
 - Don't use dev-stack credentials (`vs14 / dev-only-insecure`, `admin /
   admin`) anywhere near prod.
