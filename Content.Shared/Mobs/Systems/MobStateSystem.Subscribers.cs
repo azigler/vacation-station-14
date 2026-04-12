@@ -85,11 +85,11 @@ public partial class MobStateSystem
                 //unused
                 break;
             case MobState.Critical:
-                //_standing.Stand(target); // DeltaV - Remove Redundancy
+                _standing.Stand(target);
                 break;
             case MobState.Dead:
                 RemComp<CollisionWakeComponent>(target);
-                //_standing.Stand(target); // DeltaV - Remove Redundancy
+                _standing.Stand(target);
                 break;
             case MobState.Invalid:
                 //unused
@@ -111,9 +111,7 @@ public partial class MobStateSystem
         {
             case MobState.Alive:
             {
-                if (!TryComp(target, out BuckleComponent? buckle)
-                    || !buckle.Buckled) // DeltaV - Stop buckled mobs from standing up.
-                    _standing.Stand(target);
+                _standing.Stand(target);
                 _appearance.SetData(target, MobStateVisuals.State, MobState.Alive);
                 break;
             }
@@ -184,14 +182,14 @@ public partial class MobStateSystem
     private void OnEquipAttempt(EntityUid target, MobStateComponent component, IsEquippingAttemptEvent args)
     {
         // is this a self-equip, or are they being stripped?
-        if (args.Equipee == target)
+        if (args.User == target)
             CheckAct(target, component, args);
     }
 
     private void OnUnequipAttempt(EntityUid target, MobStateComponent component, IsUnequippingAttemptEvent args)
     {
         // is this a self-equip, or are they being stripped?
-        if (args.Unequipee == target)
+        if (args.User == target)
             CheckAct(target, component, args);
     }
 

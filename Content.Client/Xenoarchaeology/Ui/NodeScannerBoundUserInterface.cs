@@ -1,4 +1,3 @@
-using Content.Client._DV.Xenoarchaeology.Ui;
 using Robust.Client.UserInterface;
 
 namespace Content.Client.Xenoarchaeology.Ui;
@@ -8,19 +7,15 @@ namespace Content.Client.Xenoarchaeology.Ui;
 /// </summary>
 public sealed class NodeScannerBoundUserInterface(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
-    // DeltaV - start of node scanner overhaul
     [ViewVariables]
-    private DVNodeScannerDisplay? _scannerDisplay;
-    // DeltaV - end of node scanner overhaul
+    private NodeScannerDisplay? _scannerDisplay;
 
     /// <inheritdoc />
     protected override void Open()
     {
         base.Open();
 
-        // DeltaV - start of node scanner overhaul
-        _scannerDisplay = this.CreateWindow<DVNodeScannerDisplay>();
-        // DeltaV - end of node scanner overhaul
+        _scannerDisplay = this.CreateWindow<NodeScannerDisplay>();
         _scannerDisplay.SetOwner(Owner);
     }
 

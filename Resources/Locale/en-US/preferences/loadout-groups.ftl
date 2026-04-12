@@ -35,14 +35,12 @@ loadout-group-hop-backpack = Head of Personnel backpack
 loadout-group-hop-outerclothing = Head of Personnel outer clothing
 
 # Civilian
-# Begin DeltaV Changes - Rename Passenger to Assistant
-loadout-group-passenger-jumpsuit = Assistant jumpsuit
-loadout-group-passenger-mask = Assistant mask
-loadout-group-passenger-gloves = Assistant gloves
-loadout-group-passenger-outerclothing = Assistant outer clothing
-loadout-group-passenger-shoes = Assistant shoes
-loadout-group-passenger-neck = Assistant neck
-# End DeltaV Changes
+loadout-group-passenger-jumpsuit = Passenger jumpsuit
+loadout-group-passenger-mask = Passenger mask
+loadout-group-passenger-gloves = Passenger gloves
+loadout-group-passenger-outerclothing = Passenger outer clothing
+loadout-group-passenger-shoes = Passenger shoes
+loadout-group-passenger-neck = Passenger neck
 
 loadout-group-bartender-head = Bartender head
 loadout-group-bartender-jumpsuit = Bartender jumpsuit
@@ -94,17 +92,18 @@ loadout-group-musician-jumpsuit = Musician jumpsuit
 loadout-group-musician-outerclothing = Musician outer clothing
 
 # Cargo
-loadout-group-quartermaster-head = Logistics Officer head
-loadout-group-quartermaster-jumpsuit = Logistics Officer jumpsuit
-loadout-group-quartermaster-neck = Logistics Officer neck
-loadout-group-quartermaster-outerclothing = Logistics Officer outer clothing
-loadout-group-quartermaster-shoes = Logistics Officer shoes
+loadout-group-quartermaster-head = Quartermaster head
+loadout-group-quartermaster-jumpsuit = Quartermaster jumpsuit
+loadout-group-quartermaster-neck = Quartermaster neck
+loadout-group-quartermaster-outerclothing = Quartermaster outer clothing
+loadout-group-quartermaster-shoes = Quartermaster shoes
 
 loadout-group-cargo-technician-head = Cargo Technician head
 loadout-group-cargo-technician-jumpsuit = Cargo Technician jumpsuit
 loadout-group-cargo-technician-backpack = Cargo Technician backpack
 loadout-group-cargo-technician-outerclothing = Cargo Technician outer clothing
 loadout-group-cargo-technician-shoes = Cargo Technician shoes
+loadout-group-cargo-technician-id = Cargo Technician ID
 
 loadout-group-salvage-specialist-backpack = Salvage Specialist backpack
 loadout-group-salvage-specialist-outerclothing = Salvage Specialist outer clothing
@@ -132,11 +131,11 @@ loadout-group-atmospheric-technician-outerclothing = Atmospheric Technician oute
 loadout-group-atmospheric-technician-shoes = Atmospheric Technician shoes
 
 # Science
-loadout-group-research-director-head = Mystagogue head
-loadout-group-research-director-neck = Mystagogue neck
-loadout-group-research-director-jumpsuit = Mystagogue jumpsuit
-loadout-group-research-director-outerclothing = Mystagogue outer clothing
-loadout-group-research-director-shoes = Mystagogue shoes
+loadout-group-research-director-head = Research Director head
+loadout-group-research-director-neck = Research Director neck
+loadout-group-research-director-jumpsuit = Research Director jumpsuit
+loadout-group-research-director-outerclothing = Research Director outer clothing
+loadout-group-research-director-shoes = Research Director shoes
 
 loadout-group-scientist-head = Scientist head
 loadout-group-scientist-neck = Scientist neck
@@ -176,7 +175,6 @@ loadout-group-security-cadet-jumpsuit = Security cadet jumpsuit
 loadout-group-security-star = Security Star
 
 # Medical
-loadout-group-medical-gloves = Medical gloves
 loadout-group-medical-mask = Medical mask
 
 loadout-group-chief-medical-officer-head = Chief Medical Officer head
@@ -203,9 +201,9 @@ loadout-group-paramedic-jumpsuit = Paramedic jumpsuit
 loadout-group-paramedic-outerclothing = Paramedic outer clothing
 loadout-group-paramedic-shoes = Paramedic shoes
 
-loadout-group-medical-glasses = Medical glasses
-
 # Wildcards
 loadout-group-reporter-jumpsuit = Reporter jumpsuit
+loadout-group-reporter-head = Reporter hat
+loadout-group-reporter-outerclothing = Reporter vest
 
 loadout-group-psychologist-jumpsuit = Psychologist jumpsuit

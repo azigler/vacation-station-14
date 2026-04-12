@@ -45,6 +45,3 @@
   - type: EmitSoundOnSpawn
     sound:
       path: /Audio/Weapons/Guns/Gunshots/rocket_launcher.ogg
-  - type: NpcFactionMember
-    factions:
-    - Dragon # prevent shitter carp from destroying rifts

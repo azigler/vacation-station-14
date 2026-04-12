@@ -198,10 +198,12 @@
     sprite: Clothing/Head/Misc/fancycrown.rsi
   - type: Clothing
     sprite: Clothing/Head/Misc/fancycrown.rsi
+  - type: TypingIndicatorClothing
+    proto: regal
   - type: StaticPrice
     price: 3000
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: MobsterAccent
+  - type: AddAccentClothing
+    accent: MobsterAccent
 
 - type: entity
   parent: [ ClothingHeadBase, BaseSyndicateContraband ]
@@ -216,8 +218,8 @@
     sprite: Clothing/Head/Hats/catears.rsi
   - type: Clothing
     sprite: Clothing/Head/Hats/catears.rsi
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: OwOAccent
+  - type: AddAccentClothing
+    accent: OwOAccent
   - type: StaticPrice
     price: 15000
 
@@ -240,8 +242,8 @@
     sprite: Clothing/Head/Hats/catears.rsi
   - type: Clothing
     sprite: Clothing/Head/Hats/catears.rsi
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: OwOAccent
+  - type: AddAccentClothing
+    accent: OwOAccent
 
 - type: entity
   parent: BaseToggleAction
@@ -260,8 +262,8 @@
     sprite: Clothing/Head/Hats/dogears.rsi
   - type: Clothing
     sprite: Clothing/Head/Hats/dogears.rsi
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: BarkAccent
+  - type: AddAccentClothing
+    accent: BarkAccent
 
 - type: entity
   parent: ClothingHeadBase

@@ -13,14 +13,13 @@
 - type: entity
   parent: ClothingHeadsetAlt
   id: ClothingHeadsetAltCargo
-  name: logistics officer's over-ear headset # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster's over-ear headset
   components:
   - type: ContainerFill
     containers:
       key_slots:
       - EncryptionKeyCargo
       - EncryptionKeyCommand
-      - EncryptionKeyTraffic # DeltaV
       - EncryptionKeyCommon
   - type: Sprite
     sprite: Clothing/Ears/Headsets/cargo.rsi
@@ -109,7 +108,7 @@
 - type: entity
   parent: [ClothingHeadsetAlt, BaseCommandContraband]
   id: ClothingHeadsetAltScience
-  name: mystagogue's over-ear headset # DeltaV - Epistemics Department replacing Science
+  name: research director's over-ear headset
   components:
   - type: ContainerFill
     containers:

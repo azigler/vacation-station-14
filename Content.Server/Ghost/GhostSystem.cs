@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Numerics;
-using Content.Server.Administration.Managers; // DeltaV
 using Content.Server.Administration.Logs;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
@@ -13,7 +12,6 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
-using Content.Shared.Examine;
 using Content.Shared.Eye;
 using Content.Shared.FixedPoint;
 using Content.Shared.Follower;
@@ -28,7 +26,6 @@ using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.NameModifier.EntitySystems;
 using Content.Shared.Popups;
-using Content.Server.Preferences.Managers; // DeltaV
 using Content.Shared.Storage.Components;
 using Content.Shared.Tag;
 using Content.Shared.Warps;
@@ -40,7 +37,6 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
-using Robust.Shared.Timing;
 
 namespace Content.Server.Ghost
 {
@@ -50,7 +46,6 @@ namespace Content.Server.Ghost
         [Dependency] private readonly IAdminLogManager _adminLog = default!;
         [Dependency] private readonly SharedEyeSystem _eye = default!;
         [Dependency] private readonly FollowerSystem _followerSystem = default!;
-        [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly JobSystem _jobs = default!;
         [Dependency] private readonly EntityLookupSystem _lookup = default!;
         [Dependency] private readonly MindSystem _minds = default!;
@@ -72,8 +67,6 @@ namespace Content.Server.Ghost
         [Dependency] private readonly TagSystem _tag = default!;
         [Dependency] private readonly NameModifierSystem _nameMod = default!;
         [Dependency] private readonly GhostSpriteStateSystem _ghostState = default!;
-        [Dependency] private readonly IServerPreferencesManager _preferencesManager = default!; // DeltaV
-        [Dependency] private readonly IAdminManager _admin = default!; // DeltaV
 
         private EntityQuery<GhostComponent> _ghostQuery;
         private EntityQuery<PhysicsComponent> _physicsQuery;
@@ -91,8 +84,6 @@ namespace Content.Server.Ghost
             SubscribeLocalEvent<GhostComponent, ComponentStartup>(OnGhostStartup);
             SubscribeLocalEvent<GhostComponent, MapInitEvent>(OnMapInit);
             SubscribeLocalEvent<GhostComponent, ComponentShutdown>(OnGhostShutdown);
-
-            SubscribeLocalEvent<GhostComponent, ExaminedEvent>(OnGhostExamine);
 
             SubscribeLocalEvent<GhostComponent, MindRemovedMessage>(OnMindRemovedMessage);
             SubscribeLocalEvent<GhostComponent, MindUnvisitedMessage>(OnMindUnvisitedMessage);
@@ -121,11 +112,6 @@ namespace Content.Server.Ghost
             if (ent.Comp.LifeStage <= ComponentLifeStage.Running)
             {
                 args.VisibilityMask |= (int)VisibilityFlags.Ghost;
-                // Begin DeltaV additions
-                args.VisibilityMask |= (int)VisibilityFlags.TelegnosticProjection;
-                args.VisibilityMask |= (int)VisibilityFlags.PsionicInvisibility;
-                args.VisibilityMask |= (int)VisibilityFlags.CosmicCultMonument;
-                // End DeltaV additions
             }
         }
 
@@ -214,8 +200,10 @@ namespace Content.Server.Ghost
             }
 
             _eye.RefreshVisibilityMask(uid);
-            var time = _gameTiming.CurTime;
+            var time = _gameTiming.RealTime;
             component.TimeOfDeath = time;
+
+            Dirty(uid, component);
         }
 
         private void OnGhostShutdown(EntityUid uid, GhostComponent component, ComponentShutdown args)
@@ -244,16 +232,6 @@ namespace Content.Server.Ghost
             _actions.AddAction(uid, ref component.ToggleLightingActionEntity, component.ToggleLightingAction);
             _actions.AddAction(uid, ref component.ToggleFoVActionEntity, component.ToggleFoVAction);
             _actions.AddAction(uid, ref component.ToggleGhostsActionEntity, component.ToggleGhostsAction);
-        }
-
-        private void OnGhostExamine(EntityUid uid, GhostComponent component, ExaminedEvent args)
-        {
-            var timeSinceDeath = _gameTiming.RealTime.Subtract(component.TimeOfDeath);
-            var deathTimeInfo = timeSinceDeath.Minutes > 0
-                ? Loc.GetString("comp-ghost-examine-time-minutes", ("minutes", timeSinceDeath.Minutes))
-                : Loc.GetString("comp-ghost-examine-time-seconds", ("seconds", timeSinceDeath.Seconds));
-
-            args.PushMarkup(deathTimeInfo);
         }
 
         #region Ghost Deletion
@@ -521,7 +499,6 @@ namespace Content.Server.Ghost
             // we changed the entity name above
             // we have to call this after the mind has been transferred since some mind roles modify the ghost's name
             _nameMod.RefreshNameModifiers(ghost);
-            ApplyAdminOOCColor(ghost); // DeltaV
             return ghost;
         }
 
@@ -600,7 +577,8 @@ namespace Content.Server.Ghost
                         && TryComp<MobThresholdsComponent>(playerEntity, out var thresholds))
                     {
                         var playerDeadThreshold = _mobThresholdSystem.GetThresholdForState(playerEntity.Value, MobState.Dead, thresholds);
-                        dealtDamage = playerDeadThreshold - damageable.TotalDamage;
+                        dealtDamage = playerDeadThreshold -
+                                      _damageable.GetTotalDamage((playerEntity.Value, damageable));
                     }
 
                     DamageSpecifier damage = new(_prototypeManager.Index(AsphyxiationDamageType), dealtDamage);
@@ -618,38 +596,6 @@ namespace Content.Server.Ghost
                 return false;
 
             return true;
-        }
-
-
-        /// <summary>
-        /// DeltaV - Applies the admin OOC color to a ghost entity if the player has one set.
-        /// </summary>
-        /// <param name="ghostEntity">The ghost entity to apply the color to</param>
-        /// <param name="mindId">The mind ID of the player</param>
-        public void ApplyAdminOOCColor(EntityUid ghostEntity) // Mono
-        {
-            if (!_player.TryGetSessionByEntity(ghostEntity, out var session))
-                return;
-
-            // Only apply admin OOC color if the player is actually an admin
-            if (!_admin.IsAdmin(session))
-                return;
-
-            if (!_preferencesManager.TryGetCachedPreferences(session.UserId, out var prefs))
-                return;
-
-            // Only apply the color if it's not transparent (the default)
-            if (prefs.AdminOOCColor == Color.Transparent)
-                return;
-
-            // Make the color slightly transparent for ghosts
-            var ghostColor = prefs.AdminOOCColor;
-
-            if (TryComp<GhostComponent>(ghostEntity, out var ghostComp))
-            {
-                ghostComp.Color = ghostColor;
-                Dirty(ghostEntity, ghostComp);
-            }
         }
     }
 

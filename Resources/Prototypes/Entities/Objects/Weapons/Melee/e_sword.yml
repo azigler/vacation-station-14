@@ -19,17 +19,6 @@
       malus: 0.6
     - type: Execution
       doAfterDuration: 4.0
-    - type: Scalpel # Shitmed
-      speed: 0.75
-    - type: Cautery # Shitmed: you have to be very, very careful to cauterize with it
-      speed: 0.2
-    - type: SurgeryTool # Shitmed
-      startSound:
-        path: /Audio/Weapons/ebladehum.ogg
-      endSound:
-        path: /Audio/Weapons/eblade1.ogg
-        params:
-          variation: 0.250
   - type: ItemToggleHot
   - type: ItemToggleSize
     activatedSize: Huge
@@ -81,8 +70,6 @@
       - state: inhand-right-blade
         shader: unshaded
   - type: Reflect
-    reflects:
-    - energy # Deltav - previously reflected all projectiles
   - type: IgnitionSource
     temperature: 700
 
@@ -271,7 +258,7 @@
   name: energy cutlass
   parent: [BaseMeleeWeaponEnergy, BaseMajorContraband]
   id: EnergyCutlass
-  description: An exotic energy weapon, brutal blade crackling with crudely harnessed plasma. # DeltaV - nicer description.
+  description: An exotic energy weapon.
   components:
   - type: ItemToggleMeleeWeapon
     activatedDamage:
@@ -280,7 +267,7 @@
             Heat: 12
     deactivatedSecret: true
   - type: Sprite
-    sprite: _DV/Objects/Weapons/Melee/e_cutlass.rsi # DeltaV
+    sprite: Objects/Weapons/Melee/e_cutlass.rsi
     layers:
       - state: e_cutlass
       - state: e_cutlass_blade
@@ -288,16 +275,8 @@
         visible: false
         shader: unshaded
         map: [ "blade" ]
-  - type: MeleeWeapon # DeltaV - reduced attack rate of e-cutlass; slower, more brutal swings
-    attackRate: 0.75
-    soundHit:
-      path: /Audio/Weapons/eblade1.ogg
-    damage:
-      types:
-        Blunt: 6
   - type: Item
-    size: Small
-    sprite: _DV/Objects/Weapons/Melee/e_cutlass.rsi # DeltaV
+    sprite: Objects/Weapons/Melee/e_cutlass.rsi
 
 - type: entity
   name: double-bladed energy sword
@@ -305,17 +284,17 @@
   id: EnergySwordDouble
   description: Syndicate Command Interns thought that having one blade on the energy sword was not enough. This can be stored in pockets.
   components:
-  #- type: ItemToggle # DeltaV - commented out
-  #  onUse: false # wielding events control it instead
-  #  onActivate: false # prevents the weapon from being able to be turned on when it is on the ground
-  #  soundActivate:
-  #    path: /Audio/Weapons/ebladeon.ogg
-  #    params:
-  #      volume: 3
-  #  soundDeactivate:
-  #    path: /Audio/Weapons/ebladeoff.ogg
-  #    params:
-  #      volume: 3
+  - type: ItemToggle
+    onUse: false # wielding events control it instead
+    onActivate: false # prevents the weapon from being able to be turned on when it is on the ground
+    soundActivate:
+      path: /Audio/Weapons/ebladeon.ogg
+      params:
+        volume: 3
+    soundDeactivate:
+      path: /Audio/Weapons/ebladeoff.ogg
+      params:
+        volume: 3
   - type: ItemToggleMeleeWeapon
     activatedSoundOnSwing:
       path: /Audio/Weapons/eblademiss.ogg
@@ -323,10 +302,10 @@
         volume: 3
         variation: 0.250
     activatedDamage:
-        types: # DeltaV - was 12 slash, 12 heat, 15 structural
-            Slash: 9
-            Heat: 9
-            Structural: 8
+        types:
+            Slash: 12
+            Heat: 12
+            Structural: 15
   - type: ItemToggleActiveSound
     activeSound:
       path: /Audio/Weapons/ebladehum.ogg
@@ -339,11 +318,11 @@
       malus: 0.7
     - type: Execution
       doAfterDuration: 4.0
-  #- type: Wieldable # DeltaV - commented out
-  #  wieldSound: null # esword light sound instead
+  - type: Wieldable
+    wieldSound: null # esword light sound instead
   - type: MeleeWeapon
     wideAnimationRotation: -135
-    attackRate: 2.0 # DeltaV - was 1.5
+    attackRate: 1.5
     angle: 100
     damage:
       types:
@@ -359,18 +338,16 @@
         map: [ "blade" ]
   - type: Item
     size: Small
-    sprite: _DV/Objects/Weapons/Melee/e_sword_double-inhands.rsi # DeltaV - fancier inhands sprite
+    sprite: Objects/Weapons/Melee/e_sword_double-inhands.rsi
   - type: Reflect
-    reflectProb: .10 # DeltaV: Having two blades isn't really practical for reflecting shots.
+    reflectProb: .75
     spread: 75
-  - type: UseDelay
-    delay: 1
 
 # Item will look weird in handslot. Will need to adjust handstorage visuals in a future PR
 - type: entity
   parent: EnergySwordDouble
   id: HyperEutacticBlade
-  name: hypereutactic blade #DeltaV remove hyphen
+  name: hypereutactic-blade
   description: A supermassive weapon envisioned to cleave the very fabric of space and time itself in twain, the hypereutactic blade dynamically flash-forges a hypereutactic crystaline nanostructure capable of passing through most known forms of matter like a hot knife through butter.
   components:
   - type: MeleeWeapon
@@ -400,7 +377,6 @@
     delay: 1.5
   - type: Sprite
     sprite: Objects/Weapons/Melee/hypereutactic_blade.rsi
-    offset: 0, 0.5 #DeltaV fix offset when placing item so hilt is centered
     layers:
     - state: hypereutactic
     - state: hypereutactic_blade
@@ -416,21 +392,10 @@
   - type: Item
     size: Small
     sprite: Objects/Weapons/Melee/hypereutactic_blade_inhands.rsi
-    # DeltaV changes
-  - type: ItemToggle 
-    onUse: false # wielding events control it instead
-    onActivate: false # cannot activate on floor
-  - type: ItemToggleSize
-    activatedSize: Ginormous #cannot be put in bags while active
-  - type: Wieldable # requires wield to swing
-    unwieldOnUse: true
   - type: Reflect
-    reflectProb: 0.75 # from 100% to 75% reflect
-    spread: 10 # tightened spread from 75 to 10
-    reflects:
-    - Energy
-    - NonEnergy
-    # DeltaV changes end
+    reflectProb: 1.0
+    spread: 75
+
 # Borgs
 
 - type: entity

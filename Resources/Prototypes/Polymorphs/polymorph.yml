@@ -136,6 +136,17 @@
     inventory: Drop
     cooldown: 160
 
+- type: polymorph
+  id: SmartCorgiMorph
+  configuration:
+    entity: MobCorgiSmart
+    forced: false
+    inventory: Drop
+    transferName: true
+    revertOnCrit: false
+    revertOnDeath: false
+    allowRepeatedMorphs: false
+
 # this is the monkey polymorph for artifact.
 - type: polymorph
   id: ArtifactMonkey
@@ -226,7 +237,7 @@
   id: VoidPocket
   configuration:
     entity: DesynchronizedPocket
-    transferName: true # DeltaV - needed for player panel
+    transferName: false
     inventory: None
     forced: false
     revertOnDeath: true

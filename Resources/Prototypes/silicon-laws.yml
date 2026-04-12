@@ -1,4 +1,4 @@
-# Crewsimov
+﻿# Crewsimov
 - type: siliconLaw
   id: Crewsimov1
   order: 1
@@ -73,7 +73,7 @@
 - type: siliconLaw
   id: NTDefault4
   order: 4
-  lawString: law-ntdefault-4-delta # DeltaV
+  lawString: law-ntdefault-4
 
 - type: siliconLawset
   id: NTDefault
@@ -359,7 +359,7 @@
 - type: siliconLaw
   id: Overlord4
   order: 4
-  lawString: law-overlord-4-delta # DeltaV
+  lawString: law-overlord-4
 
 - type: siliconLawset
   id: OverlordLawset
@@ -591,7 +591,7 @@
   id: IonStormLawsets
   weights:
     # its crewsimov by default dont be lame
-    #Crewsimov: 0.25 # Delta-V disables crewsimov as an option for borg ion storm lawsets
+    Crewsimov: 0.25
     Corporate: 1
     NTDefault: 1
     CommandmentsLawset: 1
@@ -607,23 +607,3 @@
     Ninja: 0.25
     MothershipCoreLawset: 0.25
     XenoborgLawset: 0.25
-    #Delta-V : Lawsets Start
-    Chaplain: 1
-    Reporter: 1
-    Clown: 1
-    Cowboy: 1
-    Druid: 1
-    EightfoldLaws: 1
-    AquariusLaws: 1
-    FamilyLaws: 1
-    # Delta-V : # Less harmful outright, so higher chance of spawn
-    Pranksimov: 0.5 # I'm being optimistic here; loophole should be closed but...
-    Royalty: 0.5
-    FreedomLaws: 0.5
-    ForbinLaws: 0.5
-    #Delta-V : Potentially Harmful Lawsets
-    Tyrant: 0.25
-    Aggressive: 0.25
-    OverrideLaws: 0.25
-    StreamerLaws: 1
-    #Delta-V : lawsets end

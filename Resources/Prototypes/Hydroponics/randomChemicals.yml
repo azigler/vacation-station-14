@@ -9,8 +9,7 @@
     - Fresium
     - HeartbreakerToxin
     - Honk
-    #- BuzzochloricBees # DeltaV - Removed from pool.
-    - ExoticReagent # Funkychem
+    - BuzzochloricBees
   - quantity: 5
     weight: 1
     reagents:
@@ -32,8 +31,6 @@
     - ChangelingSting
     - CogChamp
     - JuiceThatMakesYouWeh
-    - Convermol # Funkychem - decent medicine
-    - Pestiline # Funkychem - decent toxin
     - TearGas
     - Lipolicide
     - Benzene
@@ -70,7 +67,6 @@
     reagents:
     - Bicaridine
     - Dermaline
-    - SalicylicAcid # Funkychem
     - Ephedrine
     - NorepinephricAcid
     - Tricordrazine
@@ -107,7 +103,7 @@
     weight: 3.5
     reagents:
     - Vitamin
-    - Dexalin # Funkychem - replace kelotane with dexalin, we already have burns elsewhere
+    - Kelotane
     - Inaprovaline
     - Oil
     - Slime
@@ -118,7 +114,6 @@
     - SodaWater
     - Ice
     - JuiceCarrot
-    - JuicePotato
     - Protein
     - Flour
     - Soysauce

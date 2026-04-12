@@ -68,7 +68,7 @@
         Blunt: 1
   - type: DamageOtherOnHit
     damage:
-      types:
+      types: {}
 
 - type: entity
   id: BookSpaceEncyclopedia
@@ -231,12 +231,6 @@
     guides:
     - Security
     - Antagonists
-    # Begin DeltaV - More guidebooks
-    - SecurityandJusticeRegulations
-    - AlertProcedure
-    - Survival
-    - companyPolicies
-    # End DeltaV
 
 - type: entity
   id: BookHowToKeepStationClean
@@ -294,7 +288,6 @@
   - type: GuideHelp
     guides:
     - Medical
-    - MedicalRegulations
 
 - type: entity
   id: BookHowToSurvive
@@ -368,16 +361,9 @@
       color: "#87011c"
     - state: icon_law
       color: "#f7d61a"
-  - type: GuideHelp # DeltaV - Space Law/SOP In-Game
-    openOnActivation: true
+  - type: GuideHelp
     guides:
     - SpaceLaw
-    - SecurityandJusticeRegulations
-    - SOP
-    - companyPolicies
-    - Survival
-    - AlertProcedure
-    - MedicalRegulations
 
 - type: entity
   parent: BookBase

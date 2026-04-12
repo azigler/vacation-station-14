@@ -12,18 +12,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/atmospherics.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/atmospherics.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/atmospherics.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -50,10 +38,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitAtmos
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Engineering Hardsuit
 - type: entity
@@ -66,18 +52,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/engineering.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/engineering.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/engineering.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.04
     lowPressureMultiplier: 1000
@@ -100,10 +74,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitEngineering
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Spationaut Hardsuit
 - type: entity
@@ -116,18 +88,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/spatio.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/spatio.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/spatio.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.7
     lowPressureMultiplier: 1000
@@ -150,8 +110,6 @@
     - Hardsuit
     - WhitelistChameleon
     - HardsuitSpatio
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
-    - CorgiWearable
 
 #Salvage Hardsuit
 - type: entity
@@ -164,18 +122,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/salvage.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/salvage.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/salvage.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.5
     lowPressureMultiplier: 1000
@@ -198,10 +144,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitSalvage
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV - Harpy specific sprite
 
 #Goliath Hardsuit
 - type: entity
@@ -214,18 +158,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/goliath.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/goliath.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/goliath.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.5
     lowPressureMultiplier: 1000
@@ -240,11 +172,6 @@
         Heat: 0.7 #Goliath hide gets grilled instead of you
         Radiation: 0.3
         Caustic: 0.8
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.8
     sprintModifier: 0.8
@@ -256,10 +183,8 @@
     node: hardsuitGoliath
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV - Harpy specific sprite
 
 #Maxim Hardsuit
 - type: entity
@@ -286,11 +211,6 @@
         Piercing: 0.5
         Heat: 0.3
         Radiation: 0.1
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ExplosionResistance
     damageCoefficient: 0.2
   - type: TemperatureProtection
@@ -323,8 +243,6 @@
         Piercing: 0.6
         Heat: 0.8
         Caustic: 0.7
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.3
   - type: ClothingSpeedModifier
     walkModifier: 0.75
     sprintModifier: 0.75
@@ -333,7 +251,6 @@
     clothingPrototype: ClothingHeadHelmetHardsuitSecurity
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
 
@@ -341,8 +258,8 @@
 - type: entity
   parent: [ClothingOuterHardsuitBase, BaseSecurityContraband]
   id: ClothingOuterHardsuitBrigmedic
-  name: corpsman hardsuit # DeltaV - rename brigmedic to corpsman
-  description: Special hardsuit of the guardian angel of the brig. It is the medical version of the security hardsuit. # I will fix the rest of this entry later when I resprite sec suits
+  name: brigmedic hardsuit
+  description: Special hardsuit of the guardian angel of the brig. It is the medical version of the security hardsuit.
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/Hardsuits/brigmedic.rsi
@@ -357,8 +274,6 @@
         Blunt: 0.8
         Slash: 0.8
         Piercing: 0.7
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.3
   - type: ClothingSpeedModifier
     walkModifier: 0.65
     sprintModifier: 0.65
@@ -390,8 +305,6 @@
         Piercing: 0.6
         Heat: 0.8
         Caustic: 0.7
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.3
   - type: ClothingSpeedModifier
     walkModifier: 0.7
     sprintModifier: 0.7
@@ -410,18 +323,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/capspace.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/capspace.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/capspace.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -436,13 +337,6 @@
         Heat: 0.5
         Radiation: 0.5
         Caustic: 0.6
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.3
   - type: ClothingSpeedModifier
     walkModifier: 0.8
     sprintModifier: 0.8
@@ -451,10 +345,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitCap
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Chief Engineer's Hardsuit
 - type: entity
@@ -467,18 +359,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/engineering-white.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/engineering-white.rsi
-    clothingVisuals: # Delta V - Need this for Harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/engineering-white.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -503,10 +383,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitEngineeringWhite
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Chief Medical Officer's Hardsuit
 - type: entity
@@ -519,18 +397,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/medical.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/medical.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/medical.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.3
     lowPressureMultiplier: 1000
@@ -548,10 +414,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitMedical
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Research Director's Hardsuit
 - type: entity
@@ -576,13 +440,6 @@
         Heat: 0.3
         Radiation: 0.1
         Caustic: 0.2
-        Holy: 0.7 # DeltaV
-        Shadow: 0.7 # DeltaV
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ExplosionResistance
     damageCoefficient: 0.1
   - type: ClothingSpeedModifier
@@ -597,8 +454,6 @@
     tags:
     - WhitelistChameleon
     - HighRiskItem
-    - HidesHarpyWings # DeltaV: Couldn't see the wings for their species-specific sprite because of a lack of this.
-    - CorgiWearable
     - Hardsuit
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitRd
@@ -632,13 +487,6 @@
         Heat: 0.8
         Radiation: 0.5
         Caustic: 0.6
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.3
   - type: ClothingSpeedModifier
     walkModifier: 0.8
     sprintModifier: 0.8
@@ -651,25 +499,13 @@
   parent: ClothingOuterHardsuitBase
   id: ClothingOuterHardsuitLuxury #DO NOT MAP - https://github.com/space-wizards/space-station-14/pull/19738#issuecomment-1703486738
   name: luxury mining hardsuit
-  description: A refurbished mining hardsuit, fashioned after the Logistics Officer's colors. Graphene lining provides less protection, but is much easier to move. # DeltaV - Logistics Department replacing Cargo
+  description: A refurbished mining hardsuit, fashioned after the Quartermaster's colors. Graphene lining provides less protection, but is much easier to move.
   categories: [ DoNotMap ]
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/Hardsuits/luxury.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/luxury.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/luxury.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.5
     lowPressureMultiplier: 1000
@@ -684,11 +520,6 @@
         Heat: 0.9
         Radiation: 0.5
         Caustic: 0.8
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
@@ -710,27 +541,13 @@
     size: Huge
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/syndicate.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/syndicate.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-scurret:
-      - state: equipped-OUTERCLOTHING-scurret
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.05
     lowPressureMultiplier: 1000
   - type: ExplosionResistance
     damageCoefficient: 0.5
-  - type: StaminaResistance # DeltaV - uncommented
-    damageCoefficient: 0.2 # DeltaV - was 0.75
+  - type: StaminaResistance # do not add these to other equipment or mobs, we don't want to microbalance these everywhere
+    damageCoefficient: 0.75
   - type: Armor
     modifiers:
       coefficients:
@@ -740,34 +557,18 @@
         Heat: 0.5
         Radiation: 0.5
         Caustic: 0.5
-        Cold: 0.8 # DeltaV - Cold res
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
   - type: HeldSpeedModifier
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitSyndie
-  - type: ReverseEngineering # Nyano
-    difficulty: 5
-    newItem: ClothingOuterHardsuitSyndieReverseEngineered
-    recipes:
-      - ClothingOuterHardsuitSyndieReverseEngineered
   - type: Tag
     tags:
     - MonkeyWearable
     - Hardsuit
     - WhitelistChameleon
-    - CorgiWearable
     - ScurretWearable
-    - HidesHarpyWings
-  - type: MappingCategories # DeltaV
-    categories:
-    - Syndicate
   - type: StaticPrice
     price: 5000
 
@@ -782,25 +583,12 @@
     sprite: Clothing/OuterClothing/Hardsuits/syndiemedic.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/syndiemedic.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/syndiemedic.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitSyndieMedic
   - type: Tag
     tags:
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings
 
 #Syndicate Elite Hardsuit
 - type: entity
@@ -813,18 +601,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/syndieelite.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/syndieelite.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/syndieelite.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -835,23 +611,17 @@
     damageCoefficient: 0.2
   - type: FireProtection
     reduction: 0.8
-  - type: StaminaResistance # DeltaV - uncommented
-    damageCoefficient: 0.3 # DeltaV - was 0.6
+  - type: StaminaResistance # do not add these to other equipment or mobs, we don't want to microbalance these everywhere
+    damageCoefficient: 0.6
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.8 # DeltaV - was 0.6
-        Slash: 0.8 # DeltaV - was 0.6
+        Blunt: 0.6
+        Slash: 0.6
         Piercing: 0.6
         Heat: 0.2
         Radiation: 0.01
         Caustic: 0.5
-        Cold: 0.4 # DeltaV - Cold res
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: Item
     size: Huge
   - type: ClothingSpeedModifier
@@ -862,10 +632,8 @@
     clothingPrototype: ClothingHeadHelmetHardsuitSyndieElite
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Syndicate Commander Hardsuit
 - type: entity
@@ -878,25 +646,13 @@
     sprite: Clothing/OuterClothing/Hardsuits/syndiecommander.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/syndiecommander.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/syndiecommander.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.05
     lowPressureMultiplier: 1000
   - type: ExplosionResistance
     damageCoefficient: 0.5
-  - type: StaminaResistance # DeltaV - uncommented
-    damageCoefficient: 0.2 # DeltaV - was 0.6
+  - type: StaminaResistance # do not add these to other equipment or mobs, we don't want to microbalance these everywhere
+    damageCoefficient: 0.6
   - type: Armor
     modifiers:
       coefficients:
@@ -906,27 +662,16 @@
         Heat: 0.5
         Radiation: 0.25
         Caustic: 0.4
-        Cold: 0.8 # DeltaV - Cold res
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
   - type: HeldSpeedModifier
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitSyndieCommander
-  - type: MappingCategories # DeltaV
-    categories:
-    - Syndicate
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 
 #Cybersun Juggernaut Hardsuit
@@ -940,25 +685,12 @@
     sprite: Clothing/OuterClothing/Hardsuits/cybersun.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/cybersun.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/cybersun.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.2
     lowPressureMultiplier: 1000
   - type: ExplosionResistance
     damageCoefficient: 0.3
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.5
+  # - type: StaminaResistance # Should not have stamina resistance, this is purely so people know it was not forgotten.
   - type: Armor
     modifiers:
       coefficients:
@@ -968,12 +700,6 @@
         Heat: 0.2
         Radiation: 0.2
         Caustic: 0.2
-        Cold: 0.6 # DeltaV - Cold res
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.65
     sprintModifier: 0.65
@@ -983,20 +709,8 @@
   - type: Tag
     tags:
     - MonkeyWearable
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
-  # Begin DeltaV Additions
-  - type: ReverseEngineering # DeltaV
-    difficulty: 5
-    newItem: ClothingOuterHardsuitJuggernautReverseEngineered
-    recipes:
-    - ClothingOuterHardsuitJuggernautReverseEngineered
-  - type: MappingCategories
-    categories:
-    - Syndicate
-  # End DeltaV Additions
 
 #Wizard Hardsuit
 - type: entity
@@ -1023,23 +737,14 @@
         Heat: 0.25
         Radiation: 0.25
         Caustic: 0.75
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 0.8
     sprintModifier: 0.8
   - type: HeldSpeedModifier
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitWizard
-  - type: MappingCategories # DeltaV
-    categories:
-    - Wizard
   - type: Tag
     tags:
-    - CorgiWearable
     - Hardsuit
     - WhitelistChameleon
 
@@ -1072,9 +777,6 @@
   - type: HeldSpeedModifier
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitLing
-  - type: MappingCategories # DeltaV
-    categories:
-    - Changeling
 
 #Pirate EVA Suit (Deep Space EVA Suit)
 #Despite visually appearing like a softsuit, it functions exactly like a hardsuit would (parents off of base hardsuit, has resistances and toggleable clothing, etc.) so it goes here.
@@ -1109,9 +811,6 @@
     clothingPrototype: ClothingHeadHelmetHardsuitPirateEVA
   - type: StaticPrice
     price: 0
-  - type: MappingCategories # DeltaV
-    categories:
-    - Pirate
 
 #Pirate Captain Hardsuit
 - type: entity
@@ -1147,16 +846,12 @@
     clothingPrototype: ClothingHeadHelmetHardsuitPirateCap
   - type: StaticPrice
     price: 0
-  - type: MappingCategories # DeltaV
-    categories:
-    - Pirate
 
 #CENTCOMM / ERT HARDSUITS
 #ERT Leader Hardsuit
 - type: entity
   parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndieCommander ]
   id: ClothingOuterHardsuitERTLeader
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT leader's hardsuit
   description: A protective hardsuit worn by the leader of an emergency response team.
   components:
@@ -1169,9 +864,8 @@
 
 #ERT Chaplain Hardsuit
 - type: entity
-  parent: [ BaseCentcommContraband, ClothingOuterHardsuitBase ] # Delta V - Changed parent (ClothingOuterHardsuitJuggernaut) that was causing issues in debug
+  parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndie ]
   id: ClothingOuterHardsuitERTChaplain
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT chaplain's hardsuit
   description: A protective hardsuit worn by the chaplains of an Emergency Response Team.
   components:
@@ -1186,7 +880,6 @@
 - type: entity
   parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndieElite ]
   id: ClothingOuterHardsuitERTEngineer
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT engineer's hardsuit
   description: A protective hardsuit worn by the engineers of an emergency response team.
   components:
@@ -1203,7 +896,6 @@
 - type: entity
   parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndieMedic ]
   id: ClothingOuterHardsuitERTMedical
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT medic's hardsuit
   description: A protective hardsuit worn by the medics of an emergency response team.
   components:
@@ -1218,7 +910,6 @@
 - type: entity
   parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndie ]
   id: ClothingOuterHardsuitERTSecurity
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT security's hardsuit
   description: A protective hardsuit worn by the security officers of an emergency response team.
   components:
@@ -1232,13 +923,11 @@
     tags:
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV - Harpy ERT hardsuits
 
 #ERT Janitor Hardsuit
 - type: entity
   parent: [ BaseCentcommContraband, ClothingOuterHardsuitSyndieElite ]
   id: ClothingOuterHardsuitERTJanitor
-  categories: [ HideSpawnMenu ] # Delta V - We have our own we use for ERT
   name: ERT janitor's hardsuit
   description: A protective hardsuit worn by the janitors of an emergency response team.
   components:
@@ -1260,18 +949,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/deathsquad.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/deathsquad.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/deathsquad.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -1293,11 +970,6 @@
         Heat: 0.1
         Radiation: 0.1
         Caustic: 0.1
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ClothingSpeedModifier
     walkModifier: 1.0
     sprintModifier: 1.0
@@ -1316,18 +988,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/cburn.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/cburn.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/cburn.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
@@ -1347,11 +1007,6 @@
         Shock: 0.1
         Radiation: 0.1
         Caustic: 0.1
-  - type: DamageOnShootProtection # imp
-    slots: OUTERCLOTHING
-    damageProtection:
-      flatReductions:
-        Blunt: 10
   - type: ZombificationResistance
     zombificationResistanceCoefficient: 0.25
   - type: ClothingSpeedModifier
@@ -1364,7 +1019,7 @@
 #MISC. HARDSUITS
 #Clown Hardsuit
 - type: entity
-  parent: ClothingOuterEVASuitBase # Delta V-Brings back clownsuit but make it make sense
+  parent: ClothingOuterHardsuitBase
   id: ClothingOuterHardsuitClown
   name: clown hardsuit
   description: A custom-made clown hardsuit.
@@ -1373,30 +1028,18 @@
     sprite: Clothing/OuterClothing/Hardsuits/clown.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/clown.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/clown.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.5
     lowPressureMultiplier: 1000
-  #- type: ExplosionResistance # Delta V-Brings back clownsuit but make it make sense
-  #  damageCoefficient: 0.9
-  #- type: Armor
-  #  modifiers:
-  #    coefficients:
-  #      Blunt: 0.9
-  #      Slash: 0.9
-  #      Piercing: 0.9
-  #      Caustic: 0.8
+  - type: ExplosionResistance
+    damageCoefficient: 0.9
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.9
+        Slash: 0.9
+        Piercing: 0.9
+        Caustic: 0.8
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
@@ -1406,10 +1049,6 @@
     node: clownHardsuit
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitClown
-  - type: ContainerContainer # Delta V-Brings back clownsuit but make it make sense
-    containers:
-      toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
 
 #Mime Hardsuit
 - type: entity
@@ -1422,18 +1061,6 @@
     sprite: Clothing/OuterClothing/Hardsuits/mime.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/mime.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/mime.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: Construction
     graph: MimeHardsuit
     node: mimeHardsuit

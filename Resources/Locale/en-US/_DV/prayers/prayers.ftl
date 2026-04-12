@@ -1,3 +1,0 @@
-prayer-verbs-fountainwish = Wish
-prayer-chat-notify-fountainwish = FOUNTAIN WISH
-prayer-popup-notify-fountainwish-sent = You tossed a coin in the fountain, and made a wish...

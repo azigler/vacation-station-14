@@ -39,7 +39,7 @@ using Content.Shared.Roles.Components;
 namespace Content.Server.Ghost.Roles;
 
 [UsedImplicitly]
-public sealed partial class GhostRoleSystem : EntitySystem // Converted to partial to allow for DeltaV character ghost roles
+public sealed class GhostRoleSystem : EntitySystem
 {
     [Dependency] private readonly IBanManager _ban = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
@@ -90,7 +90,6 @@ public sealed partial class GhostRoleSystem : EntitySystem // Converted to parti
         SubscribeLocalEvent<GhostRoleRaffleComponent, ComponentShutdown>(OnRaffleShutdown);
 
         SubscribeLocalEvent<GhostRoleMobSpawnerComponent, TakeGhostRoleEvent>(OnSpawnerTakeRole);
-        SubscribeLocalEvent<GhostRoleCharacterSpawnerComponent, TakeGhostRoleEvent>(OnSpawnerTakeCharacter); // DeltaV - Character ghost roles, see Content.Server/_DV/Ghost/Roles/GhostRoleSystem.Character.cs
         SubscribeLocalEvent<GhostRoleMobSpawnerComponent, GetVerbsEvent<Verb>>(OnVerb);
         SubscribeLocalEvent<GhostRoleMobSpawnerComponent, GhostRoleRadioMessage>(OnGhostRoleRadioMessage);
         _playerManager.PlayerStatusChanged += PlayerStatusChanged;
@@ -488,7 +487,7 @@ public sealed partial class GhostRoleSystem : EntitySystem // Converted to parti
         }
         else
         {
-            TryTakeover(player, identifier); // DeltaV - prevent taking ghost roles in the lobby
+            Takeover(player, identifier);
         }
     }
 

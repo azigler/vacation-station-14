@@ -54,16 +54,6 @@
   id: BorgModuleAdvancedMining
   result: BorgModuleAdvancedMining
 
-# DeltaV - Mining Modules
-# Technically added in "early merge of rebalanced salv weapon researching (#2077)",
-# I think upstream never managed to merge this (#32398), so I'm marking this as a DeltaV change
-# I will not move it from here though, just in case.
-- type: latheRecipe
-  parent: BaseGoldBorgModuleRecipe
-  id: BorgModuleFauna
-  result: BorgModuleFauna
-# DeltaV - End of changes
-
 # Engineering Modules
 
 - type: latheRecipe

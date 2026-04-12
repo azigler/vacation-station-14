@@ -9,21 +9,13 @@
   icon: "JobIconERTLeader"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirement
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 15h
-  - !type:DepartmentTimeRequirement
-    department: Command
-    time: 4h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTLeaderGearEVA
@@ -116,24 +108,16 @@
   icon: "JobIconERTChaplain"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirement
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 5h
-  - !type:DepartmentTimeRequirement
-    department: Epistemics
-    time: 5h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddComponentSpecial
     components:
     - type: BibleUser #Lets them heal with bibles
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTChaplainGearEVA
@@ -201,21 +185,13 @@
   icon: "JobIconERTEngineer"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirements
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 5h
-  - !type:DepartmentTimeRequirement
-    department: Engineering
-    time: 5h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTEngineerGearEVA
@@ -303,18 +279,13 @@
   icon: "JobIconERTSecurity"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirements
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 15h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTSecurityGearEVA
@@ -495,21 +466,13 @@
   icon: "JobIconERTMedic"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirements
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 5h
-  - !type:DepartmentTimeRequirement
-    department: Medical
-    time: 10h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTMedicalGearEVA
@@ -603,21 +566,13 @@
   icon: "JobIconERTJanitor"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirements
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 5h
-  - !type:RoleTimeRequirement
-    role: JobJanitor
-    time: 2h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
-  - ERT # Delta V - Add ERT Access
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   parent: ERTJanitorGearEVA

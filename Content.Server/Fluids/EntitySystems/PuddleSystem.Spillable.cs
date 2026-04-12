@@ -3,14 +3,11 @@ using Content.Shared.Database;
 using Content.Shared.Fluids.Components;
 using Content.Shared.Spillable;
 using Content.Shared.Throwing;
-using Robust.Shared.Physics.Systems; // DeltaV - Beer Goggles Safe Throw
 
 namespace Content.Server.Fluids.EntitySystems;
 
 public sealed partial class PuddleSystem
 {
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!; // DeltaV - Beer Goggles Safe Throw
-
     protected override void InitializeSpillable()
     {
         base.InitializeSpillable();
@@ -37,15 +34,6 @@ public sealed partial class PuddleSystem
 
         if (TrySplashSpillAt(entity.Owner, Transform(entity).Coordinates, out _, out var solution) && args.User != null)
         {
-            // DeltaV - Beer Goggles Safe Throw
-            if (_safeSolutionThrower.GetSafeThrow(args.User.Value))
-            {
-                _physics.SetAngularVelocity(entity, 0);
-                Transform(entity).LocalRotation = Angle.Zero;
-                return;
-            }
-            // END DeltaV
-
             AdminLogger.Add(LogType.Landed,
                 $"{ToPrettyString(entity.Owner):entity} spilled a solution {SharedSolutionContainerSystem.ToPrettyString(solution):solution} on landing");
         }

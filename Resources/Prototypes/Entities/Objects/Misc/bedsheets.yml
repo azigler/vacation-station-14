@@ -176,13 +176,12 @@
   id: BedsheetHOS
   parent: BedsheetBase
   name: HOS's bedsheet
-  description: A soft, slate-coloured quilt, adorned with gold trim. Not quite cozy enough to warm a cold heart. # DeltaV - change from "It's decorated with a shield emblem. While crime doesn't sleep, you do, but you are still THE LAW!"
+  description: It's decorated with a shield emblem. While crime doesn't sleep, you do, but you are still THE LAW!
   components:
   - type: Sprite
-    sprite: _DV/Objects/Misc/bedsheets.rsi # DeltaV - resprite sec bedsheets
     state: sheethos
   - type: Clothing
-    sprite: Clothing/Neck/Bedsheets/grey.rsi # DeltaV - resprite sec bedsheets
+    sprite: Clothing/Neck/Bedsheets/hos.rsi
   - type: StealTarget
     stealGroup: HeadBedsheet
 
@@ -252,7 +251,7 @@
 - type: entity
   id: BedsheetQM
   parent: BedsheetBase
-  name: LO's bedsheet # DeltaV - Logistics Department replacing Cargo
+  name: QM's bedsheet
   components:
   - type: Sprite
     state: sheetqm
@@ -274,7 +273,7 @@
 - type: entity
   id: BedsheetRD
   parent: BedsheetBase
-  name: Mystagogue's bedsheet # DeltaV - Epistemics Department - Replace Research Director with Mystagogue
+  name: RD's bedsheet
   description: It appears to have a beaker emblem, and is made out of fire-resistant material, although it probably won't protect you in the event of fires you're familiar with every day.
   components:
   - type: Sprite
@@ -287,14 +286,13 @@
 - type: entity
   id: BedsheetBrigmedic
   parent: BedsheetBase
-  name: corpsman's bedsheet # DeltaV - rename brigmedic to corpsman
-  description: A soft, slate-coloured quilt, adorned with white crosses. Unfortunately not sterile. # DeltaV - change from "Not worse than cotton."
+  name: brigmedic's bedsheet
+  description: Not worse than cotton.
   components:
   - type: Sprite
-    sprite: _DV/Objects/Misc/bedsheets.rsi # DeltaV - resprite sec bedsheets
     state: sheetbrigmedic
   - type: Clothing
-    sprite: Clothing/Neck/Bedsheets/grey.rsi # DeltaV - resprite sec bedsheets
+    sprite: Clothing/Neck/Bedsheets/brigmedic.rsi
 
 - type: entity
   id: BedsheetRed

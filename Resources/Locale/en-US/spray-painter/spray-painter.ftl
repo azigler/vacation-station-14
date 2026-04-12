@@ -5,6 +5,8 @@ spray-painter-ammo-after-interact-refilled = You refill the spray painter.
 
 spray-painter-interact-no-charges = Not enough paint left.
 spray-painter-interact-nothing-to-remove = Nothing to remove!
+spray-painter-interact-no-color-pick = Can't find a color to pick!
+spray-painter-interact-color-picked = Picked color from '{$id}'.
 
 spray-painter-on-examined-painted-message = It seems to have been freshly painted.
 spray-painter-style-not-available = Cannot apply the selected style to this object.
@@ -64,8 +66,7 @@ spray-painter-tab-group-walllocker = Secure (Wall)
 # Airlocks
 spray-painter-style-airlockstandard-atmospherics = Atmospheric
 spray-painter-style-airlockstandard-basic = Basic
-# DeltaV: Logistics
-spray-painter-style-airlockstandard-cargo = Logistics
+spray-painter-style-airlockstandard-cargo = Cargo
 spray-painter-style-airlockstandard-chemistry = Chemistry
 spray-painter-style-airlockstandard-command = Command
 spray-painter-style-airlockstandard-engineering = Engineering
@@ -74,15 +75,13 @@ spray-painter-style-airlockstandard-hydroponics = Hydroponics
 spray-painter-style-airlockstandard-maintenance = Maintenance
 spray-painter-style-airlockstandard-medical = Medical
 spray-painter-style-airlockstandard-salvage = Salvage
-# DeltaV: Epistemics
-spray-painter-style-airlockstandard-science = Epistemics
+spray-painter-style-airlockstandard-science = Science
 spray-painter-style-airlockstandard-security = Security
 spray-painter-style-airlockstandard-virology = Virology
 
 spray-painter-style-airlockglass-atmospherics = Atmospherics
 spray-painter-style-airlockglass-basic = Basic
-# DeltaV: Logistics
-spray-painter-style-airlockglass-cargo = Logistics
+spray-painter-style-airlockglass-cargo = Cargo
 spray-painter-style-airlockglass-chemistry = Chemistry
 spray-painter-style-airlockglass-command = Command
 spray-painter-style-airlockglass-engineering = Engineering
@@ -90,8 +89,7 @@ spray-painter-style-airlockglass-hydroponics = Hydroponics
 spray-painter-style-airlockglass-maintenance = Maintenance
 spray-painter-style-airlockglass-medical = Medical
 spray-painter-style-airlockglass-salvage = Salvage
-# DeltaV: Epistemics
-spray-painter-style-airlockglass-science = Epistemics
+spray-painter-style-airlockglass-science = Science
 spray-painter-style-airlockglass-security = Security
 spray-painter-style-airlockglass-virology = Virology
 
@@ -114,10 +112,8 @@ spray-painter-style-locker-hos = HOS
 spray-painter-style-locker-medicine = Medicine
 spray-painter-style-locker-mime = Mime
 spray-painter-style-locker-paramedic = Paramedic
-# DeltaV: Logistics
-spray-painter-style-locker-quartermaster = Logistics Officer
-# DeltaV: Epistemics
-spray-painter-style-locker-rd = Mystagogue
+spray-painter-style-locker-quartermaster = Quartermaster
+spray-painter-style-locker-rd = RD
 spray-painter-style-locker-representative = Representative
 spray-painter-style-locker-salvage = Salvage
 spray-painter-style-locker-scientist = Scientist
@@ -164,8 +160,7 @@ spray-painter-style-cratesteel-basic = Basic
 spray-painter-style-cratesteel-electrical = Electrical
 spray-painter-style-cratesteel-engineering = Engineering
 spray-painter-style-cratesteel-radiation = Radiation
-# DeltaV: Epistemics
-spray-painter-style-cratesteel-science = Epistemics
+spray-painter-style-cratesteel-science = Science
 spray-painter-style-cratesteel-surgery = Surgery
 
 spray-painter-style-crateplastic-basic = Basic
@@ -183,15 +178,13 @@ spray-painter-style-cratesecure-hydroponics = Hydroponics
 spray-painter-style-cratesecure-medical = Medical
 spray-painter-style-cratesecure-plasma = Plasma
 spray-painter-style-cratesecure-private = Private
-# DeltaV: Epistemics
-spray-painter-style-cratesecure-science = Epistemics
+spray-painter-style-cratesecure-science = Science
 spray-painter-style-cratesecure-secgear = Secgear
 spray-painter-style-cratesecure-weapon = Weapon
 
 # Canisters
 spray-painter-style-canisters-air = Air
-# DeltaV: Miasma
-spray-painter-style-canisters-ammonia = Miasma
+spray-painter-style-canisters-ammonia = Ammonia
 spray-painter-style-canisters-carbon-dioxide = Carbon dioxide
 spray-painter-style-canisters-frezon = Frezon
 spray-painter-style-canisters-nitrogen = Nitrogen

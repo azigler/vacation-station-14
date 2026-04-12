@@ -2,9 +2,6 @@
   id: XenoArtifactEffectsDefaultTable
   table: !type:GroupSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: XenoArtifactEffectsDeltaV
-      weight: 9 # update this if you change the above table
     # hijacks use key, prevents from using artifact, sadly
     #- id: XenoArtifactEffectUniversalIntercom
     #  weight: 10.0
@@ -174,11 +171,8 @@
 - type: entity
   id: XenoArtifactEffectUniversalIntercom
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of long-distance communication device
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-intercom
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAEApplyComponents
     components:
     - type: RadioMicrophone
@@ -206,11 +200,8 @@
 - type: entity
   id: XenoArtifactBecomeRandomInstrument
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of musical instrument
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-become-instrument
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     components:
     - type: Instrument
@@ -222,11 +213,8 @@
 - type: entity
   id: XenoArtifactStorage
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of hidden storage
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-storage
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEApplyComponents
     components:
     - type: Item
@@ -239,21 +227,15 @@
 - type: entity
   id: XenoArtifactPhasing
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Becomes phased
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-phasing
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAERemoveCollision
 
 - type: entity
   id: XenoArtifactWandering
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Starts to move sporadically
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-wandering
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     components:
     - type: RandomWalk
@@ -265,11 +247,8 @@
 - type: entity
   id: XenoArtifactSolutionStorage
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of container for chemical solutions
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-solution-storage
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEApplyComponents
     components:
     - type: SolutionContainerManager
@@ -299,11 +278,8 @@
 - type: entity
   id: XenoArtifactSpeedUp
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Improves holder movement speed
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-speedup
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEApplyComponents
     components:
     - type: HeldSpeedModifier
@@ -313,11 +289,8 @@
 - type: entity
   id: XenoArtifactDrill
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of drill
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-drill
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     components:
     - type: MeleeWeapon
@@ -332,11 +305,8 @@
 - type: entity
   id: XenoArtifactGenerateEnergy
   parent: BaseOneTimeXenoArtifactEffect # todo - increment power, but only once per node
-  categories: [ HideSpawnMenu ]
+  description: Produces power
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-generator
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAEApplyComponents
     components:
     - type: PowerSupplier
@@ -351,11 +321,8 @@
 - type: entity
   id: XenoArtifactGun
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of firearm
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gun
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -385,11 +352,8 @@
 - type: entity
   id: XenoArtifactGhost
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Becomes sentient
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-ghost
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     components:
     - type: GhostRole
@@ -408,11 +372,8 @@
 - type: entity
   id: XenoArtifactOmnitool
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Obtains ability of omnitool
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-omnitool
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     components:
     - type: UserInterface
@@ -458,11 +419,8 @@
 - type: entity
   id: XenoArtifactEffectBadFeeling
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Broadcasts sublime message
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-feeling
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAETelepathic
     messages:
     - badfeeling-artifact-1
@@ -491,11 +449,8 @@
 - type: entity
   id: XenoArtifactEffectGoodFeeling
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Broadcasts sublime message
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-feeling
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAETelepathic
     messages:
     - goodfeeling-artifact-1
@@ -523,11 +478,8 @@
 - type: entity
   id: XenoArtifactEffectJunkSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create recyclable junk
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-junk
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -548,21 +500,15 @@
 - type: entity
   id: XenoArtifactEffectLightFlicker
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Minor electromagnetic interference
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-flicker
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAELightFlicker
 
 - type: entity
   id: XenoArtifactPotassiumWave
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Produces potassium
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-potassium
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -588,11 +534,8 @@
 - type: entity
   id: XenoArtifactFloraSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Produces flora
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-flora
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -606,12 +549,8 @@
 - type: entity
   id: XenoArtifactChemicalPuddle
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Produces puddle of chemical mixture # todo: make description say what exact chemical is produced, maybe add mixes into possible chemicals
   components:
-  - type: XAEDetails # DeltaV
-    # todo: make description say what exact chemical is produced, maybe add mixes into possible chemicals
-    specificTip: xenoarch-effect-tip-specific-puddle-basic
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XAECreatePuddle
     chemAmount:
       min: 1
@@ -646,44 +585,31 @@
 - type: entity
   id: XenoArtifactThrowThingsAround
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Minor implosion
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-throw
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAEThrowThingsAround
 
 - type: entity
   id: XenoArtifactColdWave
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Cools down surrounding gas
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-cold
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAETemperature
     targetTemp: 50
 
 - type: entity
   id: XenoArtifactHeatWave
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Heats up surrounding gas greatly
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-heat
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAETemperature
     targetTemp: 500
 
 - type: entity
   id: XenoArtifactFoamMild
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Produces chemical foam # todo: separate in 1 for each chemical for description? actually sounds like a very good idea
   components:
-  - type: XAEDetails # DeltaV
-    # todo: separate in 1 for each chemical for description? actually sounds like a very good idea
-    specificTip: xenoarch-effect-tip-specific-foam-basic
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAEFoam
     replaceDescription: true
     reagents:
@@ -702,11 +628,8 @@
 - type: entity
   id: XenoArtifactRandomInstrumentSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates musical instrument
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-create-instrument
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XenoArtifactNode
     maxDurability: 2
     maxDurabilityCanDecreaseBy:
@@ -725,11 +648,8 @@
 - type: entity
   id: XenoArtifactMonkeySpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates primate
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-monkey
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XenoArtifactNode
     maxDurability: 3
     maxDurabilityCanDecreaseBy:
@@ -751,11 +671,8 @@
 - type: entity
   id: XenoArtifactRadioactive
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Becomes mildly radioactive
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-radioactive-mild
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -767,11 +684,8 @@
 - type: entity
   id: XenoArtifactChargeBattery
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Charges up batteries
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-charge
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAEChargeBattery
   - type: XAETelepathic
     messages:
@@ -780,22 +694,16 @@
 - type: entity
   id: XenoArtifactKnock
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Mild electromagnetic interference
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-knock
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEKnock
   - type: XAELightFlicker
 
 - type: entity
   id: XenoArtifactMagnet
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create small gravity well
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-magnet
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -808,11 +716,8 @@
 - type: entity
   id: XenoArtifactMagnetNegative
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create small gravity well
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-magnet
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -825,11 +730,8 @@
 - type: entity
   id: XenoArtifactStealth
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create light interference
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-stealth
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAEApplyComponents
     components:
     - type: Stealth
@@ -841,11 +743,8 @@
 - type: entity
   id: XenoArtifactRareMaterialSpawn
   parent: BaseXenoArtifactEffect # todo: splice into different well-named effects, amounts should reflect how rare material is
-  categories: [ HideSpawnMenu ]
+  description: Create rare materials
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-rare-materials
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -874,11 +773,8 @@
 - type: entity
   id: XenoArtifactRareMaterialSpawnSilver
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create rare materials
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-rare-materials
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XenoArtifactNode
     maxDurability: 4
     maxDurabilityCanDecreaseBy:
@@ -900,11 +796,8 @@
 - type: entity
   id: XenoArtifactRareMaterialSpawnPlasma
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create plasma
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-plasma
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XenoArtifactNode
     maxDurability: 4
     maxDurabilityCanDecreaseBy:
@@ -926,11 +819,8 @@
 - type: entity
   id: XenoArtifactRareMaterialSpawnGold
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create gold
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gold
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XenoArtifactNode
     maxDurability: 3
     maxDurabilityCanDecreaseBy:
@@ -952,11 +842,8 @@
 - type: entity
   id: XenoArtifactRareMaterialSpawnUranium
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create uranium
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-uranium
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XenoArtifactNode
     maxDurability: 4
     maxDurabilityCanDecreaseBy:
@@ -978,11 +865,8 @@
 - type: entity
   id: XenoArtifactAngryCarpSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create hostile fish
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-carp
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XenoArtifactNode
     maxDurability: 3
     maxDurabilityCanDecreaseBy:
@@ -1004,11 +888,8 @@
 - type: entity
   id: XenoArtifactFaunaSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create friendly fauna
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-fauna
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XenoArtifactNode
     maxDurability: 4
     maxDurabilityCanDecreaseBy:
@@ -1054,7 +935,6 @@
 - type: entity
   id: XenoArtifactHostileFaunaSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
   description: Create hostile fauna
   components:
   - type: XenoArtifactNode
@@ -1082,11 +962,8 @@
 - type: entity
   id: XenoArtifactCashSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create money
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-cash
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XenoArtifactNode
     maxDurability: 2
     maxDurabilityCanDecreaseBy:
@@ -1114,11 +991,8 @@
 - type: entity
   id: XenoArtifactShatterWindows
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Break windows
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-shatter
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XenoArtifactNode
     maxDurability: 3
     maxDurabilityCanDecreaseBy:
@@ -1136,11 +1010,8 @@
 - type: entity
   id: XenoArtifactFoamGood
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates wave of helpful foam
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-foam-medicine
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XenoArtifactNode
     maxDurability: 7
     maxDurabilityCanDecreaseBy:
@@ -1160,11 +1031,8 @@
 - type: entity
   id: XenoArtifactFoamDangerous
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates wave of harmful foam
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-foam-poison
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAEFoam
     minFoamAmount: 20
     maxFoamAmount: 30
@@ -1185,11 +1053,8 @@
 - type: entity
   id: XenoArtifactPuddleRare
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates puddle of helpful chemicals
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-puddle-rare
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAECreatePuddle
     chemAmount:
       min: 1
@@ -1218,11 +1083,8 @@
 - type: entity
   id: XenoArtifactAnomalySpawn
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Creates anomaly
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-anomaly
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1236,11 +1098,8 @@
 - type: entity
   id: XenoArtifactIgnite
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Pyrokinesis
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-ignite
-    vagueTip: xenoarch-effect-tip-vague-energy-manipulation
   - type: XAEIgnite
     range: 7
     fireStack:
@@ -1250,21 +1109,15 @@
 - type: entity
   id: XenoArtifactTeleport
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Teleportation
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-teleport
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAERandomTeleportInvoker
 
 - type: entity
   id: XenoArtifactEmp
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Dangerous electromagnetic interference
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-emp
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XenoArtifactNode
     maxDurability: 5
     maxDurabilityCanDecreaseBy:
@@ -1275,43 +1128,31 @@
 - type: entity
   id: XenoArtifactPolyMonkey
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Temporarily reshape flesh to fur
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-poly-monkey
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEPolymorph
 
 - type: entity
   id: XenoArtifactPolyLizard
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Temporarily reshape flesh to scale
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-poly-lizard
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEPolymorph
     polymorphPrototypeName: ArtifactLizard
 
 - type: entity
   id: XenoArtifactPolyLuminous
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Temporarily reshape flesh to light
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-poly-luminous
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEPolymorph
     polymorphPrototypeName: ArtifactLuminous
 
 - type: entity
   id: XenoArtifactRadioactiveStrong
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Becomes highly radioactive
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-radioactive-strong
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1323,11 +1164,8 @@
 - type: entity
   id: XenoArtifactMaterialSpawnGlass
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create glass
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-glass
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1341,11 +1179,8 @@
 - type: entity
   id: XenoArtifactMaterialSpawnSteel
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create steel
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-steel
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1359,11 +1194,8 @@
 - type: entity
   id: XenoArtifactMaterialSpawnPlastic
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create plastic
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-plastic
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1377,21 +1209,15 @@
 - type: entity
   id: XenoArtifactPortal
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create short-living bluespace portal
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-portal
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEPortal
 
 - type: entity
   id: XenoArtifactArtifactSpawn
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Create artifact
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-artifact
-    vagueTip: xenoarch-effect-tip-vague-pattern
   - type: XenoArtifactNode
     maxDurability: 2
     maxDurabilityCanDecreaseBy:
@@ -1410,11 +1236,8 @@
 - type: entity
   id: XenoArtifactShuffle
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Switch places of sentient beings #not ALL beings, but oh well...
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-shuffle
-    vagueTip: xenoarch-effect-tip-vague-spatial
   - type: XAEShuffle
   - type: XAETelepathic
     range: 7.5
@@ -1424,11 +1247,8 @@
 - type: entity
   id: XenoArtifactHealAll
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Miraclous healing
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-heal
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAEDamageInArea
     damageChance: 1
     radius: 8
@@ -1436,19 +1256,19 @@
       components:
       - MobState
     damage:
-      groups:
-        Brute: -300
-        Burn: -300
+      types:
+        Blunt: -100
+        Piercing: -100
+        Slash: -100
+        Heat: -100
+        Cold: -100
+        Shock: -100
 
 - type: entity
   id: XenoArtifactTesla
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Mass destruction
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-tesla
-    # no vague tip - players should know what they're messing with
-    allowLockedEffectHiding: false
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1462,12 +1282,8 @@
 - type: entity
   id: XenoArtifactSingularity
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Imminent doom
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-singularity
-    # no vague tip - players should know what they're messing with
-    allowLockedEffectHiding: false
   - type: XAEApplyComponents
     applyIfAlreadyHave: true
     refreshOnReactivate: true
@@ -1481,11 +1297,8 @@
 - type: entity
   id: XenoArtifactExplosionScary
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Small scale high-speed nuclear reaction
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-explosion-radioactive
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAETriggerExplosives
   - type: Explosive
     deleteAfterExplosion: false
@@ -1499,11 +1312,8 @@
 - type: entity
   id: XenoArtifactBoom
   parent: BaseOneTimeXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Explosion
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-explosion-default
-    vagueTip: xenoarch-effect-tip-vague-energy-release
   - type: XAETriggerExplosives
   - type: Explosive
     deleteAfterExplosion: false
@@ -1516,11 +1326,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasPlasma
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels plasma
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-plasma
-    vagueTip: xenoarch-effect-tip-vague-element
   - type: XAECreateGas
     gases:
       Plasma: 300
@@ -1528,11 +1335,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasTritium
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels tritium
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-tritium
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAECreateGas
     gases:
       Tritium: 300
@@ -1540,11 +1344,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasAmmonia
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels ammonia
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-ammonia
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAECreateGas
     gases:
       Ammonia: 300
@@ -1552,11 +1353,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasFrezon
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels frezon
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-frezon
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAECreateGas
     gases:
       Frezon: 300
@@ -1564,11 +1362,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasNitrousOxide
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels nitrous oxide
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-nitrous
-    vagueTip: xenoarch-effect-tip-vague-chemical
   - type: XAECreateGas
     gases:
       NitrousOxide: 300
@@ -1576,11 +1371,8 @@
 - type: entity
   id: XenoArtifactEffectCreationGasCarbonDioxide
   parent: BaseXenoArtifactEffect
-  categories: [ HideSpawnMenu ]
+  description: Expels carbon dioxide
   components:
-  - type: XAEDetails # DeltaV
-    specificTip: xenoarch-effect-tip-specific-gas-carbon
-    vagueTip: xenoarch-effect-tip-vague-biological
   - type: XAECreateGas
     gases:
       CarbonDioxide: 300

@@ -16,7 +16,6 @@ using Content.Shared.Rounding;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Stunnable;
 using Content.Shared.Throwing;
-using Content.Shared.Weapons.Melee; // DeltaV
 using Content.Shared.Weapons.Melee.Events;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
@@ -45,7 +44,8 @@ public abstract partial class SharedStaminaSystem : EntitySystem
     [Dependency] private readonly SharedColorFlashEffectSystem _color = default!;
     [Dependency] private readonly StatusEffectsSystem _status = default!;
     [Dependency] protected readonly SharedStunSystem StunSystem = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movement = default!; // EE - Harpy Flight
+
+    [Dependency] private readonly EntityQuery<StaminaComponent> _stamQuery = default!;
 
     /// <summary>
     /// How much of a buffer is there between the stun duration and when stuns can be re-applied.
@@ -164,13 +164,12 @@ public abstract partial class SharedStaminaSystem : EntitySystem
         if (ev.Cancelled)
             return;
 
-        var stamQuery = GetEntityQuery<StaminaComponent>();
         var toHit = new List<(EntityUid Entity, StaminaComponent Component)>();
 
         // Split stamina damage between all eligible targets.
         foreach (var ent in args.HitEntities)
         {
-            if (!stamQuery.TryGetComponent(ent, out var stam))
+            if (!_stamQuery.TryGetComponent(ent, out var stam))
                 continue;
 
             toHit.Add((ent, stam));
@@ -181,11 +180,6 @@ public abstract partial class SharedStaminaSystem : EntitySystem
 
         if (hitEvent.Handled)
             return;
-
-        // Begin DeltaV additions
-        // Allow users to modifier stamina damage as well, this part of the event is not handle-able by listeners.
-        RaiseLocalEvent(args.User, hitEvent);
-        // End DeltaV additions
 
         var damage = component.Damage;
 
@@ -269,13 +263,12 @@ public abstract partial class SharedStaminaSystem : EntitySystem
     }
 
     public void TakeStaminaDamage(EntityUid uid, float value, StaminaComponent? component = null,
-        EntityUid? source = null, EntityUid? with = null, bool visual = true, SoundSpecifier? sound = null, bool ignoreResist = false,
-        bool? allowsSlowdown = true) // EE - Harpy Flight
+        EntityUid? source = null, EntityUid? with = null, bool visual = true, SoundSpecifier? sound = null, bool ignoreResist = false)
     {
         if (!Resolve(uid, ref component, false))
             return;
 
-        var ev = new BeforeStaminaDamageEvent(value, HasComp<MeleeWeaponComponent>(source)); // DeltaV - check if the source is a melee weapon
+        var ev = new BeforeStaminaDamageEvent(value);
         RaiseLocalEvent(uid, ref ev);
         if (ev.Cancelled)
             return;
@@ -287,9 +280,6 @@ public abstract partial class SharedStaminaSystem : EntitySystem
         }
 
         value = UniversalStaminaDamageModifier * value;
-
-        if (allowsSlowdown == true) // EE - Harpy Flight
-            _movement.RefreshMovementSpeedModifiers(uid);
 
         // Have we already reached the point of max stamina damage?
         if (component.Critical)
@@ -362,30 +352,18 @@ public abstract partial class SharedStaminaSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        var stamQuery = GetEntityQuery<StaminaComponent>();
         var query = EntityQueryEnumerator<ActiveStaminaComponent>();
         var curTime = Timing.CurTime;
 
         while (query.MoveNext(out var uid, out _))
         {
             // Just in case we have active but not stamina we'll check and account for it.
-            if (!stamQuery.TryGetComponent(uid, out var comp) ||
-                comp.StaminaDamage <= 0f && !comp.Critical && comp.ActiveDrains.Count == 0) // EE - Harpy Flight
+            if (!_stamQuery.TryComp(uid, out var comp) ||
+                comp.StaminaDamage <= 0f && !comp.Critical)
             {
                 RemComp<ActiveStaminaComponent>(uid);
                 continue;
             }
-
-            // EE - Harpy Flight
-            if (comp.ActiveDrains.Count > 0)
-                foreach (var (source, (drainRate, modifiesSpeed)) in comp.ActiveDrains)
-                    TakeStaminaDamage(uid,
-                    drainRate * frameTime,
-                    comp,
-                    source: source,
-                    visual: false,
-                    allowsSlowdown: modifiesSpeed);
-            // End EE
 
             // Shouldn't need to consider paused time as we're only iterating non-paused stamina components.
             var nextUpdate = comp.NextUpdate;
@@ -399,11 +377,10 @@ public abstract partial class SharedStaminaSystem : EntitySystem
 
             comp.NextUpdate += TimeSpan.FromSeconds(1f);
 
-            if (comp.ActiveDrains.Count == 0) // EE - Harpy Flight
-                TakeStaminaDamage(
-                    uid,
-                    comp.AfterCritical ? -comp.Decay * comp.AfterCritDecayMultiplier : -comp.Decay, // Recover faster after crit
-                    comp);
+            TakeStaminaDamage(
+                uid,
+                comp.AfterCritical ? -comp.Decay * comp.AfterCritDecayMultiplier : -comp.Decay, // Recover faster after crit
+                comp);
 
             Dirty(uid, comp);
         }
@@ -428,11 +405,6 @@ public abstract partial class SharedStaminaSystem : EntitySystem
         EnsureComp<ActiveStaminaComponent>(uid);
         Dirty(uid, component);
         _adminLogger.Add(LogType.Stamina, LogImpact.Medium, $"{ToPrettyString(uid):user} entered stamina crit");
-
-        // Begin DeltaV Additions - StaminaCrit event
-        var ev = new EnterStaminaCritEvent();
-        RaiseLocalEvent(uid, ref ev);
-        // End DeltaV Additions - StaminaCrit event
     }
 
     private void ExitStamCrit(EntityUid uid, StaminaComponent? component = null)

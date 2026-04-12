@@ -146,7 +146,7 @@ public sealed class AccessReaderSystem : EntitySystem
 
     private void OnEmagged(EntityUid uid, AccessReaderComponent reader, ref GotEmaggedEvent args)
     {
-        if (!_emag.CompareFlag(args.Type, EmagType.Interaction)) // DeltaV - emag for lockers etc instead of doorjack
+        if (!_emag.CompareFlag(args.Type, EmagType.Access))
             return;
 
         if (!reader.BreakOnAccessBreaker)

@@ -65,7 +65,7 @@ public abstract class SharedArmorSystem : EntitySystem
         if (!args.CanInteract || !args.CanAccess || !component.ShowArmorOnExamine)
             return;
 
-        var examineMarkup = GetArmorExamine(component); // DeltaV - Changed argument type to ArmorComponent
+        var examineMarkup = GetArmorExamine(component.Modifiers);
 
         var ev = new ArmorExamineEvent(examineMarkup);
         RaiseLocalEvent(uid, ref ev);
@@ -75,13 +75,12 @@ public abstract class SharedArmorSystem : EntitySystem
             Loc.GetString("armor-examinable-verb-message"));
     }
 
-    // DeltaV - Changed to take ArmorComponent instead of DamageModifierSet
-    private FormattedMessage GetArmorExamine(ArmorComponent component)
+    private FormattedMessage GetArmorExamine(DamageModifierSet armorModifiers)
     {
         var msg = new FormattedMessage();
         msg.AddMarkupOrThrow(Loc.GetString("armor-examine"));
 
-        foreach (var coefficientArmor in component.Modifiers.Coefficients) // DeltaV
+        foreach (var coefficientArmor in armorModifiers.Coefficients)
         {
             msg.PushNewline();
 
@@ -92,7 +91,7 @@ public abstract class SharedArmorSystem : EntitySystem
             ));
         }
 
-        foreach (var flatArmor in component.Modifiers.FlatReduction) // DeltaV
+        foreach (var flatArmor in armorModifiers.FlatReduction)
         {
             msg.PushNewline();
 
@@ -102,17 +101,6 @@ public abstract class SharedArmorSystem : EntitySystem
                 ("value", flatArmor.Value)
             ));
         }
-
-        // Begin DeltaV Additions - Add melee stamina resistance information if it has any
-        if (!MathHelper.CloseTo(component.StaminaMeleeDamageCoefficient, 1.0f))
-        {
-            msg.PushNewline();
-            var reduction = (1 - component.StaminaMeleeDamageCoefficient) * 100;
-            msg.AddMarkupOrThrow(Loc.GetString("armor-stamina-melee-coefficient-value",
-                ("value", MathF.Round(reduction, 1))
-            ));
-        }
-        // End DeltaV
 
         return msg;
     }

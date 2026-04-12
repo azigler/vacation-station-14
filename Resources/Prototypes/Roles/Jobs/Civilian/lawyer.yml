@@ -3,37 +3,30 @@
   name: job-name-lawyer
   description: job-description-lawyer
   playTimeTracker: JobLawyer
-  antagAdvantage: 4 # DeltaV - Reduced TC: Security Radio and Access
   requirements:
     - !type:OverallPlaytimeRequirement
       time: 2.5h
   startingGear: LawyerGear
   icon: "JobIconLawyer"
-  supervisors: job-supervisors-cj # DeltaV - Change supervisor to chief justice
+  supervisors: job-supervisors-hop
   access:
-  - Justice # DeltaV - Justice dept, replaces Service
+  - Service
   - Lawyer
-  #- Brig # DeltaV - Removed brig access
+  - Brig
   - Maintenance
-  special: # Goobstation - Everyone knows lawyers are soulless.
-  - !type:AddComponentSpecial
-    components:
-    - type: Condemned
-      soulOwnedNotDevil: true
 
 - type: startingGear
   id: LawyerGear
   equipment:
     shoes: ClothingShoesBootsLaceup
     id: LawyerPDA
-    ears: ClothingHeadsetJustice # DeltaV - Added lawyer to justice department
+    ears: ClothingHeadsetSecurity
   inhand:
     - BriefcaseBrownFilled
   storage:
     back:
     - RubberStampLawyer
     - BookSpaceLaw
-    - ForensicScanner # DeltaV - lets lawyers grab evidence
 
 - type: chameleonOutfit
   id: LawyerChameleonOutfit

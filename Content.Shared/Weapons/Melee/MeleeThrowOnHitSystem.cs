@@ -89,7 +89,6 @@ public sealed class MeleeThrowOnHitSystem : EntitySystem
     {
         var attemptEvent = new AttemptMeleeThrowOnHitEvent(target, user);
         RaiseLocalEvent(ent.Owner, ref attemptEvent);
-        RaiseLocalEvent(target, ref attemptEvent); // DeltaV - Let probers cancel it
 
         if (attemptEvent.Cancelled)
             return;

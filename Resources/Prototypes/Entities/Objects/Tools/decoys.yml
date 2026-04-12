@@ -119,7 +119,7 @@
   description: Upon closer inspection, this Syndicate juggernaut is actually a balloon.
   components:
   - type: Sprite
-    sprite: _DV/Objects/Tools/Decoys/juggernaut_decoy.rsi # DeltaV
+    sprite: Objects/Tools/Decoys/juggernaut_decoy.rsi
     layers:
     - state: jballoon
       map: ["unfoldedLayer"]

@@ -20,7 +20,7 @@ public sealed partial class ScrubberControl : BoxContainer
     private string _address;
 
     public event Action<string, IAtmosDeviceData>? ScrubberDataChanged;
-    public event Action<IAtmosDeviceData>? ScrubberDataCopied;
+	public event Action<IAtmosDeviceData>? ScrubberDataCopied;
 
     private CheckBox _enabled => CEnableDevice;
     private CollapsibleHeading _addressLabel => CAddress;
@@ -36,6 +36,7 @@ public sealed partial class ScrubberControl : BoxContainer
 
     public ScrubberControl(GasVentScrubberData data, string address)
     {
+
         IoCManager.InjectDependencies(this);
         var atmosphereSystem = _entMan.System<SharedAtmosphereSystem>();
 

@@ -5,9 +5,8 @@
   - !type:JobRequirementLoadoutEffect
     requirement:
       !type:DepartmentTimeRequirement
-      department: Epistemics
+      department: Science
       time: 60h
-
 
 # Head
 - type: startingGear

@@ -9,27 +9,11 @@
     sprite: Clothing/OuterClothing/Suits/eva.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/eva.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Suits/eva.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-monkey:
-      - state: equipped-OUTERCLOTHING-monkey
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: Tag
     tags:
     - SuitEVA
     - MonkeyWearable
-    - CorgiWearable
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV
 
 #Syndicate EVA
 - type: entity
@@ -42,26 +26,11 @@
     sprite: Clothing/OuterClothing/Suits/eva_syndicate.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/eva_syndicate.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Suits/eva_syndicate.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-monkey:
-      - state: equipped-OUTERCLOTHING-monkey
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: Tag
     tags:
     - SuitEVA
     - MonkeyWearable
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV
   - type: StaticPrice
     price: 1000 # Helmet is 500
 
@@ -76,22 +45,6 @@
     sprite: Clothing/OuterClothing/Suits/eva_emergency.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/eva_emergency.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Suits/eva_emergency.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-monkey:
-      - state: equipped-OUTERCLOTHING-monkey
-      outerClothing-scurret:
-      - state: equipped-OUTERCLOTHING-scurret
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: ClothingSpeedModifier
     walkModifier: 0.7
     sprintModifier: 0.7
@@ -101,17 +54,16 @@
     coolingCoefficient: 0.5
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetEVALarge
+    slot: head
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
   - type: Tag
     tags:
     - CorgiWearable
     - ScurretWearable
     - MonkeyWearable
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
 
 #Prisoner EVA
 - type: entity
@@ -124,20 +76,6 @@
     sprite: Clothing/OuterClothing/Suits/eva_prisoner.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/eva_prisoner.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Suits/eva_prisoner.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-monkey:
-      - state: equipped-OUTERCLOTHING-monkey
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: ClothingSpeedModifier
     walkModifier: 0.7
     sprintModifier: 0.7
@@ -150,7 +88,6 @@
     - SuitEVA
     - MonkeyWearable
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV
 
 #NTSRA Voidsuit / Ancient Voidsuit
 - type: entity
@@ -182,18 +119,6 @@
   - type: Appearance
   - type: Clothing
     sprite: Clothing/OuterClothing/Hardsuits/paramed.rsi
-    clothingVisuals: # Delta V - Need this for harpies
-      outerClothing:
-      - state: equipped-OUTERCLOTHING
-      outerClothing-harpy:
-      - sprite: _DV/Clothing/OuterClothing/Hardsuits/paramed.rsi
-        state: equipped-OUTERCLOTHING-harpy
-      outerClothing-vox:
-      - state: equipped-OUTERCLOTHING-vox
-      outerClothing-reptilian:
-      - state: equipped-OUTERCLOTHING-reptilian
-      outerClothing-dog:
-      - state: equipped-OUTERCLOTHING-dog
   - type: PressureProtection
     highPressureMultiplier: 0.5
     lowPressureMultiplier: 1000
@@ -216,20 +141,17 @@
     stealGroup: ClothingOuterHardsuitVoidParamed
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetVoidParamed
-    slot: head
   - type: ItemToggle
     onUse: false
     soundActivate:
       path: /Audio/Items/flashlight_on.ogg
     soundDeactivate:
       path: /Audio/Items/flashlight_off.ogg
-  # Begin DeltaV Removals - Sound spam bad
-  #- type: ItemToggleActiveSound
-  #  activeSound:
-  #    path: /Audio/Effects/Vehicle/ambulancesiren.ogg #not the best sound, but after looking through all of current freesound regarding sirens and ambulance, this was the best compromise
-  #    params:
-  #      volume: -4
-  # End DeltaV Removals
+  - type: ItemToggleActiveSound
+    activeSound:
+      path: /Audio/Effects/Vehicle/ambulancesiren.ogg #not the best sound, but after looking through all of current freesound regarding sirens and ambulance, this was the best compromise
+      params:
+        volume: -4
   - type: UseDelay
     delay: 1.0
   - type: ToggleClothing
@@ -246,9 +168,6 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
   - type: Tag
     tags:
-    - CorgiWearable
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites

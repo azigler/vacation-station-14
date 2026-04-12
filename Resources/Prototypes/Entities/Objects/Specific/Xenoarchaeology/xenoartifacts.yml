@@ -42,10 +42,8 @@
         showEnts: False
         occludes: True
         ents: []
-  - type: Psionic # DeltaV - sentient artifacts are psionic
   # These components are needed for certain triggers to work.
   - type: RadiationReceiver
-    selfSourceMultiplier: 0.1 # DeltaV - a radiation effect triggering a radiation trigger on the same artifact is often annoying
   - type: Reactive
     groups:
       Flammable: [Touch]
@@ -53,7 +51,8 @@
       Acidic: [Touch]
 
 - type: entity
-  id: ActionSentientArtifactActivate
+  parent: BaseAction
+  id: ActionArtifactActivate
   name: Activate Artifact
   description: Activate yourself, causing chaos to those near you.
   components:
@@ -64,38 +63,3 @@
     useDelay: 300
   - type: InstantAction
     event: !type:ArtifactSelfActivateEvent
-    
-- type: entity
-  id: SimpleXenoArtifact
-  parent: ComplexXenoArtifact
-  name: "Simple Artifact"
-  description: "A simple xeno artifact placeholder."
-  components: []
-
-- type: entity
-  id: MediumXenoArtifact
-  parent: ComplexXenoArtifact
-  name: "Medium Artifact"
-  description: "A medium xeno artifact placeholder."
-  components: []
-
-- type: entity
-  id: SimpleXenoArtifactItem
-  parent: ComplexXenoArtifactItem
-  name: "Simple Artifact Item"
-  description: "A simple artifact item placeholder."
-  components: []
-
-- type: entity
-  id: MediumXenoArtifactItem
-  parent: ComplexXenoArtifactItem
-  name: "Medium Artifact Item"
-  description: "A medium artifact item placeholder."
-  components: []
-
-- type: entity
-  id: VariedXenoArtifactItem
-  parent: ComplexXenoArtifactItem
-  name: "Varied Artifact Item"
-  description: "A varied artifact item placeholder."
-  components: []

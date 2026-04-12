@@ -43,7 +43,7 @@
     - map: ["foodSequenceLayers"]
   - type: FoodSequenceStartPoint
     key: Burger
-    maxLayers: 6 # DeltaV, was 10
+    maxLayers: 10
     startPosition: 0, 0
     offset: 0, 0.07
     minLayerOffset: -0.05, 0
@@ -545,8 +545,7 @@
       food:
         maxVol: 25
         reagents:
-        # Funkychem - bicaridine -> salicylic acid
-        - ReagentId: SalicylicAcid #keeping it somewhat consistent with the meat itself
+        - ReagentId: Bicaridine #keeping it somewhat consistent with the meat itself
           Quantity: 7
         - ReagentId: Vitamin
           Quantity: 12
@@ -721,8 +720,6 @@
   name: fillet-o-carp burger
   description: Almost like a carp is yelling somewhere...
   components:
-  - type: Sprite
-    state: fish
   - type: Item
     storedOffset: 0,1
     inhandVisuals:
@@ -742,6 +739,8 @@
     flavors:
       - bun
       - fishy
+  - type: Sprite
+    state: fish
   - type: Tag
     tags:
     - Meat

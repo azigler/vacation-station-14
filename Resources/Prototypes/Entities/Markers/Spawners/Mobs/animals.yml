@@ -35,16 +35,18 @@
     layers:
     - state: green
     - state: ai
-  - type: RandomSpawner
-    prototypes:
-    - MobCat
-    - MobCatCalico
-    - MobCatCaracal
-    - MobCatKitten
-    rarePrototypes:
-    - MobCatSpace
-    - MobCatShadow # DeltaV - Make it a small chance for it to spawn.
-    rareChance: 0.05
+  - type: EntityTableSpawner
+    table: !type:GroupSelector
+      children:
+      - id: MobCatSpace
+        weight: 5
+      - !type:GroupSelector
+        weight: 95
+        children:
+        - id: MobCat
+        - id: MobCatCalico
+        - id: MobCatCaracal
+        - id: MobCatKitten
 
 - type: entity
   parent: MarkerBase
@@ -245,35 +247,33 @@
     prototypes:
     - MobPenguin
 
-# DeltaV - not ported for some reason
-#- type: entity
-#  parent: MarkerBase
-#  id: SpawnMobReindeerBuck
-#  name: Reindeer Buck Spawner
-#  components:
-#  - type: Sprite
-#    layers:
-#    - state: green
-#    - state: reindeer_buck_still
-#      sprite: Mobs/Animals/reindeer_buck.rsi
-#  - type: ConditionalSpawner
-#    prototypes:
-#    - MobReindeerBuck
+- type: entity
+  parent: MarkerBase
+  id: SpawnMobReindeerBuck
+  name: Reindeer Buck Spawner
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: reindeer_buck_still
+      sprite: Mobs/Animals/reindeer_buck.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobReindeerBuck
 
-# DeltaV - not ported for some reason
-#- type: entity
-#  parent: MarkerBase
-#  id: SpawnMobReindeerDoe
-#  name: Reindeer Doe Spawner
-#  components:
-#  - type: Sprite
-#    layers:
-#    - state: green
-#    - state: reindeer_doe_still
-#      sprite: Mobs/Animals/reindeer_doe.rsi
-#  - type: ConditionalSpawner
-#    prototypes:
-#    - MobReindeerDoe
+- type: entity
+  parent: MarkerBase
+  id: SpawnMobReindeerDoe
+  name: Reindeer Doe Spawner
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: reindeer_doe_still
+      sprite: Mobs/Animals/reindeer_doe.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobReindeerDoe
 
 - type: entity
   parent: MarkerBase

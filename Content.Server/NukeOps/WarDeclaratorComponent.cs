@@ -50,7 +50,7 @@ public sealed partial class WarDeclaratorComponent : Component
     /// Time allowed for declaration of war
     /// </summary>
     [DataField]
-    public float WarDeclarationDelay = 8.0f; // DeltaV - was 6.0
+    public float WarDeclarationDelay = 6.0f;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoPausedField]
     public TimeSpan DisableAt;

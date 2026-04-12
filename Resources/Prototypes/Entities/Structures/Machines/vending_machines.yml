@@ -1,4 +1,4 @@
-# base
+﻿# base
 
 - type: entity
   id: VendingMachine
@@ -264,7 +264,7 @@
   - type: GuideHelp
     guides:
     - Bartender
-    #- Drinks # DeltaV - doesn't exist
+    - Drinks
 
 - type: entity
   parent: VendingMachineBooze
@@ -1017,7 +1017,7 @@
   - type: SpeakOnUIClosed
     pack: SecTechGoodbyes
   - type: Sprite
-    sprite: _DV/Structures/Machines/VendingMachines/sec.rsi # DeltaV - resprite security vendors
+    sprite: Structures/Machines/VendingMachines/sec.rsi
     layers:
     - state: "off"
       map: ["enum.VendingMachineVisualLayers.Base"]
@@ -1356,7 +1356,7 @@
     - state: panel
       map: ["enum.WiresVisualLayers.MaintenancePanel"]
   - type: AccessReader
-    access: [["Robotics"]] # DeltaV: Robotics access instead of Research
+    access: [["Research"]]
   - type: PointLight
     radius: 1.5
     energy: 3.0
@@ -1464,12 +1464,12 @@
   name: Salvage Vendor
   description: A dwarf's best friend!
   components:
-  #- type: VendingMachine # DeltaV: Use mining points instead of limited stock
-  #  pack: SalvageEquipmentInventory
-  #  offState: off
-  #  brokenState: broken
-  #  normalState: normal-unshaded
-  #  denyState: deny-unshaded
+  - type: VendingMachine
+    pack: SalvageEquipmentInventory
+    offState: off
+    brokenState: broken
+    normalState: normal-unshaded
+    denyState: deny-unshaded
   - type: Sprite
     sprite: Structures/Machines/VendingMachines/mining.rsi
     layers:
@@ -1484,21 +1484,6 @@
     radius: 1.5
     energy: 3.0
     color: "#b89f25"
-  - type: ShopVendor # DeltaV
-    pack: SalvageVendorInventory
-    offState: off
-    brokenState: broken
-    normalState: normal-unshaded
-    denyState: deny-unshaded
-  - type: PointsVendor # DeltaV
-  - type: UserInterface # DeltaV: Replace vending machine BUI with shop vendor
-    interfaces:
-      enum.VendingMachineUiKey.Key:
-        type: ShopVendorBoundUserInterface
-      enum.WiresUiKey.Key:
-        type: WiresBoundUserInterface
-  - type: Wires # DeltaV: Use shop vendor wires layout
-    layoutId: ShopVendor
   - type: AccessReader
     access: [["Salvage"]]
   - type: GuideHelp
@@ -1598,7 +1583,7 @@
     - state: panel
       map: ["enum.WiresVisualLayers.MaintenancePanel"]
   - type: AccessReader
-    access: [["Justice"]]
+    access: [["Lawyer"]]
 
 - type: entity
   parent: VendingMachine
@@ -1616,7 +1601,7 @@
   - type: SpeakOnUIClosed
     pack: GenericVendGoodbyes
   - type: Sprite
-    sprite: _DV/Structures/Machines/VendingMachines/secdrobe.rsi # DeltaV - resprite security vendors
+    sprite: Structures/Machines/VendingMachines/secdrobe.rsi
     layers:
     - state: "off"
       map: ["enum.VendingMachineVisualLayers.Base"]
@@ -1691,8 +1676,8 @@
 - type: entity
   parent: VendingMachine
   id: VendingMachineCargoDrobe
-  name: LogiDrobe # DeltaV - Logistics Department replacing Cargo
-  description: A highly advanced vending machine for buying logistics related clothing for free. # DeltaV - Logistics Department replacing Cargo
+  name: CargoDrobe
+  description: A highly advanced vending machine for buying cargo related clothing for free.
   components:
   - type: VendingMachine
     pack: CargoDrobeInventory
@@ -1912,7 +1897,7 @@
   - type: SpeakOnUIClosed
     pack: GenericVendGoodbyes
   - type: Sprite
-    sprite: _DV/Structures/Machines/VendingMachines/detdrobe.rsi # DeltaV - resprite security vendors
+    sprite: Structures/Machines/VendingMachines/detdrobe.rsi
     layers:
     - state: "off"
       map: ["enum.VendingMachineVisualLayers.Base"]
@@ -2042,7 +2027,7 @@
     - state: panel
       map: ["enum.WiresVisualLayers.MaintenancePanel"]
   - type: AccessReader
-    access: [["Robotics"]] # DeltaV: Robotics access instead of Research
+    access: [["Research"]]
 
 - type: entity
   parent: VendingMachine
@@ -2204,27 +2189,27 @@
 - type: entity
   parent: VendingMachine
   id: VendingMachineTankDispenserEVA
-  suffix: EVA [O2, N2, H2O] # DeltaV - Added H2O.
+  suffix: EVA [O2, N2]
   name: gas tank dispenser
   description: A vendor for dispensing gas tanks.
   components:
   - type: VendingMachine
     pack: TankDispenserEVAInventory
   - type: Sprite
-    sprite: _DV/Structures/Machines/VendingMachines/tankdispenser.rsi #TODO add visualizer for remaining tanks as layers # Delta V - Changed Sprites
+    sprite: Structures/Machines/VendingMachines/tankdispenser.rsi #TODO add visualiser for remaining tanks as layers
     state: dispenser
 
 - type: entity
   parent: VendingMachine
   id: VendingMachineTankDispenserEngineering
-  suffix: ENG [O2, Plasma, H2O] # DeltaV - Added H2O.
+  suffix: ENG [O2, Plasma]
   name: gas tank dispenser
   description: A vendor for dispensing gas tanks. This one has an engineering livery.
   components:
   - type: VendingMachine
     pack: TankDispenserEngineeringInventory
   - type: Sprite
-    sprite: _DV/Structures/Machines/VendingMachines/tankdispenser.rsi #TODO add visualizer for remaining tanks as layers # Delta V - Changed Sprites
+    sprite: Structures/Machines/VendingMachines/tankdispenser.rsi #TODO add visualiser for remaining tanks as layers
     layers:
     - state: dispenser
     - state: dispensereng
@@ -2262,7 +2247,7 @@
   parent: VendingMachineChemicals
   id: VendingMachineChemicalsSyndicate
   name: SyndieJuice
-  description: Not made with freshly squeezed syndies I hope. Backwards compatible with standard ChemVend restocks. # DeltaV: Add chemvend part
+  description: Not made with freshly squeezed syndies I hope.
   components:
   - type: VendingMachine
     pack: ChemVendInventorySyndicate

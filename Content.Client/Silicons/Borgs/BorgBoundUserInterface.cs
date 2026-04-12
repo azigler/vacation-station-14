@@ -1,4 +1,3 @@
-using Content.Shared._DV.Silicons.Borgs; // DeltaV
 using Content.Shared.Silicons.Borgs;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
@@ -26,7 +25,6 @@ public sealed class BorgBoundUserInterface : BoundUserInterface
         {
             SendPredictedMessage(new BorgEjectBrainBuiMessage());
         };
-        _menu.IdChipButtonPressed += () => SendMessage(new BorgEjectIdChipMessage()); // DeltaV
 
         _menu.EjectBatteryButtonPressed += () =>
         {
@@ -48,7 +46,6 @@ public sealed class BorgBoundUserInterface : BoundUserInterface
     {
         _menu?.UpdateBatteryButton();
         _menu?.UpdateBrainButton();
-        _menu?.UpdateIdChipButton(); // DeltaV
         _menu?.UpdateModulePanel();
     }
 }

@@ -9,8 +9,8 @@
           prob: 0.5
         - proto: AmmoTechFabCircuitboard
           cost: 2
-        # - proto: AutolatheMachineCircuitboard # DeltaV - departamental lathes
-        #   cost: 2
+        - proto: AutolatheMachineCircuitboard
+          cost: 2
         - proto: BiomassReclaimerMachineCircuitboard
           cost: 2
         - proto: BluespaceBeaker
@@ -54,7 +54,7 @@
         - proto: PowerCellAntiqueProto
           cost: 5
           prob: 0.5
-        # - proto: ProtolatheMachineCircuitboard # DeltaV - departamental lathes
+        - proto: ProtolatheMachineCircuitboard
         - proto: RandomArtifactSpawner
           cost: 2
         - proto: RandomCargoCorpseSpawner
@@ -105,15 +105,6 @@
         - proto: WeaponTeslaGun
           prob: 0.1
           cost: 2
-        # Begin DeltaV Additions
-        - proto: AncientBookDamagedCommon
-        - proto: AncientBookDamagedUncommon
-          prob: 0.7
-          cost: 2
-        - proto: AncientBookDamagedRare
-          prob: 0.3
-          cost: 4
-        # End DeltaV Additions
 
 # Mob loot table
 
@@ -148,7 +139,7 @@
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreCoal # DeltaV: replace salt with coal
+      proto: OreSalt
 
 # - Medium value
 - type: salvageLoot

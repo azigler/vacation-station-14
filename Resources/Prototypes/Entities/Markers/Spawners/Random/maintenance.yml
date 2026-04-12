@@ -95,6 +95,7 @@
     - !type:GroupSelector
       weight: 23
       children:
+      - id: TravelCamera
       - id: ClothingNeckCloakHerald
       - id: ClothingHeadHelmetTemplar
       # Cloaks
@@ -102,7 +103,6 @@
         children:
         - id: ClothingNeckCloakTrans
         - id: ClothingNeckCloakAdmin
-        - id: ClothingNeckCloakBoat # DeltaV - adds boat cloak to maints spawner. Makes more sense than admin cloak o.o
         - id: ClothingNeckCloakMoth
         - id: ClothingNeckCloakVoid
         - id: ClothingNeckCloakGoliathCloak
@@ -166,8 +166,6 @@
       - id: CigarGold
       - id: ClothingUniformJumpsuitFamilyGuy
       - id: WristwatchGold
-      - id: ClothingBeltFoamSheathFilled # DeltaV - Add small chance of it spawning in maints locker.
-      - id: WeaponLaserTagGun # DeltaV - Add small chance of it spawning in maints locker.
       - id: RubberStampGreytide
       - id: MysteryLighterBox
 
@@ -205,10 +203,6 @@
         children:
         - id: NitrogenTankFilled
         - id: DoubleEmergencyNitrogenTankFilled
-      - !type:GroupSelector # DeltaV - Random water vapor tanks spawn too
-        children:
-        - id: WaterVaporTankFilled
-        - id: DoubleEmergencyWaterVaporTankFilled
       - id: EmergencyFunnyOxygenTankFilled
         weight: 0.5
       - !type:GroupSelector
@@ -300,10 +294,8 @@
       - id: ResearchDisk5000
       - id: PetCarrier
       - id: DrinkMopwataBottleRandom
-      #- id: SpectralLocator # DeltaV: no ghost locator
-      - id: ClothingShoesRealJordans # DeltaV
-      - id: ClothingShoesCreasedJordans # DeltaV
-      #- id: LidSalami # Delta V - bloat
+      - id: SpectralLocator
+      - id: LidSalami
         weight: 0.05
 
 - type: entity
@@ -389,16 +381,16 @@
   id: MaintenancePlantSpawner
   parent: MarkerBase
   components:
-    - type: Sprite
-      layers:
-        - state: red
-        - sprite: Objects/Misc/spaceshroom.rsi
-          state: structure
-    - type: RandomSpawner
-      prototypes:
-        - Spaceshroom
-      chance: 0.6
-      offset: 0.0
+  - type: Sprite
+    layers:
+      - state: red
+      - sprite: Objects/Misc/spaceshroom.rsi
+        state: structure
+  - type: EntityTableSpawner
+    table:
+      id: Spaceshroom
+      prob: 0.6
+    offset: 0.0
 
 
 - type: entityTable

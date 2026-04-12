@@ -16,7 +16,6 @@
   - type: Tag
     tags:
     - Sidearm
-    - ConcealCarry # DeltaV - allow revolvers to be stowed in military boots for now
   - type: Clothing
     sprite: Objects/Weapons/Guns/Revolvers/deckard.rsi
     quickEquip: false
@@ -96,6 +95,8 @@
     capacity: 6
     chambers: [ True, True, True, True, True, True ]
     ammoSlots: [ null, null, null, null, null, null ]
+  - type: StealTarget
+    stealGroup: OfficerHandgun
 
 - type: entity
   name: Mateba

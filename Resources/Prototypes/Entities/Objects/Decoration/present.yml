@@ -96,14 +96,6 @@
         orGroup: GiftPool
       - id: PlushieDiona
         orGroup: GiftPool
-      - id: PlushieMoth
-        orGroup: GiftPool
-      - id: PlushieMothRandom # Nyanotrasen Random Moth Plushie
-        orGroup: GiftPool
-      - id: PlushieMothBartender # Nyanotrasen Moth Bartender Plushie
-        orGroup: GiftPool
-      - id: PlushieMothMusician # Nyanotrasen Moth Musician Plushie
-        orGroup: GiftPool
       - id: PlushieArachind
         orGroup: GiftPool
       - id: ClothingNeckCloakMoth
@@ -384,30 +376,6 @@
         orGroup: GiftPool
       - id: RGBStaff
         orGroup: GiftPool
-        # Begin DeltaV - see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-      - id: ToyRenault
-        orGroup: GiftPool
-      - id: ToySiobhan
-        orGroup: GiftPool
-      - id: PlushieIPC
-        orGroup: GiftPool
-      - id: PlushieFelinid
-        orGroup: GiftPool
-      - id: PlushieOni
-        orGroup: GiftPool
-      - id: PlushieHarpy
-        orGroup: GiftPool
-      - id: PlushieRodentia
-        orGroup: GiftPool
-      - id: PlushieFeroxi
-        orGroup: GiftPool
-      - id: PlushieChitinid
-        orGroup: GiftPool
-      - id: PlushieKitsune
-        orGroup: GiftPool
-      - id: PlushieThaven
-        orGroup: GiftPool
-        # End DeltaV
     sound:
       path: /Audio/Effects/unwrap.ogg
 

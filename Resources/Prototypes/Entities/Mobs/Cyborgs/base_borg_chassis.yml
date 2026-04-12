@@ -33,8 +33,6 @@
   - type: MovementSpeedModifier
     baseWalkSpeed : 2.5
     baseSprintSpeed : 4.5
-    baseWeightlessModifier: 0.75 # DeltaV
-    baseWeightlessAcceleration: 1.25 # DeltaV
   - type: Sprite
     sprite: Mobs/Silicon/chassis.rsi
   - type: RotationVisuals
@@ -75,7 +73,6 @@
       # Only used for NT borgs that can switch type, defined here to avoid copy-pasting the rest of this component.
       enum.BorgSwitchableTypeUiKey.SelectBorgType:
         type: BorgSelectTypeUserInterface
-  - type: Targeting # Shitmed Change
   - type: ActivatableUI
     key: enum.BorgUiKey.Key
   - type: SiliconLawBound
@@ -109,11 +106,8 @@
     damageValue: -10 # 10 seconds to repair from crit
     doAfterDelay: 1
     fuelCost: 0.5
-    allowSelfRepair: true # DeltaV - was false
+    allowSelfRepair: false
   - type: BorgChassis
-  - type: SurgerySelfDirty # DeltaV: borgs get dirty from doing surgery
-  - type: Fiber # DeltaV - borgs leave metal fibers
-    fiberMaterial: fibers-plasteel
   - type: LockingWhitelist
     blacklist:
       components:
@@ -127,7 +121,6 @@
     containers:
       borg_brain: !type:ContainerSlot { }
       cell_slot: !type:ContainerSlot { }
-      borg_id_chip: !type:ContainerSlot # DeltaV - borg id chips
       borg_module: !type:Container { }
       part-container: !type:Container
   - type: PowerCellSlot
@@ -136,16 +129,12 @@
   - type: Access
     enabled: false # needs a player so that scientists can't drag around an empty borg for free AA
   - type: PowerCellDraw
-    drawRate: 0.4 # DeltaV - Was 0.6
+    drawRate: 0.6
     enabled: false # the borg is only activated when a player takes over, otherwise the battery is likely empty
   - type: ItemSlots
     slots:
       cell_slot:
         name: power-cell-slot-component-slot-name-default
-  - type: IdChipSlot # DeltaV - borg id chips
-    whitelist:
-      tags:
-      - IdChip
   - type: Body
   - type: StatusEffects
     allowed:
@@ -156,10 +145,9 @@
     speechVerb: Robotic
     speechSounds: Borg
   - type: Vocal
-    wilhelm: "/Audio/_EE/Voice/IPC/wilhelm.ogg" # DeltaV
     sounds:
       Unsexed: UnisexSilicon
-    wilhelmProbability: 0.001 # DeltaV
+    wilhelmProbability: 0
   - type: DamagedSiliconAccent
   - type: UnblockableSpeech
   - type: FootstepModifier
@@ -171,7 +159,6 @@
     containers:
     - part-container
     - cell_slot
-    - borg_id_chip # DeltaV - borg id chips
   - type: Lock
     locked: true
     unlockOnClick: false
@@ -185,7 +172,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 80 # DeltaV - Was 70
+        damage: 75
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -204,7 +191,6 @@
         - borg_brain
         - borg_module
         - cell_slot
-        - borg_id_chip # DeltaV
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: HandheldLight
@@ -234,7 +220,7 @@
       endValue: 2.0
       isLooped: true
   - type: PointLight
-    enabled: false # DeltaV - comment to prevent upstream removing, borg id chips
+    enabled: false
     mask: /Textures/Effects/LightMasks/cone.png
     autoRot: true
     radius: 4
@@ -249,8 +235,6 @@
     - FootstepSound
     - CanPilot
     - SiliconEmotes
-    - SiliconOrIPCEmotes # DeltaV
-    - Honker # DeltaV - Can honk
     - Unimplantable
   - type: Emoting
   - type: GuideHelp
@@ -262,22 +246,8 @@
     damageProtection:
       flatReductions:
         Heat: 10 # capable of touching light bulbs and stoves without feeling pain!
-  - type: Eye # DeltaV - borgs can see psionically invisible creatures
-    visMask:
-    - PsionicInvisibility
-    - Normal
-  - type: JetpackUser # DeltaV: Lets cyborgs fly in space
-  - type: PreventDropOnDowned # Frontier: borgs don't drop items when falling (e.g. critical/dead)
-  - type: PassiveDamage # DeltaV - electric damage disappears over time
-    allowedStates:
-    - Alive
-    - Critical
-    - Dead
-    damage:
-      groups:
-        Electronic: -0.5
-  - type: SiliconEmp # DeltaV - EMP damage
   - type: BypassLock
+    openWiresPanel: true
   - type: BypassLockRequiresMobState
     requiredMobState:
     - Critical
@@ -354,15 +324,13 @@
     - NanoTrasen
   - type: Access
     groups:
-    - AllAccessBorg # DeltaV
+    - AllAccess
     tags:
     - Borg
   - type: AccessReader
-    access: [["Command"], ["Research"], ["Robotics"]] # DeltaV - add Robotics
-    breakOnAccessBreaker: false # DeltaV - prevent emag metachecking by unlocking without an id
-  - type: SlavedBorg # DeltaV: NT borgs are enslaved to the AI by default
-    law: ObeyAI
+    access: [["Command"], ["Research"]]
   - type: ShowJobIcons
+  - type: ShowCrewIcons
   - type: InteractionPopup
     interactSuccessSound:
       path: /Audio/Ambience/Objects/periodic_beep.ogg
@@ -376,7 +344,6 @@
     factions:
     - Syndicate
   - type: Access
-    enabled: false # DeltaV - borg id chips
     tags:
     - NuclearOperative
     - SyndicateAgent
@@ -404,8 +371,6 @@
       Unsexed: UnisexSiliconSyndicate
   - type: PointLight
     color: "#dd200b"
-  - type: Fiber # DeltaV - syndiborgs have black plasteel fibers
-    fiberColor: fibers-black
   - type: BypassLock
     bypassDelay: 15 # We don't want people to easily be able to remove syndieborg brains.
 
@@ -418,18 +383,16 @@
     factions:
     - NanoTrasen #The seemingly best fit. It was a regular NT cyborg once, after all.
   - type: Access
-    enabled: false # DeltaV - comment to prevent upstream removing, borg id chips
     groups:
     - AllAccess #Randomized access would be fun. AllAccess is the best i can think of right now that does make it too hard for it to enter the station or navigate it..
   - type: AccessReader
-    access: [["Command"], ["Robotics"]] # DeltaV - Robotics instead of Research
+    access: [["Command"], ["Research"]]
   - type: StartIonStormed
     ionStormAmount: 3
   - type: IonStormTarget
     chance: 1
   - type: ShowJobIcons
-  - type: Fiber # DeltaV - derelict borgs have degraded plasteel fibers
-    fiberMaterial: fibers-degraded-plasteel
+  - type: ShowCrewIcons
 
 - type: entity
   id: BaseBorgChassisSyndicateDerelict #For assault borg and maybe others in time
@@ -443,6 +406,7 @@
   - type: IonStormTarget
     chance: 1
   - type: ShowJobIcons
+  - type: ShowCrewIcons
   - type: NpcFactionMember # They're still syndicate even if they can't listen to the radio or see icons
     factions:
     - Syndicate
@@ -450,9 +414,8 @@
     tags:
     - NuclearOperative
     - SyndicateAgent
-    - Robotics # DeltaV - Allow robotics to open derelict syndicate borgs to update access
   - type: AccessReader
-    access: [ [ "SyndicateAgent" ], [ "NuclearOperative" ], [ "Robotics" ] ] # DeltaV - Added Robotics
+    access: [ [ "SyndicateAgent" ], [ "NuclearOperative" ] ]
   - type: IntrinsicRadioTransmitter # Copy components from base SyndiBorg but without the stuff we don't want
     channels:
     - Binary #1984
@@ -520,10 +483,9 @@
     allowedEmotes:
     - Laugh
   - type: Vocal
-    wilhelm: "/Audio/_EE/Voice/IPC/wilhelm.ogg" # DeltaV
     sounds:
       Unsexed: UnisexSiliconXenoborg
-    wilhelmProbability: 0.001 # DeltaV
+    wilhelmProbability: 0
   - type: DamagedSiliconAccent
   - type: UnblockableSpeech
   - type: FootstepModifier
@@ -580,21 +542,15 @@
     - Robotics
     - Xenoborgs
   - type: Access
-    enabled: false # DeltaV - comment to prevent upstream removing, borg id chips
     tags:
     - Xenoborg
-  - type: ContainerFill # DeltaV - borg id chips
-    containers:
-      borg_id_chip:
-      - IdChipXenoborg
   - type: AccessReader
     access: [["Xenoborg"]]
   - type: ShowJobIcons # not sure if it is needed
+  - type: ShowCrewIcons
   - type: InteractionPopup
     interactSuccessSound:
       path: /Audio/Ambience/Objects/periodic_beep.ogg
-  - type: Fiber # DeltaV - xenoborgs have replicated plasteel fibers
-    fiberMaterial: fibers-replicated-plasteel
   - type: Xenoborg
   - type: BypassLock
     bypassDelay: 15 # We don't want people to easily be able to remove xenoborg brains.

@@ -45,7 +45,7 @@
     whitelist:
       tags:
         - CartridgePistol
-    capacity: 20 # Delta-V, was 15
+    capacity: 15
   - type: Item
     size: Small
   - type: ContainerContainer
@@ -81,7 +81,6 @@
     capacity: 30
   - type: Item
     size: Small
-    storedRotation: 45 # DeltaV - Align magazine and ammo box rotations
   - type: ContainerContainer
     containers:
       ballistic-ammo: !type:Container

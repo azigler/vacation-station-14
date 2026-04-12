@@ -8,16 +8,15 @@
     state: seedextractor
   discipline: CivilianServices
   tier: 1
-  cost: 7500 # Delta Price. 5000 is pre-adjustment.
+  cost: 5000
   recipeUnlocks:
-  - PlantBagOfHolding # DeltaV
   - SeedExtractorMachineCircuitboard
   - HydroponicsTrayMachineCircuitboard
   - ReagentGrinderIndustrialMachineCircuitboard
 
 - type: technology
   id: CritterMechs
-  name: research-technology-civilian-mechs # DeltaV
+  name: research-technology-critter-mechs
   icon:
     sprite: Objects/Specific/Mech/mecha.rsi
     state: hamtr
@@ -34,17 +33,6 @@
   - HamtrPeripheralsElectronics
   - MechEquipmentGrabberSmall
   - VimHarness
-  # Begin DeltaV Additions - moved from HONK tech
-  - HonkerHarness
-  - HonkerLArm
-  - HonkerRArm
-  - HonkerLLeg
-  - HonkerRLeg
-  - HonkerCentralElectronics
-  - HonkerPeripheralsElectronics
-  - HonkerTargetingElectronics
-  - MechEquipmentHorn
-  # End DeltaV Additions
 
 - type: technology
   id: AudioVisualCommunication
@@ -94,7 +82,6 @@
   - FatExtractorMachineCircuitboard
   - BiofabricatorMachineCircuitboard
   - BiomassReclaimerMachineCircuitboard
-  - AdvancedMicrowaveMachineCircuitBoard # DeltaV
 
 # Tier 2
 
@@ -115,8 +102,8 @@
   - FauxTileLightAstroGrass
   - FauxTileAstroIce
   - FauxTileAstroSnow
-  - FauxTileMowedAstroSnow # DeltaV
   - FauxTileAstroAsteroidSand
+  - FauxTileAstroAsteroidSandBorderless
   - FauxTileDesertAstroSand
   - FauxTileAstroIronsand
   - FauxTileAstroIronsandBorderless
@@ -127,8 +114,8 @@
   icon:
     sprite: Structures/Machines/stasis_bed.rsi
     state: icon
-  discipline: Biochemical # DeltaV
-  tier: 1 # DeltaV - was 2
+  discipline: CivilianServices
+  tier: 2
   cost: 7500
   recipeUnlocks:
   - StasisBedMachineCircuitboard
@@ -142,8 +129,8 @@
   icon:
     sprite: Mobs/Silicon/chassis.rsi
     state: medical
-  discipline: Biochemical
-  tier: 1 # DeltaV - was 2
+  discipline: CivilianServices
+  tier: 2
   cost: 5000
   recipeUnlocks:
   - BorgModuleAdvancedTopical
@@ -162,29 +149,26 @@
   - AdvMopItem
   - MegaSprayBottle
   - BorgModuleAdvancedCleaning
-  - TrashBagOfHolding # DeltaV
 
-# Begin DeltaV Removals - waste of points nobody makes, moved into civilian mechs
-#- type: technology
-#  id: HONKMech
-#  name: research-technology-honk-mech
-#  icon:
-#    sprite: Objects/Specific/Mech/mecha.rsi
-#    state: honker
-#  discipline: CivilianServices
-#  tier: 2
-#  cost: 7500
-#  recipeUnlocks:
-#  - HonkerHarness
-#  - HonkerLArm
-#  - HonkerRArm
-#  - HonkerLLeg
-#  - HonkerRLeg
-#  - HonkerCentralElectronics
-#  - HonkerPeripheralsElectronics
-#  - HonkerTargetingElectronics
-#  - MechEquipmentHorn
-# End DeltaV Removals
+- type: technology
+  id: HONKMech
+  name: research-technology-honk-mech
+  icon:
+    sprite: Objects/Specific/Mech/mecha.rsi
+    state: honker
+  discipline: CivilianServices
+  tier: 2
+  cost: 7500
+  recipeUnlocks:
+  - HonkerHarness
+  - HonkerLArm
+  - HonkerRArm
+  - HonkerLLeg
+  - HonkerRLeg
+  - HonkerCentralElectronics
+  - HonkerPeripheralsElectronics
+  - HonkerTargetingElectronics
+  - MechEquipmentHorn
 
 - type: technology
   id: AdvancedSpray
@@ -226,18 +210,17 @@
 
 # Tier 3
 
-# DeltaV - Kill Speedboots
-# - type: technology
-#   id: QuantumFiberWeaving
-#   name: research-technology-quantum-fiber-weaving
-#   icon:
-#     sprite: Clothing/Shoes/Boots/speedboots.rsi
-#     state: icon
-#   discipline: CivilianServices
-#   tier: 3
-#   cost: 10000
-#   recipeUnlocks:
-#   - ClothingShoesBootsSpeed
+- type: technology
+  id: QuantumFiberWeaving
+  name: research-technology-quantum-fiber-weaving
+  icon:
+    sprite: Clothing/Shoes/Boots/speedboots.rsi
+    state: icon
+  discipline: CivilianServices
+  tier: 3
+  cost: 10000
+  recipeUnlocks:
+  - ClothingShoesBootsSpeed
 
 - type: technology
   id: BluespaceChemistry
@@ -245,7 +228,7 @@
   icon:
     sprite: Objects/Specific/Chemistry/beaker_bluespace.rsi
     state: beakerbluespace
-  discipline: Biochemical # DeltaV
+  discipline: CivilianServices
   tier: 3
   cost: 10000
   recipeUnlocks:
@@ -258,9 +241,9 @@
   icon:
     sprite: Objects/Weapons/Guns/Cannons/syringe_gun.rsi
     state: syringe_gun
-  discipline: Biochemical # DeltaV
-  tier: 1 # DeltaV - was 3
-  cost: 10000 # DeltaV - was 15000
+  discipline: CivilianServices
+  tier: 3
+  cost: 15000
   recipeUnlocks:
   - LauncherSyringe
   - MiniSyringe

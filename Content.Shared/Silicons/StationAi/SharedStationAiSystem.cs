@@ -72,8 +72,8 @@ public abstract partial class SharedStationAiSystem : EntitySystem
     // StationAiOverlay handles the static overlay. It also handles interaction blocking on client and server
     // for anything under it.
 
-    private EntityQuery<BroadphaseComponent> _broadphaseQuery;
-    private EntityQuery<MapGridComponent> _gridQuery;
+    [Dependency] private readonly EntityQuery<BroadphaseComponent> _broadphaseQuery = default!;
+    [Dependency] private readonly EntityQuery<MapGridComponent> _gridQuery = default!;
 
     private static readonly EntProtoId DefaultAi = "StationAiBrain";
     private readonly ProtoId<ChatNotificationPrototype> _downloadChatNotificationPrototype = "IntellicardDownload";
@@ -81,9 +81,6 @@ public abstract partial class SharedStationAiSystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
-
-        _broadphaseQuery = GetEntityQuery<BroadphaseComponent>();
-        _gridQuery = GetEntityQuery<MapGridComponent>();
 
         InitializeAirlock();
         InitializeHeld();
@@ -151,11 +148,6 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 
     private void OnAiAccessible(Entity<StationAiOverlayComponent> ent, ref AccessibleOverrideEvent args)
     {
-        // Begin DeltaV Additions
-        if (ent.Comp.Cosmetic)
-            return;
-        // End DeltaV Additions
-
         // We don't want to allow entities to access the AI just because the eye is nearby.
         // Only let the AI access entities through the eye.
         if (args.Accessible || args.User != ent.Owner)
@@ -173,10 +165,6 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 
     private void OnAiMenu(Entity<StationAiOverlayComponent> ent, ref MenuVisibilityEvent args)
     {
-        // Begin DeltaV Additions
-        if (ent.Comp.Cosmetic)
-            return;
-        // End DeltaV Additions
         args.Visibility &= ~MenuVisibility.NoFov;
     }
 
@@ -214,10 +202,6 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 
     private void OnAiInRange(Entity<StationAiOverlayComponent> ent, ref InRangeOverrideEvent args)
     {
-        // Begin DeltaV Additions
-        if (ent.Comp.Cosmetic)
-            return;
-        // End DeltaV Additions
         args.Handled = true;
         var targetXform = Transform(args.Target);
 
@@ -635,6 +619,29 @@ public abstract partial class SharedStationAiSystem : EntitySystem
         }
 
         return _blocker.CanComplexInteract(entity.Owner);
+    }
+
+    /// <summary>
+    /// Gets all alive AI minds and adds them to the inputted hashset, excluding one optional mind
+    /// </summary>
+    /// <param name="aliveAis">Hashset of alive AI minds</param>
+    /// <param name="exclude">Optional mind to exclude</param>
+    public void AddAliveAis(HashSet<Entity<MindComponent>> aliveAis, EntityUid? exclude = null)
+    {
+        var query = EntityQueryEnumerator<StationAiCoreComponent, StationAiHolderComponent>();
+
+        while (query.MoveNext(out var uid, out _, out var aiHolder))
+        {
+            // the player needs to have a mind and not be the excluded one +
+            // the player has to be alive
+            if (!TryGetHeld((uid, aiHolder), out var held) || _mobState.IsDead(held.Value))
+                continue;
+
+            if (!_mind.TryGetMind(held.Value, out var mind, out var mindComp) || mind == exclude)
+                continue;
+
+            aliveAis.Add((mind, mindComp));
+        }
     }
 }
 

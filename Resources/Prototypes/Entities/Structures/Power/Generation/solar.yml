@@ -172,7 +172,7 @@
   - type: Construction
     graph: SolarPanel
     node: solarpanel
-  #- type: SolarPanelReplacementMarker # DeltaV - we have a random solar panel spawner, this takes away mapper freedom e.g. having guaranteed good solars for a deadpop station
+  - type: SolarPanelReplacementMarker
 
 - type: entity
   id: SolarPanelBroken

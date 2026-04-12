@@ -9,7 +9,6 @@
         children:
         - id: CommsComputerCircuitboard
         - id: StationRecordsComputerCircuitboard
-        - id: IDComputerCircuitboard # DeltaV
 
 - type: entity
   parent: ToteBase
@@ -25,9 +24,6 @@
         - id: AtmosMonitoringComputerCircuitboard
         - id: PowerComputerCircuitboard
         - id: SolarControlComputerCircuitboard
-        - id: IDComputerCircuitboard # DeltaV
-        - id: EngineeringTechFabCircuitboard # DeltaV
-        - id: CircuitImprinterMachineCircuitboard # DeltaV
 
 - type: entity
   parent: ToteBase
@@ -40,9 +36,6 @@
         children:
         - id: MedicalTechFabCircuitboard
         - id: CargoRequestMedicalComputerCircuitboard
-        - id: IDComputerCircuitboard # DeltaV
-        - id: MedicalBiofabMachineBoard # DeltaV
-        - id: AutoclaveMachineCircuitboard # DeltaV
 
 - type: entity
   parent: ToteBase
@@ -96,15 +89,8 @@
         - id: CargoSaleComputerCircuitboard
         - id: CargoShuttleConsoleCircuitboard
         - id: SalvageMagnetMachineCircuitboard
-        #- id: SalvageJobBoardComputerCircuitboard # DeltaV - Uneeded because mining points
+        - id: SalvageJobBoardComputerCircuitboard
         - id: MailTeleporterMachineCircuitboard
-        # DeltaV Additions
-        - id: IDComputerCircuitboard
-        - id: MiningShuttleConsoleCircuitboard
-        - id: LogisticsTechFabCircuitboard
-        - id: SalvageExpeditionsComputerCircuitboard
-        - id: FundingAllocationComputerCircuitboard # To be removed when it's in techvault on all maps
-        # END DeltaV Additions
 
 - type: entity
   parent: BoxStamps
@@ -129,12 +115,10 @@
       storagebase: !type:AllSelector
         children:
         - id: CircuitImprinterMachineCircuitboard
-        #- id: ProtolatheMachineCircuitboard # DeltaV - Replaced with Epi fab
+        - id: ProtolatheMachineCircuitboard
         - id: ResearchComputerCircuitboard
         - id: CargoRequestScienceComputerCircuitboard
         - id: RoboticsConsoleCircuitboard
         - id: AnalysisComputerCircuitboard #Because sometimes round start artis just fucking explode on the pad.
         - id: ArtifactAnalyzerMachineCircuitboard
         - id: StationAiFixerCircuitboard
-        - id: IDComputerCircuitboard # DeltaV
-        - id: EpistemicsTechFabCircuitboard # DeltaV

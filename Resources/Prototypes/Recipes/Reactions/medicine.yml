@@ -113,18 +113,17 @@
   products:
     Dexalin: 3
 
-# Funkychem - no more dex+
-# - type: reaction
-#   id: DexalinPlus
-#   reactants:
-#     Dexalin:
-#       amount: 1
-#     Carbon:
-#       amount: 1
-#     Iron:
-#       amount: 1
-#   products:
-#     DexalinPlus: 3
+- type: reaction
+  id: DexalinPlus
+  reactants:
+    Dexalin:
+      amount: 1
+    Carbon:
+      amount: 1
+    Iron:
+      amount: 1
+  products:
+    DexalinPlus: 3
 
 - type: reaction
   id: Hyronalin
@@ -254,7 +253,7 @@
 - type: reaction
   id: HeartbreakerToxin
   reactants:
-    Salbutamol: # Funkychem - no more dex+
+    DexalinPlus:
       amount: 1
     MindbreakerToxin:
       amount: 1
@@ -585,20 +584,6 @@
     Arcryox: 3
 
 - type: reaction
-  id: Necrosol
-  impact: Medium
-  minTemp: 370
-  reactants:
-    Blood:
-      amount: 3
-    Omnizine:
-      amount: 1
-    Cryoxadone:
-      amount: 2
-  products:
-    Necrosol: 2
-
-- type: reaction
   id: Aloxadone
   impact: Medium
   reactants:
@@ -678,22 +663,7 @@
     Haloperidol: 5
 
 - type: reaction
-  id: Traumoxadone
-  impact: Medium
-  reactants:
-    Cryoxadone:
-      amount: 1
-    Bicaridine:
-      amount: 1
-    Fersilicite:
-      amount: 1
-    Lipozine:
-      amount: 1
-  products:
-    Traumoxadone: 3
-
-- type: reaction
-  id: Warfarin
+  id: Heparin
   reactants:
     SulfuricAcid:
       amount: 1
@@ -702,12 +672,12 @@
     Sodium:
       amount: 1
   products:
-    Warfarin: 2
+    Heparin: 2
 
 - type: reaction
   id: Hemorrhinol
   reactants:
-    Warfarin:
+    Heparin:
       amount: 2
     Razorium:
       amount: 2

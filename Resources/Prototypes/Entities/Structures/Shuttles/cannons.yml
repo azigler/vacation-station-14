@@ -1,3 +1,5 @@
+# Most of these have DO NOT MAP, since stations are completely unequipped to deal with ship combat + these are basically placeholder.
+
 - type: entity
   id: ShuttleGunBase
   parent: BaseStructure
@@ -238,7 +240,7 @@
           acts: ["Destruction"]
   - type: Gun
     projectileSpeed: 40
-    fireRate: 1 # DeltaV - buffed from 0.3
+    fireRate: 0.3
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/ship_duster.ogg
       params:
@@ -358,14 +360,11 @@
     count: 5
   - type: Machine
     board: ShuttleGunKineticCircuitboard
-  - type: ExtensionCableReceiver # Frontier
-  - type: ApcPowerReceiver # Frontier
-    powerLoad: 1500 # Frontier
 
 - type: entity
   parent: ShuttleGunBase
   id: ShuttleGunKineticOld
-  name: xenomorphic dematerializer
+  name: exomorphic dematerializer
   description: An ancient ship gun, utilizing biomechanical systems to store and release energy. While unique in its design, it has been rendered obsolete due to its inferior charging and firing speed compared to mechanical constructions.
   components:
   - type: Sprite
@@ -410,10 +409,3 @@
   - type: DeviceLinkSink
     ports:
     - Trigger
-  - type: Fixtures
-    fixtures:
-      fix1:
-        shape:
-          !type:PhysShapeAabb
-          bounds: "-0.45,-0.45,0.45,0.45"
-        density: 1800

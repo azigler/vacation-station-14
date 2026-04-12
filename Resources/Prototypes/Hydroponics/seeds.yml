@@ -1102,7 +1102,6 @@
     - FoodChiliPepper
   mutationPrototypes:
     - chilly
-    - GhostPepper #Delta-V
   harvestRepeat: Repeat
   lifespan: 25
   maturation: 6
@@ -1166,7 +1165,7 @@
   productPrototypes:
     - FoodPoppy
   mutationPrototypes:
-    - spacemansTrumpet # Delta-V - Makes Trumpets Easier to get over Deus! Was lily
+    - lily
   lifespan: 25
   maturation: 10
   production: 3
@@ -1179,7 +1178,7 @@
       Min: 1
       Max: 2
       PotencyDivisor: 50
-    SalicylicAcid: # Funkychem - bicaridine -> salicylic acid
+    Bicaridine:
       Min: 1
       Max: 20
       PotencyDivisor: 5
@@ -1233,7 +1232,7 @@
       Min: 1
       Max: 2
       PotencyDivisor: 50
-    SalicylicAcid: # Funkychem - bicaridine -> salicylic acid
+    Bicaridine:
       Min: 1
       Max: 20
       PotencyDivisor: 5
@@ -1340,7 +1339,7 @@
   productPrototypes:
     - FoodGalaxythistle
   mutationPrototypes:
-    - CrystalThistle #Delta-V, replaces glasstle
+    - glasstle
   lifespan: 25
   maturation: 10
   production: 3
@@ -1564,8 +1563,8 @@
       PotencyDivisor: 50
     PolypyryliumOligomers:
       Min: 1
-      Max: 5 # Delta-V - Was 15
-      PotencyDivisor: 20 # Delta-V - Was 5 (50 potency/5 = 10u of Polyp in one Trumpet, now 3.5u)
+      Max: 15
+      PotencyDivisor: 5
 
 - type: seed
   id: koibean

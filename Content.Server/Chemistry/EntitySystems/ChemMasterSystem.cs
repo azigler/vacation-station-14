@@ -51,7 +51,7 @@ namespace Content.Server.Chemistry.EntitySystems
             SubscribeLocalEvent<ChemMasterComponent, EntRemovedFromContainerMessage>(SubscribeUpdateUiState);
             SubscribeLocalEvent<ChemMasterComponent, BoundUIOpenedEvent>(SubscribeUpdateUiState);
 
-            //SubscribeLocalEvent<ChemMasterComponent, ChemMasterSetModeMessage>(OnSetModeMessage); // DeltaV - removed discarding
+            SubscribeLocalEvent<ChemMasterComponent, ChemMasterSetModeMessage>(OnSetModeMessage);
             SubscribeLocalEvent<ChemMasterComponent, ChemMasterSortingTypeCycleMessage>(OnCycleSortingTypeMessage);
             SubscribeLocalEvent<ChemMasterComponent, ChemMasterSetPillTypeMessage>(OnSetPillTypeMessage);
             SubscribeLocalEvent<ChemMasterComponent, ChemMasterReagentAmountButtonMessage>(OnReagentButtonMessage);
@@ -77,13 +77,12 @@ namespace Content.Server.Chemistry.EntitySystems
             var bufferCurrentVolume = bufferSolution.Volume;
 
             var state = new ChemMasterBoundUserInterfaceState(
-                /*chemMaster.Mode,*/ chemMaster.SortingType, BuildInputContainerInfo(inputContainer), BuildOutputContainerInfo(outputContainer), // DeltaV - Removed discarding
+                chemMaster.Mode, chemMaster.SortingType, BuildInputContainerInfo(inputContainer), BuildOutputContainerInfo(outputContainer),
                 bufferReagents, bufferCurrentVolume, chemMaster.PillType, chemMaster.PillDosageLimit, updateLabel, chemMaster.DrawSource);
 
             _userInterfaceSystem.SetUiState(owner, ChemMasterUiKey.Key, state);
         }
 
-        /* DeltaV - removed discarding
         private void OnSetModeMessage(Entity<ChemMasterComponent> chemMaster, ref ChemMasterSetModeMessage message)
         {
             // Ensure the mode is valid, either Transfer or Discard.
@@ -93,7 +92,7 @@ namespace Content.Server.Chemistry.EntitySystems
             chemMaster.Comp.Mode = message.ChemMasterMode;
             UpdateUiState(chemMaster);
             ClickSound(chemMaster);
-        } */
+        }
 
         private void OnCycleSortingTypeMessage(Entity<ChemMasterComponent> chemMaster, ref ChemMasterSortingTypeCycleMessage message)
         {
@@ -121,7 +120,19 @@ namespace Content.Server.Chemistry.EntitySystems
             if (!Enum.IsDefined(typeof(ChemMasterReagentAmount), message.Amount))
                 return;
 
-            TransferReagents(chemMaster, message.ReagentId, message.Amount.GetFixedPoint(), message.FromBuffer);
+            switch (chemMaster.Comp.Mode)
+            {
+                case ChemMasterMode.Transfer:
+                    TransferReagents(chemMaster, message.ReagentId, message.Amount.GetFixedPoint(), message.FromBuffer);
+                    break;
+                case ChemMasterMode.Discard:
+                    DiscardReagents(chemMaster, message.ReagentId, message.Amount.GetFixedPoint(), message.FromBuffer);
+                    break;
+                default:
+                    // Invalid mode.
+                    return;
+            }
+
             ClickSound(chemMaster);
         }
 
@@ -160,6 +171,30 @@ namespace Content.Server.Chemistry.EntitySystems
             }
 
             UpdateUiState(chemMaster, updateLabel: true);
+        }
+
+        private void DiscardReagents(Entity<ChemMasterComponent> chemMaster, ReagentId id, FixedPoint2 amount, bool fromBuffer)
+        {
+            if (fromBuffer)
+            {
+                if (_solutionContainerSystem.TryGetSolution(chemMaster.Owner, SharedChemMaster.BufferSolutionName, out _, out var bufferSolution))
+                    bufferSolution.RemoveReagent(id, amount, preserveOrder: true);
+                else
+                    return;
+            }
+            else
+            {
+                var container = _itemSlotsSystem.GetItemOrNull(chemMaster, SharedChemMaster.InputSlotName);
+                if (container is not null &&
+                    _solutionContainerSystem.TryGetFitsInDispenser(container.Value, out var containerSolution, out _))
+                {
+                    _solutionContainerSystem.RemoveReagent(containerSolution.Value, id, amount);
+                }
+                else
+                    return;
+            }
+
+            UpdateUiState(chemMaster, updateLabel: fromBuffer);
         }
 
         private void OnCreatePillsMessage(Entity<ChemMasterComponent> chemMaster, ref ChemMasterCreatePillsMessage message)

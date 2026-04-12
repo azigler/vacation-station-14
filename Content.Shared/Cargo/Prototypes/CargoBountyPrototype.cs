@@ -42,12 +42,6 @@ public sealed partial class CargoBountyPrototype : IPrototype
     public string IdPrefix = "NT";
 
     /// <summary>
-    /// DeltaV - Skips this bounty for the cargo bounty arbitrage test.
-    /// </summary>
-    [DataField]
-    public bool SkipArbitrage;
-
-    /// <summary>
     /// A group used for categorizing this bounty.
     /// </summary>
     [DataField]

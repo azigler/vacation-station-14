@@ -50,7 +50,6 @@
   description: A direction sign, pointing out which way the Brig is.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: direction_brig
 
 - type: entity
@@ -208,12 +207,11 @@
 - type: entity
   parent: BaseSignDirectional
   id: SignDirectionalSci
-  name: epistemics sign # DeltaV - Epistemics Department replacing Science
-  description: A direction sign, pointing out which way the Epistemics department is. # DeltaV - Epistemics Department replacing Science
+  name: science sign
+  description: A direction sign, pointing out which way the Science department is.
   components:
   - type: Sprite
-    sprite: Nyanotrasen/Structures/Wallmounts/signs.rsi # DeltaV - Epistemics Department replacing Science
-    state: direction_epi # DeltaV - Epistemics Department replacing Science
+    state: direction_sci
 
 - type: entity
   parent: BaseSignDirectional
@@ -222,7 +220,6 @@
   description: A direction sign, pointing out which way Security is.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: direction_sec
 
 - type: entity
@@ -297,7 +294,6 @@
   description: A sign indicating the armory.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: armory
 
 - type: entity
@@ -316,7 +312,6 @@
   description: A sign indicating the tool storage room.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - general resprite, upstream's is just bad
     state: ass
 
 - type: entity
@@ -354,6 +349,15 @@
   components:
   - type: Sprite
     state: bar
+
+- type: entity
+  parent: BaseSign
+  id: SignBath
+  name: bathroom sign
+  description: A sign indicating the bathroom.
+  components:
+  - type: Sprite
+    state: bath
 
 - type: entity
   parent: BaseSign
@@ -429,12 +433,11 @@
 - type: entity
   parent: BaseSign
   id: SignCargo
-  name: logistics sign # DeltaV - Logistics Department replacing Cargo
-  description: A sign indicating the logistics area. # DeltaV - Logistics Department replacing Cargo
+  name: cargo sign
+  description: A sign indicating the cargo area.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - Logistics Department replacing Cargo
-    state: logistics # DeltaV - Logistics Department replacing Cargo
+    state: cargo
 
 - type: entity
   parent: BaseSign
@@ -452,7 +455,6 @@
   description: A sign indicating the chapel.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV: Epi-themed chapel sprite
     state: chapel
 
 - type: entity
@@ -553,9 +555,7 @@
   description: A sign indicating the escape pods.
   components:
   - type: Sprite
-    sprite: Nyanotrasen/Structures/Wallmounts/signs.rsi # Nyanotrasen - Give pods sign directional sprites
     state: pods
-    snapCardinals: false
 
 - type: entity
   parent: BaseSign
@@ -627,7 +627,6 @@
   description: A sign indicating an interrogation room.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: interrogation
 
 - type: entity
@@ -655,7 +654,6 @@
   description: A sign indicating the presence of the (typically absent) rule of law.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: law
 
 - type: entity
@@ -665,8 +663,7 @@
   description: A sign indicating the library.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite library sign
-    state: library # DeltaV - resprite library sign
+    state: biblio
 
 - type: entity
   parent: BaseSign
@@ -729,7 +726,6 @@
   description: A sign indicating the prison.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: prison
 
 - type: entity
@@ -780,12 +776,11 @@
 - type: entity
   parent: BaseSign
   id: SignScience
-  name: epistemics sign # DeltaV - Epistemics Department replacing Science
-  description: A sign indicating the epistemics area. # DeltaV - Epistemics Department replacing Science
+  name: science sign
+  description: A sign indicating the science area.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - Epistemics Department replacing Science
-    state: epistemics # DeltaV - Epistemics Department replacing Science
+    state: sci
 
 - type: entity
   parent: BaseSign
@@ -806,6 +801,14 @@
     state: cans
 
 - type: entity
+  parent: SignCans
+  id: SignCansScience
+  suffix: science
+  components:
+  - type: Sprite
+    state: cans_sci
+
+- type: entity
   parent: BaseSign
   id: SignShipDock
   name: evac sign
@@ -821,9 +824,7 @@
   description: A sign warning that the area ahead is nothing but cold, empty space.
   components:
   - type: Sprite
-    sprite: Nyanotrasen/Structures/Wallmounts/signs.rsi # Nyanotrasen - Give space sign directional sprites
     state: space
-    snapCardinals: false
 
 - type: entity
   parent: BaseSign
@@ -1259,7 +1260,6 @@
   description: A sign depicting the security insignia.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite security signs
     state: security
 
 - type: entity
@@ -1269,7 +1269,6 @@
   description: A sign depicting the detective's office.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/signs.rsi # DeltaV - resprite detective signs
     state: detective
 
 - type: entity

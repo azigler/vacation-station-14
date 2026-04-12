@@ -9,10 +9,6 @@
   access:
   - Service
   - Maintenance
-  # Begin DeltaV Additions
-  - Theatre # Reporter is valuely a threatre role
-  - Reporter
-  # End DeltaV Additions
 
 - type: startingGear
   id: ReporterGear
@@ -20,11 +16,9 @@
     shoes: ClothingShoesColorWhite
     id: ReporterPDA
     ears: ClothingHeadsetService
-  storage: # DeltaV: Give reporters tape recording equipment
-    back:
-    - TapeRecorder
-    - CassetteTape
-    - CassetteTape
+  #storage:
+    #back:
+    #- Stuff
 
 - type: chameleonOutfit
   id: ReporterChameleonOutfit

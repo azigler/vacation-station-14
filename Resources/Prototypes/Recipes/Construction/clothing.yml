@@ -110,10 +110,10 @@
   category: construction-category-clothing
   objectType: Item
 
-#- type: construction # DeltaV - remove for overstimulation + LRP
-#  id: ClothingHeadHelmetJustice
-#  graph: HelmetJustice
-#  startNode: start
-#  targetNode: helmet
-#  category: construction-category-clothing
-#  objectType: Item
+- type: construction
+  id: ClothingHeadHelmetJustice
+  graph: HelmetJustice
+  startNode: start
+  targetNode: helmet
+  category: construction-category-clothing
+  objectType: Item

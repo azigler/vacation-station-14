@@ -1,6 +1,0 @@
-- type: latheRecipe
-  id: Skimmer
-  result: Skimmer
-  completetime: 2
-  materials:
-    Glass: 200

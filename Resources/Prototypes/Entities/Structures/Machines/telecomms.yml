@@ -184,9 +184,6 @@
       key_slots: !type:Container
       machine_board: !type:Container
       machine_parts: !type:Container
-  - type: CosmicTransmutable # DeltaV
-    transmutesTo: CosmicRadioJammer
-    requiredGlyphType: CosmicGlyphCessation
 
 - type: entity
   parent: TelecomServer
@@ -204,7 +201,6 @@
       - EncryptionKeySecurity
       - EncryptionKeyService
       - EncryptionKeyCommand
-      - EncryptionKeyJustice # DeltaV - Justice dept
 
 - type: entity
   parent: TelecomServer
@@ -265,7 +261,6 @@
     containers:
       key_slots:
       - EncryptionKeySecurity
-      - EncryptionKeyJustice # DeltaV - Justice dept
 
 - type: entity
   parent: TelecomServer

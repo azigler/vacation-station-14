@@ -171,34 +171,13 @@ public sealed class AmeNodeGroup : BaseNodeGroup
     public float CalculatePower(int fuel, int cores)
     {
         // Balanced around a single core AME with injection level 2 producing 120KW.
-        // Overclocking yields diminishing returns until it evens out at around 360KW.
+        // Two core with four injection is 150kW. Two core with two injection is 90kW.
 
-        // The adjustment for cores make it so that a 1 core AME at 2 injections is better than a 2 core AME at 2 injections.
-        // However, for the relative amounts for each (1 core at 2 and 2 core at 4), more cores has more output.
-        // return 200000f * MathF.Log10(fuel * fuel) * MathF.Pow(0.75f, cores - 1); 
-
-        // DeltaV code
-        // Check if there's any cores attached to the controller
-        if (cores == 0)
-        {
-            return 0f;
-        }
-        
-        //more parametrized and linear AME power function https://www.desmos.com/calculator/r523dxiqna
-        float wattsPerCore = 80000f;
-        float startEfficency = 0.5f;
-        float tailPenaltyFactor = 0.9f;
-        
-        float efficency = startEfficency * fuel / (2 * cores);
-        
-        if (fuel >= 2 * cores - 1)
-            efficency += (fuel - (2 * cores - 1)) * (1 - startEfficency);
-
-        if (fuel >= 2 * cores)
-            efficency -= (fuel - (2 * cores)) * (1 - startEfficency) * tailPenaltyFactor;
-
-        return efficency * wattsPerCore * cores;
-        // End of DeltaV code
+        // Increasing core count creates diminishing returns, increasing injection amount increases 
+        // Unlike the previous solution, increasing fuel and cores always leads to an increase in power, even if by very small amounts.
+        // Increasing core count without increasing fuel always leads to reduced power as well.
+        // At 18+ cores and 2 inject, the power produced is less than 0, the Max ensures the AME can never produce "negative" power.
+        return MathF.Max(200000f * MathF.Log10(2 * fuel * MathF.Pow(cores, (float)-0.5)), 0);
     }
 
     public int GetTotalStability()

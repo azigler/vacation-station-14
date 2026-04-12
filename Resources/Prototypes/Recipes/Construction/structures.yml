@@ -656,14 +656,13 @@
   startNode: start
   targetNode: Catwalk
   category: construction-category-structures
-  # DeltaV - This prevented building catwalk over lava
-  #conditions:
-  #- !type:TileNotBlocked
-  #  failIfSpace: false
-  #- !type:TileType
-  #  targets:
-  #    - Lattice
-  #    - Plating
+  conditions:
+    - !type:TileNotBlocked
+      failIfSpace: false
+    - !type:TileType
+      targets:
+        - Lattice
+        - Plating
   objectType: Structure
   placementMode: SnapgridCenter
   canBuildInImpassable: false

@@ -1,8 +1,6 @@
 ## Static recipes
 
 - type: latheRecipePack
-  parent:
-  - SecurityEquipmentStaticDeltaV # DeltaV
   id: SecurityEquipmentStatic
   recipes:
   - ClothingEyesHudSecurity
@@ -15,8 +13,6 @@
 
 # Practice ammo/mags and practice weapons
 - type: latheRecipePack
-  parent:
-  - SecurityPracticeStaticDeltaV # DeltaV
   id: SecurityPracticeStatic
   recipes:
   - BoxShotgunPractice
@@ -35,13 +31,10 @@
 
 # Shared between secfab and emagged autolathe
 - type: latheRecipePack
-  parent:
-  - SecurityAmmoStaticDeltaV # DeltaV
   id: SecurityAmmoStatic
   recipes:
   - BoxLethalshot
   - BoxShotgunSlug
-  - BoxShotgunFlare # DeltaV - added
   - MagazineBoxLightRifle
   - MagazineBoxMagnum
   - MagazineBoxPistol
@@ -60,8 +53,6 @@
   - SpeedLoaderMagnumEmpty
 
 - type: latheRecipePack
-  parent:
-  - SecurityWeaponsStaticDeltaV # DeltaV
   id: SecurityWeaponsStatic
   recipes:
   - Flash
@@ -72,20 +63,16 @@
 ## Dynamic recipes
 
 - type: latheRecipePack
-  parent:
-  - SecurityEquipmentDeltaV # DeltaV
-  - BorgModulesSecurityDeltaV # DeltaV
-  - SecurityCybernetics # Shitmed change
   id: SecurityEquipment
   recipes:
   - ClothingBackpackElectropack
-  #- HoloprojectorSecurity # DeltaV - made roundstart
+  - HoloprojectorSecurity
   - PortableRecharger
   - PowerCageHigh
   - PowerCageMedium
   - PowerCageSmall
   - TelescopicShield
-  #- ClothingBackpackHarmpack # DeltaV - HARMPACKS deemed harmful
+  - ClothingBackpackHarmpack
 
 - type: latheRecipePack
   id: SecurityBoards
@@ -110,14 +97,12 @@
 
 # Shared between secfab and emagged protolathe
 - type: latheRecipePack
-  parent:
-  - SecurityAmmoDeltaV # DeltaV
   id: SecurityAmmo
   recipes:
-  #- BoxBeanbag # DeltaV - made roundstart
+  - BoxBeanbag
   - BoxShotgunIncendiary
   - BoxShotgunUranium
-  #- BoxShellTranquilizer # DeltaV - made roundstart
+  - BoxShellTranquilizer
   - MagazineBoxLightRifleIncendiary
   - MagazineBoxLightRifleUranium
   - MagazineBoxMagnumIncendiary
@@ -134,17 +119,15 @@
   - MagazinePistolSubMachineGunUranium
   - MagazineRifleIncendiary
   - MagazineRifleUranium
-  #- MagazineShotgunBeanbag # DeltaV - made roundstart
+  - MagazineShotgunBeanbag
   - MagazineShotgunIncendiary
   - SpeedLoaderMagnumIncendiary
   - SpeedLoaderMagnumUranium
 
 - type: latheRecipePack
-  parent:
-  - SecurityWeaponsDeltaV # DeltaV
   id: SecurityWeapons
   recipes:
-  #- Truncheon # DeltaV - made roundstart
+  - Truncheon
   - WeaponAdvancedLaser
   - WeaponLaserCannon
   - WeaponLaserCarbine

@@ -15,8 +15,8 @@
     fixtures:
       fix1:
         shape:
-          !type:PhysShapeAabb # Delta V - Switch to square for more accuracy and enlarge for easier interactions
-          bounds: "-0.20,-0.25,0.20,0.20"
+          !type:PhysShapeCircle
+          radius: 0.1
         density: 190
         mask:
         - HighImpassable
@@ -35,6 +35,10 @@
     containers:
       stash: !type:ContainerSlot {}
   - type: Pullable
+  - type: MultiHandedItem
+  - type: Item
+    sprite: Structures/Furniture/potted_plants.rsi
+    size: Huge
   - type: Damageable
     damageContainer: StructuralInorganic # The pot. Not the plant. Or is it plastic?
   - type: Destructible
@@ -233,10 +237,8 @@
 - type: entity
   id: PottedPlantRD #PottedPlant25
   parent: PottedPlantBase
-  # DeltaV - Epistemics Department - Replace Research Director with Mystagogue
-  name: Mystagogue's potted plant
-  description: "A gift from the botanical staff, presented after the Mystagogue's reassignment. There's a tag on it that says \"Y'all come back now, y'hear?\"\nIt doesn't look very healthy..."
-  # End of modified code
+  name: "RD's potted plant"
+  description: "A gift from the botanical staff, presented after the RD's reassignment. There's a tag on it that says \"Y'all come back now, y'hear?\"\nIt doesn't look very healthy..."
   components:
   - type: Sprite
     state: plant-25

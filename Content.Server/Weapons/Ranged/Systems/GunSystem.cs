@@ -1,6 +1,5 @@
 using System.Numerics;
 using Content.Server.Cargo.Systems;
-using Content.Server.Temperature.Systems; // DeltaV Heat Change system
 using Content.Server.Weapons.Ranged.Components;
 using Content.Shared.Cargo;
 using Content.Shared.Damage;
@@ -18,9 +17,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
-using Content.Shared.Interaction; // Frontier
-using Content.Shared.Examine; // Frontier
-using Content.Shared.Power; // Frontier
+using Robust.Shared.Random;
 
 namespace Content.Server.Weapons.Ranged.Systems;
 
@@ -28,7 +25,6 @@ public sealed partial class GunSystem : SharedGunSystem
 {
     [Dependency] private readonly PricingSystem _pricing = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
-    [Dependency] private readonly TemperatureSystem _temperature = default!; // DeltaV Heat change system
 
     private const float DamagePitchVariation = 0.05f;
 
@@ -36,12 +32,6 @@ public sealed partial class GunSystem : SharedGunSystem
     {
         base.Initialize();
         SubscribeLocalEvent<BallisticAmmoProviderComponent, PriceCalculationEvent>(OnBallisticPrice);
-        SubscribeLocalEvent<AutoShootGunComponent, ActivateInWorldEvent>(OnActivateGun); // Frontier
-        SubscribeLocalEvent<AutoShootGunComponent, ComponentInit>(OnGunInit); // Frontier
-        SubscribeLocalEvent<AutoShootGunComponent, ComponentShutdown>(OnGunShutdown); // Frontier
-        SubscribeLocalEvent<AutoShootGunComponent, ExaminedEvent>(OnGunExamine); // Frontier
-        SubscribeLocalEvent<AutoShootGunComponent, PowerChangedEvent>(OnPowerChange); // Frontier
-        SubscribeLocalEvent<AutoShootGunComponent, AnchorStateChangedEvent>(OnAnchorChange); // Frontier
     }
 
     private void OnBallisticPrice(Entity<BallisticAmmoProviderComponent> ent, ref PriceCalculationEvent args)
@@ -170,7 +160,6 @@ public sealed partial class GunSystem : SharedGunSystem
         RaiseLocalEvent(gun, new AmmoShotEvent()
         {
             FiredProjectiles = shotProjectiles,
-            Shooter = user, //starlight
         });
 
         void CreateAndFireProjectiles(EntityUid ammoEnt, AmmoComponent ammoComp)

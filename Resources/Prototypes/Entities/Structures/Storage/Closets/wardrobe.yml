@@ -180,7 +180,7 @@
 - type: entity
   id: WardrobeCargo
   parent: WardrobePrison
-  name: logistics wardrobe # DeltaV - Logistics Department replacing Cargo
+  name: cargo wardrobe
 
 - type: entity
   id: WardrobeSalvage
@@ -221,7 +221,7 @@
 - type: entity
   id: WardrobeScience
   parent: WardrobeWhite
-  name: epistemics wardrobe # DeltaV - Epistemics Department replacing Science
+  name: science wardrobe
 
 - type: entity
   id: WardrobeBotanist

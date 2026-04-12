@@ -28,7 +28,7 @@ internal sealed partial class ChatManager
 
     private void RateLimitAlertAdmins(ICommonSession player)
     {
-        // SendAdminAlert(Loc.GetString("chat-manager-rate-limit-admin-announcement", ("player", player.Name))); // DeltaV - I DON'T CARE
+        SendAdminAlert(Loc.GetString("chat-manager-rate-limit-admin-announcement", ("player", player.Name)));
     }
 
     public RateLimitStatus HandleRateLimit(ICommonSession player)

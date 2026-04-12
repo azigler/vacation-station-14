@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.IntegrationTests.Fixtures;
 using Content.Shared.Lathe;
 using Content.Shared.Research.Prototypes;
-using Content.Shared.ReverseEngineering; // DeltaV
 using Robust.Shared.GameObjects;
 using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests;
 
 [TestFixture]
-public sealed class ResearchTest
+public sealed class ResearchTest : GameTest
 {
     [Test]
     public async Task DisciplineValidTierPrerequesitesTest()
     {
-        await using var pair = await PoolManager.GetServerClient();
+        var pair = Pair;
         var server = pair.Server;
 
         var protoManager = server.ResolveDependency<IPrototypeManager>();
@@ -43,14 +43,12 @@ public sealed class ResearchTest
                 }
             });
         });
-
-        await pair.CleanReturnAsync();
     }
 
     [Test]
     public async Task AllTechPrintableTest()
     {
-        await using var pair = await PoolManager.GetServerClient();
+        var pair = Pair;
         var server = pair.Server;
 
         var entMan = server.ResolveDependency<IEntityManager>();
@@ -93,23 +91,6 @@ public sealed class ResearchTest
                     }
                 }
 
-                // Begin DeltaV Additions: Check RE recipes too
-                foreach (var proto in allEnts)
-                {
-                    if (proto.Abstract)
-                        continue;
-
-                    if (!proto.TryGetComponent<ReverseEngineeringComponent>(out var rev))
-                        continue;
-
-                    foreach (var recipe in rev.Recipes)
-                    {
-                        unlockedTechs.Add(recipe);
-                        Assert.That(latheTechs, Does.Contain(recipe), $"Reverse engineered recipe \"{recipe}\" cannot be unlocked on any lathe.");
-                    }
-                }
-                // End DeltaV Additions
-
                 // now check that every dynamic recipe a lathe lists can be unlocked
                 foreach (var recipe in latheTechs)
                 {
@@ -117,7 +98,5 @@ public sealed class ResearchTest
                 }
             });
         });
-
-        await pair.CleanReturnAsync();
     }
 }

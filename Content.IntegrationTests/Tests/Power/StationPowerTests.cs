@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.IntegrationTests.Fixtures;
 using Content.Server.GameTicking;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
@@ -13,46 +14,39 @@ using Robust.Shared.EntitySerialization;
 
 namespace Content.IntegrationTests.Tests.Power;
 
-public sealed class StationPowerTests
+public sealed class StationPowerTests : GameTest
 {
     /// <summary>
     /// How long the station should be able to survive on stored power if nothing is changed from round start.
     /// </summary>
     private const float MinimumPowerDurationSeconds = 10 * 60;
 
-    // Begin DeltaV Additions - DeltaV maps for testing
     private static readonly string[] GameMaps =
     [
-        "Academy",
-        "Arena",
-        "Asterisk",
-        "Byoin",
-        "Chibi",
-        "Division",
-        "Edge",
-        "Elegance",
-        "Glacier",
-        "Hammurabi",
-        "TheHive",
-        "Lighthouse",
-        "Micro",
-        "Ovni",
-        "Pebble",
-        "Shoukou",
-        "Submarine",
-        "Terra",
-        "Tortuga",
+        "Bagel",
+        "Box",
+        "Elkridge",
+        "Fland",
+        "Marathon",
+        "Oasis",
+        "Packed",
+        "Plasma",
+        "Relic",
+        "Snowball",
+        "Reach",
+        "Exo",
     ];
-    // Begin DeltaV Additions - DeltaV maps for testing
+
+    public override PoolSettings PoolSettings => new ()
+    {
+        Dirty = true,
+    };
 
     [Explicit]
     [Test, TestCaseSource(nameof(GameMaps))]
     public async Task TestStationStartingPowerWindow(string mapProtoId)
     {
-        await using var pair = await PoolManager.GetServerClient(new PoolSettings
-        {
-            Dirty = true,
-        });
+        var pair = Pair;
         var server = pair.Server;
 
         var entMan = server.EntMan;
@@ -105,17 +99,12 @@ public sealed class StationPowerTests
             Assert.That(totalStartingCharge, Is.GreaterThanOrEqualTo(requiredStoredPower),
                 $"Needs at least {requiredStoredPower - totalStartingCharge} more stored power!");
         });
-
-        await pair.CleanReturnAsync();
     }
 
     [Test, TestCaseSource(nameof(GameMaps))]
     public async Task TestApcLoad(string mapProtoId)
     {
-        await using var pair = await PoolManager.GetServerClient(new PoolSettings
-        {
-            Dirty = true,
-        });
+        var pair = Pair;
         var server = pair.Server;
 
         var entMan = server.EntMan;
@@ -154,7 +143,5 @@ public sealed class StationPowerTests
                 }
             }
         });
-
-        await pair.CleanReturnAsync();
     }
 }

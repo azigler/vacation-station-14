@@ -97,7 +97,7 @@ public sealed class FoodSequenceSystem : SharedFoodSequenceSystem
             return;
 
         _solutionContainer.RemoveAllSolution(resultSoln.Value); //Remove all YML reagents
-        resultSoln.Value.Comp.Solution.MaxVolume = startSoln.Value.Comp.Solution.MaxVolume;
+        _solutionContainer.SetCapacity(resultSoln.Value, startSoln.Value.Comp.Solution.MaxVolume);
         _solutionContainer.TryAddSolution(resultSoln.Value, startSolution);
 
         MergeFlavorProfiles(start, result);
@@ -117,6 +117,7 @@ public sealed class FoodSequenceSystem : SharedFoodSequenceSystem
         //looking for a suitable FoodSequence prototype
         if (!element.Comp1.Entries.TryGetValue(start.Comp.Key, out var elementProto))
             return false;
+
         if (!_proto.Resolve(elementProto, out var elementIndexed))
             return false;
 

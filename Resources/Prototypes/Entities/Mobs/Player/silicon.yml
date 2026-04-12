@@ -16,11 +16,6 @@
     - Security
     - Service
     - Supply
-    # Begin DeltaV additions
-    - Justice
-    - Prison
-    - Traffic
-    # End DeltaV additions
   - type: ActiveRadio
     channels:
     - Binary
@@ -32,11 +27,6 @@
     - Security
     - Service
     - Supply
-    # Begin DeltaV additions
-    - Justice
-    - Prison
-    - Traffic
-    # End DeltaV additions
   - type: IgnoreUIRange
   - type: StationAiHeld
   - type: StationAiOverlay
@@ -44,7 +34,6 @@
   - type: ActionGrant
     actions:
     - ActionJumpToCore
-    - ActionSurvCameraLights
     - ActionAIViewLaws
   - type: UserInterface
     interfaces:
@@ -58,8 +47,6 @@
         type: SiliconLawBoundUserInterface
       enum.CommunicationsConsoleUiKey.Key:
         type: CommunicationsConsoleBoundUserInterface
-      enum.StoreUiKey.Key: # DeltaV - AI shop system
-        type: StoreBoundUserInterface
   - type: IntrinsicUI
     uis:
       enum.RadarConsoleUiKey.Key:
@@ -83,10 +70,10 @@
     title: comms-console-announcement-title-station-ai
     color: "#5ed7aa"
   - type: ShowJobIcons
+  - type: ShowCrewIcons
   - type: DamagedSiliconAccent
     startPowerCorruptionAtCharIdx: 4
     maxPowerCorruptionAtCharIdx: 20
-  - type: StationAiShop # DeltaV - AI Shop System
 
 - type: entity
   id: AiHeldIntellicard
@@ -109,6 +96,7 @@
       enum.SiliconLawsUiKey.Key:
         type: SiliconLawBoundUserInterface
   - type: ShowJobIcons
+  - type: ShowCrewIcons
 
 # Ai
 - type: entity
@@ -294,6 +282,16 @@
         enum.StationAiVisualLayers.Base:
           False: { state: ai_empty }
           True: { state: ai_error }
+  - type: CreamPied
+    sprite:
+      sprite: Effects/creampie.rsi
+      state: creampie_ai
+  - type: Reactive
+    reactions:
+    - reagents: [Water, SpaceCleaner]
+      methods: [Touch]
+      effects:
+      - !type:WashCreamPie
   - type: InteractionPopup
     interactSuccessString: petting-success-station-ai
     interactFailureString: petting-failure-station-ai
@@ -425,22 +423,11 @@
     # Once it's in a core it's pretty much an abstract entity at that point.
     visible: false
   - type: SiliconLawProvider
-    laws: NTDefault # Goobstation - AI/borg law changes - set AI to NTDefault
-  - type: IonStormTarget # Goobstation - AI/borg law changes - ion stormable AI
+    laws: Crewsimov
   - type: SiliconLawBound
   - type: ActionGrant
     actions:
     - ActionViewLaws
-  # Begin DeltaV - AI Shop System
-  - type: Store
-    categories:
-    - AiAbilities
-    currencyWhitelist:
-    - AiMemory
-    balance:
-      AiMemory: 3
-    grantActionsToMind: false
-  # End DeltaV - AI Shop System
   - type: UserInterface
     interfaces:
       enum.SiliconLawsUiKey.Key:
@@ -481,13 +468,6 @@
       state: ai_female
   - type: NameIdentifier
     group: StationAi
-  # Begin DeltaV additions
-  - type: ShowHealthBars
-    damageContainers:
-    - Inorganic
-    - Silicon
-    - HumanoidSilicon
-  # End DeltaV additions
   - type: ToggleableGhostRole
     roleName: station-ai-ghost-role-name
     roleDescription: station-ai-ghost-role-description
@@ -506,6 +486,16 @@
   description: The AI's viewer.
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
+  - type: Fixtures
+    fixtures:
+      lightTrigger:
+        shape:
+          !type:PhysShapeCircle
+          radius: 8
+        density: 80
+        hard: false
+        layer:
+        - GhostImpassable
   - type: NoFTL
   - type: Tag
     tags:
@@ -525,7 +515,7 @@
     - state: ai_camera
       shader: unshaded
       map: ["base"]
-  - type: AiDetectable # DeltaV - AI detector
+  - type: CameraActiveOnCollideCollider
 
 # The holographic representation of the AI that is projected from a holopad.
 - type: entity
@@ -564,8 +554,6 @@
     containers:
       borg_brain:
       - PositronicBrain
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipBorgAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -584,20 +572,16 @@
   - type: ContainerFill
     containers:
       borg_brain:
-        - SyndicateNeuroling # DeltaV
+        - PositronicBrain
       borg_module:
         - BorgModuleOperative
         - BorgModuleL6C
         - BorgModuleDoubleEsword
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipSyndie
   - type: ItemSlots
     slots:
       cell_slot:
         name: power-cell-slot-component-slot-name-default
         startingItem: PowerCellHyper
-  - type: RandomMetadata # Delta V - Gives syndiborgs cool names!
-    nameSegments: [NamesDeathCommando]
 
 - type: entity
   id: PlayerBorgSyndicateAssaultGhostRole
@@ -622,23 +606,16 @@
   - type: ContainerFill
     containers:
       borg_brain:
-        - SyndicateNeuroling # DeltaV
+        - PositronicBrain
       borg_module:
-        - BorgModuleAdvancedTool # Delta V - replaced tool module
-        - BorgModuleCable # DeltaV
-        - BorgModuleConstruction # DeltaV
+        - BorgModuleTool
         - BorgModuleOperative
         - BorgModuleSyndicateWeapon
-        - BorgModuleCloakDeviceSyndicate # DeltaV
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipSyndie
   - type: ItemSlots
     slots:
       cell_slot:
         name: power-cell-slot-component-slot-name-default
         startingItem: PowerCellHyper
-  - type: RandomMetadata # Delta V - Gives syndiborgs cool names!
-    nameSegments: [NamesDeathCommando]
 
 - type: entity
   id: PlayerBorgSyndicateSaboteurGhostRole
@@ -681,13 +658,12 @@
       borg_brain:
       - PositronicBrain
       borg_module:
+      - BorgModulePrying
       - BorgModuleTool
       - BorgModuleFireExtinguisher
       - BorgModuleConstruction
       - BorgModuleRCD
       - BorgModuleCable
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipBorgAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -721,10 +697,9 @@
       borg_brain:
         - PositronicBrain
       borg_module:
+        - BorgModulePrying
         - BorgModuleTool
         - BorgModuleFireExtinguisher
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -758,12 +733,11 @@
       borg_brain:
       - PositronicBrain
       borg_module:
+      - BorgModulePrying
       - BorgModuleTool
       - BorgModuleFireExtinguisher
       - BorgModuleCleaning
       - BorgModuleCustodial
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipBorgAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -797,13 +771,12 @@
       borg_brain:
       - PositronicBrain
       borg_module:
+      - BorgModulePrying
       - BorgModuleTool
       - BorgModuleFireExtinguisher
       - BorgModuleChemical
       - BorgModuleTopicals
       - BorgModuleRescue
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipBorgAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -837,12 +810,11 @@
       borg_brain:
       - PositronicBrain
       borg_module:
+      - BorgModulePrying
       - BorgModuleTool #No fire extinguisher, traversal is better
       - BorgModuleMining
       - BorgModuleTraversal
       - BorgModuleAppraisal
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipBorgAA
   - type: ItemSlots
     slots:
       cell_slot:
@@ -874,13 +846,11 @@
   - type: ContainerFill
     containers:
       borg_brain:
-      - SyndicateNeuroling # DeltaV
+      - PositronicBrain
       borg_module:
       - BorgModuleOperative
       - BorgModuleC20r
       - BorgModuleEsword
-      borg_id_chip: # DeltaV - borg id chips
-      - IdChipRoboNeuroticist # BorgAA doesn't make sense. This gives them externals and maintenence access to get into the station at least.
   - type: ItemSlots
     slots:
       cell_slot:

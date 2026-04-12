@@ -6,8 +6,6 @@ using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
 using Content.Server.Speech.EntitySystems;
-using Content.Shared.Speech.Hushing; // DeltaV
-using Content.Server.Nyanotrasen.Chat;
 using Content.Server.Speech.Prototypes;
 using Content.Server.Station.Systems;
 using Content.Shared.ActionBlocker;
@@ -60,9 +58,6 @@ public sealed partial class ChatSystem : SharedChatSystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly ReplacementAccentSystem _wordreplacement = default!;
     [Dependency] private readonly ExamineSystemShared _examineSystem = default!;
-    
-    //Nyano - Summary: pulls in the nyano chat system for psionics.
-    [Dependency] private readonly NyanoChatSystem _nyanoChatSystem = default!;
 
     private bool _loocEnabled = true;
     private bool _deadLoocEnabled;
@@ -195,15 +190,6 @@ public sealed partial class ChatSystem : SharedChatSystem
             message = message[1..];
         }
 
-        // DeltaV - Hushed trait logic
-        // This needs to happen after prefix removal to avoid bug
-        if (desiredType == InGameICChatType.Speak && HasComp<HushedComponent>(source))
-        {
-            // hushed players cannot speak on local chat so will be sent as whisper instead
-            desiredType = InGameICChatType.Whisper;
-        }
-        // DeltaV - End hushed trait logic
-
         bool shouldCapitalize = (desiredType != InGameICChatType.Emote);
         bool shouldPunctuate = _configurationManager.GetCVar(CCVars.ChatPunctuation);
         // Capitalizing the word I only happens in English, so we check language here
@@ -221,17 +207,6 @@ public sealed partial class ChatSystem : SharedChatSystem
         // This can happen if the entire string is sanitized out.
         if (string.IsNullOrEmpty(message))
             return;
-
-        // Begin Mono Changes - Is this being sent direct
-        var targetEv = new CheckTargetedSpeechEvent();
-        RaiseLocalEvent(source, targetEv);
-
-        if (targetEv.Targets.Count > 0)
-        {
-            SendEntityDirect(source, message, range, nameOverride, targetEv.Targets);
-            return;
-        }
-        // End Mono Changes - Is this being sent direct
 
         // This message may have a radio prefix, and should then be whispered to the resolved radio channel
         if (checkRadioPrefix)
@@ -254,10 +229,6 @@ public sealed partial class ChatSystem : SharedChatSystem
                 break;
             case InGameICChatType.Emote:
                 SendEntityEmote(source, message, range, nameOverride, hideLog: hideLog, ignoreActionBlocker: ignoreActionBlocker);
-                break;
-            //Nyano - Summary: case adds the telepathic chat sending ability.
-            case InGameICChatType.Telepathic:
-                _nyanoChatSystem.SendTelepathicChat(source, message, range == ChatTransmitRange.HideChat);
                 break;
         }
     }
@@ -557,72 +528,6 @@ public sealed partial class ChatSystem : SharedChatSystem
                     $"Whisper from {source}, original: {originalMessage}, transformed: {message}.");
             }
     }
-
-    // Begin Mono Changes
-    private void SendEntityDirect(
-        EntityUid source,
-        string originalMessage,
-        ChatTransmitRange range,
-        string? nameOverride,
-        List<EntityUid> recipients,
-        bool hideLog = false,
-        bool ignoreActionBlocker = false)
-    {
-        var message = TransformSpeech(source, FormattedMessage.RemoveMarkupOrThrow(originalMessage));
-        if (message.Length == 0)
-            return;
-
-        string name;
-        if (nameOverride != null)
-        {
-            name = nameOverride;
-        }
-        else
-        {
-            var nameEv = new TransformSpeakerNameEvent(source, Name(source));
-            RaiseLocalEvent(source, nameEv);
-            name = nameEv.VoiceName;
-        }
-        name = FormattedMessage.EscapeText(name);
-
-        var wrappedMessage = Loc.GetString("chat-manager-entity-whisper-wrap-message",
-            ("entityName", name), ("message", FormattedMessage.EscapeText(message)));
-
-        foreach (var (session, data) in GetRecipients(source, WhisperMuffledRange))
-        {
-            EntityUid listener;
-
-            if (session.AttachedEntity is not { Valid: true } playerEntity)
-                continue;
-            listener = session.AttachedEntity.Value;
-
-            if (MessageRangeCheck(session, data, range) != MessageRangeCheckResult.Full ||
-                !recipients.Contains(listener) &&
-                !HasComp<GhostComponent>(listener))
-                continue;
-
-            _chatManager.ChatMessageToOne(ChatChannel.Local, message, wrappedMessage, source, false, session.Channel); // DeltaV - no collective mind chat channel, use local..?
-        }
-
-        if (!hideLog)
-            if (originalMessage == message)
-            {
-                if (name != Name(source))
-                    _adminLogger.Add(LogType.Chat, LogImpact.Low, $"Direct messaged from {ToPrettyString(source):user} as {name}: {originalMessage}.");
-                else
-                    _adminLogger.Add(LogType.Chat, LogImpact.Low, $"Direct messaged from {ToPrettyString(source):user}: {originalMessage}.");
-            }
-            else
-            {
-                if (name != Name(source))
-                    _adminLogger.Add(LogType.Chat, LogImpact.Low,
-                        $"Direct messaged from {ToPrettyString(source):user} as {name}, original: {originalMessage}, transformed: {message}.");
-                else
-                    _adminLogger.Add(LogType.Chat, LogImpact.Low,
-                        $"Direct messaged from {ToPrettyString(source):user}, original: {originalMessage}, transformed: {message}.");
-            }
-    }
-    // End Mono Changes
 
     protected override void SendEntityEmote(
         EntityUid source,
@@ -965,10 +870,3 @@ public sealed partial class ChatSystem : SharedChatSystem
 public record ExpandICChatRecipientsEvent(EntityUid Source, float VoiceRange, Dictionary<ICommonSession, ChatSystem.ICChatRecipientData> Recipients)
 {
 }
-
-// Begin Mono - Cortical Borers
-public sealed class CheckTargetedSpeechEvent : EntityEventArgs
-{
-    public List<EntityUid> Targets = new List<EntityUid>();
-}
-// END Mono

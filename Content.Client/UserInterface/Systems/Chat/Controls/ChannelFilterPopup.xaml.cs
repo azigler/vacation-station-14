@@ -1,4 +1,3 @@
-using Content.Shared._DV.CCVars; // DeltaV
 using Content.Shared.Chat;
 using Content.Shared.CCVar;
 using Robust.Shared.Utility;
@@ -20,7 +19,6 @@ public sealed partial class ChannelFilterPopup : Popup
         ChatChannel.Whisper,
         ChatChannel.Emotes,
         ChatChannel.Radio,
-        ChatChannel.Telepathic, //Nyano - Summary: adds telepathic chat to where it belongs in order in the chat.
         ChatChannel.Notifications,
         ChatChannel.LOOC,
         ChatChannel.OOC,
@@ -46,10 +44,9 @@ public sealed partial class ChannelFilterPopup : Popup
 
         // Load highlights if any were saved.
         var cfg = IoCManager.Resolve<IConfigurationManager>();
-        string highlights = cfg.GetCVar(DCCVars.ChatHighlights); // DeltaV - Use our own CVar
-        var autoHighlightsEnabled = cfg.GetCVar(CCVars.ChatAutoFillHighlights); // DeltaV - Auto-highlighting
+        string highlights = cfg.GetCVar(CCVars.ChatHighlights);
 
-        if (!string.IsNullOrEmpty(highlights) || autoHighlightsEnabled) // DeltaV - Auto-highlighting
+        if (!string.IsNullOrEmpty(highlights))
         {
             UpdateHighlights(highlights);
         }

@@ -156,14 +156,13 @@
 
 - type: entity
   name: Runtime
-  parent: MobCatGhost # DeltaV - Frontier Feature
+  parent: MobCat
   id: MobCatRuntime
   description: Professional mouse hunter. Escape artist.
   components:
   - type: NpcFactionMember
     factions:
       - PetsNT
-      - Cat # DeltaV
   - type: HTN
     rootTask:
       task: SimpleHostileCompound
@@ -171,10 +170,6 @@
     attributes:
       proper: true
       gender: female
-  - type: Butcherable # DeltaV - Frontier Feature
-    spawned:
-    - id: FoodMeatCat
-      amount: 1
   - type: Tag
     tags:
     - CannotSuicide
@@ -185,21 +180,16 @@
 - type: entity
   name: Exception
   id: MobCatException
-  parent: MobCatCalicoGhost # DeltaV - Frontier Feature
+  parent: MobCatCalico
   description: Ask nicely, and maybe they'll give you one of their spare lives.
   components:
   - type: NpcFactionMember
     factions:
       - PetsNT
-      - Cat # DeltaV
   - type: Grammar
     attributes:
       proper: true
       gender: male
-  - type: Butcherable # DeltaV - Frontier Feature
-    spawned:
-    - id: FoodMeatCat
-      amount: 1
   - type: Tag
     tags:
     - CannotSuicide
@@ -210,7 +200,7 @@
 - type: entity
   name: Floppa
   id: MobCatFloppa
-  parent: MobCatCaracalGhost # DeltaV - Frontier Feature
+  parent: MobCatCaracal
   description: He out here.
   components:
   - type: Fixtures
@@ -303,10 +293,6 @@
     tags:
     - CannotSuicide
     - VimPilot
-  - type: JumpAbility # DeltaV - Don't leave Bingus out on being able to pounce
-    jumpThrowSpeed: 16 # Fastest it can be without hurting themselves by run+jumping into a wall
-    jumpDistance: 3
-    action: ActionCatJump
   - type: StealTarget
     stealGroup: AnimalNamedCat
 
@@ -698,15 +684,6 @@
   id: MobSpiderShiva
   description: The first defender of the station.
   components:
-  - type: GhostRole # DeltaV
-    makeSentient: true
-    allowSpeech: true
-    allowMovement: true
-    name: ghost-role-information-Shiva-name
-    description: ghost-role-information-Shiva-description
-    rules: ghost-role-information-Shiva-rules
-    job: RoleShiva # DeltaV - controls the playtime requirement, no raiders
-  - type: GhostTakeoverAvailable # DeltaV
   - type: InteractionPopup
     successChance: 0.5 # spider is mean
     interactSuccessString: petting-success-tarantula
@@ -766,7 +743,7 @@
     - DoorBumpOpener
     - FootstepSound
   - type: StealTarget
-    stealGroup: AnimalSecurity # DeltaV - Adjusts because we have multiple possible sec animals
+    stealGroup: AnimalShiva
 
 - type: entity
   name: Willow
@@ -842,9 +819,6 @@
         BaseUnshaded: aslime-_3
       Dead:
         Base: rainbow_baby_slime_dead
-  - type: Body  # DeltaV - Changes to add brain
-    prototype: Smiles
-    requiredLegs: 1
   - type: Butcherable
     spawned:
     - id: FoodMeatSlime
@@ -897,7 +871,6 @@
     name: ghost-role-information-punpun-name
     description: ghost-role-information-punpun-description
     rules: ghost-role-information-nonantagonist-rules
-    job: RolePunPun
   - type: GhostTakeoverAvailable
   - type: Butcherable
     butcheringType: Spike
@@ -918,10 +891,6 @@
     attributes:
       proper: true
       gender: male
-  #DeltaV Changes - he can shoot his gun 80% of the time
-  - type: Clumsy 
-    clumsyGunShootCheck: 0.2
-    #DeltaV Changes end
 
 - type: entity
   name: Tropico

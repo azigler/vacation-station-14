@@ -14,6 +14,7 @@ using Content.Shared.Forensics;
 using Content.Shared.Forensics.Components;
 using Content.Shared.Forensics.Systems;
 using Content.Shared.Gibbing;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory;
@@ -36,7 +37,6 @@ namespace Content.Server.Forensics
         public override void Initialize()
         {
             SubscribeLocalEvent<HandsComponent, ContactInteractionEvent>(OnInteract);
-            SubscribeLocalEvent<FiberComponent, MapInitEvent>(OnFiberInit, after: [typeof(BloodstreamSystem)]); // DeltaV - (#1455) unique glove fibers
             SubscribeLocalEvent<FingerprintComponent, MapInitEvent>(OnFingerprintInit, after: new[] { typeof(BloodstreamSystem) });
             // The solution entities are spawned on MapInit as well, so we have to wait for that to be able to set the DNA in the bloodstream correctly without ResolveSolution failing
             SubscribeLocalEvent<DnaComponent, MapInitEvent>(OnDNAInit, after: new[] { typeof(BloodstreamSystem) });
@@ -68,14 +68,6 @@ namespace Content.Server.Forensics
         {
             ApplyEvidence(uid, args.Other);
         }
-
-        // Begin DeltaV Additions
-        // #1455 - unique glove fibers
-        private void OnFiberInit(Entity<FiberComponent> ent, ref MapInitEvent args)
-        {
-            ent.Comp.Fiberprint = GenerateFingerprint(length: 7);
-        }
-        // End DeltaV Additions
 
         private void OnFingerprintInit(Entity<FingerprintComponent> ent, ref MapInitEvent args)
         {
@@ -206,8 +198,8 @@ namespace Content.Server.Forensics
             {
                 Act = () => TryStartCleaning(entity, user, target),
                 Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/bubbles.svg.192dpi.png")),
-                Text = Loc.GetString(Loc.GetString("forensics-verb-text")),
-                Message = Loc.GetString(Loc.GetString("forensics-verb-message")),
+                Text = Loc.GetString("forensics-verb-text"),
+                Message = Loc.GetString("forensics-verb-message"),
                 // This is important because if its true using the cleaning device will count as touching the object.
                 DoContactInteraction = false
             };
@@ -226,7 +218,7 @@ namespace Content.Server.Forensics
         {
             if (!TryComp<ForensicsComponent>(target, out var forensicsComp))
             {
-                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning-cannot-clean", ("target", target)), user, user, PopupType.MediumCaution);
+                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning-cannot-clean", ("target", Identity.Entity(target, EntityManager))), user, user, PopupType.MediumCaution);
                 return false;
             }
 
@@ -247,13 +239,13 @@ namespace Content.Server.Forensics
 
                 _doAfterSystem.TryStartDoAfter(doAfterArgs);
 
-                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning", ("target", target)), user, user);
+                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning", ("target", Identity.Entity(target, EntityManager))), user, user);
 
                 return true;
             }
             else
             {
-                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning-cannot-clean", ("target", target)), user, user, PopupType.MediumCaution);
+                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning-cannot-clean", ("target", Identity.Entity(target, EntityManager))), user, user, PopupType.MediumCaution);
                 return false;
             }
 
@@ -281,9 +273,9 @@ namespace Content.Server.Forensics
                 targetComp.Residues.Add(string.IsNullOrEmpty(residue.ResidueColor) ? Loc.GetString("forensic-residue", ("adjective", residue.ResidueAdjective)) : Loc.GetString("forensic-residue-colored", ("color", residue.ResidueColor), ("adjective", residue.ResidueAdjective)));
         }
 
-        public string GenerateFingerprint(int length = 16) // DeltaV #1455 - allow changing the length of the fingerprint hash
+        public string GenerateFingerprint()
         {
-            var fingerprint = new byte[length]; // DeltaV #1455 - allow changing the length of the fingerprint hash
+            var fingerprint = new byte[16];
             _random.NextBytes(fingerprint);
             return Convert.ToHexString(fingerprint);
         }
@@ -307,26 +299,10 @@ namespace Content.Server.Forensics
                 return;
 
             var component = EnsureComp<ForensicsComponent>(target);
-            // Begin DeltaV Additions - IPCs and borgs leave fibers
-            if (TryComp<FiberComponent>(user, out var fiber) && CanAccessFingerprint(user, out _))
-            {
-                var fiberLocale = string.IsNullOrEmpty(fiber.FiberColor)
-                    ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial))
-                    : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial));
-                component.Fibers.Add(fiberLocale + " ; " + fiber.Fiberprint);
-            }
-            // End DeltaV Additions
             if (_inventory.TryGetSlotEntity(user, "gloves", out var gloves))
             {
-                // DeltaV #1455 - unique glove fibers
-                if (TryComp<FiberComponent>(gloves, out fiber) && !string.IsNullOrEmpty(fiber.FiberMaterial))
-                {
-                    var fiberLocale = string.IsNullOrEmpty(fiber.FiberColor)
-                        ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial))
-                        : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial));
-                    component.Fibers.Add(fiberLocale + " ; " + fiber.Fiberprint);
-                }
-                // End of DeltaV code
+                if (TryComp<FiberComponent>(gloves, out var fiber) && !string.IsNullOrEmpty(fiber.FiberMaterial))
+                    component.Fibers.Add(string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
             }
 
             if (TryComp<FingerprintComponent>(user, out var fingerprint) && CanAccessFingerprint(user, out _))

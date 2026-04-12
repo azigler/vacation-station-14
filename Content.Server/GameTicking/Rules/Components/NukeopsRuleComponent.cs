@@ -81,7 +81,7 @@ public sealed partial class NukeopsRuleComponent : Component
     ///     Minimal operatives count for war declaration
     /// </summary>
     [DataField]
-    public int WarDeclarationMinOps = 3; // DeltaV - was 4
+    public int WarDeclarationMinOps = 4;
 
     [DataField]
     public WinType WinType = WinType.Neutral;
@@ -141,6 +141,5 @@ public enum WinCondition : byte
     NukiesAbandoned,
     AllNukiesDead,
     SomeNukiesAlive,
-    AllNukiesAlive,
-    NukiesKidnappedHeads, // DeltaV - Hostage ops
+    AllNukiesAlive
 }

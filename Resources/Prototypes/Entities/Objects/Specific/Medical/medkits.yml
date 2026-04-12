@@ -7,20 +7,7 @@
   - type: Sprite
     sprite: Objects/Specific/Medical/firstaidkits.rsi
     state: firstaid
-  - type: Storage # DeltaV - add whitelist to first aid kits
-    whitelist:
-      tags:
-        - Bloodpack
-        - Bottle
-        - Brutepack
-        - Gauze
-        - Ointment
-        - PillCanister
-        - Syringe
-      components:
-        - GasTank # DeltaV
-        - BreathMask
-        - Injector # Deltav
+  - type: Storage
     maxItemSize: Small
     grid:
     - 0,0,3,1

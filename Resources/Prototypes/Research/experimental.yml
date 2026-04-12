@@ -11,7 +11,6 @@
   cost: 5000
   recipeUnlocks:
   - ProximitySensor
-  - ClothingEyesHudDiagnostic # DeltaV
 
 - type: technology
   id: BasicAnomalousResearch
@@ -54,7 +53,6 @@
   cost: 5000
   recipeUnlocks:
   - TechDiskComputerCircuitboard
-  - ReverseEngineeringMachineCircuitboard # DeltaV
 
 - type: technology
   id: MagnetsTech
@@ -68,10 +66,6 @@
   recipeUnlocks:
   - ClothingShoesBootsMagSci
   - ClothingShoesBootsMoon
-  # Begin DeltaV Additions
-  - HoverBedHoloSpawnFolded
-  - ClothingShoesBootsSecurityMagboots
-  # End DeltaV Additions
 
 - type: technology
   id: AnomalyCoreHarnessing
@@ -128,18 +122,18 @@
   - WeaponParticleDecelerator
   - HoloprojectorField
 
-#- type: technology # DeltaV - LRP
-#  id: GravityManipulation
-#  name: research-technology-gravity-manipulation
-#  icon:
-#    sprite: Objects/Weapons/Guns/Launchers/tether_gun.rsi
-#    state: base
-#  discipline: Experimental
-#  tier: 2
-#  cost: 10000
-#  recipeUnlocks:
-#    - WeaponForceGun
-#    - WeaponTetherGun
+- type: technology
+  id: GravityManipulation
+  name: research-technology-gravity-manipulation
+  icon:
+    sprite: Objects/Weapons/Guns/Launchers/tether_gun.rsi
+    state: base
+  discipline: Experimental
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+    - WeaponForceGun
+    - WeaponTetherGun
 
 # Tier 3
 

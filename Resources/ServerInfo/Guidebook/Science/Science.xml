@@ -1,18 +1,15 @@
 <Document>
-# Epistemics
-
-[color=#c96dbf]Epistemics[/color], often called Research and Development, is a job made up of both generating research points to unlock new technologies as well as using said technologies to produce new items at lathes to help out the station.
+# Science
+[color=#c96dbf]Science[/color], often called Research and Development, is a job consisting of generating research points to unlock new technologies and using said technologies to produce new items at lathes to help out the station.
 
 ## Personnel
-[color=#c96dbf]Epistemics[/color]' staff is made up of Research Assistants, Scientists, the chaplain, the archivist, and the Psionic Mantis. [color=#c96dbf]Epistemics[/color] is run by the Mystagogue.
+[color=#c96dbf]Science[/color]'s staff is made up of Research Assistants and Scientists. [color=#c96dbf]Science[/color] is run by the Research Director.
 
-<!--Delta V: Renamed Research Director to Mystagouge-->
   <Box>
    <GuideEntityEmbed Entity="ToyFigurineScientist" Caption="Scientist"/>
-   <GuideEntityEmbed Entity="ToyFigurineResearchDirector" Caption="Mystagouge"/>
-   <GuideEntityEmbed Entity="ToyFigurineChaplain" Caption="Chaplain"/>
-   <GuideEntityEmbed Entity="ToyFigurineLibrarian" Caption="Archivist"/>
+   <GuideEntityEmbed Entity="ToyFigurineResearchDirector" Caption="RD"/>
   </Box>
+
 ## Technologies
   <Box>
     <GuideEntityEmbed Entity="ComputerResearchAndDevelopment"/>
@@ -38,11 +35,13 @@ Technologies are spread over 4 different Disciplines:
 ## Tiers
 Each Discipline tree has up to 3 tiers of technologies. At the start the only tier that is open and available for you is tier 1.
 
-In order to progress further, you have to research [color=brown]all[/color] of the current tier to move to the next one. So in order to unlock T2 researches you need to research the entirety of T1.
+In order to progress further, you have to research up to [color=brown]75%[/color] of the current tier to move to the next one. So in order to unlock T2 researches you need to research 75% of T1.
+
+Now [color=green]Tier 3[/color] is where it gets interesting. If you research a T3 tech, you [color=brown]lock out[/color] T3 techs from other Discipline trees. That is, unless you can find some other way around it... you should probably ask your [color=purple]Research Director[/color].
 
 ## Lathes
   <Box>
-    <GuideEntityEmbed Entity="EpistemicsTechFab"/>
+    <GuideEntityEmbed Entity="Protolathe"/>
     <GuideEntityEmbed Entity="CircuitImprinter"/>
   </Box>
   <Box>
@@ -50,6 +49,6 @@ In order to progress further, you have to research [color=brown]all[/color] of t
     <GuideEntityEmbed Entity="MedicalTechFab"/>
     <GuideEntityEmbed Entity="SecurityTechFab"/>
   </Box>
-At a lathe, you can choose a server to allow it print whatever recipes you have unlocked. Recipes require various materials (steel, glass, plastic, gold, plasma) which can be acquired at Logistics or Salvage.
+At a lathe, you can choose a server to allow it print whatever recipes you have unlocked. Recipes require various materials (steel, glass, plastic, gold, plasma) which can be acquired at Cargo or Salvage.
 
 </Document>

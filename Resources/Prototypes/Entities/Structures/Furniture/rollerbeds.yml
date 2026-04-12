@@ -10,7 +10,7 @@
       size: Normal
       heldPrefix: rollerbed
     - type: Sprite
-      sprite: _DV/Structures/Furniture/rollerbeds.rsi # DeltaV - Resprited some medical items
+      sprite: Structures/Furniture/rollerbeds.rsi
       noRot: true
       layers:
       - state: rollerbed
@@ -80,7 +80,6 @@
             True: {visible: false}
     - type: StaticPrice
       price: 120
-    - type: ProtectedFromStepTriggers # DeltaV - Make Rollerbeds immune to Mousetraps.
 
 - type: entity
   parent: RollerBed

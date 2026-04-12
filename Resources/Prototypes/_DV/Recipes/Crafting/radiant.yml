@@ -1,7 +1,0 @@
-- type: construction
-  id: RadiantSword
-  graph: RadiantSword
-  startNode: start
-  targetNode: radiantsword
-  category: construction-category-weapons
-  objectType: item

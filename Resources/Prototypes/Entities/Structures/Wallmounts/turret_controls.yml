@@ -99,7 +99,7 @@
     - Bar
     - BasicSilicon
     - Borg
-    #- Brig # DeltaV - we don't use brig
+    - Brig
     - Detective
     - Captain
     - Cargo
@@ -181,8 +181,6 @@
   - type: DeviceNetwork
     receiveFrequencyId: TurretAI
     transmitFrequencyId: TurretControlAI
-  - type: StationAiVision #DeltaV
-    range: 0
   - type: TurretTargetSettings
     exemptAccessLevels:
     - BasicSilicon
@@ -222,8 +220,6 @@
     containers:
       board:
       - WeaponEnergyTurretCommandControlPanelElectronics
-  - type: StationAiVision #DeltaV
-    range: 0
   - type: TurretTargetSettings
     exemptAccessLevels:
     - Command

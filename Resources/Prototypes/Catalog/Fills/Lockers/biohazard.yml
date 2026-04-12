@@ -68,7 +68,7 @@
 
 - type: entity
   id: ClosetL3ScienceFilled
-  suffix: Filled, Epistemics # DeltaV - Epistemics Department replacing Science
+  suffix: Filled, Science
   parent: ClosetL3Science
   components:
   - type: EntityTableContainerFill

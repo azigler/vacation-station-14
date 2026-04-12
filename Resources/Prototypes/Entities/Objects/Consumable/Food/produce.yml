@@ -883,11 +883,6 @@
     heldPrefix: produce
   - type: Produce
     seedId: potato
-  - type: Extractable
-    juiceSolution:
-      reagents:
-      - ReagentId: JuicePotato
-        Quantity: 10
   - type: Tag
     tags:
     - Potato
@@ -1591,7 +1586,7 @@
         reagents:
         - ReagentId: Nutriment
           Quantity: 2
-        - ReagentId: SalicylicAcid # Funkychem - bicaridine -> salicylic acid
+        - ReagentId: Bicaridine
           Quantity: 20
   - type: Sprite
     sprite: Objects/Specific/Hydroponics/poppy.rsi
@@ -1623,7 +1618,7 @@
         reagents:
         - ReagentId: Nutriment
           Quantity: 2
-        - ReagentId: SalicylicAcid # Funkychem - bicaridine -> salicylic acid
+        - ReagentId: Bicaridine
           Quantity: 20
   - type: Sprite
     sprite: Objects/Specific/Hydroponics/lily.rsi

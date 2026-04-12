@@ -120,12 +120,12 @@
 - type: entity
   parent: CrateGenericSteel
   id: CrateScience
-  name: epistemics crate # DeltaV - Epistemics Department replacing Science
+  name: science crate
   components:
   - type: Icon
-    sprite: _DV/Structures/Storage/Crates/epistemics.rsi # DeltaV - Epistemics Department replacing Science
+    sprite: Structures/Storage/Crates/science.rsi
   - type: Sprite
-    sprite: _DV/Structures/Storage/Crates/epistemics.rsi # DeltaV - Epistemics Department replacing Science
+    sprite: Structures/Storage/Crates/science.rsi
 
 - type: entity
   parent: CrateGenericSteel
@@ -198,13 +198,11 @@
   name: secgear crate
   components:
   - type: Icon
-    sprite: _DV/Structures/Storage/Crates/sec_gear.rsi # DeltaV - resprite security crates
+    sprite: Structures/Storage/Crates/sec_gear.rsi
   - type: Sprite
-    sprite: _DV/Structures/Storage/Crates/sec_gear.rsi # DeltaV - resprite security crates
+    sprite: Structures/Storage/Crates/sec_gear.rsi
   - type: AccessReader
     access: [["Security"]]
-  - type: AntiTamper # DeltaV - port impstation's anti-tamper
-    containers: [ entity_storage ] # DeltaV - port impstation's anti-tamper
 
 - type: entity
   parent: CrateBaseSecure
@@ -255,7 +253,7 @@
 - type: entity
   parent: CrateBaseSecure
   id: CrateScienceSecure
-  name: secure epistemics crate # DeltaV - Epistemics Department replacing Science
+  name: secure science crate
   components:
   - type: Icon
     sprite: Structures/Storage/Crates/scicrate_secure.rsi
@@ -309,8 +307,6 @@
     sprite: Structures/Storage/Crates/weapon.rsi
   - type: AccessReader
     access: [["Armory"]]
-  - type: AntiTamper # DeltaV - port impstation's anti-tamper
-    containers: [ entity_storage ] # DeltaV - port impstation's anti-tamper
 
 - type: entity
   parent: [ CrateBaseSecure, BaseSecurityContraband ]
@@ -320,7 +316,7 @@
   description: An armory access locked crate for storing contraband confiscated from suspects or prisoners.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Storage/Crates/sec_gear.rsi # DeltaV - resprite security crates
+    sprite: Structures/Storage/Crates/sec_gear.rsi
   - type: AccessReader
     access: [["Armory"]]
 
@@ -691,7 +687,7 @@
   parent: CratePirate
   id: CrateToyBox
   name: toy box
-  #suffix: Empty # Delta V - Commented out simply for clarity at spawn menu on other uses besides the filled toy box.
+  suffix: Empty
   description: A box overflowing with fun.
   components:
   - type: Sprite

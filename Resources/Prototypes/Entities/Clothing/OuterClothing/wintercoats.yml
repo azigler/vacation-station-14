@@ -1,5 +1,5 @@
 - type: entity
-  parent: [ClothingOuterStorageBase, AllowSuitStorageClothingGasTanks] # DeltaV - allow tanks for winter coats
+  parent: ClothingOuterStorageBase
   id: ClothingOuterWinterCoat
   name: winter coat
   description: A heavy jacket made from 'synthetic' animal furs.
@@ -50,7 +50,6 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
       storagebase: !type:Container
         ents: []
 
@@ -122,18 +121,11 @@
       - state: CAP-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCaptain
-  - type: Armor # DeltaV - adds resists to coat, same as HoS coat. Still better than nothing, but nowhere as good as a carapace
-    modifiers:
-      coefficients:
-        Blunt: 0.75
-        Slash: 0.75
-        Piercing: 0.75
-        Heat: 0.75
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
   id: ClothingOuterWinterCargo
-  name: logistics winter coat # DeltaV - Logistics Department replacing Cargo
+  name: cargo winter coat
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
@@ -257,20 +249,20 @@
   name: chief medical officer's winter coat
   components:
   - type: Sprite
-    sprite: _DV/Clothing/OuterClothing/WinterCoats/cmo.rsi # DeltaV - Recolor to match department color
-#    layers:
-#    - state: CMO-icon
-#  - type: Item
-#    inhandVisuals:
-#      left:
-#      - state: CMO-inhand-left
-#      right:
-#      - state: CMO-inhand-right
+    sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
+    layers:
+    - state: CMO-icon
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: CMO-inhand-left
+      right:
+      - state: CMO-inhand-right
   - type: Clothing
-    sprite: _DV/Clothing/OuterClothing/WinterCoats/cmo.rsi # DeltaV - Recolor to match department color
-#    clothingVisuals:
-#      outerClothing:
-#      - state: CMO-equipped-OUTERCLOTHING
+    sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
+    clothingVisuals:
+      outerClothing:
+      - state: CMO-equipped-OUTERCLOTHING
   - type: Armor
     modifiers:
       coefficients:
@@ -370,7 +362,7 @@
 
 ##########################################################
 - type: entity
-  parent: [ClothingOuterArmorHoS, ClothingOuterArmoredWinterCoatToggleable, BaseSecurityCommandContraband] # DeltaV - Replaced ClothingOuterWinterCoatToggleable with ClothingOuterArmoredWinterCoatToggleable
+  parent: [ClothingOuterArmorHoS, ClothingOuterWinterCoatToggleable, BaseSecurityCommandContraband]
   id: ClothingOuterWinterHoS
   name: head of security's armored winter coat
   description: A sturdy, utilitarian winter coat designed to protect a head of security from any brig-bound threats and hypothermic events.
@@ -381,6 +373,11 @@
     sprite: Clothing/OuterClothing/WinterCoats/coathosarmored.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHOS
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:ContainerSlot { }
+      storagebase: !type:Container
+        ents: [ ]
 ##########################################################
 
 - type: entity
@@ -406,13 +403,6 @@
       - state: HOS-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHOS
-  - type: Armor # DeltaV - adds resists to coat. As good as Cap's, but I don't know why you'd wear this over a trench coat
-    modifiers:
-      coefficients:
-        Blunt: 0.75
-        Slash: 0.75
-        Piercing: 0.75
-        Heat: 0.75
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -473,20 +463,20 @@
   name: medical winter coat
   components:
   - type: Sprite
-    sprite: _DV/Clothing/OuterClothing/WinterCoats/medical.rsi # DeltaV - Recolor to match department color
-#    layers:
-#    - state: MED-icon
-#  - type: Item
-#    inhandVisuals:
-#      left:
-#      - state: MED-inhand-left
-#      right:
-#      - state: MED-inhand-right
+    sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
+    layers:
+    - state: MED-icon
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: MED-inhand-left
+      right:
+      - state: MED-inhand-right
   - type: Clothing
-    sprite: _DV/Clothing/OuterClothing/WinterCoats/medical.rsi # DeltaV - Recolor to match department color
-#    clothingVisuals:
-#      outerClothing:
-#      - state: MED-equipped-OUTERCLOTHING 
+    sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
+    clothingVisuals:
+      outerClothing:
+      - state: MED-equipped-OUTERCLOTHING
   - type: Armor
     modifiers:
       coefficients:
@@ -576,7 +566,7 @@
 - type: entity
   parent: [ClothingOuterWinterCoatToggleable, BaseCommandContraband]
   id: ClothingOuterWinterQM
-  name: logistics officer's winter coat # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster's winter coat
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
@@ -600,7 +590,7 @@
 - type: entity
   parent: [ClothingOuterWinterCoatToggleable, BaseCommandContraband]
   id: ClothingOuterWinterRD
-  name: mystagogue's winter coat # DeltaV - Epistemics Department replacing Science
+  name: research director's winter coat
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
@@ -654,7 +644,7 @@
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
   id: ClothingOuterWinterSci
-  name: epistemics winter coat # DeltaV - Epistemics Department replacing Science
+  name: science winter coat
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
@@ -703,13 +693,6 @@
       - state: SEC-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterSec
-  - type: Armor # DeltaV - adds resists to coat. Make sure to update ClothingLongcoatSecurity if these values change.
-    modifiers:
-      coefficients:
-        Blunt: 0.85
-        Slash: 0.85
-        Piercing: 0.85 # DeltaV - not as resistant as pre-rebase, but still better than nothing
-        Heat: 0.75
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -743,7 +726,7 @@
 
 ################################################################
 - type: entity
-  parent: [ClothingOuterArmorWarden, ClothingOuterArmoredWinterCoatToggleable, BaseSecurityContraband] # DeltaV - Replaced ClothingOuterWinterCoatToggleable with ClothingOuterArmoredWinterCoatToggleable
+  parent: [ClothingOuterArmorWarden, ClothingOuterWinterCoatToggleable, BaseSecurityContraband]
   id: ClothingOuterWinterWarden
   name: warden's armored winter coat
   description: A sturdy, utilitarian winter coat designed to protect a warden from any brig-bound threats and hypothermic events.
@@ -754,6 +737,11 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatwardenarmored.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterWarden
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:ContainerSlot { }
+      storagebase: !type:Container
+        ents: [ ]
 ################################################################
 
 - type: entity

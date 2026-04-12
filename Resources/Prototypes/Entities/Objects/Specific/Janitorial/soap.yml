@@ -66,7 +66,6 @@
     solution: soap
   - type: BadFood
   - type: CleansForensics
-  - type: SurgeryCleansDirt # DeltaV - surgery cross contamination
   - type: Residue
     residueAdjective: residue-slippery
 
@@ -81,7 +80,6 @@
       map: ["enum.SolutionContainerLayers.Fill"]
   - type: Residue
     residueColor: residue-green
-  - type: PhysicalComposition # DeltaV - made soap recycleable
 
 - type: entity
   parent: BaseSoap
@@ -136,7 +134,6 @@
   - type: Slippery
     staminaDamage: 50
     slipData:
-      stunTime: 3 # DeltaV - buff slips
       knockdownTime: 3
       launchForwardsMultiplier: 3
   - type: Item
@@ -147,8 +144,6 @@
       - punishment
   - type: CleansForensics
     cleanDelay: 8.0
-  - type: SurgeryCleansDirt # DeltaV - evil soap is fast
-    cleanDelay: 2
   - type: Residue
     residueColor: residue-red
   - type: StaticPrice
@@ -242,7 +237,6 @@
   - type: Slippery
     staminaDamage: 50
     slipData:
-      stunTime: 5.0 # DeltaV - buff slips
       knockdownTime: 5.0
       launchForwardsMultiplier: 3.0
   - type: Item
@@ -254,7 +248,5 @@
         reagents:
         - ReagentId: SoapReagent
           Quantity: 240
-  - type: SurgeryCleansDirt # DeltaV - omega soap is fast
-    cleanDelay: 2
   - type: Residue
     residueColor: residue-blue

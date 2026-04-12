@@ -14,7 +14,7 @@
   id: Drinks
   name: guide-entry-drinks
   text: "/ServerInfo/Guidebook/ReferenceTables/Drinks.xml"
-  filterEnabled: true
+  filterEnabled: True
 
 - type: guideEntry
   id: FoodRecipes
@@ -37,7 +37,6 @@
   - OtherRecipes
   - MedicinalRecipes
   - SecretRecipes
-  - DeepFriedRecipes # DeltaV
 
 - type: guideEntry
   id: PizzaRecipes

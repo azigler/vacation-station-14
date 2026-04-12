@@ -10,17 +10,15 @@
   products:
     Protein: 0.5
 
-#- type: reaction # Delta V - Removed this reaction due to lack of function besides punishing chefs
-#  id: EggCooking
-#  impact: Low
-#  minTemp: 344
-#  reactants:
-#    Egg:
-#      amount: 0.5
-#  products:
-#    EggCooked: 0.5
-
-# Holy - TODO: make it so only the chaplain can use the bible to start these reactions, not anyone with a bible
+- type: reaction
+  id: EggCooking
+  impact: Low
+  minTemp: 344
+  reactants:
+    Egg:
+      amount: 0.5
+  products:
+    EggCooked: 0.5
 
 - type: reaction
   id: SapBoiling

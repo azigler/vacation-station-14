@@ -3,29 +3,15 @@
   name: guide-entry-species
   text: "/ServerInfo/Guidebook/Mobs/Species.xml"
   children:
-    - Arachnid
-    - Diona
-    - Dwarf
-    - Human
-    - Moth
-    - Reptilian
-    - SlimePerson
-    - Vox
-    # DeltaV additions
-    - Vulpkanin
-    - Harpy
-    - Felinid
-    - Oni
-    - Rodentia
-    - Chitinid
-    - IPC
-    - Feroxi
-    - Kitsune
-    - Avali
-    # ImpStation additions
-    - Thaven
-    # Den addition
-    - Ovinia
+  - Arachnid
+  - Diona
+  - Dwarf
+  - Human
+  - Moth
+  - Reptilian
+  - SlimePerson
+  - Vox
+  - Vulpkanin
 
 - type: guideEntry
   id: Arachnid
@@ -68,6 +54,6 @@
   text: "/ServerInfo/Guidebook/Mobs/Vox.xml"
 
 - type: guideEntry
-  id: IPC
-  name: species-name-ipc
-  text: "/ServerInfo/Guidebook/Mobs/IPCs.xml"
+  id: Vulpkanin
+  name: species-name-vulpkanin
+  text: "/ServerInfo/Guidebook/Mobs/Vulpkanin.xml"

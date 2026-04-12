@@ -30,6 +30,8 @@
   components:
   - type: Contraband
     severity: Syndicate
+    allowedDepartments: [  ]
+    allowedJobs: [  ]
 
 # minor contraband not departmentally restricted -- improvised weapons etc
 - type: entity
@@ -65,9 +67,6 @@
   components:
   - type: Contraband
     allowedDepartments: [ CentralCommand ]
-  - type: MappingCategories # DeltaV
-    categories:
-    - Centcomm
 
 - type: entity
   id: BaseCommandContraband
@@ -99,7 +98,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Epistemics ] # DeltaV - Epistemics department
+    allowedDepartments: [ Science ]
 
 - type: entity
   id: BaseMedicalContraband
@@ -123,7 +122,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Logistics ] # DeltaV - logistics department
+    allowedDepartments: [ Cargo ]
 
 # multiple departments restricted contraband
 - type: entity
@@ -148,7 +147,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Security, Epistemics, Command ] # DeltaV - Epistemics department
+    allowedDepartments: [ Security, Science, Command ]
 
 - type: entity
   id: BaseSecurityEngineeringContraband
@@ -164,7 +163,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Epistemics, Silicon ] # DeltaV - Epistemics department
+    allowedDepartments: [ Science, Silicon ]
 
 - type: entity
   id: BaseSecurityCargoContraband
@@ -172,7 +171,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Security, Logistics ] # DeltaV - Logistics department
+    allowedDepartments: [ Security, Cargo ]
 
 - type: entity
   id: BaseMedicalScienceContraband
@@ -180,7 +179,7 @@
   abstract: true
   components:
   - type: Contraband
-    allowedDepartments: [ Medical, Epistemics ] # DeltaV - Epistemics department
+    allowedDepartments: [ Medical, Science ]
 
 # contraband restricted by job by some degree
 - type: entity

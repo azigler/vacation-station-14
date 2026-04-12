@@ -1,7 +1,7 @@
 - type: entity
+  abstract: true
   parent: BaseSign
   id: PosterBase
-  abstract: true
   components:
   - type: Sprite
     sprite: Structures/Wallmounts/posters.rsi
@@ -34,6 +34,9 @@
             min: 1
             max: 1
         offset: 0
+  - type: Construction
+    graph: PosterGraph
+    node: start
 
 - type: entity
   parent: BaseSign
@@ -45,6 +48,8 @@
     drawdepth: WallTops
     sprite: Structures/Wallmounts/posters.rsi
     state: poster_broken
+  - type: Damageable
+    damageModifierSet: Card
   - type: Destructible
     thresholds:
     - trigger:
@@ -56,6 +61,9 @@
           path: /Audio/Effects/poster_broken.ogg
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
+  - type: Construction
+    graph: PosterGraph
+    node: tornPoster
 
 # Contraband
 - type: entity
@@ -224,7 +232,7 @@
   parent: PosterBase
   id: PosterContrabandLamarr
   name: "Lamarr"
-  description: "This poster depicts Lamarr. Probably made by a traitorous Mystagogue." # DeltaV - Epistemics Department replacing Science
+  description: "This poster depicts Lamarr. Probably made by a traitorous Research Director."
   components:
   - type: Sprite
     state: poster19_contraband
@@ -892,10 +900,9 @@
   parent: PosterBase
   id: PosterLegitEnlist
   name: "Enlist"
-  description: "Enlist in the NanoTrasen ERT reserves today!" # DeltaV - expunged blatant reference to Division of Asset Protection death squads
+  description: "Enlist in the Nanotrasen Deathsquadron reserves today!"
   components:
   - type: Sprite
-    sprite: _DV/Structures/Wallmounts/Posters/legit.rsi # DeltaV - resprite to an ERT
     state: poster29_legit
 
 - type: entity

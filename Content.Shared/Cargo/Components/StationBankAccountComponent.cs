@@ -41,7 +41,6 @@ public sealed partial class StationBankAccountComponent : Component
         { "Science",     1000 },
         { "Security",    1000 },
         { "Service",     1000 },
-        { "Justice",     1000 }, // DeltaV - Justice
     };
 
     /// <summary>
@@ -51,12 +50,11 @@ public sealed partial class StationBankAccountComponent : Component
     public Dictionary<ProtoId<CargoAccountPrototype>, double> RevenueDistribution = new()
     {
         { "Cargo",       0.00 },
-        { "Engineering", 0.25 }, // DeltaV - was 0.20
-        { "Medical",     0.25 }, // DeltaV - was 0.20
-        { "Science",     0.15 }, // DeltaV - was 0.20
-        { "Security",    0.15 }, // DeltaV - was 0.20, we took a cut for Justice
-        { "Justice",     0.05 }, // DeltaV - Justice
-        { "Service",     0.15 }, // DeltaV - was 0.20
+        { "Engineering", 0.20 },
+        { "Medical",     0.20 },
+        { "Science",     0.20 },
+        { "Security",    0.20 },
+        { "Service",     0.20 },
     };
 
     /// <summary>

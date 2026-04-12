@@ -92,10 +92,6 @@ def install_hooks():
     with open("INSTALLED_HOOKS_VERSION", "w") as f:
         f.write(CURRENT_HOOKS_VERSION)
 
-    # Begin DeltaV Additions - add pre-commit hooks if you have it installed
-    if shutil.which("pre-commit") is not None:
-        run_command(["pre-commit", "install"], True)
-    # End DeltaV Additions
 
 def reset_solution():
     """

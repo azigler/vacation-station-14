@@ -11,12 +11,12 @@
   boilingPoint: -183.0
   meltingPoint: -218.4
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:Oxygenate
         conditions:
         - !type:MetabolizerTypeCondition
-          type: [ Human, Animal, Rat, Plant, Feroxi, Harpy ] # DeltaV
+          type: [ Human, Animal, Rat, Plant ]
       # Convert Oxygen into CO2.
       - !type:ModifyLungGas
         conditions:
@@ -26,15 +26,6 @@
         ratios:
           CarbonDioxide: 1.0
           Oxygen: -1.0
-      # Begin DeltaV - Poison the atmosphere
-      - !type:ModifyLungGas
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Fuel ]
-        ratios:
-          CarbonDioxide: 10.0
-          Oxygen: -1.0
-      # End DeltaV
       - !type:HealthChange
         conditions:
         - !type:MetabolizerTypeCondition
@@ -51,12 +42,12 @@
             type: [ Vox ]
         clear: true
         time: 5
-    Gas:
+    Respiration:
       effects:
       - !type:Oxygenate
         conditions:
         - !type:MetabolizerTypeCondition
-          type: [ Human, Animal, Rat, Plant, Feroxi, Harpy ] # DeltaV
+          type: [ Human, Animal, Rat, Plant, Arachnid, Moth ]
       # Convert Oxygen into CO2.
       - !type:ModifyLungGas
         conditions:
@@ -66,15 +57,6 @@
         ratios:
           CarbonDioxide: 1.0
           Oxygen: -1.0
-      # Begin DeltaV - Poison the atmosphere
-      - !type:ModifyLungGas
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Fuel ]
-        ratios:
-          CarbonDioxide: 10.0
-          Oxygen: -1.0
-      # End DeltaV
       - !type:HealthChange
         conditions:
         - !type:MetabolizerTypeCondition
@@ -106,7 +88,7 @@
   - !type:FlammableTileReaction
     temperatureMultiplier: 1.5
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:HealthChange
         damage:
@@ -115,7 +97,7 @@
       - !type:AdjustReagent
         reagent: Inaprovaline
         amount: -2.0
-    Gas:
+    Respiration:
       effects:
       - !type:HealthChange
         ignoreResistances: true
@@ -129,11 +111,6 @@
         minScale: 1.5
         clear: True
         time: 5
-      - !type:Oxygenate # DeltaV - Harpy sensitive to air quality
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Harpy ]
-        factor: -8
   reactiveEffects:
     Flammable:
       methods: [ Touch ]
@@ -159,13 +136,13 @@
       - !type:Flammable
         multiplier: 0.8
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:HealthChange
         damage:
           types:
             Radiation: 1.5
-    Gas:
+    Respiration:
       effects:
       - !type:HealthChange
         ignoreResistances: true
@@ -179,11 +156,6 @@
         minScale: 1.5
         clear: True
         time: 5
-      - !type:Oxygenate # DeltaV - Harpy sensitive to air quality
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Harpy ]
-        factor: -8
 
 - type: reagent
   id: CarbonDioxide
@@ -193,7 +165,7 @@
   flavor: bitter
   color: "#66ff33"
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:Oxygenate
         conditions:
@@ -212,15 +184,10 @@
       - !type:Oxygenate
         conditions:
         - !type:MetabolizerTypeCondition
-          type: [ Plant, Harpy ] # DeltaV - Harpy moved below
+          type: [ Plant ]
           inverted: true
         factor: -4
-      - !type:Oxygenate # DeltaV - Harpy more sensitive to air quality
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Harpy ]
-        factor: -12
-    Gas:
+    Respiration:
       effects:
       - !type:Oxygenate
         conditions:
@@ -242,17 +209,12 @@
       - !type:Oxygenate # carbon dioxide displaces oxygen from the bloodstream, causing asphyxiation
         conditions:
         - !type:MetabolizerTypeCondition
-          type: [ Plant, Harpy ] # DeltaV - Harpy moved below
+          type: [ Plant ]
           inverted: true
         factor: -4
       # We need a metabolism effect on reagent removal
       #- !type:AdjustAlert
       #  alertType: CarbonDioxide
-      - !type:Oxygenate # DeltaV - Harpy more sensitive to air quality
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Harpy ]
-        factor: -12
 
 - type: reagent
   id: Nitrogen
@@ -264,13 +226,13 @@
   boilingPoint: -195.8
   meltingPoint: -210.0
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:HealthChange
         damage:
           types:
             Cold: 0.5 # liquid nitrogen is cold
-    Gas:
+    Respiration:
       effects:
       - !type:Oxygenate
         conditions:
@@ -302,13 +264,13 @@
   boilingPoint: -88
   meltingPoint: -90
   metabolisms:
-    Poison:
+    Bloodstream:
       effects:
       - !type:HealthChange
         damage:
           types:
             Poison: 1
-    Gas:
+    Respiration:
       effects:
       - !type:Emote
         minScale: 0.2
@@ -355,20 +317,6 @@
         effectProto: StatusEffectForcedSleeping
         time: 3
         type: Update
-      # DeltaV - anesthesia changes
-      - !type:GenericStatusEffect
-        conditions:
-        - !type:ReagentCondition
-          reagent: NitrousOxide
-          min: 1
-        - !type:MetabolizerTypeCondition
-          type: [ Slime ]
-          inverted: true
-        key: Anesthesia
-        component: Anesthesia
-        time: 200
-        type: Add
-      # END DeltaV
       - !type:HealthChange
         minScale: 3.5
         conditions:
@@ -376,9 +324,10 @@
           type: [ Slime ]
           inverted: true
         ignoreResistances: true
+        scaling: true
         damage:
           types:
-            Poison: 0.25
+            Poison: 1
 
 - type: reagent
   id: Frezon
@@ -394,7 +343,7 @@
   boilingPoint: -195.8
   meltingPoint: -210.0
   metabolisms:
-    Narcotic:
+    Bloodstream:
       effects:
       - !type:HealthChange
         ignoreResistances: true
@@ -419,7 +368,7 @@
         probability: 0.1
         conditions:
         minScale: 2
-    Gas:
+    Respiration:
       effects:
       - !type:HealthChange
         minScale: 0.5
@@ -446,8 +395,3 @@
         messages: [ "frezon-euphoric" ]
         probability: 0.1
         minScale: 1
-      - !type:Oxygenate # DeltaV - Harpy sensitive to air quality
-        conditions:
-        - !type:MetabolizerTypeCondition
-          type: [ Harpy ]
-        factor: -4

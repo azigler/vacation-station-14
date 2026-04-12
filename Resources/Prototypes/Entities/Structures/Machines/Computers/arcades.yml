@@ -5,8 +5,6 @@
   name: arcade
   parent: BaseComputer
   components:
-  - type: ApcPowerReceiver
-    powerLoad: 350
   - type: ExtensionCableReceiver
   - type: PointLight
     radius: 1.8
@@ -126,18 +124,6 @@
     - PlushieSharkBlue
     - PlushieVox
     - PlushieXeno
-    # Begin DeltaV - see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - PlushieMort
-    - PlushieIPC
-    - PlushieFelinid
-    - PlushieOni
-    - PlushieHarpy
-    - PlushieRodentia
-    - PlushieFeroxi
-    - PlushieChitinid
-    - PlushieKitsune
-    # End DeltaV
-    - PlushieThaven # IMP Port
     - PlasticBanana
     - RevolverCapGun
     - SnapPopBox
@@ -165,8 +151,6 @@
     - ToyAmongPequeno
     - ToyRubberDuck
     - ToyHammer
-    - ToyRenault # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - ToySiobhan # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
     - WeaponWaterPistol
     - WhoopieCushion
     - Whistle

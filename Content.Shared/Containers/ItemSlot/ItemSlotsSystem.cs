@@ -144,7 +144,7 @@ namespace Content.Shared.Containers.ItemSlots
         {
             itemSlot = null;
 
-            if (!Resolve(uid, ref component, false)) // Goobstation - sane API
+            if (!Resolve(uid, ref component))
                 return false;
 
             return component.Slots.TryGetValue(slotId, out itemSlot);
@@ -420,7 +420,10 @@ namespace Content.Shared.Containers.ItemSlots
         ///     Useful for predicted interactions
         /// </param>
         /// <returns>False if failed to insert item</returns>
-        public bool TryInsertEmpty(Entity<ItemSlotsComponent?> ent, EntityUid item, EntityUid? user, bool excludeUserAudio = false)
+        public bool TryInsertEmpty(Entity<ItemSlotsComponent?> ent,
+            EntityUid item,
+            EntityUid? user,
+            bool excludeUserAudio = false)
         {
             if (!Resolve(ent, ref ent.Comp, false))
                 return false;
@@ -453,8 +456,7 @@ namespace Content.Shared.Containers.ItemSlots
             EntityUid item,
             Entity<HandsComponent?>? userEnt,
             [NotNullWhen(true)] out ItemSlot? itemSlot,
-            bool emptyOnly = false,
-            bool excludeUserAudio = false)  // DV - hand refactor fixes
+            bool emptyOnly = false)
         {
             itemSlot = null;
 
@@ -472,33 +474,20 @@ namespace Content.Shared.Containers.ItemSlots
             var slots = new List<ItemSlot>();
             foreach (var slot in ent.Comp.Slots.Values)
             {
-                if (slot.ContainerSlot?.ContainedEntity != null)
+                if (emptyOnly && slot.ContainerSlot?.ContainedEntity != null)
                     continue;
 
-                if (CanInsert(ent, item, userEnt, slot)) // DV - hand refactor fixes
+                if (CanInsert(ent, item, userEnt, slot))
                     slots.Add(slot);
             }
 
             if (slots.Count == 0)
                 return false;
 
-            if (userEnt != null && _handsSystem.IsHolding(userEnt.Value, item)) // DV - hand refactor fixes
-            {
-                if (!_handsSystem.TryDrop(userEnt.Value, item)) // DV - hand refactor fixes
-                    return false;
-            }
-
             slots.Sort(SortEmpty);
 
-            foreach (var slot in slots)
-            {
-                itemSlot = slot;
-                if (TryInsert(ent, slot, item, userEnt, excludeUserAudio: excludeUserAudio)) // DV - hand refactor fixes
-                    return true;
-            }
-
-            itemSlot = null;
-            return false;
+            itemSlot = slots[0];
+            return true;
         }
 
         private static int SortEmpty(ItemSlot a, ItemSlot b)

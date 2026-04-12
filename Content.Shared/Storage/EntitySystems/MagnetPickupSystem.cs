@@ -1,5 +1,4 @@
 using Content.Shared.Inventory;
-using Content.Shared.Item.ItemToggle; // DeltaV
 using Content.Shared.Storage.Components;
 using Content.Shared.Whitelist;
 using Robust.Shared.Physics.Components;
@@ -15,20 +14,18 @@ public sealed class MagnetPickupSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly ItemToggleSystem _toggle = default!; // DeltaV
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedStorageSystem _storage = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
 
+    [Dependency] private readonly EntityQuery<PhysicsComponent> _physicsQuery = default!;
 
     private static readonly TimeSpan ScanDelay = TimeSpan.FromSeconds(1);
 
-    private EntityQuery<PhysicsComponent> _physicsQuery;
 
     public override void Initialize()
     {
         base.Initialize();
-        _physicsQuery = GetEntityQuery<PhysicsComponent>();
         SubscribeLocalEvent<MagnetPickupComponent, MapInitEvent>(OnMagnetMapInit);
     }
 
@@ -51,18 +48,11 @@ public sealed class MagnetPickupSystem : EntitySystem
             comp.NextScan += ScanDelay;
             Dirty(uid, comp);
 
-            // Begin DeltaV Addition: Make ore bags use ItemToggle
-            if (!_toggle.IsActivated(uid))
+            if (!_inventory.TryGetContainingSlot((uid, xform, meta), out var slotDef))
                 continue;
-            // End DeltaV Addition
 
-            // Begin DeltaV Removals: Allow ore bags to work inhand
-            //if (!_inventory.TryGetContainingSlot((uid, xform, meta), out var slotDef))
-            //    continue;
-
-            //if ((slotDef.SlotFlags & comp.SlotFlags) == 0x0)
-            //    continue;
-            // End DeltaV Removals
+            if ((slotDef.SlotFlags & comp.SlotFlags) == 0x0)
+                continue;
 
             // No space
             if (!_storage.HasSpace((uid, storage)))

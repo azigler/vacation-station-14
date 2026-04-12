@@ -13,7 +13,7 @@
   canBeAntag: false
   access:
   - Security
-  #- Brig # DeltaV - Removed brig access
+  - Brig
   - Maintenance
   - Detective
   - Cryogenics
@@ -25,11 +25,10 @@
 - type: startingGear
   id: DetectiveGear
   equipment:
-    #eyes: ClothingEyesGlassesSecurity # DeltaV - loadouts
+    eyes: ClothingEyesGlassesSecurity
     id: DetectivePDA
-    gloves: ClothingHandsGlovesForensic # DeltaV - roundstart detective forensic gloves
     ears: ClothingHeadsetSecurity
-    belt: ClothingBeltHolster # DeltaV - loadouts
+    belt: ClothingBeltHolsterFilled
   storage:
     back:
     - Flash

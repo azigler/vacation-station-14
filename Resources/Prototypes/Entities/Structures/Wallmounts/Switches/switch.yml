@@ -275,13 +275,13 @@
   - type: AccessReader
     access: [["Armory"]]
 
-# - type: entity # DeltaV - This was commented out with no context so idk
-#   parent: LockableButton
-#   id: LockableButtonBrig
-#   suffix: Brig
-#   components:
-#   - type: AccessReader
-#     access: [["Brig"]]
+- type: entity
+  parent: LockableButton
+  id: LockableButtonBrig
+  suffix: Brig
+  components:
+  - type: AccessReader
+    access: [["Brig"]]
 
 - type: entity
   parent: LockableButton

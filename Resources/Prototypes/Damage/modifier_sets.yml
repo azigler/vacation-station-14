@@ -199,11 +199,10 @@
 - type: damageModifierSet
   id: Diona
   coefficients:
-    Piercing: 0.6 # start Delta V Diona difference
-    Blunt: 0.6
-    Slash: 0.7
+    Blunt: 0.7
+    Slash: 0.8
     Heat: 1.5
-    Shock: 1.2 # end Delta V Diona difference
+    Shock: 1.2
 
 - type: damageModifierSet
   id: Moth # Slightly worse at everything but cold
@@ -239,7 +238,7 @@
     Asphyxiation: 0.0
     Bloodloss: 0.0
     Cellular: 0.0
-    Holy: 1.5 # DeltaV - was 0.5
+    Holy: 0.5
   flatReductions:
     Blunt: 5
 
@@ -271,7 +270,6 @@
     Piercing: 0.2
     Poison: 0.0
     Radiation: 0.0
-    Shadow: 0.0 # DeltaV
     Shock: 0.0
     Slash: 0.25
     Structural: 0.0
@@ -324,13 +322,14 @@
     Heat: 2.5
     Caustic: 0.0
 
-# protects against radiation
-- type: damageModifierSet
-  id: PotassiumIodide
-  coefficients:
-    Radiation: 0.1
-
 - type: damageModifierSet
   id: ManifestedSpirit
   coefficients:
     Holy: 2
+
+# Vulps get more heat damage because fur
+- type: damageModifierSet
+  id: Vulpkanin
+  coefficients:
+    Heat: 1.15
+    Cold: 0.85

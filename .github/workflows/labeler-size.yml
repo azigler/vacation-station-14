@@ -10,12 +10,11 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           # Custom size configuration
-          # DeltaV: changed to powers of 4
           sizes: >
             {
               "0": "XS",
-              "16": "S",
-              "64": "M",
-              "256": "L",
-              "1024": "XL"
+              "10": "S",
+              "100": "M",
+              "1000": "L",
+              "5000": "XL"
             }

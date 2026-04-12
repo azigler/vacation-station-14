@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Content.Shared._EE.Flight; // DeltaV - Harpy Flight
 using Content.Shared.ActionBlocker;
 using Content.Shared.Administration.Components;
 using Content.Shared.Administration.Logs;
@@ -21,7 +20,6 @@ using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Inventory.VirtualItem;
 using Content.Shared.Item;
-using Content.Shared.Mindshield.Components; // DeltaV - Admin QOL
 using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Pulling.Events;
 using Content.Shared.Popups;
@@ -58,7 +56,6 @@ namespace Content.Shared.Cuffs
         [Dependency] private readonly SharedTransformSystem _transform = default!;
         [Dependency] private readonly UseDelaySystem _delay = default!;
         [Dependency] private readonly SharedCombatModeSystem _combatMode = default!;
-        [Dependency] private readonly SharedFlightSystem _flight = default!; // DeltaV - Harpy flight
 
         public override void Initialize()
         {
@@ -525,15 +522,6 @@ namespace Content.Shared.Cuffs
                 return false;
             }
 
-            // EE - Harpy Flight
-            if (_flight.IsFlying(target))
-            {
-                _popup.PopupClient(Loc.GetString("handcuff-component-target-flying-error",
-                    ("targetName", Identity.Name(target, EntityManager, user))), user, user);
-                return false;
-            }
-            // END EE
-
             var cuffTime = handcuffComponent.CuffTime;
 
             if (HasComp<StunnedComponent>(target))
@@ -666,11 +654,7 @@ namespace Content.Shared.Cuffs
             if (!_doAfter.TryStartDoAfter(doAfterEventArgs))
                 return;
 
-            // DeltaV - Conditional Impact START
-            var isMindShielded = HasComp<MindShieldComponent>(user);
-            // Only alert if new user tries to uncuff someone else and if they aren't mindshielded, stops spam during escape attempts or for cadets. LogImpact previously always High.
-            _adminLog.Add(LogType.Action, isOwner || isMindShielded ? LogImpact.Medium : LogImpact.High, $"{ToPrettyString(user):player} is trying to uncuff {ToPrettyString(target):subject}");
-            // DeltaV - Conditional impact END
+            _adminLog.Add(LogType.Action, LogImpact.High, $"{ToPrettyString(user):player} is trying to uncuff {ToPrettyString(target):subject}");
 
             var popupText = user == target.Owner
                 ? "cuffable-component-start-uncuffing-self-observer"
@@ -770,7 +754,7 @@ namespace Content.Shared.Cuffs
                 {
                     _popup.PopupEntity(Loc.GetString("cuffable-component-remove-cuffs-by-other-success-message",
                         ("otherName", Identity.Name(user.Value, EntityManager, user))), target, target);
-                    _adminLog.Add(LogType.Action, HasComp<MindShieldComponent>(user) ? LogImpact.Medium : LogImpact.High, // DeltaV - make impact conditional, previously always high
+                    _adminLog.Add(LogType.Action, LogImpact.High,
                         $"{ToPrettyString(user):player} has successfully uncuffed {ToPrettyString(target):player}");
                 }
                 else
@@ -811,14 +795,14 @@ namespace Content.Shared.Cuffs
         private void OnEquipAttempt(EntityUid uid, CuffableComponent component, IsEquippingAttemptEvent args)
         {
             // is this a self-equip, or are they being stripped?
-            if (args.Equipee == uid)
+            if (args.User == uid)
                 CheckAct(uid, component, args);
         }
 
         private void OnUnequipAttempt(EntityUid uid, CuffableComponent component, IsUnequippingAttemptEvent args)
         {
             // is this a self-equip, or are they being stripped?
-            if (args.Unequipee == uid)
+            if (args.User == uid)
                 CheckAct(uid, component, args);
         }
 

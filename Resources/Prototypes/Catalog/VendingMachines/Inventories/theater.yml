@@ -14,9 +14,6 @@
     ClothingOuterCardborg: 2
     ClothingHeadHatSombrero: 2
     ClothingOuterPonchoClassic: 2
-    ClothingUniformJumpsuitKilt: 3 # DeltaV - SCOTTTTLANDDDDD FURREVERRRRR!!
-    ClothingEyesEyepatch: 2 # Delta-V Yarrr
-    ClothingUniformBlackTurtleneck : 2 # DeltaV - Clothing addition
     ClothingHeadHatPwig: 2
     ClothingOuterRobesJudge: 2
     ClothingOuterPoncho: 2
@@ -25,8 +22,6 @@
     ClothingHeadHatSkub: 2
     ClothingOuterSkub: 2
     ClothingHeadHatBeretFrench: 2
-    ClothingUniformMrSpaceWide: 2 #imp
-    ClothingUniformMrSpaceWideSkirt: 2 #imp
     ClothingOuterSuitChicken: 2
     ClothingHeadHatChickenhead: 2
     ClothingOuterSuitMonkey: 2
@@ -36,14 +31,6 @@
     Gohei: 2
     ClothingOuterSuitWitchRobes: 2
     ClothingHeadHatWitch1: 2
-    # Begin DeltaV additions
-    ClothingHeadHatWitch: 2
-    ClothingHeadHatAnimalCatBrown: 2
-    ClothingHeadHatAnimalCat: 2
-    ClothingOuterWizardFake: 2
-    ClothingShoesWizardFake: 2
-    ClothingHeadHatWizardFake: 2
-    # End DeltaV additions
     ClothingHeadHatRedRacoon: 2
     ClothingOuterRedRacoon: 2
     ClothingHeadPaperSack: 2
@@ -53,6 +40,7 @@
     ClothingUniformJumpsuitDameDane: 2
     ClothingShoesDameDane: 2
     ClothingOuterDameDane: 2
+    ClothingHeadHatMitreClown: 1
     ClothingOuterClownPriest: 1
     ClothingMaskSadMime: 1
     ClothingMaskScaredMime: 1
@@ -61,81 +49,6 @@
     FoodPoppy: 1
     ClothingHeadHatGladiator: 1
     ClothingUniformJumpsuitGladiator: 1
-    # Begin DeltaV Additions
-    ClothingUniformSkirtTurtle: 2
-    ClothingUniformSwimsuitBlue: 2
-    ClothingCostumeBunnySuit: 2
-    ClothingHeadHatBunny: 2
-    ClothingUniformDressRed: 1
-    ClothingHeadHatCake: 2
-    ClothingUniformSchoolGakuranBlack: 2
-    ClothingUniformJumpskirtWaitstaffFormal: 2
-    ClothingUniformJumpsuitWaitstaffFormal: 2
-    ClothingUniformJumpsuitWorkvest: 2
-    ClothingOuterDusterCoat: 2
-    ClothingOuterCoatNavalCoat: 2
-    ClothingNeckCloakWitchCloak: 2
-    ClothingNeckCopperNecklace: 2
-    UniformSchoolgirlBlack: 1
-    UniformSchoolgirlBlue: 1
-    UniformSchoolgirlCyan: 1
-    UniformSchoolgirlGreen: 1
-    UniformSchoolgirlOrange: 1
-    UniformSchoolgirlPink: 1
-    UniformSchoolgirlPurple: 1
-    UniformSchoolgirlRed: 1
-    UniformSchoolgirlDusk: 1
-    UniformSchoolgirlBlazerTan: 1
-    UniformGeisha: 1
-    ClothingKimonoBlue: 2
-    ClothingKimonoPink: 2
-    ClothingKimonoPurple: 2
-    ClothingKimonoSky: 2
-    ClothingKimonoGreen: 2
-    ClothingMaskOniBlue: 1
-    ClothingMaskOniRed: 1
-    ClothingCostumeArcDress: 1
-    ClothingCostumeMioSkirt: 1
-    ClothingCostumeNaota: 1
-    ClothingUniformJumpsuitSober: 1
-    ClothingOuterSuitCarp: 2 # moved out of syndicate uplink
-    ClothingShoesBootsWinterClown: 2
-    ClothingShoesBootsWinterMime: 2
-    ClothingUniformJumpsuitDetective: 1
-    ClothingUniformJumpskirtDetective: 1
-    ClothingUniformJumpsuitDetectiveGrey: 1
-    ClothingUniformJumpskirtDetectiveGrey: 1
-    ClothingOuterCoatDetectiveLoadout: 1
-    ClothingNeckTieDet: 1
-    ClothingHeadHatFedoraBrown: 1
-    ClothingHeadHatFedoraGrey: 1
-    ClothingHeadHatFedoraChoc: 1
-    ClothingHeadHatFedoraWhite: 1
-    ClothingHeadHatFedoraBlack: 1
-    ClothingHeadHatBowlerHat: 1
-    ClothingUniformFuneralSuit: 1
-    ClothingUniformFuneralSuitSkirt: 1
-    ClothingHeadTechPriest: 2 # moved from robodrobe
-    ClothingOuterRobeTechPriest: 2
-    ClothingMaskBlushingClown: 1 # moved from emag inventory
-    ClothingMaskBlushingMime: 1
-    ClothingHeadPropellerHat: 2
-    ClothingUniformLittleGuyOveralls: 2
-    ClothingOuterWinterLongMime: 1
-    # Festive
-    ClothingHeadHatRedRibbon: 2
-    ClothingHeadHatFestiveHatRed: 2
-    ClothingUniformJumpskirtFestiveDressRed: 2
-    ClothingHeadHatFestiveHatGreen: 2
-    ClothingHeadHatReindeer: 2
-    ClothingHeadHatCandyCane: 2
-    ClothingHeadHatStar: 2
-    ClothingHeadHatFestiveLights: 4
-    ClothingHeadHatElf: 4
-    ClothingUniformElf: 2
-    ClothingUniformJumpskirtElf: 2
-    ClothingShoesMiscElf: 4
-    # End DeltaV Additions
     ClothingHeadHatCowboyBrown: 1
     ClothingHeadHatCowboyBlack: 1
     ClothingHeadHatCowboyWhite: 1
@@ -143,24 +56,14 @@
     ClothingShoesBootsCowboyBrown: 1
     ClothingShoesBootsCowboyBlack: 1
     ClothingShoesBootsCowboyWhite: 1
-    # Begin Impstation Additions
-    ClothingUniformHitmanSuit: 1
-    ClothingUniformHitmanSuitSkirt: 1
-    ClothingUniformBrosBlazer: 1
-    ClothingUniformBrosBlazerSkirt: 1
-    # End Impstation Additions
   contrabandInventory:
     ClothingHeadHatRichard: 1
     ToyFigurineBoxer: 1
     ToyFigurineMusician: 1
-    ClothingShoesClownMoffers: 1 # DeltaV
-  emaggedInventory:
     ClothingShoesBling: 1
     ClothingShoesBootsCowboyFancy: 1
     ClothingOuterDogi: 1
     ClothingOuterSuitCarp: 1
-    # Begin DeltaV Removals - Moved to regular inventory
-    #ClothingMaskBlushingClown: 1
-    #ClothingMaskBlushingMime: 1
-    # End DeltaV Removals
+    ClothingMaskBlushingClown: 1
+    ClothingMaskBlushingMime: 1
     ClothingHeadHatCowboyBountyHunter: 1

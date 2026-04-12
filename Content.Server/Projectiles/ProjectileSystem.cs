@@ -1,4 +1,3 @@
-using Content.Server._DV.Projectiles.Events; // DeltaV - Addition of the NT-3
 using Content.Server.Administration.Logs;
 using Content.Server.Destructible;
 using Content.Server.Effects;
@@ -54,7 +53,7 @@ public sealed class ProjectileSystem : SharedProjectileSystem
         var damageRequired = _destructibleSystem.DestroyedAt(target);
         if (TryComp<DamageableComponent>(target, out var damageableComponent))
         {
-            damageRequired -= damageableComponent.TotalDamage;
+            damageRequired -= _damageableSystem.GetTotalDamage((target, damageableComponent));
             damageRequired = FixedPoint2.Max(damageRequired, FixedPoint2.Zero);
         }
         var deleted = Deleted(target);
@@ -70,7 +69,7 @@ public sealed class ProjectileSystem : SharedProjectileSystem
                 LogImpact.Medium,
                 $"Projectile {ToPrettyString(uid):projectile} shot by {ToPrettyString(component.Shooter!.Value):user} hit {otherName:target} and dealt {damage:damage} damage");
 
-            component.ProjectileSpent = !TryPenetrate((uid, component), damage, damageRequired, target); // DeltaV - Addition of the NT-3
+            component.ProjectileSpent = !TryPenetrate((uid, component), damage, damageRequired);
         }
         else
         {
@@ -94,7 +93,7 @@ public sealed class ProjectileSystem : SharedProjectileSystem
         }
     }
 
-    private bool TryPenetrate(Entity<ProjectileComponent> projectile, DamageSpecifier damage, FixedPoint2 damageRequired, EntityUid target) // DeltaV - Addition of the NT-3
+    private bool TryPenetrate(Entity<ProjectileComponent> projectile, DamageSpecifier damage, FixedPoint2 damageRequired)
     {
         // If penetration is to be considered, we need to do some checks to see if the projectile should stop.
         if (projectile.Comp.PenetrationThreshold == 0)
@@ -112,9 +111,6 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             }
         }
 
-        var pierceEv = new ProjectilePierceEvent(target, damageRequired); // DeltaV - Addition of the NT-3
-        RaiseLocalEvent(projectile, ref pierceEv);
-
         // If the object won't be destroyed, it "tanks" the penetration hit.
         if (damage.GetTotal() < damageRequired)
         {
@@ -128,11 +124,6 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             if (projectile.Comp.PenetrationAmount >= projectile.Comp.PenetrationThreshold)
             {
                 return false;
-            }
-
-            if (projectile.Comp.ProjectileSpent && pierceEv.Pierced) // DeltaV - Addition of the NT-3
-            {
-                return true;
             }
         }
 

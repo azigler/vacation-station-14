@@ -40,8 +40,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: MaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/Human/gulp.ogg
 
 - type: emoteSounds
   id: FemaleHuman
@@ -84,8 +82,6 @@
       collection: FemaleGasp
     DefaultDeathgasp:
       collection: FemaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/Human/gulp.ogg
 
 - type: emoteSounds
   id: MaleReptilian
@@ -96,8 +92,6 @@
       path: /Audio/Voice/Reptilian/reptilian_scream.ogg
     Laugh:
       path: /Audio/Animals/lizard_happy.ogg
-    Hiss:
-      collection: ReptillianHiss # Impstation
     Honk:
       collection: BikeHorn
     Whistle:
@@ -108,22 +102,10 @@
       collection: Weh
     Hew:
       collection: Hew
-    # Begin DeltaV Additions
-    Cough:
-      collection: MaleCoughs
-    Sneeze:
-      collection: MaleSneezes
-    Sigh:
-      collection: MaleSigh
-    Yawn:
-      collection: MaleYawn
-    # End DeltaV Additions
     Gasp:
       collection: MaleGasp
     DefaultDeathgasp:
       collection: DeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
 
 - type: emoteSounds
   id: FemaleReptilian
@@ -134,8 +116,6 @@
       path: /Audio/Voice/Reptilian/reptilian_scream.ogg
     Laugh:
       path: /Audio/Animals/lizard_happy.ogg
-    Hiss:
-      collection: ReptillianHiss # Impstation
     Honk:
       collection: BikeHorn
     Whistle:
@@ -146,22 +126,10 @@
       collection: Weh
     Hew:
       collection: Hew
-    # Begin DeltaV Additions
-    Cough:
-      collection: FemaleCoughs
-    Sneeze:
-      collection: FemaleSneezes
-    Sigh:
-      collection: FemaleSigh
-    Yawn:
-      collection: FemaleYawn 
-    # End DeltaV Additions
     Gasp:
       collection: FemaleGasp
     DefaultDeathgasp:
       collection: FemaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
 
 - type: emoteSounds
   id: MaleSlime
@@ -204,8 +172,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: MaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
   params:
     variation: 0.125
 
@@ -250,8 +216,6 @@
       collection: FemaleGasp
     DefaultDeathgasp:
       collection: FemaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
   params:
     variation: 0.125
 
@@ -262,48 +226,31 @@
       path: /Audio/Voice/Vox/shriek1.ogg
     Laugh:
       path: /Audio/Voice/Vox/vox_laugh.ogg
+    Sneeze:
+      path: /Audio/Voice/Vox/vox_sneeze.ogg
     Cough:
       path: /Audio/Voice/Vox/vox_cough.ogg
     Sigh:
       path: /Audio/Voice/Vox/vox_sigh.ogg
     Click:
       path: /Audio/Voice/Vox/vox_click.ogg
-    #Chitter: # DeltaV - Combined upstream and impstation sounds
-    #  path: /Audio/Voice/Vox/vox_chitter.ogg
+    Chitter:
+      path: /Audio/Voice/Vox/vox_chitter.ogg
     Honk:
       collection: BikeHorn
     Crying:
-      collection: VoxCry # DeltaV - Combined upstream and Imp sounds
-      params: # Imp
-        volume: -7
+      path: /Audio/Voice/Vox/vox_cry.ogg
     Weh:
       collection: Weh
     Hew:
       collection: Hew
-    Gasp: 
-      collection: VoxGasp # DeltaV - Combined upstream and our sounds
+    Gasp:
+      path: /Audio/Effects/Gasp/vox_gasp.ogg
     DefaultDeathgasp:
-      collection: VoxDeathgasp # DeltaV - Combined upstream and our sounds
-    # Begin Impstation Additions
-    Chitter:
-      collection: VoxChitter # DeltaV - Combined upstream and impstation sounds
-      params:
-        volume: -5
-    Coo:
-      collection: VoxCoo
-      params:
-        volume: -7
-    Hiss:
-      collection: VoxHiss
-      params:
-        volume: -5
-    # End Impstation Additions
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
+      path: /Audio/Effects/Gasp/vox_DeathGasp.ogg
   params:
     variation: 0.125
-    # We need vox sounds for the other emotes
-
+    # TODO: We need vox sounds for the other emotes
 
 - type: emoteSounds
   id: UnisexDiona
@@ -312,6 +259,8 @@
       path: /Audio/Voice/Diona/diona_scream.ogg
     Laugh:
       collection: DionaLaugh
+    Sneeze:
+      collection: DionaSneeze
     Chirp:
       path: /Audio/Animals/nymph_chirp.ogg
     Honk:
@@ -324,8 +273,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: DeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
   params:
     variation: 0.125
 
@@ -342,8 +289,6 @@
       path: /Audio/Voice/Arachnid/arachnid_chitter.ogg
     Click:
       path: /Audio/Voice/Arachnid/arachnid_click.ogg
-    Hiss:
-      path: /Audio/Animals/snake_hiss.ogg # DeltaV
     Weh:
       collection: Weh
     Hew:
@@ -354,8 +299,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: DeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
 
 - type: emoteSounds
   id: UnisexDwarf
@@ -396,8 +339,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: MaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/Human/gulp.ogg
   params:
     variation: 0.125
     pitch: 0.75
@@ -441,8 +382,6 @@
       collection: FemaleGasp
     DefaultDeathgasp:
       collection: FemaleDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/Human/gulp.ogg
   params:
     variation: 0.125
     pitch: 0.75
@@ -472,8 +411,6 @@
       collection: MaleGasp
     DefaultDeathgasp:
       collection: MothDeathGasp
-    Gulp: # Goob
-      path: /Audio/_Goobstation/Voice/gulpexotic.ogg
 
 - type: emoteSounds
   id: UnisexSilicon
@@ -494,12 +431,6 @@
       path: /Audio/Items/bikehorn.ogg
     Ping:
       path: /Audio/Effects/Cargo/ping.ogg
-    Boop: # DeltaV (EE)
-      path: /Audio/_EE/Voice/IPC/beep_500.ogg      
-    Whirr: # DeltaV (EE)
-      collection: IPCWhirrs
-      params:
-        variation: 0
 
 - type: emoteSounds
   id: UnisexSiliconSyndicate
@@ -522,12 +453,6 @@
       path: /Audio/Items/bikehorn.ogg
     Ping:
       path: /Audio/Effects/Cargo/ping.ogg
-    Boop: # DeltaV (EE)
-      path: /Audio/_EE/Voice/IPC/beep_500.ogg      
-    Whirr: # DeltaV (EE)
-      collection: IPCWhirrs
-      params:
-        variation: 0
 
 - type: emoteSounds
   id: UnisexSiliconXenoborg
@@ -550,12 +475,91 @@
       collection: XenoborgBikeHorn
     Ping:
       collection: XenoborgPing
-    Boop: # DeltaV (EE)
-      path: /Audio/_EE/Voice/IPC/beep_500.ogg      
-    Whirr: # DeltaV (EE)
-      collection: IPCWhirrs
-      params:
-        variation: 0
+
+# Vulp Sounds
+- type: emoteSounds
+  id: MaleVulpkanin
+  params:
+    variation: 0.125
+  sounds:
+    Laugh:
+      collection: MaleLaugh
+    Sneeze:
+      collection: VulpkaninSneeze
+    Cough:
+      collection: MaleCoughs
+    Whistle:
+      collection: Whistles
+    Sigh:
+      collection: MaleSigh
+    Yawn:
+      collection: VulpkaninYawns
+    Scream:
+      collection: VulpkaninScreams
+    Growl:
+      collection: VulpkaninGrowls
+    Snarl:
+      collection: VulpkaninSnarls
+    Bark:
+      collection: VulpkaninBarks
+    Whine:
+      collection: VulpkaninWhines
+    Crying:
+      collection: VulpkaninWhines
+    Howl:
+      collection: VulpkaninHowls
+    Weh:
+      collection: Weh
+    Hew:
+      collection: Hew
+    Honk:
+      collection: BikeHorn
+    Gasp:
+      collection: MaleGasp
+    DefaultDeathgasp:
+      collection: MaleDeathGasp
+
+- type: emoteSounds
+  id: FemaleVulpkanin
+  params:
+    variation: 0.125
+  sounds:
+    Laugh:
+      collection: FemaleLaugh
+    Sneeze:
+      collection: VulpkaninSneeze
+    Cough:
+      collection: FemaleCoughs
+    Whistle:
+      collection: Whistles
+    Sigh:
+      collection: FemaleSigh
+    Yawn:
+      collection: VulpkaninYawns
+    Scream:
+      collection: VulpkaninScreams
+    Growl:
+      collection: VulpkaninGrowls
+    Snarl:
+      collection: VulpkaninSnarls
+    Bark:
+      collection: VulpkaninBarks
+    Whine:
+      collection: VulpkaninWhines
+    Crying:
+      collection: VulpkaninWhines
+    Howl:
+      collection: VulpkaninHowls
+    Weh:
+      collection: Weh
+    Hew:
+      collection: Hew
+    Honk:
+      collection: BikeHorn
+    Gasp:
+      collection: FemaleGasp
+    DefaultDeathgasp:
+      collection: FemaleDeathGasp
 
 # body emotes
 - type: emoteSounds
@@ -571,8 +575,6 @@
         volume: -6
     Salute:
       collection: Salutes
-    Blink: # Imp
-      collection: Blinks # Imp
 
 - type: emoteSounds
   id: DionaBodyEmotes
@@ -590,8 +592,6 @@
       path: /Audio/Voice/Diona/diona_salute.ogg
       params:
        volume: -5
-    Blink: # Imp
-      collection: Blinks # Imp
 
 - type: emoteSounds
   id: ReptilianBodyEmotes
@@ -610,8 +610,22 @@
         volume: -6
     Salute:
       collection: Salutes
-    Blink: # Imp
-      collection: Blinks # Imp
+
+- type: emoteSounds
+  id: MothBodyEmotes
+  sounds:
+    Flap:
+      path: /Audio/Voice/Moth/moth_flap.ogg
+    Clap:
+      collection: Claps
+    ClapSingle:
+      collection: ClapSingle
+    Snap:
+      collection: Snaps
+      params:
+        volume: -6
+    Salute:
+      collection: Salutes
 
 # mobs
 - type: emoteSounds

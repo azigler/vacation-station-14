@@ -30,28 +30,10 @@
         - id: Dropper
         # It would be cool to have special "syndicate" chemical analysis goggles
         - id: ClothingEyesGlassesChemical
-        - id: SyringeStimulants
+        - id: Syringe
         - id: VestineChemistryVial
           amount: 2
         - id: ChemistryEmptyVial
-
-- type: entity # DeltaV - upstream removed this i think?
-  id: Observationskit
-  parent: [BoxCardboard, BaseSyndicateContraband]
-  name: observations kit
-  suffix: Filled
-  components:
-    - type: StorageFill
-      contents:
-        - id: SyndiCrewMonitorEmpty
-          amount: 1
-        - id: PowerCellHigh # DeltaV - Reverted to high with removal of the monitor's power drain
-          amount: 1
-        - id: ClothingEyesGlassesHiddenSecurity
-          amount: 1
-        - id: CameraBug # DeltaV - Way better than that board
-          amount: 1
-
 
 - type: entity
   parent: [BoxCardboard, BaseSyndicateContraband]
@@ -113,8 +95,26 @@
     containers:
       storagebase: !type:AllSelector
         children:
+        - id: SyndicateMicrowaveFlatpack
         - id: WeaponCroissant
           amount: 2
         - id: WeaponBaguette
-        - id: SyndicateMicrowaveMachineCircuitboard
         - id: PaperWrittenCombatBakeryKit
+
+- type: entity
+  parent: [BoxCardboardSmall, BaseSyndicateContraband]
+  id: SyndimovCircuitKit
+  name: syndimov circuit kit
+  description: A kit containing an electronics board with the Syndimov lawset and a Syndicate ID.
+  components:
+  - type: Sprite
+    layers:
+    - state: box_of_doom
+    - state: circuit
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: SyndimovCircuitBoard
+        - id: SyndicateIDCard
+

@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Content.Shared._DV.Movement; // DeltaV
 using Content.Shared.ActionBlocker;
 using Content.Shared.CCVar;
 using Content.Shared.Friction;
@@ -10,7 +9,6 @@ using Content.Shared.Maps;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
-using Content.Shared.StepTrigger.Components; // DeltaV - NoShoesSilentFootstepsComponent
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Tag;
 using Robust.Shared.Audio;
@@ -49,25 +47,23 @@ public abstract partial class SharedMoverController : VirtualController
     [Dependency] private   readonly SharedGravitySystem _gravity = default!;
     [Dependency] private   readonly SharedTransformSystem _transform = default!;
     [Dependency] private   readonly TagSystem _tags = default!;
-    [Dependency] private   readonly TileMovementSystem _tileMovement = default!; // DeltaV
 
-    protected EntityQuery<CanMoveInAirComponent> CanMoveInAirQuery;
-    protected EntityQuery<FootstepModifierComponent> FootstepModifierQuery;
-    protected EntityQuery<FTLComponent> FTLQuery;
-    protected EntityQuery<InputMoverComponent> MoverQuery;
-    protected EntityQuery<MapComponent> MapQuery;
-    protected EntityQuery<MapGridComponent> MapGridQuery;
-    protected EntityQuery<MobMoverComponent> MobMoverQuery;
-    protected EntityQuery<MovementRelayTargetComponent> RelayTargetQuery;
-    protected EntityQuery<MovementSpeedModifierComponent> ModifierQuery;
-    protected EntityQuery<NoRotateOnMoveComponent> NoRotateQuery;
-    protected EntityQuery<PhysicsComponent> PhysicsQuery;
-    protected EntityQuery<PilotComponent> PilotQuery;
-    protected EntityQuery<PreventPilotComponent> PreventPilotQuery;
-    protected EntityQuery<RelayInputMoverComponent> RelayQuery;
-    protected EntityQuery<PullableComponent> PullableQuery;
-    protected EntityQuery<TransformComponent> XformQuery;
-    protected EntityQuery<NoShoesSilentFootstepsComponent> NoShoesSilentQuery; // DeltaV - NoShoesSilentFootstepsComponent
+    [Dependency] protected readonly EntityQuery<CanMoveInAirComponent> CanMoveInAirQuery = default!;
+    [Dependency] protected readonly EntityQuery<FootstepModifierComponent> FootstepModifierQuery = default!;
+    [Dependency] protected readonly EntityQuery<FTLComponent> FTLQuery = default!;
+    [Dependency] protected readonly EntityQuery<InputMoverComponent> MoverQuery = default!;
+    [Dependency] protected readonly EntityQuery<MapComponent> MapQuery = default!;
+    [Dependency] protected readonly EntityQuery<MapGridComponent> MapGridQuery = default!;
+    [Dependency] protected readonly EntityQuery<MobMoverComponent> MobMoverQuery = default!;
+    [Dependency] protected readonly EntityQuery<MovementRelayTargetComponent> RelayTargetQuery = default!;
+    [Dependency] protected readonly EntityQuery<MovementSpeedModifierComponent> ModifierQuery = default!;
+    [Dependency] protected readonly EntityQuery<NoRotateOnMoveComponent> NoRotateQuery = default!;
+    [Dependency] protected readonly EntityQuery<PhysicsComponent> PhysicsQuery = default!;
+    [Dependency] protected readonly EntityQuery<PilotComponent> PilotQuery = default!;
+    [Dependency] protected readonly EntityQuery<PreventPilotComponent> PreventPilotQuery = default!;
+    [Dependency] protected readonly EntityQuery<RelayInputMoverComponent> RelayQuery = default!;
+    [Dependency] protected readonly EntityQuery<PullableComponent> PullableQuery = default!;
+    [Dependency] protected readonly EntityQuery<TransformComponent> XformQuery = default!;
 
     private static readonly ProtoId<TagPrototype> FootstepSoundTag = "FootstepSound";
 
@@ -87,24 +83,6 @@ public abstract partial class SharedMoverController : VirtualController
     {
         UpdatesBefore.Add(typeof(TileFrictionController));
         base.Initialize();
-
-        MoverQuery = GetEntityQuery<InputMoverComponent>();
-        MobMoverQuery = GetEntityQuery<MobMoverComponent>();
-        ModifierQuery = GetEntityQuery<MovementSpeedModifierComponent>();
-        RelayTargetQuery = GetEntityQuery<MovementRelayTargetComponent>();
-        PhysicsQuery = GetEntityQuery<PhysicsComponent>();
-        RelayQuery = GetEntityQuery<RelayInputMoverComponent>();
-        PullableQuery = GetEntityQuery<PullableComponent>();
-        XformQuery = GetEntityQuery<TransformComponent>();
-        NoRotateQuery = GetEntityQuery<NoRotateOnMoveComponent>();
-        CanMoveInAirQuery = GetEntityQuery<CanMoveInAirComponent>();
-        FootstepModifierQuery = GetEntityQuery<FootstepModifierComponent>();
-        MapGridQuery = GetEntityQuery<MapGridComponent>();
-        NoShoesSilentQuery = GetEntityQuery<NoShoesSilentFootstepsComponent>(); // DeltaV - NoShoesSilentFootstepsComponent
-        MapQuery = GetEntityQuery<MapComponent>();
-        FTLQuery = GetEntityQuery<FTLComponent>();
-        PilotQuery = GetEntityQuery<PilotComponent>();
-        PreventPilotQuery = GetEntityQuery<PreventPilotComponent>();
 
         SubscribeLocalEvent<MovementSpeedModifierComponent, TileFrictionEvent>(OnTileFriction);
         SubscribeLocalEvent<InputMoverComponent, ComponentStartup>(OnMoverStartup);
@@ -139,7 +117,7 @@ public abstract partial class SharedMoverController : VirtualController
     /// <summary>
     ///     Movement while considering actionblockers, weightlessness, etc.
     /// </summary>
-    public void HandleMobMovement( // DeltaV - made public
+    protected void HandleMobMovement(
         Entity<InputMoverComponent> entity,
         float frameTime)
     {
@@ -209,8 +187,7 @@ public abstract partial class SharedMoverController : VirtualController
         // If we can't move then just use tile-friction / no movement handling.
         if (!mover.CanMove
             || !PhysicsQuery.TryComp(uid, out var physicsComponent)
-            // DeltaV - still process mobs pulled by TileMovement players
-            || PullableQuery.TryGetComponent(uid, out var pullable) && pullable.BeingPulled && !_tileMovement.HasTileMovement(pullable.Puller))
+            || PullableQuery.TryGetComponent(uid, out var pullable) && pullable.BeingPulled)
         {
             UsedMobMovement[uid] = false;
             return;
@@ -258,11 +235,6 @@ public abstract partial class SharedMoverController : VirtualController
 
         // Get current tile def for things like speed/friction mods
         ContentTileDefinition? tileDef = null;
-
-        // Begin DeltaV Additions - handle tile movement
-        if (_tileMovement.TryTick((uid, mover, physicsComponent, xform), relaySource, tileDef, weightless, frameTime))
-            return;
-        // End DeltaV Additions
 
         var touching = false;
         // Whether we use tilefriction or not
@@ -527,7 +499,7 @@ public abstract partial class SharedMoverController : VirtualController
 
     protected abstract bool CanSound();
 
-    public bool TryGetSound( // DeltaV - made public
+    private bool TryGetSound(
         bool weightless,
         EntityUid uid,
         InputMoverComponent mover,
@@ -572,14 +544,6 @@ public abstract partial class SharedMoverController : VirtualController
             return false;
 
         mobMover.StepSoundDistance -= distanceNeeded;
-
-        // DeltaV - Don't play the sound if they have no shoes and the component
-        if (NoShoesSilentQuery.HasComp(uid) &&
-            !_inventory.TryGetSlotEntity(uid, "shoes", out var _))
-        {
-            return false;
-        }
-        // End DeltaV code
 
         if (FootstepModifierQuery.TryComp(uid, out var moverModifier))
         {

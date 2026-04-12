@@ -17,7 +17,6 @@
         Science: [ ]
         Security: [ ]
         Service: [ ]
-        Justice: [ ] # DeltaV - Justice
     - type: StationCargoBountyDatabase
 
 - type: entity
@@ -51,52 +50,38 @@
   abstract: true
   components:
     - type: StationCargoShuttle
-      path: /Maps/_DV/Shuttles/Cargo/ntcs_express.yml # DeltaV - Custom cargo shuttle
+      path: /Maps/Shuttles/cargo.yml
     - type: GridSpawn
       groups:
-#        trade: # DeltaV - trade station has its own map
-#          addComponents:
-#          - type: ProtectedGrid
-#          - type: TradeStation
-#          paths:
-#          - /Maps/Shuttles/trading_outpost.yml
-        # Spawn last
-        salvageShuttle: !type:GridSpawnGroup # DeltaV - salvage gets their own ship
+        trade: !type:GridSpawnGroup
+          addComponents:
+            - type: ProtectedGrid
+            - type: TradeStation
           paths:
-          - /Maps/_DV/Shuttles/Misc/reclaimer_mk2.yml
-          nameGrid: true
-          name: Reclaimer Mk2
+            - /Maps/Shuttles/trading_outpost.yml
+        # Spawn last
         ruins: !type:GridSpawnGroup
           hide: true
           nameGrid: true
           minCount: 2
-          maxCount: 3
+          maxCount: 2
           stationGrid: false
           paths:
-          #- /Maps/Ruins/abandoned_outpost.yml #  DeltaV - Moved to _DV/Salvage pool
-          - /Maps/_DV/Ruins/atmos_interchange.yml  # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/chunked_tcomms.yml  # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/biodome_satellite.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/derelict.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/djstation.yml # DeltaV - Moved to DV folder
-          #- /Maps/Ruins/empty_flagship.yml # TODO
-          - /Maps/_DV/Ruins/hydro_outpost.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/old_ai_sat.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/relaystation.yml # DeltaV - upstream removed
-          #- /Maps/Ruins/ruined_prison_ship.yml # TODO
-          - /Maps/_DV/Ruins/destroyed_syndicate_dropship.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/whiteship_ancient.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/whiteship_bluespacejumper.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/mining_mostdestroyed.yml # DeltaV - Moved to DV folder
-          #- /Maps/Ruins/displaced_telescience.yml # TODO
-          # DeltaV - Added maps
-          - /Maps/_DV/Ruins/the_pond.yml # DeltaV - Moved to DV folder
-          - /Maps/_DV/Ruins/garbagetruck1.yml
-          - /Maps/_DV/Ruins/infested_frigate.yml
-          - /Maps/_DV/Ruins/mrow_thats_right.yml
-          - /Maps/_DV/Ruins/old_infiltrator.yml
-          - /Maps/_DV/Ruins/abandoned_dojo.yml
-          # DeltaV - End added maps
+          - /Maps/Ruins/abandoned_outpost.yml
+          - /Maps/Ruins/atmos_interchange.yml
+          - /Maps/Ruins/chunked_tcomms.yml
+          - /Maps/Ruins/biodome_satellite.yml
+          - /Maps/Ruins/derelict.yml
+          - /Maps/Ruins/djstation.yml
+          - /Maps/Ruins/empty_flagship.yml
+          - /Maps/Ruins/hydro_outpost.yml
+          - /Maps/Ruins/old_ai_sat.yml
+          - /Maps/Ruins/ruined_prison_ship.yml
+          - /Maps/Ruins/syndicate_dropship.yml
+          - /Maps/Ruins/whiteship_ancient.yml
+          - /Maps/Ruins/whiteship_bluespacejumper.yml
+          - /Maps/Ruins/wrecklaimer.yml
+          - /Maps/Ruins/displaced_telescience.yml
         wrecks: !type:DungeonSpawnGroup
           minimumDistance: 150
           maximumDistance: 300
@@ -117,8 +102,8 @@
           - ChunkDebrisSmall
           - ChunkDebris
         vgroid: !type:DungeonSpawnGroup
-          minimumDistance: 500 # DeltaV - vgroid spawns farther out (TODO: until we fix it spawning in the station)
-          maximumDistance: 550 # DeltaV - vgroid spawns farther out (TODO: until we fix it spawning in the station)
+          minimumDistance: 300
+          maximumDistance: 350
           nameDataset: NamesBorer
           stationGrid: false
           addComponents:
@@ -133,7 +118,6 @@
   abstract: true
   components:
     - type: StationCentcomm
-    - type: StationSecondaryCentcomm # DeltaV - midpoint station
 
 - type: entity
   id: BaseStationEvacuation
@@ -193,6 +177,12 @@
   abstract: true
   components:
     - type: StationNews
+
+- type: entity
+  id: BaseStationDeliveries
+  abstract: true
+  components:
+  - type: CargoDeliveryData
 
 - type: entity
   id: BaseStationAllEventsEligible

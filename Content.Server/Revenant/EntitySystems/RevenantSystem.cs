@@ -1,10 +1,8 @@
 using System.Numerics;
 using Content.Server.Actions;
+using Content.Server.Atmos.EntitySystems;
 using Content.Server.GameTicking;
-using Content.Server.Mind; // Imp
-using Content.Server.Revenant.Components; // Imp
 using Content.Server.Store.Systems;
-using Content.Shared.Actions; // Imp
 using Content.Shared.Alert;
 using Content.Shared.Damage.Systems;
 using Content.Shared.DoAfter;
@@ -14,7 +12,7 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
 using Content.Shared.Maps;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.Physics; // Imp
+using Content.Shared.Physics;
 using Content.Shared.Popups;
 using Content.Shared.Revenant;
 using Content.Shared.Revenant.Components;
@@ -23,8 +21,6 @@ using Content.Shared.Store.Components;
 using Content.Shared.Stunnable;
 using Content.Shared.Tag;
 using Robust.Server.GameObjects;
-using Robust.Shared.Physics.Components;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Server.Revenant.EntitySystems;
@@ -33,6 +29,7 @@ public sealed partial class RevenantSystem : EntitySystem
 {
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly GameTicker _ticker = default!;
@@ -47,12 +44,7 @@ public sealed partial class RevenantSystem : EntitySystem
     [Dependency] private readonly StoreSystem _store = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly VisibilitySystem _visibility = default!;
-    [Dependency] private readonly MindSystem _mind = default!; // Imp
-    [Dependency] private readonly MetaDataSystem _meta = default!; // Imp
-    [Dependency] private readonly SharedActionsSystem _action = default!; // Imp
     [Dependency] private readonly TurfSystem _turf = default!;
-
-    private readonly EntProtoId _revenantHaunt = "ActionRevenantHaunt"; // Imp
     public override void Initialize()
     {
         base.Initialize();
@@ -94,11 +86,6 @@ public sealed partial class RevenantSystem : EntitySystem
 
         //ghost vision
         _eye.RefreshVisibilityMask(uid);
-    }
-
-    private void OnMapInit(EntityUid uid, RevenantComponent component, MapInitEvent args)
-    {
-        _action.AddAction(uid, ref component.HauntAction, _revenantHaunt); // Imp
     }
 
     private void OnStatusAdded(EntityUid uid, RevenantComponent component, StatusEffectAddedEvent args)
@@ -152,14 +139,8 @@ public sealed partial class RevenantSystem : EntitySystem
 
         if (component.Essence <= 0)
         {
-            component.Essence = 0; // Begin Imp Changes
-            _statusEffects.TryRemoveAllStatusEffects(uid);
-            var stasisObj = Spawn(component.SpawnOnDeathPrototype, Transform(uid).Coordinates);
-            AddComp(stasisObj, new RevenantStasisComponent(component.StasisTime, (uid, component)));
-            if (_mind.TryGetMind(uid, out var mindId, out var _))
-                _mind.TransferTo(mindId, stasisObj);
-            _transformSystem.DetachEntity(uid, Comp<TransformComponent>(uid));
-            _meta.SetEntityPaused(uid, true); // End Imp Changes
+            Spawn(component.SpawnOnDeathPrototype, Transform(uid).Coordinates);
+            QueueDel(uid);
         }
         return true;
     }
@@ -186,8 +167,6 @@ public sealed partial class RevenantSystem : EntitySystem
 
         _statusEffects.TryAddStatusEffect<CorporealComponent>(uid, "Corporeal", TimeSpan.FromSeconds(debuffs.Y), false);
         _stun.TryAddStunDuration(uid, TimeSpan.FromSeconds(debuffs.X));
-        if (debuffs.X > 0) // Imp
-            _physics.ResetDynamics(uid, Comp<PhysicsComponent>(uid)); // Imp
 
         return true;
     }
@@ -211,6 +190,23 @@ public sealed partial class RevenantSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Cools the area around the revenant.
+    /// The more essence they have, the colder it gets, up to a certain point.
+    /// </summary>
+    /// <param name="ent">The revenant entity.</param>
+    private void ChillArea(Entity<RevenantComponent> ent)
+    {
+        var effectiveEssence = Math.Clamp(ent.Comp.Essence.Int(), 0, ent.Comp.ChillUpperBound.Float());
+        // Parabolic curve based on essence, more essence = more delta q, flattening as upper bound is reached
+        var dQ =
+            200 / ent.Comp.ChillScaling.Float() * MathF.Pow(effectiveEssence - ent.Comp.ChillUpperBound.Float(), 2) -
+            ent.Comp.ChillScaling.Float();
+
+        if (_atmosphere.GetContainingMixture(ent.Owner, true, true) is { } air)
+            _atmosphere.AddHeat(air, dQ);
+    }
+
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
@@ -226,13 +222,10 @@ public sealed partial class RevenantSystem : EntitySystem
 
             if (rev.Essence < rev.EssenceRegenCap)
             {
-                var essence = rev.EssencePerSecond; // Begin Imp Changes
-
-                if (TryComp<RevenantRegenModifierComponent>(uid, out var regen))
-                    essence += rev.HauntEssenceRegenPerWitness * regen.NewHaunts;
-
-                ChangeEssenceAmount(uid, essence, rev, regenCap: true); // End Imp Changes
+                ChangeEssenceAmount(uid, rev.EssencePerSecond, rev, regenCap: true);
             }
+
+            ChillArea((uid, rev));
         }
     }
 }

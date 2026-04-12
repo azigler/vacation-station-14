@@ -29,7 +29,7 @@
   id: FloorSteel
   parent: BaseStationTile
   name: tiles-steel-floor
-  sprite: /Textures/_DV/Tiles/steel.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/steel.png
   variants: 4
   placementVariants:
   - 1.0
@@ -42,7 +42,7 @@
   id: FloorSteelCheckerLight
   parent: BaseStationTile
   name: tiles-steel-floor-checker-light
-  sprite: /Textures/_DV/Tiles/cafeteria.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/cafeteria.png
   variants: 4
   placementVariants:
   - 1.0
@@ -55,7 +55,7 @@
   id: FloorSteelCheckerDark
   parent: BaseStationTile
   name: tiles-steel-floor-checker-dark
-  sprite: /Textures/_DV/Tiles/checker_dark.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/checker_dark.png
   variants: 4
   placementVariants:
   - 1.0
@@ -68,7 +68,7 @@
   id: FloorSteelMini
   parent: BaseStationTile
   name: tiles-steel-floor-mini
-  sprite: /Textures/_DV/Tiles/steel_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -81,7 +81,7 @@
   id: FloorSteelPavement
   parent: BaseStationTile
   name: tiles-steel-floor-pavement
-  sprite: /Textures/_DV/Tiles/steel_pavement.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_pavement.png
   variants: 4
   placementVariants:
   - 1.0
@@ -94,7 +94,7 @@
   id: FloorSteelDiagonal
   parent: BaseStationTile
   name: tiles-steel-floor-diagonal
-  sprite: /Textures/_DV/Tiles/steel_diagonal.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_diagonal.png
   variants: 4
   placementVariants:
   - 1.0
@@ -107,14 +107,14 @@
   id: FloorSteelOffset
   parent: BaseStationTile
   name: tiles-steel-floor-offset
-  sprite: /Textures/_DV/Tiles/steel_offset.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_offset.png
   itemDrop: FloorTileItemSteelOffset
 
 - type: tile
   id: FloorSteelMono
   parent: BaseStationTile
   name: tiles-steel-floor-mono
-  sprite: /Textures/_DV/Tiles/steel_mono.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_mono.png
   variants: 4
   placementVariants:
   - 1.0
@@ -127,7 +127,7 @@
   id: FloorSteelPavementVertical
   parent: BaseStationTile
   name: tiles-steel-floor-pavement-vertical
-  sprite: /Textures/_DV/Tiles/steel_pavement_vertical.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_pavement_vertical.png
   variants: 4
   placementVariants:
   - 1.0
@@ -140,7 +140,7 @@
   id: FloorSteelHerringbone
   parent: BaseStationTile
   name: tiles-steel-floor-herringbone
-  sprite: /Textures/_DV/Tiles/steel_herringbone.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_herringbone.png
   variants: 4
   placementVariants:
   - 1.0
@@ -153,7 +153,7 @@
   id: FloorSteelDiagonalMini
   parent: BaseStationTile
   name: tiles-steel-floor-diagonal-mini
-  sprite: /Textures/_DV/Tiles/steel_diagonal_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/steel_diagonal_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -161,6 +161,46 @@
   - 1.0
   - 1.0
   itemDrop: FloorTileItemSteelDiagonalMini
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorSteelSlatsContinuous
+  name: tiles-steel-floor-slats-continuous
+  sprite: /Textures/Tiles/steel_slats_continuous.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemSteelSlatsContinuous
+  allowRotationMirror: true
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorSteelVerticalSlatsBordered
+  name: tiles-steel-floor-vertical-slats-bordered
+  sprite: /Textures/Tiles/steel_vertical_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemSteelVerticalSlatsBordered
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorSteelHorizontalSlatsBordered
+  name: tiles-steel-floor-horizontal-slats-bordered
+  sprite: /Textures/Tiles/steel_horizontal_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemSteelHorizontalSlatsBordered
 
 - type: tile
   id: FloorBrassFilled
@@ -184,7 +224,7 @@
   id: FloorPlastic
   parent: BaseStationTile
   name: tiles-plastic-floor
-  sprite: /Textures/_DV/Tiles/plastic.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/plastic.png
   variants: 4
   placementVariants:
   - 1.0
@@ -197,7 +237,7 @@
   id: FloorWood
   parent: BaseStationTile
   name: tiles-wood
-  sprite: /Textures/_DV/Tiles/wood.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/wood.png
   variants: 4
   placementVariants:
   - 1.0
@@ -214,7 +254,7 @@
   id: FloorWhite
   parent: BaseStationTile
   name: tiles-white-floor
-  sprite: /Textures/_DV/Tiles/white.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white.png
   variants: 4
   placementVariants:
   - 1.0
@@ -229,7 +269,7 @@
   id: FloorWhiteMini
   parent: BaseStationTile
   name: tiles-white-floor-mini
-  sprite: /Textures/_DV/Tiles/white_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -241,10 +281,50 @@
   itemDrop: FloorTileItemWhiteMini
 
 - type: tile
+  parent: BaseStationTile
+  id: FloorWhiteSlatsContinuous
+  name: tiles-white-floor-slats-continuous
+  sprite: /Textures/Tiles/white_slats_continuous.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemWhiteSlatsContinuous
+  allowRotationMirror: true
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorWhiteVerticalSlatsBordered
+  name: tiles-white-floor-vertical-slats-bordered
+  sprite: /Textures/Tiles/white_vertical_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemWhiteVerticalSlatsBordered
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorWhiteHorizontalSlatsBordered
+  name: tiles-white-floor-horizontal-slats-bordered
+  sprite: /Textures/Tiles/white_horizontal_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemWhiteHorizontalSlatsBordered
+
+- type: tile
   id: FloorWhitePavement
   parent: BaseStationTile
   name: tiles-white-floor-pavement
-  sprite: /Textures/_DV/Tiles/white_pavement.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_pavement.png
   variants: 4
   placementVariants:
   - 1.0
@@ -259,7 +339,7 @@
   id: FloorWhiteDiagonal
   parent: BaseStationTile
   name: tiles-white-floor-diagonal
-  sprite: /Textures/_DV/Tiles/white_diagonal.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_diagonal.png
   variants: 4
   placementVariants:
   - 1.0
@@ -274,7 +354,7 @@
   id: FloorWhiteOffset
   parent: BaseStationTile
   name: tiles-white-floor-offset
-  sprite: /Textures/_DV/Tiles/white_offset.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_offset.png
   footstepSounds:
     collection: FootstepTile
   itemDrop: FloorTileItemWhiteOffset
@@ -283,7 +363,7 @@
   id: FloorWhiteMono
   parent: BaseStationTile
   name: tiles-white-floor-mono
-  sprite: /Textures/_DV/Tiles/white_mono.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_mono.png
   variants: 4
   placementVariants:
   - 1.0
@@ -298,7 +378,7 @@
   id: FloorWhitePavementVertical
   parent: BaseStationTile
   name: tiles-white-floor-pavement-vertical
-  sprite: /Textures/_DV/Tiles/white_pavement_vertical.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_pavement_vertical.png
   variants: 4
   placementVariants:
   - 1.0
@@ -313,7 +393,7 @@
   id: FloorWhiteHerringbone
   parent: BaseStationTile
   name: tiles-white-floor-herringbone
-  sprite: /Textures/_DV/Tiles/white_herringbone.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_herringbone.png
   variants: 4
   placementVariants:
   - 1.0
@@ -328,7 +408,7 @@
   id: FloorWhiteDiagonalMini
   parent: BaseStationTile
   name: tiles-white-floor-diagonal-mini
-  sprite: /Textures/_DV/Tiles/white_diagonal_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_diagonal_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -343,7 +423,7 @@
   id: FloorWhitePlastic
   parent: BaseStationTile
   name: tiles-plastic-white-floor
-  sprite: /Textures/_DV/Tiles/white_plastic.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/white_plastic.png
   variants: 4
   placementVariants:
   - 1.0
@@ -358,7 +438,7 @@
   id: FloorDark
   parent: BaseStationTile
   name: tiles-dark-floor
-  sprite: /Textures/_DV/Tiles/dark.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark.png
   variants: 4
   placementVariants:
   - 1.0
@@ -373,7 +453,7 @@
   id: FloorDarkMini
   parent: BaseStationTile
   name: tiles-dark-floor-mini
-  sprite: /Textures/_DV/Tiles/dark_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -385,10 +465,50 @@
   itemDrop: FloorTileItemDarkMini
 
 - type: tile
+  parent: BaseStationTile
+  id: FloorDarkSlatsContinuous
+  name: tiles-dark-floor-slats-continuous
+  sprite: /Textures/Tiles/dark_slats_continuous.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemDarkSlatsContinuous
+  allowRotationMirror: true
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorDarkVerticalSlatsBordered
+  name: tiles-dark-floor-vertical-slats-bordered
+  sprite: /Textures/Tiles/dark_vertical_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemDarkVerticalSlatsBordered
+
+- type: tile
+  parent: BaseStationTile
+  id: FloorDarkHorizontalSlatsBordered
+  name: tiles-dark-floor-horizontal-slats-bordered
+  sprite: /Textures/Tiles/dark_horizontal_slats_bordered.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  itemDrop: FloorTileItemDarkHorizontalSlatsBordered
+
+- type: tile
   id: FloorDarkPavement
   parent: BaseStationTile
   name: tiles-dark-floor-pavement
-  sprite: /Textures/_DV/Tiles/dark_pavement.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_pavement.png
   variants: 4
   placementVariants:
   - 1.0
@@ -403,7 +523,7 @@
   id: FloorDarkDiagonal
   parent: BaseStationTile
   name: tiles-dark-floor-diagonal
-  sprite: /Textures/_DV/Tiles/dark_diagonal.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_diagonal.png
   variants: 4
   placementVariants:
   - 1.0
@@ -418,7 +538,7 @@
   id: FloorDarkOffset
   parent: BaseStationTile
   name: tiles-dark-floor-offset
-  sprite: /Textures/_DV/Tiles/dark_offset.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_offset.png
   footstepSounds:
     collection: FootstepTile
   itemDrop: FloorTileItemDarkOffset
@@ -427,7 +547,7 @@
   id: FloorDarkMono
   parent: BaseStationTile
   name: tiles-dark-floor-mono
-  sprite: /Textures/_DV/Tiles/dark_mono.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_mono.png
   variants: 4
   placementVariants:
   - 1.0
@@ -442,7 +562,7 @@
   id: FloorDarkPavementVertical
   parent: BaseStationTile
   name: tiles-dark-floor-pavement-vertical
-  sprite: /Textures/_DV/Tiles/dark_pavement_vertical.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_pavement_vertical.png
   variants: 4
   placementVariants:
   - 1.0
@@ -457,7 +577,7 @@
   id: FloorDarkHerringbone
   parent: BaseStationTile
   name: tiles-dark-floor-herringbone
-  sprite: /Textures/_DV/Tiles/dark_herringbone.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_herringbone.png
   variants: 4
   placementVariants:
   - 1.0
@@ -472,7 +592,7 @@
   id: FloorDarkDiagonalMini
   parent: BaseStationTile
   name: tiles-dark-floor-diagonal-mini
-  sprite: /Textures/_DV/Tiles/dark_diagonal_mini.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_diagonal_mini.png
   variants: 4
   placementVariants:
   - 1.0
@@ -487,7 +607,7 @@
   id: FloorDarkPlastic
   parent: BaseStationTile
   name: tiles-plastic-dark-floor
-  sprite: /Textures/_DV/Tiles/dark_plastic.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/dark_plastic.png
   variants: 4
   placementVariants:
   - 1.0
@@ -547,13 +667,13 @@
   id: FloorSteelDirty
   parent: BaseStationTile
   name: tiles-dirty-steel-floor
-  sprite: /Textures/_DV/Tiles/steel_dirty.png # DeltaV - Resprite Tile
-  #variants: 4 # DeltaV - No resprited variants
-  #placementVariants:
-  #- 1.0
-  #- 1.0
-  #- 1.0
-  #- 1.0
+  sprite: /Textures/Tiles/steel_dirty.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
   footstepSounds:
     collection: FootstepPlating
   itemDrop: FloorTileItemDirty
@@ -589,7 +709,7 @@
   id: FloorBlue
   parent: BaseStationTile
   name: tiles-blue-tile
-  sprite: /Textures/_DV/Tiles/blue.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/blue.png
   footstepSounds:
     collection: FootstepTile
   itemDrop: FloorTileItemBlue
@@ -598,7 +718,7 @@
   id: FloorSteelLime
   parent: BaseStationTile
   name: tiles-lime-floor
-  sprite: /Textures/_DV/Tiles/lime.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/lime.png
   variants: 4
   placementVariants:
   - 1.0
@@ -639,7 +759,7 @@
   id: FloorFreezer
   parent: BaseStationTile
   name: tiles-freezer
-  sprite: /Textures/_DV/Tiles/freezer.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/freezer.png
   footstepSounds:
     collection: FootstepHull
   itemDrop: FloorTileItemFreezer
@@ -648,21 +768,21 @@
   id: FloorShowroom
   parent: BaseStationTile
   name: tiles-showroom-floor
-  sprite: /Textures/_DV/Tiles/showroom.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/showroom.png
   itemDrop: FloorTileItemShowroom
 
 - type: tile
   id: FloorHydro
   parent: BaseStationTile
   name: tiles-hydro-floor
-  sprite: /Textures/_DV/Tiles/hydro.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/hydro.png
   itemDrop: FloorTileItemHydro
 
 - type: tile
   id: FloorBar
   parent: BaseStationTile
   name: tiles-bar-floor
-  sprite: /Textures/_DV/Tiles/bar.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/bar.png
   variants: 4
   placementVariants:
   - 1.0
@@ -675,21 +795,21 @@
   id: FloorClown
   parent: BaseStationTile
   name: tiles-clown-floor
-  sprite: /Textures/_DV/Tiles/clown.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/clown.png
   itemDrop: FloorTileItemClown
 
 - type: tile
   id: FloorMime
   parent: BaseStationTile
   name: tiles-mime-floor
-  sprite: /Textures/_DV/Tiles/mime.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/mime.png
   itemDrop: FloorTileItemMime
 
 - type: tile
   id: FloorKitchen
   parent: BaseStationTile
   name: tiles-kitchen-floor
-  sprite: /Textures/_DV/Tiles/kitchen.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/kitchen.png
   footstepSounds:
     collection: FootstepTile
   itemDrop: FloorTileItemKitchen
@@ -698,7 +818,7 @@
   id: FloorLaundry
   parent: BaseStationTile
   name: tiles-laundry-floor
-  sprite: /Textures/_DV/Tiles/laundry.png # DeltaV - Resprite Tiles
+  sprite: /Textures/Tiles/laundry.png
   footstepSounds:
     collection: FootstepTile
   itemDrop: FloorTileItemLaundry
@@ -1070,7 +1190,7 @@
   id: FloorGlass
   parent: BaseStationTile
   name: tiles-glass-floor
-  sprite: /Textures/_DV/Tiles/glass.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/glass.png
   variants: 4
   placementVariants:
   - 1.0
@@ -1085,7 +1205,7 @@
   id: FloorRGlass
   parent: BaseStationTile
   name: tiles-reinforced-glass-floor
-  sprite: /Textures/_DV/Tiles/rglass.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/rglass.png
   variants: 4
   placementVariants:
   - 1.0
@@ -1536,7 +1656,7 @@
   id: FloorWoodTile
   parent: BaseStationTile
   name: tiles-wood2
-  sprite: /Textures/_DV/Tiles/wood_tile.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/wood_tile.png
   variants: 4
   placementVariants:
   - 1.0
@@ -1553,7 +1673,7 @@
   id: FloorBrokenWood
   parent: BaseStationTile
   name: tiles-wood3
-  sprite: /Textures/_DV/Tiles/wood_broken.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/wood_broken.png
   variants: 7
   placementVariants:
   - 1.0
@@ -1753,7 +1873,7 @@
   id: FloorWoodLarge
   parent: BaseStationTile
   name: tiles-wood-large
-  sprite: /Textures/_DV/Tiles/wood_large.png # DeltaV - Resprite Tile
+  sprite: /Textures/Tiles/wood_large.png
   variants: 4
   placementVariants:
   - 1.0

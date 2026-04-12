@@ -3,7 +3,6 @@
   name: job-name-qm
   description: job-description-qm
   playTimeTracker: JobQuartermaster
-  antagAdvantage: 6 # DeltaV - Reduced TC: Head of Staff
   requirements:
     - !type:RoleTimeRequirement
       role: JobCargoTechnician
@@ -12,26 +11,22 @@
       role: JobSalvageSpecialist
       time: 2.5h
     - !type:DepartmentTimeRequirement
-      department: Logistics # DeltaV
+      department: Cargo
       time: 10h
   weight: 10
   startingGear: QuartermasterGear
   icon: "JobIconQuarterMaster"
-  requireAdminNotify: true # DeltaV
   supervisors: job-supervisors-captain
   canBeAntag: false
   access:
   - Cargo
   - Salvage
-  - Mail # Nyanotrasen - MailCarrier, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Cargo/mail-carrier.yml
   - Quartermaster
   - Maintenance
   - External
   - Command
-  #- Brig # DeltaV - Removed brig access
-  - Orders # DeltaV - Orders, see Resources/Prototypes/_DV/Access/cargo.yml
+  - Brig
   - Cryogenics
-  - Funding # DeltaV
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]

@@ -1,11 +1,10 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
-using Content.Server.Atmos.Piping.Components;
 using Content.Server.Atmos.Piping.Trinary.Components;
-using Content.Server.NodeContainer;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.NodeContainer.Nodes;
 using Content.Shared.Atmos;
+using Content.Shared.Atmos.Components;
 using Content.Shared.Atmos.Piping;
 using Content.Shared.Atmos.Piping.Components;
 using Content.Shared.Atmos.Piping.Trinary.Components;
@@ -43,7 +42,6 @@ namespace Content.Server.Atmos.Piping.Trinary.EntitySystems
             SubscribeLocalEvent<GasFilterComponent, GasFilterChangeRateMessage>(OnTransferRateChangeMessage);
             SubscribeLocalEvent<GasFilterComponent, GasFilterSelectGasMessage>(OnSelectGasMessage);
             SubscribeLocalEvent<GasFilterComponent, GasFilterToggleStatusMessage>(OnToggleStatusMessage);
-            SubscribeLocalEvent<GasFilterComponent, MapInitEvent>(OnMapInit); // Frontier
 
         }
 
@@ -56,7 +54,7 @@ namespace Content.Server.Atmos.Piping.Trinary.EntitySystems
         {
             if (!filter.Enabled
                 || !_nodeContainer.TryGetNodes(uid, filter.InletName, filter.FilterName, filter.OutletName, out PipeNode? inletNode, out PipeNode? filterNode, out PipeNode? outletNode)
-                || outletNode.Air.Pressure >= Atmospherics.MaxOutputPressure) // No need to transfer if target is full.
+                || (outletNode.Air.Pressure >= Atmospherics.MaxOutputPressure && filterNode.Air.Pressure >= Atmospherics.MaxOutputPressure)) // No need to transfer if targets are full.
             {
                 _ambientSoundSystem.SetAmbience(uid, false);
                 return;
@@ -75,17 +73,31 @@ namespace Content.Server.Atmos.Piping.Trinary.EntitySystems
 
             if (filter.FilteredGas.HasValue)
             {
-                var filteredOut = new GasMixture() { Temperature = removed.Temperature };
+                // Make sure we don't pump over the pressure limit.
+                var limitMolesFilter =
+                    AtmosphereSystem.MolesToMaxPressure(removed, filterNode.Air, Atmospherics.MaxOutputPressure);
 
-                filteredOut.SetMoles(filter.FilteredGas.Value, removed.GetMoles(filter.FilteredGas.Value));
-                removed.SetMoles(filter.FilteredGas.Value, 0f);
+                var availableMoles = removed.GetMoles(filter.FilteredGas.Value);
+                var filteredMoles = Math.Max(Math.Min(limitMolesFilter, availableMoles), 0);
+                var filteredGasMixture = new GasMixture { Temperature = removed.Temperature };
 
-                var target = filterNode.Air.Pressure < Atmospherics.MaxOutputPressure ? filterNode : inletNode;
-                _atmosphereSystem.Merge(target.Air, filteredOut);
-                _ambientSoundSystem.SetAmbience(uid, filteredOut.TotalMoles > 0f);
+                filteredGasMixture.SetMoles(filter.FilteredGas.Value, filteredMoles);
+                removed.AdjustMoles(filter.FilteredGas.Value, -filteredMoles);
+
+                _atmosphereSystem.Merge(filterNode.Air, filteredGasMixture);
+
+                _ambientSoundSystem.SetAmbience(uid, filteredMoles > 0f);
             }
 
-            _atmosphereSystem.Merge(outletNode.Air, removed);
+            // Fraction of `removed` that can be sent to outlet without exceeding max pressure.
+            var limitRatioOutlet =
+                AtmosphereSystem.FractionToMaxPressure(removed, outletNode.Air, Atmospherics.MaxOutputPressure);
+
+            // This might end up negative, but such cases are handled correctly by the `RemoveRatio` method
+            var passthrough = removed.RemoveRatio(limitRatioOutlet);
+
+            _atmosphereSystem.Merge(outletNode.Air, passthrough);
+            _atmosphereSystem.Merge(inletNode.Air, removed);
         }
 
         private void OnFilterLeaveAtmosphere(EntityUid uid, GasFilterComponent filter, ref AtmosDeviceDisabledEvent args)
@@ -212,19 +224,5 @@ namespace Content.Server.Atmos.Piping.Trinary.EntitySystems
 
             args.DeviceFlipped = inlet != null && filterNode != null && inlet.CurrentPipeDirection.ToDirection() == filterNode.CurrentPipeDirection.ToDirection().GetClockwise90Degrees();
         }
-
-        // Frontier - Start: Enable filters at roundstart
-        private void OnMapInit(EntityUid uid, GasFilterComponent filter, MapInitEvent args) // Frontier - Init on map
-        {
-            if (filter.StartOnMapInit)
-            {
-                filter.Enabled = true;
-                DirtyUI(uid, filter);
-
-                UpdateAppearance(uid, filter);
-                _userInterfaceSystem.CloseUi(uid, GasFilterUiKey.Key);
-            }
-        }
-        // Frontier - End: Enable filters at roundstart
     }
 }

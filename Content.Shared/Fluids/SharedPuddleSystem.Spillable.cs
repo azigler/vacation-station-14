@@ -1,4 +1,3 @@
-using Content.Shared._DV.Chemistry.Systems; // DeltaV - Beer Goggles Safe Throw
 using Content.Shared.Chemistry;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
@@ -19,15 +18,12 @@ using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Player;
 
-
 namespace Content.Shared.Fluids;
 
 public abstract partial class SharedPuddleSystem
 {
     private static readonly FixedPoint2 MeleeHitTransferProportion = 0.25;
     [Dependency] private readonly InjectorSystem _injectorSystem = default!;
-
-    [Dependency] protected readonly SafeSolutionThrowerSystem _safeSolutionThrower = default!; // DeltaV - Beer Goggles Safe Throw
 
     protected virtual void InitializeSpillable()
     {
@@ -84,7 +80,7 @@ public abstract partial class SharedPuddleSystem
                 // Injectors should not be hardcoded here.
                 if (TryComp<InjectorComponent>(entity, out var injectorComp)
                     && _prototypeManager.Resolve(injectorComp.ActiveModeProtoId, out var activeMode)
-                    && !activeMode.Behavior.HasFlag(InjectorBehavior.Draw))
+                    && !activeMode.Behavior.HasAnyFlag(InjectorBehavior.Draw | InjectorBehavior.Dynamic))
                 {
                     foreach (var mode in injectorComp.AllowedModes)
                     {
@@ -204,10 +200,6 @@ public abstract partial class SharedPuddleSystem
         // Don’t care about empty containers.
         if (!_solutionContainerSystem.TryGetSolution(ent.Owner, ent.Comp.SolutionName, out _, out var solution)
             || solution.Volume <= 0)
-            return;
-
-         // DeltaV - Beer Goggles Safe Throw
-        if (_safeSolutionThrower.GetSafeThrow(args.PlayerUid))
             return;
 
         args.Cancel("pacified-cannot-throw-spill");

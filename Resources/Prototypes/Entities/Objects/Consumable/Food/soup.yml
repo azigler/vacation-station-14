@@ -12,9 +12,7 @@
   - type: Edible
     trash:
     - FoodBowlBig
-    utensil: 
-    - Spoon
-    - Fork # Delta V - Mainly so people can eat rice dishes with a chopstick
+    utensil: Spoon
   - type: SolutionContainerManager
     solutions:
       food:

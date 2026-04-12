@@ -25,9 +25,6 @@
     - WhitelistChameleonIdCard
   - type: StealTarget
     stealGroup: IDCard
-  - type: NanoChatCard # DeltaV
-  - type: MiningPoints # DeltaV
-  - type: FishingPoints # DeltaV
 
 #IDs with layers
 
@@ -138,7 +135,7 @@
 - type: entity
   parent: IDCardStandard
   id: RDIDCard
-  name: mystagogue ID card # DeltaV - Epistemics Department replacing Science
+  name: research director ID card
   components:
   - type: Sprite
     layers:
@@ -164,9 +161,9 @@
     layers:
     - state: silver
     - state: stripe_top
-      color: &color-security-top "#39393c"
+      color: &color-security-top "#cb0000"
     - state: stripe_bottom
-      color: &color-security-bottom "#262626"
+      color: &color-security-bottom "#830000"
     - sprite: *icon-rsi
       offset: *icon-offset
       state: HeadOfSecurity
@@ -266,9 +263,6 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: SeniorEngineer
-  - type: IdCard # DeltaV
-    jobTitle: job-name-senior-engineer
-    jobIcon: JobIconSeniorEngineer
 
 #Medical
 
@@ -377,9 +371,6 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: SeniorPhysician
-  - type: IdCard # DeltaV
-    jobTitle: job-name-senior-physician
-    jobIcon: JobIconSeniorPhysician
 
 #Science
 
@@ -434,9 +425,6 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: SeniorResearcher
-  - type: IdCard # DeltaV
-    jobTitle: job-name-senior-researcher
-    jobIcon: JobIconSeniorResearcher
 
 #Security
 
@@ -452,7 +440,7 @@
       color: *color-security-top
     - state: stripe_bottom
       color: *color-security-bottom
-    - sprite: &icon-rsi-dv /Textures/_DV/Interface/Misc/job_icons.rsi # DeltaV - Sec Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: SecurityCadet
   - type: PresetIdCard
@@ -488,7 +476,7 @@
       color: *color-security-top
     - state: stripe_bottom
       color: *color-security-bottom
-    - sprite: *icon-rsi-dv # DeltaV - Sec Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Warden
   - type: PresetIdCard
@@ -506,7 +494,7 @@
       color: *color-security-top
     - state: stripe_bottom
       color: *color-security-bottom
-    - sprite: *icon-rsi-dv # DeltaV - Sec Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Detective
   - type: PresetIdCard
@@ -515,7 +503,7 @@
 - type: entity
   parent: IDCardStandard
   id: BrigmedicIDCard
-  name: corpsman ID card # DeltaV - rename brigmedic to corpsman
+  name: brigmedic ID card
   components:
   - type: Sprite
     layers:
@@ -524,7 +512,7 @@
       color: *color-security-top
     - state: stripe_bottom
       color: *color-security-bottom
-    - sprite: *icon-rsi-dv # DeltaV - Sec Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Brigmedic
 
@@ -540,12 +528,9 @@
       color: *color-security-top
     - state: stripe_bottom
       color: *color-security-bottom
-    - sprite: *icon-rsi-dv # DeltaV - Sec Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: SeniorOfficer
-  - type: IdCard # DeltaV
-    jobTitle: job-name-senior-officer
-    jobIcon: JobIconSeniorOfficer
 
 #Service
 
@@ -627,10 +612,10 @@
     layers:
     - state: default
     - state: stripe_top
-      color: *color-science-top # DeltaV - Chap is Epi
+      color: *color-service-top
     - state: stripe_bottom
-      color: *color-science-bottom # DeltaV - Chap is Epi
-    - sprite: *icon-rsi-dv # DeltaV - Chaplain Icon Resprite
+      color: *color-service-bottom
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Chaplain
   - type: PresetIdCard
@@ -739,9 +724,9 @@
     layers:
     - state: default
     - state: stripe_top
-      color: *color-science-top # DeltaV - Librarian is Epi
+      color: *color-service-top
     - state: stripe_bottom
-      color: *color-science-bottom # DeltaV - Librarian is Epi
+      color: *color-service-bottom
     - sprite: *icon-rsi
       offset: *icon-offset
       state: Librarian
@@ -757,10 +742,10 @@
     layers:
     - state: default
     - state: stripe_top
-      color: &color-justice-top "#641327" # DeltaV - Lawyer is Justice
+      color: *color-service-top
     - state: stripe_bottom
-      color: &color-justice-bottom "#4c0e1d" # DeltaV - Lawyer is Justice
-    - sprite: *icon-rsi-dv # DeltaV - Lawyer Icon Resprite
+      color: *color-service-bottom
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Lawyer
   - type: PresetIdCard
@@ -799,8 +784,6 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: Boxer
-  - type: PresetIdCard
-    job: Boxer  # DeltaV - Keep Zookeeper/Boxer
 
 - type: entity
   parent: IDCardStandard
@@ -817,8 +800,6 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: Zookeeper
-  - type: PresetIdCard
-    job: Zookeeper # DeltaV - Keep Zookeeper/Boxer
 
 #Supply
 
@@ -869,7 +850,7 @@
   - type: Sprite
     layers:
     - state: orange
-    - sprite: *icon-rsi-dv # DeltaV - Prisoner Icon Resprite
+    - sprite: *icon-rsi
       offset: *icon-offset
       state: Prisoner
   - type: Item
@@ -964,8 +945,6 @@
         type: AgentIDCardBoundUserInterface
       enum.ChameleonUiKey.Key:
         type: ChameleonBoundUserInterface
-  - type: NanoChatCard # DeltaV
-    listNumber: false
 
 - type: entity
   parent: AgentIDCard
@@ -993,19 +972,19 @@
     - sprite: *icon-rsi
       offset: *icon-offset
       state: Syndicate
+  - type: IdCard
+    jobIcon: JobIconSyndicate
   - type: Item
     heldPrefix: black
   - type: Access
     tags:
     - NuclearOperative
     - SyndicateAgent
-  - type: NanoChatCard # DeltaV
-    listNumber: false
 
 - type: entity
   parent: [ SyndicateIDCard, BaseSyndicateContraband ]
   id: SyndiOperativeIDCard
-  name: gorlex operative ID card # DeltaV - slight name change
+  name: syndicate operative ID card
   components:
   - type: Sprite
     layers:
@@ -1023,8 +1002,8 @@
 
 - type: entity
   parent: [ SyndiOperativeIDCard, BaseSyndicateContraband ]
-  id: SyndiAgentIDCard # DeltaV - Nukie agent is still agent
-  name: gorlex agent ID card # DeltaV - slight name change
+  id: SyndiCorpsmanIDCard
+  name: syndicate corpsman ID card
   components:
   - type: Sprite
     layers:
@@ -1042,7 +1021,7 @@
 - type: entity
   parent: [ SyndiOperativeIDCard, BaseSyndicateContraband ]
   id: SyndiCommanderIDCard
-  name: gorlex commander ID card # DeltaV - slight name change
+  name: syndicate commander ID card
   components:
   - type: Sprite
     layers:
@@ -1097,8 +1076,6 @@
     heldPrefix: orange #this is close enough to the weird puce color pirate IDs have going on
   - type: IdCard
     jobIcon: JobIconPirate
-  - type: NanoChatCard # DeltaV
-    listNumber: false
 
 - type: entity
   parent: IDCardStandard
@@ -1184,9 +1161,9 @@
     layers:
     - state: centcom
     - state: stripe_top
-      color: *color-science-top # DeltaV - Chap is Epi
+      color: *color-service-top
     - state: stripe_bottom
-      color: *color-science-bottom # DeltaV - Chap is Epi
+      color: *color-service-bottom
     - sprite: *icon-rsi
       offset: *icon-offset
       state: ERTChaplain
@@ -1345,14 +1322,6 @@
     - SyndicateAgent
     - Wizard
     - Xenoborg
-    - DV-SpareSafe # DeltaV
-    - Admeme1 # DeltaV
-    - Admeme2 # DeltaV
-    - Admeme3 # DeltaV
-    - ERT # Delta V
-  - type: NanoChatCard # DeltaV
-    notificationsMuted: true
-    listNumber: false
   - type: Tag #  Ignore Chameleon tags
     tags:
     - DoorBumpOpener

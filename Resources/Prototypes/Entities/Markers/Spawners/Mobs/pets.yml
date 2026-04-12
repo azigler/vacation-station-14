@@ -41,7 +41,7 @@
     - MobCatRuntime
     - MobCatException
     - MobCatFloppa
-    - MobBingusGhost # DeltaV - was MobBingus
+    - MobBingus
 
 - type: entity
   parent: MarkerBase
@@ -55,7 +55,7 @@
     - state: ai
   - type: ConditionalSpawner
     prototypes:
-    - MobBingusGhost # DeltaV - was MobBingus
+    - MobBingus
 
 - type: entity
   parent: MarkerBase

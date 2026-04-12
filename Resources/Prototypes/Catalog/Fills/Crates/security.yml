@@ -7,7 +7,7 @@
   - type: EntityTableContainerFill
     containers:
       entity_storage:
-        id: ClothingOuterArmorPlateCarrier # DeltaV - ClothingOuterArmorBulletproof replaced in favour of plate carrier
+        id: ClothingOuterArmorBulletproof
         amount: 3
 
 - type: entity

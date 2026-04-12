@@ -59,12 +59,6 @@
         layer:
         - WallLayer
         density: 2000
-  # Delta V - add Tag
-  - type: Tag
-    tags:
-    - Wall
-    - Natural
-  # Delta V - end tags
 
 - type: entity
   abstract: true
@@ -118,9 +112,6 @@
         acts: ["Destruction"]
       - !type:TriggerBehavior
         keyOut: timer # explode immediately
-  - type: Gatherable # DeltaV - prevent mining gibtonite
-    toolWhitelist:
-      tags: []
 
 # Ore veins
 - type: entity
@@ -849,12 +840,6 @@
       state: rock_north
     - map: [ "enum.EdgeLayer.West" ]
       state: rock_west
-  # Delta V - add Tag
-  - type: Tag
-    tags:
-    - Wall
-    - Natural
-  # Delta V - end tags
 
 # Ore veins
 - type: entity

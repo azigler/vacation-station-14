@@ -26,8 +26,6 @@
     delay:
       min: 10
       max: 10
-  - type: PrecognitionResult # DeltaV - Precogniton
-    message: psionic-power-precognition-cargo-gifts-base-result-message
   - type: StationEvent
     startColor: "#18abf5"
     startAudio:
@@ -65,7 +63,7 @@
     description: cargo-gift-pizza-large
     dest: cargo-gift-dest-bar
     gifts:
-      FoodPizza: 2 # DeltaV - Changed to 2 small pizza crates, 8 pizzas total (Was 16)
+      FoodPizza: 4              # 16 pizzas
       FoodBarSupply: 1
       FoodSoftdrinks: 2         # 32 sodas
 

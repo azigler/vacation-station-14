@@ -799,21 +799,11 @@
   parent: BaseCommandHatRecipe
   id: ClothingHeadHatBeretHoS
   result: ClothingHeadHatBeretHoS
-  # Begin DeltaV additions
-  materials:
-    Cloth: 100
-    Durathread: 200
-  # End DeltaV additions
 
 - type: latheRecipe
   parent: BaseCommandHatRecipe
   id: ClothingHeadHatHoshat
   result: ClothingHeadHatHoshat
-  # Begin DeltaV additions
-  materials:
-    Cloth: 100
-    Durathread: 200
-  # End DeltaV additions
 
 - type: latheRecipe
   parent: BaseCommandHatRecipe
@@ -830,11 +820,6 @@
   id: ClothingHeadHatHopcap
   result: ClothingHeadHatHopcap
 
-- type: latheRecipe
-  parent: BaseCommandHatRecipe
-  id: ClothingHeadHatBeretHop
-  result: ClothingHeadHatBeretHop
-  
 - type: latheRecipe
   parent: BaseCommandHatRecipe
   id: ClothingHeadHatQMsoft

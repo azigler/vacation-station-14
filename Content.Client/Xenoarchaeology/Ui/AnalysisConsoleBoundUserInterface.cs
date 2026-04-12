@@ -1,8 +1,7 @@
 using Content.Shared.Research.Components;
-using Content.Shared._DV.Xenoarchaeology.BUI;// DeltaV
 using Content.Shared.Xenoarchaeology.Equipment.Components;
+using Robust.Client.UserInterface;
 using JetBrains.Annotations;
-using Robust.Client.UserInterface; // DeltaV
 
 namespace Content.Client.Xenoarchaeology.Ui;
 
@@ -22,7 +21,7 @@ public sealed class AnalysisConsoleBoundUserInterface(EntityUid owner, Enum uiKe
         base.Open();
 
         _consoleMenu = this.CreateWindow<AnalysisConsoleMenu>();
-        _consoleMenu.SetOwner(owner);
+        _consoleMenu.SetOwner(Owner);
 
         _consoleMenu.OnClose += Close;
         _consoleMenu.OpenCentered();
@@ -55,15 +54,5 @@ public sealed class AnalysisConsoleBoundUserInterface(EntityUid owner, Enum uiKe
 
         _consoleMenu?.Dispose();
     }
-
-    // DeltaV
-    protected override void UpdateState(BoundUserInterfaceState state)
-    {
-        if (state is not AnalysisConsoleBoundUserInterfaceState consoleState)
-            return;
-
-        _consoleMenu?.UpdateState(consoleState.Mult, consoleState.Ratio);
-    }
-
 }
 

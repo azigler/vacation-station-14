@@ -5,13 +5,13 @@
   playTimeTracker: JobResearchAssistant
   requirements:
     - !type:DepartmentTimeRequirement
-      department: Epistemics # DeltaV
-      time: 5h
+      department: Science
+      time: 10h
       inverted: true # stop playing intern if you're good at science!
   startingGear: ResearchAssistantGear
   icon: "JobIconResearchAssistant"
   supervisors: job-supervisors-science
-  canBeAntag: true # DeltaV - Can be antagonist
+  canBeAntag: false
   access:
   - Research
   - Maintenance

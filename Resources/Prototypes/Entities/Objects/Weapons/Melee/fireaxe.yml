@@ -38,11 +38,9 @@
     quickEquip: false
     slots:
     - back
-    - suitStorage # DeltaV addition
   - type: Tool
     qualities:
       - Prying
-      - Axing # DeltaV - The return of fireaxe prying
   - type: ToolTileCompatible
   - type: Prying
   - type: UseDelay
@@ -51,13 +49,6 @@
     stealGroup: FireAxe
   - type: IgniteOnMeleeHit
     fireStacks: -4
-  - type: Scalpel # Shitmed
-    speed: 0.3
-  - type: BoneSaw # Shitmed
-    speed: 0.5
-  - type: SurgeryTool # Shitmed
-    startSound:
-      path: /Audio/_Shitmed/Medical/Surgery/saw.ogg
 
 - type: entity
   id: FireAxeFlaming
@@ -77,7 +68,3 @@
     quickEquip: false
     slots:
     - back
-    - suitStorage # DeltaV addition
-  - type: Tool
-    qualities:
-    - Prying # DeltaV - Makes so it can only pry tiles, not plates. #1844

@@ -1,11 +1,10 @@
 ## Static
 
 - type: latheRecipePack
-  parent:
-  - ServiceStaticDeltaV # DeltaV
   id: ServiceStatic
   recipes:
   - Bucket
+  - Ashtray
   - DrinkMug
   - DrinkMugMetal
   - DrinkGlass
@@ -29,8 +28,6 @@
   - WireBrush
 
 - type: latheRecipePack
-  parent:
-  - ServiceBoardsStaticDeltaV # DeltaV
   id: ServiceBoardsStatic
   recipes:
   - BiogeneratorMachineCircuitboard
@@ -59,8 +56,6 @@
   - PushHorn
 
 - type: latheRecipePack
-  parent:
-  - ServiceBoardsDeltaV # DeltaV
   id: ServiceBoards
   recipes:
   - BiofabricatorMachineCircuitboard

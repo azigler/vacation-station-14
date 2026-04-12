@@ -24,7 +24,7 @@
         - InteractImpassable
   - type: Damageable
     damageContainer: Inorganic
-    damageModifierSet: StorageTank # DeltaV
+    damageModifierSet: Metallic
   - type: Destructible
     thresholds:
     - trigger:

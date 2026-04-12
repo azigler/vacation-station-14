@@ -75,8 +75,6 @@ namespace Content.Server.Connection
             InitializeWhitelist();
         }
 
-        private List<NetUserId> _connectedWhitelistedPlayers = new(); // DeltaV - Soft whitelist improvements
-
         public void Initialize()
         {
             _sawmill = _logManager.GetSawmill("connections");
@@ -84,8 +82,6 @@ namespace Content.Server.Connection
             _ipintel = new IPIntel.IPIntel(new IPIntelApi(_http, _cfg), _db, _cfg, _logManager, _chatManager, _gameTiming);
 
             _netMgr.Connecting += NetMgrOnConnecting;
-            _netMgr.Connected += OnConnected; // DeltaV - Soft whitelist improvements
-            _netMgr.Disconnect += OnDisconnected; // DeltaV - Soft whitelist improvements
             _netMgr.AssignUserIdCallback = AssignUserIdCallback;
             _plyMgr.PlayerStatusChanged += PlayerStatusChanged;
             // Approval-based IP bans disabled because they don't play well with Happy Eyeballs.
@@ -211,7 +207,7 @@ namespace Content.Server.Connection
          * TODO: Jesus H Christ what is this utter mess of a function
          * TODO: Break this apart into is constituent steps.
          */
-        private async Task<(ConnectionDenyReason, string, List<ServerBanDef>? bansHit)?> ShouldDeny(
+        private async Task<(ConnectionDenyReason, string, List<BanDef>? bansHit)?> ShouldDeny(
             NetConnectingArgs e)
         {
             // Check if banned.
@@ -232,7 +228,7 @@ namespace Content.Server.Connection
                 return (ConnectionDenyReason.NoHwid, Loc.GetString("hwid-required"), null);
             }
 
-            var bans = await _db.GetServerBansAsync(addr, userId, hwId, modernHwid, includeUnbanned: false);
+            var bans = await _db.GetBansAsync(addr, userId, hwId, modernHwid, includeUnbanned: false);
             if (bans.Count > 0)
             {
                 var firstBan = bans[0];
@@ -312,8 +308,8 @@ namespace Content.Server.Connection
                 return (ConnectionDenyReason.Full, Loc.GetString("soft-player-cap-full"), null);
             }
 
-            // DeltaV - Replace existing softwhitelist implementation
-            if (false)//if (_cfg.GetCVar(CCVars.WhitelistEnabled) && adminData is null)
+            // Checks for whitelist IF it's enabled AND the user isn't an admin. Admins are always allowed.
+            if (_cfg.GetCVar(CCVars.WhitelistEnabled) && adminData is null)
             {
                 if (_whitelists is null)
                 {
@@ -339,29 +335,6 @@ namespace Content.Server.Connection
 
                     // Whitelisted, don't check any more.
                     break;
-                }
-            }
-
-            // DeltaV - Soft whitelist improvements
-            // TODO: replace this with a whitelist config prototype with a connected whitelisted players condition
-            if (_cfg.GetCVar(CCVars.WhitelistEnabled))
-            {
-                var connectedPlayers = _plyMgr.PlayerCount;
-                var connectedWhitelist = _connectedWhitelistedPlayers.Count;
-
-                var slots = 25;
-
-                var noSlotsOpen = slots > 0 && slots < connectedPlayers - connectedWhitelist;
-
-                if (noSlotsOpen && await _db.GetWhitelistStatusAsync(userId) == false
-                                     && adminData is null)
-                {
-                    var msg = Loc.GetString("whitelist-not-whitelisted-peri");
-
-                    if (slots > 0)
-                        msg += "\n" + Loc.GetString("whitelist-playercount-invalid", ("min", slots), ("max", _cfg.GetCVar(CCVars.SoftMaxPlayers)));
-
-                    return (ConnectionDenyReason.Whitelist, msg, null);
                 }
             }
 
@@ -398,32 +371,6 @@ namespace Content.Server.Connection
             var assigned = new NetUserId(Guid.NewGuid());
             await _db.AssignUserIdAsync(name, assigned);
             return assigned;
-        }
-
-        /// <summary>
-        ///     DeltaV - Soft whitelist improvements
-        ///     Handles a completed connection, and stores the player if they're whitelisted and the whitelist is enabled
-        /// </summary>
-        private async void OnConnected(object? sender, NetChannelArgs e)
-        {
-            var userId = e.Channel.UserId;
-
-            if (_cfg.GetCVar(CCVars.WhitelistEnabled) && await _db.GetWhitelistStatusAsync(userId))
-            {
-                _connectedWhitelistedPlayers.Add(userId);
-            }
-        }
-
-        /// <summary>
-        ///     DeltaV - Soft whitelist improvements
-        ///     Handles a disconnection, and removes a stored player from the count if the whitelist is enabled
-        /// </summary>
-        private async void OnDisconnected(object? sender, NetChannelArgs e)
-        {
-            if (_cfg.GetCVar(CCVars.WhitelistEnabled))
-            {
-                _connectedWhitelistedPlayers.Remove(e.Channel.UserId);
-            }
         }
     }
 }

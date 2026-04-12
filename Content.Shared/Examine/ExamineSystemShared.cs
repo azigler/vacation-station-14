@@ -21,6 +21,8 @@ namespace Content.Shared.Examine
         [Dependency] private readonly SharedInteractionSystem _interactionSystem = default!;
         [Dependency] protected readonly MobStateSystem MobStateSystem = default!;
 
+        [Dependency] private readonly EntityQuery<GhostComponent> _ghostQuery = default!;
+
         public const float MaxRaycastRange = 100;
 
         /// <summary>
@@ -39,11 +41,9 @@ namespace Content.Shared.Examine
         public const float DeadExamineRange = 0.75f;
 
         public const float ExamineRange = 16f;
-        protected const float ExamineDetailsRange = ExamineRange; // DeltaV - increase examine range
+        protected const float ExamineDetailsRange = 3f;
 
         protected const float ExamineBlurrinessMult = 2.5f;
-
-        private EntityQuery<GhostComponent> _ghostQuery;
 
         /// <summary>
         ///     Creates a new examine tooltip with arbitrary info.

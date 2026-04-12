@@ -2,7 +2,6 @@
 using Content.Shared.Silicons.Borgs;
 using Content.Shared.Silicons.Borgs.Components;
 using Robust.Client.GameObjects;
-using Robust.Shared.Serialization; // DeltaV
 
 namespace Content.Client.Silicons.Borgs;
 
@@ -11,7 +10,7 @@ namespace Content.Client.Silicons.Borgs;
 /// </summary>
 /// <seealso cref="SharedBorgSwitchableTypeSystem"/>
 /// <seealso cref="BorgSwitchableTypeComponent"/>
-public sealed partial class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeSystem // DeltaV - made partial
+public sealed class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeSystem
 {
     [Dependency] private readonly BorgSystem _borgSystem = default!;
     [Dependency] private readonly AppearanceSystem _appearance = default!;
@@ -39,15 +38,8 @@ public sealed partial class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeS
         Entity<BorgSwitchableTypeComponent> entity,
         BorgTypePrototype prototype)
     {
-        // Begin DeltaV Additions
-        if (prototype.ClientComponents is {} add)
-            EntityManager.AddComponents(entity, add);
-        // End DeltaV Additions
         if (TryComp(entity, out SpriteComponent? sprite))
         {
-            // Begin DeltaV Additions - work around engine bug with AddComponents
-            ((ISerializationHooks) sprite).AfterDeserialization();
-            // End DeltaV Additions
             _sprite.LayerSetRsiState((entity, sprite), BorgVisualLayers.Body, prototype.SpriteBodyState);
             _sprite.LayerSetRsiState((entity, sprite), BorgVisualLayers.LightStatus, prototype.SpriteToggleLightState);
         }

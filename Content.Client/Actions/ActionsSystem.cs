@@ -237,7 +237,6 @@ namespace Content.Client.Actions
 
             var actions = EnsureComp<ActionsComponent>(user);
 
-            ClearActions(); // DeltaV - this is needed here for mapping XX commands to work properly
             ClearAssignments?.Invoke();
 
             var assignments = new List<SlotAssignment>();
@@ -310,97 +309,6 @@ namespace Content.Client.Actions
 
             AssignSlot?.Invoke(assignments);
         }
-
-        // DeltaV - begin changes
-        /// <summary>
-        ///     Load actions and their toolbar assignments from a file.
-        ///     DeltaV - Load from an existing yaml stream instead
-        /// </summary>
-        public void LoadActionAssignments(YamlStream stream)
-        {
-            if (_playerManager.LocalEntity is not { } user)
-                return;
-
-            if (stream.Documents[0].RootNode.ToDataNode() is not SequenceDataNode sequence)
-                return;
-
-            var actions = EnsureComp<ActionsComponent>(user);
-
-            // We need to clear previously loaded actions, otherwise they keep adding up, filling the screen
-            ClearActions();
-
-            ClearAssignments?.Invoke();
-
-            foreach (var entry in sequence.Sequence)
-            {
-                if (entry is not MappingDataNode map)
-                    continue;
-
-                if (!map.TryGet("assignments", out var assignmentNode))
-                    continue;
-
-                var actionId = EntityUid.Invalid;
-                if (map.TryGet<ValueDataNode>("action", out var actionNode))
-                {
-                    var id = new EntProtoId(actionNode.Value);
-                    actionId = Spawn(id);
-                }
-                else if (map.TryGet<ValueDataNode>("entity", out var entityNode))
-                {
-                    var id = new EntProtoId(entityNode.Value);
-                    var proto = _proto.Index(id);
-                    actionId = Spawn(MappingEntityAction);
-                    SetIcon(actionId, new SpriteSpecifier.EntityPrototype(id));
-                    SetEvent(actionId, new StartPlacementActionEvent()
-                    {
-                        PlacementOption = "SnapgridCenter",
-                        EntityType = id
-                    });
-                    _metaData.SetEntityName(actionId, proto.Name);
-                }
-                else if (map.TryGet<ValueDataNode>("tileId", out var tileNode))
-                {
-                    var id = new ProtoId<ContentTileDefinition>(tileNode.Value);
-                    var proto = _proto.Index(id);
-                    actionId = Spawn(MappingEntityAction);
-                    if (proto.Sprite is {} sprite)
-                        SetIcon(actionId, new SpriteSpecifier.Texture(sprite));
-                    SetEvent(actionId, new StartPlacementActionEvent()
-                    {
-                        PlacementOption = "AlignTileAny",
-                        TileId = id
-                    });
-                    _metaData.SetEntityName(actionId, Loc.GetString(proto.Name));
-                }
-                else
-                {
-                    Log.Error($"Mapping actions from yamlstream had unknown action data!");
-                    continue;
-                }
-
-                AddActionDirect((user, actions), actionId);
-            }
-        }
-
-        private void ClearActions()
-        {
-            var existingActions = GetClientActions().ToList();
-
-            foreach (var actionId in existingActions)
-            {
-                var meta = MetaData(actionId);
-
-                if (meta.EntityPrototype == null)
-                    continue;
-
-                if (meta.EntityPrototype.ID == MappingEntityAction ||
-                    meta.EntityPrototype.ID == "ActionMappingEraser")
-                {
-                    RemoveAction(actionId.AsNullable());
-                }
-            }
-        }
-        // DeltaV - end changes
 
         private void OnWorldTargetAttempt(Entity<WorldTargetActionComponent> ent, ref ActionTargetAttemptEvent args)
         {

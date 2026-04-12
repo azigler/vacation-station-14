@@ -53,12 +53,11 @@
   - type: Storage
     maxItemSize: Small
     grid:
-    - 0,0,6,3 # DeltaV - increased size
+    - 0,0,5,2
     whitelist:
       components:
       - MachineBoard
       - Circuitboard
-      - ComputerBoard
   - type: Construction
     graph: ToteBase
     node: totebase

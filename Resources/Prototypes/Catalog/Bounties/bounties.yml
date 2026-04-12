@@ -25,7 +25,6 @@
   id: BountyBrain
   reward: 12500
   description: bounty-description-brain
-  skipArbitrage: true # DeltaV - arena mob crate has mobs with brain
   entries:
   - name: bounty-item-brain
     amount: 1
@@ -75,29 +74,12 @@
   reward: 12500
   description: bounty-description-carp
   idPrefix: CC
-  skipArbitrage: true # DeltaV - arena mob crate has mobs with brain
   entries:
   - name: bounty-item-carp
     amount: 1
     whitelist:
       tags:
       - Carp
-
-- type: cargoBounty
-  id: BountyClownCostume
-  reward: 1700
-  description: bounty-description-clown-costume
-  entries:
-  - name: bounty-item-clown-mask
-    amount: 1
-    whitelist:
-      tags:
-      - ClownMask
-  - name: bounty-item-clown-shoes
-    amount: 1
-    whitelist:
-      tags:
-      - ClownShoes
 
 - type: cargoBounty
   id: BountyCorn
@@ -275,11 +257,11 @@
 
 - type: cargoBounty
   id: BountyPancake
-  reward: 10000
+  reward: 5000
   description: bounty-description-pancake
   entries:
   - name: bounty-item-pancake
-    amount: 13
+    amount: 6
     whitelist:
       tags:
       - Pancake
@@ -536,10 +518,6 @@
     blacklist:
       components:
       - PowerCell
-      # Begin DeltaV Additions - Laser tag gun bounties
-      tags:
-      - Taser # Stops the bounty from allowing Laser Tag guns
-      # End DeltaV Additions - Laser tag gun bounties
 
 - type: cargoBounty
   id: BountyFood
@@ -602,16 +580,6 @@
     whitelist:
       tags:
       - ChiliBowl
-
-- type: cargoBounty
-  id: BountyRollerskates
-  reward: 900
-  description: bounty-description-rollerskates
-  entries:
-  - name: bounty-item-rollerskates
-    whitelist:
-      components:
-      - Skates
 
 - type: cargoBounty
   id: BountyBedsheet
@@ -704,7 +672,7 @@
 - type: cargoBounty
   id: BountyCardboardBox
   reward: 1500
-  description: bounty-description-cardobard-box
+  description: bounty-description-cardboard-box
   entries:
   - name: bounty-item-cardboard-box
     amount: 12

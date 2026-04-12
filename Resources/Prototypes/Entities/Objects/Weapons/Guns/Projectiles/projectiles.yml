@@ -3,20 +3,15 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
-    lifetime: 0.2 # imp
+    lifetime: 0.4
   - type: Sprite
     drawdepth: BelowMobs
     layers:
     - shader: unshaded
       map: ["enum.EffectLayers.Unshaded"]
-      sprite: _Impstation/Objects/Weapons/Guns/Projectiles/muzzleflashes.rsi # imp
-      state: kinetic # imp
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+      state: muzzle_bullet
   - type: EffectVisuals
-  - type: PointLight
-    enabled: true
-    color: "#ffa223" # imp
-    radius: 1.4 # imp
-    energy: 5.0 # imp
   - type: Tag
     tags:
       - HideContextMenu
@@ -27,38 +22,28 @@
   id: MuzzleFlashEffectOmnilaser
   categories: [ HideSpawnMenu ]
   components:
-  - type: PointLight
-    enabled: true
-    color: "#0ab8c4" # imp
-    radius: 1.4 # imp
-    energy: 5.0 # imp
   - type: Sprite
     drawdepth: BelowMobs
     offset: 0.15, 0
     layers:
     - shader: unshaded
       map: ["enum.EffectLayers.Unshaded"]
-      sprite: _Impstation/Objects/Weapons/Guns/Projectiles/muzzleflashes.rsi # imp
-      state: energystun # imp
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+      state: omnilaser_flash
 
 - type: entity
   parent: MuzzleFlashEffect
   id: MuzzleFlashEffectHeavyLaser
   categories: [ HideSpawnMenu ]
   components:
-  - type: PointLight
-    enabled: true
-    color: "#d63b28" # imp
-    radius: 1.4 # imp
-    energy: 5.0 # imp
   - type: Sprite
     drawdepth: BelowMobs
     offset: 0.15, 0
     layers:
     - shader: unshaded
       map: ["enum.EffectLayers.Unshaded"]
-      sprite: _Impstation/Objects/Weapons/Guns/Projectiles/muzzleflashes.rsi # imp
-      state: energy # imp
+      sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+      state: heavylaser_flash
 
 # One bullet to bring them all into the darkness and bind them
 - type: entity
@@ -162,7 +147,7 @@
   - type: PointLight
     enabled: true
     color: "#ff4300"
-    radius: 1.4 # imp
+    radius: 2.0
     energy: 7.0
   - type: IgniteOnCollide
     fireStacks: 0.25
@@ -216,9 +201,11 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    noRot: true
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    color: "#ffff33"
     layers:
-    - state: lightgold # imp
+    - state: spark
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -250,11 +237,6 @@
     slowdownAmount: 2.5
     walkSpeedModifier: 0.5
     sprintSpeedModifier: 0.5
-    # Begin DeltaV Additions
-    blacklist:
-      tags:
-      - TaserImmune
-    # End DeltaV Additions
 
 - type: entity
   parent: BulletTaser
@@ -300,9 +282,9 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: mediumstun # imp
+    - state: omnilaser
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -318,15 +300,13 @@
         - BulletImpassable
       fly-by: *flybyfixture
   - type: Ammo
-    muzzleFlash: MuzzleFlashEffectOmnilaser # imp
   - type: StaminaDamageOnCollide
-    damage: 30
+    damage: 33
   - type: Projectile
     impactEffect: BulletImpactEffectDisabler
     damage:
       types:
         Heat: 0
-        Ion: 10 # DeltaV
     soundHit:
       collection: WeakHit
     forceSound: true
@@ -343,9 +323,9 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: mediumstun # imp
+    - state: omnilaser
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -361,7 +341,6 @@
         - BulletImpassable
       fly-by: *flybyfixture
   - type: Ammo
-    muzzleFlash: MuzzleFlashEffectOmnilaser # imp
   - type: StaminaDamageOnCollide
     damage: 1
   - type: Projectile
@@ -369,7 +348,6 @@
     damage:
       types:
         Heat: 0
-        Ion: 5 # DeltaV
     soundHit:
       collection: WeakHit
     forceSound: true
@@ -381,12 +359,12 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Structures/Power/Generation/Singularity/emitter.rsi
     layers:
-    - state: mediumsynd # imp
-      shader: unshaded
+      - state: projectile
+        shader: unshaded
   - type: Ammo
-    muzzleFlash: MuzzleFlashEffectSyndLaser # imp
+    muzzleFlash: null
   - type: Physics
   - type: Fixtures
     fixtures:
@@ -577,7 +555,7 @@
         Structural: 30
   # Short lifespan
   - type: TimedDespawn
-    lifetime: 0.4 # DeltaV - Revert to Prebase stats, was 0.22
+    lifetime: 0.22 # roughly 5.5 tiles
   - type: GatheringProjectile
 
 - type: entity
@@ -606,7 +584,6 @@
     color: white
     energy: 0.5
   - type: GatheringProjectile
-  - type: PressureProjectile # DeltaV
 
 - type: entity
   id: BulletCharge
@@ -631,8 +608,8 @@
         - MobState
     damage:
       types:
-        Blunt: 20
-        Slash: 5
+        Blunt: 18
+        Slash: 4
   - type: Projectile
     impactEffect: BulletImpactEffectKinetic
     damage:
@@ -641,6 +618,21 @@
   # Short lifespan
   - type: TimedDespawn
     lifetime: 0.4
+
+  # Deals less damage, glaive has better HP recovery
+- type: entity
+  id: BulletChargeGlaive
+  name: leech bolt
+  parent: BulletCharge
+  components:
+  - type: DamageMarkerOnCollide
+    whitelist:
+      components:
+        - MobState
+    damage:
+      types:
+        Blunt: 1
+        Slash: 5
 
 - type: entity
   parent: BaseBullet
@@ -682,6 +674,7 @@
   - type: Reflective
     reflective:
     - Energy
+
 
 - type: entity
   parent: AnomalousParticleDelta
@@ -774,7 +767,7 @@
   - type: AnomalousParticle
     particleType: Default
     severityOverride: true
-    severityPerSeverityHit: 0.3 # DeltaV raised to .3 from .1
+    severityPerSeverityHit: 0.1
     stabilityPerDestabilizingHit: 0.05
     healthPerWeakeningeHit: 1
     stabilityPerWeakeningeHit: -0.05
@@ -782,7 +775,7 @@
     impactEffect: BulletImpactEffectKinetic
     damage:
       types:
-        Heat: 30 # DeltaV raised to 30 from 20
+        Heat: 20
 
 - type: entity
   parent: AnomalousParticleDelta
@@ -923,7 +916,7 @@
   - type: ExplodeOnTrigger
   - type: Explosive
     explosionType: Default
-    totalIntensity: 125 # DeltaV
+    totalIntensity: 50
     intensitySlope: 1
     maxIntensity: 5
     canCreateVacuum: false
@@ -1010,7 +1003,7 @@
     - type: Projectile
       damage:
         types:
-          Caustic: 15 # DeltaV - Was 5
+          Caustic: 5
     - type: Sprite
       sprite: Objects/Weapons/Guns/Projectiles/xeno_toxic.rsi
       layers:
@@ -1155,9 +1148,9 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: lightstun # imp
+    - state: omnilaser
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -1173,7 +1166,6 @@
         - BulletImpassable
       fly-by: *flybyfixture
   - type: Ammo
-    muzzleFlash: MuzzleFlashEffectOmnilaser # imp
   - type: StaminaDamageOnCollide
     damage: 15
   - type: Projectile
@@ -1181,7 +1173,6 @@
     damage:
       types:
         Heat: 0
-        Ion: 4 # DeltaV
     soundHit:
       collection: WeakHit
     forceSound: true
@@ -1201,9 +1192,9 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: medium # imp
+    - state: heavylaser
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -1227,9 +1218,9 @@
   - type: Ammo
     muzzleFlash: MuzzleFlashEffectHeavyLaser
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: medium # imp
+    - state: heavylaser
       shader: unshaded
   - type: Projectile
     impactEffect: BulletImpactEffectOrangeDisabler
@@ -1246,9 +1237,9 @@
   - type: Ammo
     muzzleFlash: MuzzleFlashEffectOmnilaser
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: mediumstun # imp
+    - state: omnilaser
       shader: unshaded
   - type: StaminaDamageOnCollide
     damage: 30
@@ -1309,9 +1300,9 @@
       params:
         volume: 5
   - type: Sprite
-    sprite: _Impstation/Objects/Weapons/Guns/Projectiles/energybolts.rsi # imp
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
     layers:
-    - state: light # imp
+    - state: heavylaser
       shader: unshaded
   - type: Physics
   - type: Fixtures
@@ -1323,15 +1314,15 @@
         hard: false
         mask:
         - Opaque
-      # - Impassable DeltaV allows pierces windows
-      # - BulletImpassable
+        - Impassable
+        - BulletImpassable
       fly-by: *flybyfixture
   - type: Ammo
   - type: Projectile
     impactEffect: BulletImpactEffectOrangeDisabler
     damage:
       types:
-        Heat: 10 # Delta V was 13
+        Heat: 13
 
 - type: entity
   name: wide laser barrage
@@ -1367,7 +1358,7 @@
     spread: 9
 
 - type: entity
-  name: magnum bolt #Delta V - does not fuction like a laser bolt
+  name: magnum laser bolt
   id: BulletLaserMagnum
   categories: [ HideSpawnMenu ]
   parent: BulletLaser
@@ -1382,20 +1373,9 @@
     color: "#ff4300"
   - type: Projectile
     impactEffect: BulletImpactEffectOrangeDisabler
-    damage: #Delta V - was 30 heat
+    damage:
       types:
-        Heat: 24
-        Piercing: 11
-  - type: Fixtures # Delta V - ensures that it doesnt pierce windows
-    fixtures:
-      projectile:
-        shape:
-          !type:PhysShapeAabb
-          bounds: "-0.1,-0.1,0.1,0.1"
-        hard: false # DeltaV - was true
-        mask:
-        - Impassable
-        - BulletImpassable
+        Heat: 30
 
 - type: entity
   name: magnum window-piercing bolt

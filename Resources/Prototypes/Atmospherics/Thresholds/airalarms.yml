@@ -1,3 +1,12 @@
+# Threshold prototypes for AtmosMonitors
+
+# NOTE: Warning thresholds are given as multipliers of the danger bound. For
+# example, if upperBound=10 (kPa) and upperWarnRound=0.5, that means the upper
+# warning threshold is actually 5 (kPa).
+#
+# As a result, all upperWarn's should be <1 and lowerWarn's should be >1,
+# otherwise the warning will never kick in.
+
 - type: alarmThreshold
   id: stationTemperature
   upperBound: !type:AlarmThresholdSetting
@@ -15,23 +24,19 @@
     threshold: 550 # HazardHighPressure from Atmospherics.cs
   lowerBound: !type:AlarmThresholdSetting
     # Actual low pressure damage threshold is at 20 kPa, but below ~85 kPa you can't breathe due to lack of oxygen.
-    threshold: 40 # DeltaV - was 80
+    threshold: 85
   upperWarnAround: !type:AlarmThresholdSetting
     threshold: 0.7 # 385 kPa, WarningHighPressure from Atmospherics.cs
   lowerWarnAround: !type:AlarmThresholdSetting
-    threshold: 2 # DeltaV - 80kpa, was 1.05 (90kpa)
+    threshold: 1.05 # ~90 kPa
 
-# a reminder that all of these are percentages (where 1 is 100%),
-# so 0.01 is 1%,
-# 0.0001 is 0.01%
-# etc.
-
+# For gas concentrations, threshold=0.1 means 10%
 - type: alarmThreshold
   id: stationOxygen
   lowerBound: !type:AlarmThresholdSetting
     threshold: 0.10
   upperBound: !type:AlarmThresholdSetting
-    threshold: 0.8 # DeltaV - was 0.3, ridiculous
+    threshold: 0.3
   lowerWarnAround: !type:AlarmThresholdSetting
     threshold: 1.5
   upperWarnAround: !type:AlarmThresholdSetting
@@ -65,6 +70,7 @@
   upperWarnAround: !type:AlarmThresholdSetting
     threshold: 0.5
 
+# this is a hack, but 150% means never danger on water, but warn at 75%
 - type: alarmThreshold
   id: stationWaterVapor
   upperBound: !type:AlarmThresholdSetting

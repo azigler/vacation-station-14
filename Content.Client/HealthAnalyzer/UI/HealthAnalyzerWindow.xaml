@@ -3,14 +3,13 @@
     xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
     xmlns:ui="clr-namespace:Content.Client.HealthAnalyzer.UI"
     MaxHeight="525"
-    MinWidth="350"> <!-- Shitmed Change -->
+    MinWidth="300">
     <ScrollContainer
         Margin="5 5 5 5"
         ReturnMeasure="True"
         VerticalExpand="True">
 
         <ui:HealthAnalyzerControl
-            Name="HealthAnalyzer"
-            Access="Public" /> <!-- DeltaV / Shitmed Change - Make Public-->
+            Name="HealthAnalyzer"/>
     </ScrollContainer>
 </controls:FancyWindow>

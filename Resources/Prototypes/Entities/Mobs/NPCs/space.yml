@@ -34,7 +34,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      100: Dead
+      80: Dead
   - type: Stamina
     baseCritThreshold: 150
   - type: MovementAlwaysTouching
@@ -171,6 +171,10 @@
     spawned:
     - id: FoodMeat
       amount: 1
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      60: Dead
 
 - type: entity
   id: MobKangarooSpaceSalvage
@@ -197,7 +201,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      90: Dead
+      45: Dead
   - type: Stamina
     baseCritThreshold: 150
   - type: DamageStateVisuals
@@ -285,8 +289,6 @@
   parent: MobSpaceBasic
   description: Long fangs and a glowing hood, and the alluring look begs to come closer.
   components:
-    - type: Body # Shitmed Change
-      prototype: SpaceCobra
     - type: Sprite
       drawdepth: Mobs
       sprite: Mobs/Animals/spacecobra.rsi
@@ -302,7 +304,7 @@
     - type: MobThresholds
       thresholds:
         0: Alive
-        100: Dead
+        45: Dead
     - type: Stamina
       baseCritThreshold: 150
     - type: DamageStateVisuals
@@ -366,6 +368,12 @@
       radius: 1.1
       energy: 2.7
       color: "#4faffb"
+    - type: Stealth
+      enabledOnDeath: false
+      maxVisibility: 1.2
+    - type: StealthOnMove
+      passiveVisibilityRate: -0.25
+      movementVisibilityRate: 0.25
 
 - type: entity
   id: MobCobraSpaceSalvage
@@ -375,13 +383,13 @@
     - type: SalvageMobRestrictions
 
 - type: entity
-  parent: SimpleSpaceMobBase
+  parent:
+  - SimpleSpaceMobBase
+  - BaseMobAnimal
   id: MobSnail
   name: snail
   description: Revolting unless you're french.
   components:
-  - type: Body
-    prototype: Mouse
   - type: GhostRole
     makeSentient: true
     allowSpeech: false
@@ -570,12 +578,10 @@
   - type: MovementAlwaysTouching
 
 - type: entity
-  parent: MobSnail
+  parent: [ BaseMobMothroach, MobSnail ]
   id: MobSnailMoth
   name: Snoth
   components:
-  - type: Body
-    prototype: Mothroach
   - type: GhostRole
     name: ghost-role-information-snoth-name
     description: ghost-role-information-snoth-description

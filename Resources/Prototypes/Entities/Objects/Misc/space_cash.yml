@@ -52,7 +52,6 @@
         mask:
         - ItemMask
   - type: Appearance
-  - type: CargoSellBlacklist # Frontier
 
 - type: material
   id: Credit

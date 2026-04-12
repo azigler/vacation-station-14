@@ -52,12 +52,10 @@
   table: !type:AllSelector
     children:
     - id: Stunbaton
-    - id: GrenadeFlashBang # DeltaV - revert upstream #32291
-    - id: TearGasGrenade # DeltaV
     - id: Handcuffs
       amount: 2
-    #- id: HoloprojectorSecurity # DeltaV
-    #- id: RadioHandheldSecurity # DeltaV
+    - id: HoloprojectorSecurity
+    - id: RadioHandheldSecurity
 
 - type: entity
   id: ClothingBeltSecurityFilled
@@ -98,8 +96,8 @@
         - id: WireBrush
 
 - type: entity
-  id: ClothingBeltMedicalFilled
   parent: ClothingBeltMedical
+  id: ClothingBeltMedicalFilled
   suffix: Filled
   components:
   - type: EntityTableContainerFill
@@ -107,28 +105,37 @@
       storagebase: !type:AllSelector
         children:
         - id: Brutepack
-          amount: 2
         - id: Ointment
-        - id: Bloodpack
         - id: Gauze
-        - id: EmergencyMedipen #You never know what people are going to latejoin into
+        # Reagents reflect the bottles in CoreMedicineReagentBottleTable
+        - id: ChemistryBottleSaline
+        - id: ChemistryBottleBicaridine
+        - id: ChemistryBottleDexalin
+        - id: ChemistryBottleDylovene
+        - id: ChemistryBottleHyronalin
+        - id: ChemistryBottleKelotane
+        - id: ChemistryBottleEpinephrine # A power item for medical players that feels thematic and worth stealing
+        - id: PillCanisterTricordrazine
 
 - type: entity
-  id: ClothingBeltMedicalEMTFilled
   parent: ClothingBeltMedicalEMT
-  suffix: Paramedic,Filled
+  id: ClothingBeltMedicalEMTFilled
+  suffix: Paramedic, Filled
   components:
   - type: EntityTableContainerFill
     containers:
       storagebase: !type:AllSelector
         children:
-        - id: Brutepack
-        - id: Ointment
         - id: Bloodpack
+          amount: 2
         - id: Gauze
-        - id: Portafib # DeltaV - Add PortaFib to EMT belt
-        - id: EmergencyMedipen #You never know what people are going to latejoin into
-          amount: 3
+        # Reagents focused on emergency response rather than outright healing
+        - id: ChemistryBottleInaprovaline
+          amount: 2
+        - id: ChemistryBottleHaloperidol
+        - id: ChemistryBottleEthylredoxrazine
+        - id: ChemistryBottleIpecac
+        - id: ChemistryBottleCharcoal
 
 - type: entity
   id: ClothingBeltPlantFilled
@@ -218,7 +225,6 @@
         children:
         - id: WeaponRevolverInspector
         - id: SpeedLoaderMagnum
-        - id: SpeedLoaderMagnumRubber
 
 - type: entity
   id: ClothingBeltChefFilled

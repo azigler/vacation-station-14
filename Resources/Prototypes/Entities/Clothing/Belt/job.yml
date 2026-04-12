@@ -135,11 +135,11 @@
       - WetFloorSign
       - HolosignProjector
       - Plunger
+      - TrashBagBlue
       - GoldenPlunger
       - WireBrush
-      components:
       - LightReplacer
-      - SmokeOnTrigger
+      - CleanerGrenade
   - type: ItemMapper
     sprite: *BeltOverlay
     mapLayers:
@@ -151,10 +151,46 @@
         whitelist:
           tags:
           - Spray
-      wrench:
+      light_replacer:
         whitelist:
           tags:
-          - Wrench
+          - LightReplacer
+      trashbag:
+        whitelist:
+          tags:
+          - TrashBag
+      trashbag_blue:
+        whitelist:
+          tags:
+          - TrashBagBlue
+      wetfloorsign:
+        whitelist:
+          tags:
+          - WetFloorSign
+      soap:
+        whitelist:
+          tags:
+          - Soap
+      wire_brush:
+        whitelist:
+          tags:
+          - WireBrush
+      holosign:
+        whitelist:
+          tags:
+          - HolosignProjector
+      plunger:
+        whitelist:
+          tags:
+          - Plunger
+      golden_plunger:
+        whitelist:
+          tags:
+          - GoldenPlunger
+      cleaner_grenade:
+        whitelist:
+          tags:
+          - CleanerGrenade
   - type: Appearance
 
 - type: entity
@@ -184,13 +220,10 @@
       - DiscreteHealthAnalyzer
       - SurgeryTool
       - Dropper
-      - Vial # DeltaV
       components:
       - Injector
       - Pill
       - HandLabeler
-      - Defibrillator # DeltaV - Add PortaFib to EMT belt
-      - SurgeryTool # Shitmed
   - type: ItemMapper
     sprite: *BeltOverlay
     mapLayers:
@@ -202,7 +235,6 @@
         whitelist:
           tags:
           - Hypospray
-          - JetInjector # DeltaV
       pill:
         whitelist:
           components:
@@ -225,21 +257,6 @@
         whitelist:
           tags:
           - Wrench
-  # DeltaV - Add medkit slot to medical belts
-  - type: ItemSlots
-    slots:
-      medkit:
-        name: clothing-belt-medkit
-        whitelist:
-          tags:
-          - Medkit
-        insertOnInteract: false
-  - type: ContainerContainer
-    containers:
-      storagebase: !type:Container
-        ents: []
-      medkit: !type:ContainerSlot {}
-  # End of DeltaV - Add medkit slot to medical belts.
   - type: Appearance
 
 - type: entity
@@ -382,15 +399,15 @@
   - type: Appearance
 
 - type: entity
-  parent: [ClothingBeltStorageBase, ContentsExplosionResistanceBase, BaseSecurityContraband, ClothingSlotBase] # DeltaV - add ClothingSlotBase
+  parent: [ClothingBeltStorageBase, ContentsExplosionResistanceBase, BaseSecurityContraband]
   id: ClothingBeltSecurity
   name: security belt
   description: Can hold security gear like handcuffs and flashes.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Belt/security.rsi # DeltaV - resprite
+    sprite: Clothing/Belt/security.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Belt/security.rsi # DeltaV - resprite
+    sprite: Clothing/Belt/security.rsi
   - type: ExplosionResistance
     damageCoefficient: 0.9
   - type: Storage
@@ -417,32 +434,19 @@
       - DoorRemote
       - Whistle
       - BalloonPopper
-  - type: ItemMapper # DeltaV - Custom sprite and item mapper
-    sprite: _DV/Clothing/Belt/belt_overlay.rsi 
+  - type: ItemMapper
+    sprite: *BeltOverlay
     mapLayers:
-      baton:
-        whitelist:
-          components:
-          - Stunbaton
-      gasgrenade:
+      flashbang:
         whitelist:
           components:
           - FlashOnTrigger
-      slp:
+      stunbaton:
         whitelist:
-          tags:
-          - Sidearm
-  - type: ContainerContainer # DeltaV
-    containers:
-      storagebase: !type:Container
-        ents: []
-      holster: !type:ContainerSlot {}
-  - type: ItemSlots # DeltaV - add sidearm slot
-    slots:
-      holster:
-        name: clothing-belt-sidearm
+          components:
+          - Stunbaton
+      tear_gas_grenade:
         whitelist:
-          tags:
-          - Sidearm
-        insertOnInteract: false
+          components:
+          - SmokeOnTrigger
   - type: Appearance

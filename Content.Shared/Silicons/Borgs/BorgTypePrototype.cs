@@ -1,9 +1,7 @@
 ﻿using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Radio;
-using Content.Shared.Roles; // DeltaV
 using Content.Shared.Silicons.Borgs.Components;
-using Content.Shared.Silicons.Laws; // DeltaV
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
@@ -14,7 +12,7 @@ namespace Content.Shared.Silicons.Borgs;
 /// Information for a borg type that can be selected by <see cref="BorgSwitchableTypeComponent"/>.
 /// </summary>
 /// <seealso cref="SharedBorgSwitchableTypeSystem"/>
-[Prototype(-5)] // DeltaV - force load after shaders
+[Prototype]
 public sealed partial class BorgTypePrototype : IPrototype
 {
     private static readonly ProtoId<SoundCollectionPrototype> DefaultFootsteps = new("FootstepBorg");
@@ -85,20 +83,6 @@ public sealed partial class BorgTypePrototype : IPrototype
     public EntProtoId[] DefaultModules = [];
 
     /// <summary>
-    /// DeltaV: Lawset to use instead of crewsimov.
-    /// If the chassis is emagged or ion stormed this is ignored.
-    /// </summary>
-    [DataField]
-    public ProtoId<SiliconLawsetPrototype>? Lawset;
-
-    /// <summary>
-    /// DeltaV: Optional job prototype to tie to this borg type.
-    /// It will have the requirements applied and rolebans will extend to this bogr type.
-    /// </summary>
-    [DataField]
-    public ProtoId<JobPrototype>? Job;
-
-    /// <summary>
     /// Additional components to add to the borg entity when this type is selected.
     /// </summary>
     [DataField]
@@ -107,12 +91,6 @@ public sealed partial class BorgTypePrototype : IPrototype
     //
     // Visual information
     //
-
-    /// <summary>
-    /// DeltaV: Components only added on the client.
-    /// </summary>
-    [DataField]
-    public ComponentRegistry? ClientComponents;
 
     /// <summary>
     /// The sprite state for the main borg body.

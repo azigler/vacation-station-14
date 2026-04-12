@@ -35,9 +35,9 @@
   description: Standard security gear. Protects the head from impacts.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Head/Helmets/security.rsi # DeltaV - resprite
+    sprite: Clothing/Head/Helmets/security.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Head/Helmets/security.rsi # DeltaV - resprite
+    sprite: Clothing/Head/Helmets/security.rsi
   - type: Tag
     tags:
     - WhitelistChameleon
@@ -111,9 +111,9 @@
   description: It's a helmet specifically designed to protect against close range attacks.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Head/Helmets/light_riot.rsi # DeltaV - resprite
+    sprite: Clothing/Head/Helmets/light_riot.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Head/Helmets/light_riot.rsi # DeltaV - resprite
+    sprite: Clothing/Head/Helmets/light_riot.rsi
   - type: IngestionBlocker
   - type: Armor
     modifiers:
@@ -269,9 +269,9 @@
   description: An atmos tech's best friend. Provides some heat resistance and looks cool.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Head/Helmets/firehelmet.rsi # DeltaV
+    sprite: Clothing/Head/Helmets/firehelmet.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Head/Helmets/firehelmet.rsi # DeltaV
+    sprite: Clothing/Head/Helmets/firehelmet.rsi
     quickEquip: true
   - type: IngestionBlocker
   - type: TemperatureProtection
@@ -297,9 +297,9 @@
   description: An atmos fire helmet, able to keep the user cool in any situation.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Head/Helmets/atmos_firehelmet.rsi # DeltaV
+    sprite: Clothing/Head/Helmets/atmos_firehelmet.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Head/Helmets/atmos_firehelmet.rsi # DeltaV
+    sprite: Clothing/Head/Helmets/atmos_firehelmet.rsi
     quickEquip: true
   - type: IngestionBlocker
   - type: TemperatureProtection
@@ -315,7 +315,6 @@
     tags:
     - WhitelistChameleon
     - FireHelmet
-    - CorgiWearable
   - type: HideLayerClothing
     layers:
       Hair: HEAD

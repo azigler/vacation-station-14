@@ -11,7 +11,6 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Item; // Delta-V: Felinids in duffelbags can't shoot.
 using Content.Shared.Popups;
 using Content.Shared.Projectiles;
 using Content.Shared.Tag;
@@ -116,9 +115,6 @@ public abstract partial class SharedGunSystem : EntitySystem
         SubscribeLocalEvent<GunComponent, CycleModeEvent>(OnCycleMode);
         SubscribeLocalEvent<GunComponent, HandSelectedEvent>(OnGunSelected);
         SubscribeLocalEvent<GunComponent, MapInitEvent>(OnMapInit);
-
-        InitializeHolders(); // DeltaV
-        InitializeBipods(); // DeltaV
     }
 
     private void OnMapInit(Entity<GunComponent> gun, ref MapInitEvent args)
@@ -151,8 +147,7 @@ public abstract partial class SharedGunSystem : EntitySystem
 
         if (user == null ||
             !_combatMode.IsInCombatMode(user) ||
-            !TryGetGun(user.Value, out var gun) ||
-            HasComp<ItemComponent>(user)) // Delta-V: Felinids in duffelbags can't shoot.
+            !TryGetGun(user.Value, out var gun))
         {
             return;
         }
@@ -163,6 +158,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         gun.Comp.ShootCoordinates = GetCoordinates(msg.Coordinates);
         gun.Comp.Target = GetEntity(msg.Target);
         AttemptShoot(user.Value, gun);
+        if (msg.Continuous)
+            gun.Comp.ShotCounter = 0;
     }
 
     private void OnStopShootRequest(RequestStopShootEvent ev, EntitySessionEventArgs args)
@@ -229,14 +226,6 @@ public abstract partial class SharedGunSystem : EntitySystem
     }
 
     /// <summary>
-    /// Sets the targeted entity of the gun. Should be called before attempting to shoot to avoid shooting over the target.
-    /// </summary>
-    public void SetTarget(GunComponent gun, EntityUid target) // Imp
-    {
-        gun.Target = target;
-    }
-
-    /// <summary>
     /// Attempts to shoot at the target coordinates. Resets the shot counter after every shot.
     /// </summary>
     public bool AttemptShoot(EntityUid user, Entity<GunComponent> gun, EntityCoordinates toCoordinates, EntityUid? target = null)
@@ -263,9 +252,6 @@ public abstract partial class SharedGunSystem : EntitySystem
 
     private bool AttemptShoot(EntityUid user, Entity<GunComponent> gun)
     {
-        if (TryComp<AutoShootGunComponent>(gun, out var auto) && !auto.CanFire) // Frontier
-            return false; // Frontier
-
         if (gun.Comp.FireRateModified <= 0f ||
             !_actionBlockerSystem.CanAttack(user))
         {
@@ -429,7 +415,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         var shooterEv = new ShooterImpulseEvent();
         RaiseLocalEvent(user, ref shooterEv);
 
-        if (shooterEv.Push && !shooterEv.CannotBePushed) // DeltaV - Bipods stop you from being moved by recoil.
+        if (shooterEv.Push)
             CauseImpulse(fromCoordinates, toCoordinates.Value, (user, userPhysics));
         return true;
     }
@@ -593,14 +579,6 @@ public abstract partial class SharedGunSystem : EntitySystem
             comp.ProjectileSpeed
         );
 
-        // Begin DeltaV additions
-        // Raise an event at the user of the gun so they have a chance to modify the gun's details.
-        if (gun.Comp.Holder != null)
-        {
-            RaiseLocalEvent(gun.Comp.Holder.Value, ref ev);
-        }
-        // End DeltaV additions
-
         RaiseLocalEvent(gun, ref ev);
 
         if (comp.SoundGunshotModified != ev.SoundGunshot)
@@ -725,7 +703,6 @@ public record struct GunShotEvent(EntityUid User, List<(EntityUid? Uid, IShootab
 public record struct ShooterImpulseEvent()
 {
     public bool Push;
-    public bool CannotBePushed; // DeltaV - Bipods stop you from being moved by recoil.
 };
 
 public enum EffectLayers : byte

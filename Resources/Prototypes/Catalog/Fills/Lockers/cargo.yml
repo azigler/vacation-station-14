@@ -11,18 +11,18 @@
   id: LockerFillSalvageSpecialist
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillSalvageSpecialistDeltaV
     - id: ClothingBeltUtilityFilled
     - id: SurvivalKnife
     - id: HandheldGPSBasic
     - id: RadioHandheld
     - id: AppraisalTool
-    #- id: FireExtinguisher # DeltaV: replaced by mini jetpack
+    - id: FireExtinguisher
     - id: Flare
       prob: 0.3
       rolls: !type:ConstantNumberSelector
         value: 3
+    - id: PlushieLizardJobSalvagespecialist
+      prob: 0.02
 
 - type: entity
   id: LockerSalvageSpecialistFilledHardsuit

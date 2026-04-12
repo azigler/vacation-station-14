@@ -69,7 +69,6 @@ public sealed partial class CCVars
     /// <summary>
     /// A string containing a list of newline-separated words to be highlighted in the chat.
     /// </summary>
-    [Obsolete("Use DCCVar.ChatHighlights instead. Trust me.")]
     public static readonly CVarDef<string> ChatHighlights =
         CVarDef.Create("chat.highlights", "", CVar.CLIENTONLY | CVar.ARCHIVE, "A list of newline-separated words to be highlighted in the chat.");
 

@@ -29,6 +29,8 @@ public abstract class SharedImplanterSystem : EntitySystem
     [Dependency] private readonly SharedUserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
 
+    [Dependency] private readonly EntityQuery<SubdermalImplantComponent> _implantCompQuery = default!;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -37,8 +39,8 @@ public abstract class SharedImplanterSystem : EntitySystem
         SubscribeLocalEvent<ImplanterComponent, EntInsertedIntoContainerMessage>(OnEntInserted);
         SubscribeLocalEvent<ImplanterComponent, ExaminedEvent>(OnExamine);
 
-        //SubscribeLocalEvent<ImplanterComponent, UseInHandEvent>(OnUseInHand); // DeltaV - dont open UI ever
-        //SubscribeLocalEvent<ImplanterComponent, GetVerbsEvent<InteractionVerb>>(OnVerb); // DeltaV - hide verb as it doesn't do anything
+        SubscribeLocalEvent<ImplanterComponent, UseInHandEvent>(OnUseInHand);
+        SubscribeLocalEvent<ImplanterComponent, GetVerbsEvent<InteractionVerb>>(OnVerb);
         SubscribeLocalEvent<ImplanterComponent, DeimplantChangeVerbMessage>(OnSelected);
     }
 
@@ -49,7 +51,6 @@ public abstract class SharedImplanterSystem : EntitySystem
 
         _itemSlots.AddItemSlot(uid, ImplanterComponent.ImplanterSlotId, component.ImplanterSlot);
 
-        return; // DeltaV - don't use deimplant chosing
         component.DeimplantChosen ??= component.DeimplantWhitelist.FirstOrNull();
 
         Dirty(uid, component);
@@ -194,13 +195,11 @@ public abstract class SharedImplanterSystem : EntitySystem
 
         if (_container.TryGetContainer(target, ImplanterComponent.ImplantSlotId, out var implantContainer))
         {
-            var implantCompQuery = GetEntityQuery<SubdermalImplantComponent>();
-
             if (component.AllowDeimplantAll)
             {
                 foreach (var implant in implantContainer.ContainedEntities)
                 {
-                    if (!implantCompQuery.TryGetComponent(implant, out var implantComp))
+                    if (!_implantCompQuery.TryGetComponent(implant, out var implantComp))
                         continue;
 
                     //Don't remove a permanent implant and look for the next that can be drawn
@@ -235,7 +234,7 @@ public abstract class SharedImplanterSystem : EntitySystem
                     }
                 }
 
-                if (implant != null && implantCompQuery.TryGetComponent(implant, out var implantComp))
+                if (implant != null && _implantCompQuery.TryGetComponent(implant, out var implantComp))
                 {
                     //Don't remove a permanent implant
                     if (!_container.CanRemove(implant.Value, implantContainer))
@@ -264,7 +263,7 @@ public abstract class SharedImplanterSystem : EntitySystem
         }
         else
         {
-            //DrawCatastrophicFailure(implanter, component, user); // DeltaV - no
+            DrawCatastrophicFailure(implanter, component, user);
         }
     }
 

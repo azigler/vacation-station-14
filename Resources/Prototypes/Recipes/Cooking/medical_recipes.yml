@@ -2,7 +2,7 @@
   id: RecipeAloeCream
   name: aloe cream recipe
   result: AloeCream
-  time: 5 # DeltaV - was 10
+  time: 10
   group: Medicinal
   solids:
     FoodAloe: 1
@@ -11,7 +11,7 @@
   id: RecipeMedicatedSuture
   name: medicated suture recipe
   result: MedicatedSuture
-  time: 5 # DeltaV - was 10
+  time: 10
   group: Medicinal
   solids:
     FoodPoppy: 1
@@ -25,7 +25,7 @@
   id: RecipeRegenerativeMesh
   name: regenerative mesh recipe
   result: RegenerativeMesh
-  time: 5 # DeltaV - was 10
+  time: 10
   group: Medicinal
   solids:
     FoodAloe: 1
@@ -33,4 +33,4 @@
     MaterialCloth1: 1
   reagents:
     Sigynate: 20
-    Oxandrolone: 20 # Funkychem - dermaline -> oxandrolone for advanced topicals
+    Dermaline: 20

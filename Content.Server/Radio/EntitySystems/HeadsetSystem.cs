@@ -1,9 +1,5 @@
-using Content.Shared.Cuffs; // DeltaV
-using Content.Shared.Cuffs.Components; // DeltaV
-using Content.Shared.Hands.Components; // DeltaV
 using Content.Shared.Chat;
 using Content.Shared.Inventory.Events;
-using Content.Shared.Popups; // DeltaV
 using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
 using Content.Shared.Radio.EntitySystems;
@@ -16,8 +12,6 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
 {
     [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
-    [Dependency] private readonly SharedCuffableSystem _cuffable = default!; // DeltaV
-    [Dependency] private readonly SharedPopupSystem _popup = default!; // DeltaV
 
     public override void Initialize()
     {
@@ -54,15 +48,6 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
             && TryComp(component.Headset, out EncryptionKeyHolderComponent? keys)
             && keys.Channels.Contains(args.Channel.ID))
         {
-            // Begin DeltaV Additions: No using headsets if you lost your hands or are cuffed
-            if (!TryComp<HandsComponent>(uid, out var hands) || hands.Count < 1 ||
-                TryComp<CuffableComponent>(uid, out var cuffable) && _cuffable.IsCuffed((uid, cuffable)))
-            {
-                _popup.PopupEntity(Loc.GetString("headset-cant-reach"), uid, uid, PopupType.SmallCaution);
-                return;
-            }
-            // End DeltaV Additions
-
             _radio.SendRadioMessage(uid, args.Message, args.Channel, component.Headset);
             args.Channel = null; // prevent duplicate messages from other listeners.
         }
@@ -73,7 +58,7 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
         base.OnGotEquipped(uid, component, args);
         if (component.IsEquipped && component.Enabled)
         {
-            EnsureComp<WearingHeadsetComponent>(args.Equipee).Headset = uid;
+            EnsureComp<WearingHeadsetComponent>(args.EquipTarget).Headset = uid;
             UpdateRadioChannels(uid, component);
         }
     }
@@ -82,7 +67,7 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
     {
         base.OnGotUnequipped(uid, component, args);
         RemComp<ActiveRadioComponent>(uid);
-        RemComp<WearingHeadsetComponent>(args.Equipee);
+        RemComp<WearingHeadsetComponent>(args.EquipTarget);
     }
 
     public void SetEnabled(EntityUid uid, bool value, HeadsetComponent? component = null)

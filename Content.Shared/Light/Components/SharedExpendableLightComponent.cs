@@ -42,17 +42,6 @@ public abstract partial class SharedExpendableLightComponent : Component
 
     [DataField]
     public SoundSpecifier? DieSound;
-
-    // Begin DeltaV additions
-    [DataField(required: true)]
-    public float LitRadius = 0.0f;
-
-    [DataField(required: true)]
-    public float LitEnergy = 0.0f;
-
-    [DataField]
-    public float FadeInDuration = 0.0f;
-    // End DeltaV additions
 }
 
 [Serializable, NetSerializable]

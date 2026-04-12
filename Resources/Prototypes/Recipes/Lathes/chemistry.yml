@@ -49,23 +49,21 @@
   result: BluespaceBeaker
   completetime: 2
   materials:
-    Steel: 200  #Cheaper Due to Needing Bluespace
-    Plastic: 200
-    Plasma: 50
+    Steel: 500
+    Plastic: 500
+    Plasma: 150
     Silver: 50
-    Bluespace: 100 # DeltaV: Bluespace
 
 - type: latheRecipe
   id: SyringeBluespace
   result: SyringeBluespace
   completetime: 2
   materials:
-    Steel: 100  #Cheaper Due to Needing Bluespace
-    Plastic: 100
-    Glass: 200
-    Plasma: 50
-    Bluespace: 100 # DeltaV: Bluespace
-   #Silver: 50
+    Steel: 100
+    Plastic: 150
+    Glass: 250
+    Plasma: 100
+    Silver: 50
 
 - type: latheRecipe
   id: PillCanister
@@ -81,16 +79,16 @@
   materials:
     Glass: 100
 
-# - type: latheRecipe # DeltaV - Disable the Vape
-#   id: Vape
-#   result: Vape
-#   icon:
-#     sprite: Objects/Consumable/Smokeables/Vapes/vape-standard.rsi
-#     state: icon
-#   completetime: 2
-#   materials:
-#     Plastic: 100
-#     Steel: 250
+- type: latheRecipe
+  id: Vape
+  result: Vape
+  icon:
+    sprite: Objects/Consumable/Smokeables/Vapes/vape-standard.rsi
+    state: icon
+  completetime: 2
+  materials:
+    Plastic: 100
+    Steel: 250
 
 - type: latheRecipe
   id: ChemistryEmptyVial
@@ -98,7 +96,7 @@
   completetime: 2
   materials:
     Glass: 100
-    # Wood: 20 # DeltaV - Why wood? Because of the cork? That's dumb.
+    Wood: 20
 
 - type: latheRecipe
   id: ChemistryEmptyVialSmall

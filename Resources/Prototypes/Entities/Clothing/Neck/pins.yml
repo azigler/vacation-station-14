@@ -22,8 +22,6 @@
 #    default: ClothingNeckLGBTPin
     requireTag: GenderPin
     affectedByEmp: false
-    windowTitleOverride: change-pin-face # DeltaV - Rename the chameleon stuff so it's not illegal
-    verbNameOverride: change-pin-face # DeltaV - Rename the chameleon stuf so it's not illegal
   - type: UserInterface
     interfaces:
       enum.ChameleonUiKey.Key:

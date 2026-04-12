@@ -237,7 +237,7 @@
     - MobCarp
   - type: Tag # overwriting PlushieCarp tags to remove ClothMade and Payload
     tags:
-    - Payload # DeltaV - remove PlushieCarp to prevent wasting in fish labeler recipe
+    - PlushieCarp
 
 - type: entity
   parent: MonkeyCube

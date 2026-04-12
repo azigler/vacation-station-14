@@ -8,7 +8,7 @@
       time: 10h
     - !type:DepartmentTimeRequirement
       department: Security
-      time: 5h
+      time: 10h
       inverted: true # stop playing intern if you're good at security!
   startingGear: SecurityCadetGear
   icon: "JobIconSecurityCadet"
@@ -16,10 +16,10 @@
   canBeAntag: false
   access:
   - Security
-  #- Brig # DeltaV - Removed brig access
+  - Brig
   - Maintenance
   - External
-  #- Cryogenics # DeltaV - No looting cryo for cadets
+  - Cryogenics
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
@@ -28,16 +28,16 @@
   id: SecurityCadetGear
   equipment:
     shoes: ClothingShoesBootsJackFilled
-    outerClothing: ClothingOuterArmorDuraVest # DeltaV - ClothingOuterArmorBasic replaced in favour of stab vest. Sucks to suck, cadets
+    outerClothing: ClothingOuterArmorBasic
     id: SecurityCadetPDA
     ears: ClothingHeadsetSecurity
     belt: ClothingBeltSecurityFilled
-    pocket1: WeaponDisabler # DeltaV - loadouts, Security Cadet doesn't spawn with a gun
+    pocket1: WeaponPistolMk58
     pocket2: BookSecurity
   storage:
     back:
     - Flash
-    #- MagazinePistol # DeltaV - no
+    - MagazinePistol
 
 - type: chameleonOutfit
   id: SecurityCadetChameleonOutfit

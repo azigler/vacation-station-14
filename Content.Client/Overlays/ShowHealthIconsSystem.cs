@@ -6,7 +6,6 @@ using Content.Shared.StatusIcon;
 using Content.Shared.StatusIcon.Components;
 using Robust.Shared.Prototypes;
 using Content.Shared.Damage.Components;
-using Content.Shared.Mobs; // DeltaV - Nuke Health icons.
 
 namespace Content.Client.Overlays;
 
@@ -81,8 +80,6 @@ public sealed class ShowHealthIconsSystem : EquipmentHudSystem<ShowHealthIconsCo
         {
             if (TryComp<MobStateComponent>(entity, out var state))
             {
-                if (state.CurrentState != MobState.Alive) // Den: Nuke Alive Icon so they don't hide speech bubbles
-                    return result;
                 // Since there is no MobState for a rotting mob, we have to deal with this case first.
                 if (HasComp<RottingComponent>(entity) && _prototypeMan.Resolve(damageableComponent.RottingIcon, out var rottingIcon))
                     result.Add(rottingIcon);

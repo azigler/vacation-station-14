@@ -13,19 +13,16 @@
   weight: 5
   startingGear: WardenGear
   icon: "JobIconWarden"
-  requireAdminNotify: true # DeltaV
   supervisors: job-supervisors-hos
   canBeAntag: false
-  whitelisted: true # DeltaV
   access:
   - Security
-  #- Brig # DeltaV - Removed brig access
+  - Brig
   - Armory
   - Maintenance
   - External
   - Detective
   - Cryogenics
-  - Corpsman # DeltaV - Warden requires access to the treatment of their prisoners.
   - GenpopEnter
   - GenpopLeave
   special:
@@ -35,14 +32,14 @@
 - type: startingGear
   id: WardenGear
   equipment:
-    #eyes: ClothingEyesGlassesSecurity # DeltaV - loadouts
+    eyes: ClothingEyesGlassesSecurity
     id: WardenPDA
     ears: ClothingHeadsetSecurity
-    #pocket1: WeaponPistolMk58Nonlethal # DeltaV - loadouts
+    pocket1: WeaponPistolMk58
   storage:
     back:
     - Flash
-    #- MagazinePistol # DeltaV - loadouts
+    - MagazinePistol
 
 - type: chameleonOutfit
   id: WardenChameleonOutfit

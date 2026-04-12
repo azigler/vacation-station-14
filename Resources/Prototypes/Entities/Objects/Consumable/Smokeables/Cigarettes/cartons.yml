@@ -6,22 +6,18 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/green.rsi
-    layers:
-      - state: closed
-        map: ["closeLayer"]
-      - state: open
-        map: ["openLayer"]
+    state: icon
   - type: Item
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/green.rsi
     size: Normal
   - type: Storage
     grid:
-    - 0,0,5,1 # DeltaV - increased from 5x2 to 6x2
+    - 0,0,4,1
   - type: EntityTableContainerFill
     containers:
       storagebase:
         id: CigPackGreen
-        amount: 6 # DeltaV - Increased contents to match description
+        amount: 5
   - type: Tag
     tags:
     - Trash
@@ -38,15 +34,14 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/red.rsi
-    ##layers:
-    ##  - state: closed #DeltaV - Already inherited, causes issues.
+    state: icon
   - type: Item
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/red.rsi
   - type: EntityTableContainerFill
     containers:
       storagebase:
         id: CigPackRed
-        amount: 6 # DeltaV - Increased contents to match description
+        amount: 5
 
 - type: entity
   id: CigCartonBlue
@@ -56,15 +51,14 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/blue.rsi
-    ##layers:
-    ##  - state: closed #DeltaV - Already inherited, causes issues.
+    state: icon
   - type: Item
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/blue.rsi
   - type: EntityTableContainerFill
     containers:
       storagebase:
         id: CigPackBlue
-        amount: 6 # DeltaV - Increased contents to match description
+        amount: 5
 
 - type: entity
   id: CigCartonBlack
@@ -74,15 +68,14 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/black.rsi
-    ##layers:
-    ##  - state: closed #DeltaV - Already inherited, causes issues.
+    state: icon
   - type: Item
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/black.rsi
   - type: EntityTableContainerFill
     containers:
       storagebase:
         id: CigPackBlack
-        amount: 6 # DeltaV - Increased contents to match description
+        amount: 5
 
 - type: entity
   id: CigCartonMixed
@@ -92,8 +85,7 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/mixed.rsi
-    ##layers:
-    ##  - state: closed #DeltaV - Already inherited, causes issues.
+    state: icon
   - type: Item
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/mixed.rsi
   - type: EntityTableContainerFill

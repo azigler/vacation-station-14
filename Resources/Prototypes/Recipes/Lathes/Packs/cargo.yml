@@ -1,8 +1,6 @@
 ## Static
 
 - type: latheRecipePack
-  parent:
-  - CargoStaticDeltaV # DeltaV
   id: CargoStatic
   recipes:
   - AppraisalTool
@@ -18,8 +16,6 @@
 ## Dynamic
 
 - type: latheRecipePack
-  parent:
-  - MiningDeltaV # DeltaV
   id: Mining
   recipes:
   - MiningDrill
@@ -27,11 +23,8 @@
   - MineralScannerEmpty
   - AdvancedMineralScannerEmpty
   - OreBagOfHolding
-  - ClothingShoesBootsJump # DV - Jump Boots since its mining research
 
 - type: latheRecipePack
-  parent:
-  - LogisticsBoards # DeltaV
   id: CargoBoards
   recipes:
   - OreProcessorIndustrialMachineCircuitboard

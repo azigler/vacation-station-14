@@ -25,7 +25,6 @@
     tags:
     - AppraisalTool
     - Sidearm
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
   - type: GuideHelp
     guides:
     - Cargo

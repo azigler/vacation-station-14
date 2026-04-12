@@ -130,8 +130,6 @@
         enum.WiresUiKey.Key:
           type: WiresBoundUserInterface
   - type: RadarConsole
-  - type: WorldLoader
-    radius: 256
   - type: PointLight
     radius: 1.5
     energy: 4.0
@@ -200,8 +198,6 @@
       - Syndicate
   - type: RadarConsole
     maxRange: 384
-  - type: WorldLoader
-    radius: 1536
   - type: PointLight
     radius: 1.5
     energy: 4.0
@@ -361,38 +357,22 @@
     color: "#1f8c28"
   - type: Computer
     board: MedicalRecordsComputerCircuitboard
-  # Begin CD - Character Records
-  - type: CharacterRecordConsole
-    consoleType: Medical
-  - type: UserInterface
-    interfaces:
-      enum.CharacterRecordConsoleKey.Key:
-        type: CharacterRecordConsoleBoundUserInterface
-  - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
-  # End CD - Character Records
 
 - type: entity
   parent: BaseComputerAiAccess
   id: ComputerCriminalRecords
   name: criminal records computer
-  description: This can be used to check criminal records. Only security and justice can modify them. # DeltaV Justice can access too 
+  description: This can be used to check criminal records. Only security can modify them.
   components:
   - type: CriminalRecordsConsole
   - type: UserInterface
     interfaces:
-      # Begin CD - Character Records
-      enum.CharacterRecordConsoleKey.Key:
-        type: CharacterRecordConsoleBoundUserInterface
-      # End CD - Character Records
+      enum.CriminalRecordsConsoleKey.Key:
+        type: CriminalRecordsConsoleBoundUserInterface
       enum.WiresUiKey.Key:
         type: WiresBoundUserInterface
-  # Begin CD - Character Records
-  - type: CharacterRecordConsole
-    consoleType: Security
   - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
-  # End CD - Character Records
+    key: enum.CriminalRecordsConsoleKey.Key
   - type: Sprite
     layers:
     - map: ["computerLayerBody"]
@@ -412,7 +392,7 @@
   - type: Computer
     board: CriminalRecordsComputerCircuitboard
   - type: AccessReader
-    access: [["Security"], ["Justice"]] # DeltaV Justice can access too 
+    access: [["Security"]]
   - type: GuideHelp
     guides:
     - CriminalRecords
@@ -426,18 +406,12 @@
   - type: GeneralStationRecordConsole
   - type: UserInterface
     interfaces:
-        # Begin CD - Character Records
-        enum.CharacterRecordConsoleKey.Key:
-          type: CharacterRecordConsoleBoundUserInterface
-        # End CD - Character Records
+        enum.GeneralStationRecordConsoleKey.Key:
+          type: GeneralStationRecordConsoleBoundUserInterface
         enum.WiresUiKey.Key:
           type: WiresBoundUserInterface
-  # Begin CD - Character Records
-  - type: CharacterRecordConsole
-    consoleType: Employment
   - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
-  # End CD - Character Records
+    key: enum.GeneralStationRecordConsoleKey.Key
   - type: PointLight
     radius: 1.5
     energy: 4.0
@@ -511,12 +485,6 @@
     channels:
     - Science
   - type: TechnologyDatabase
-    supportedDisciplines: # DeltaV - don't change it in maps
-    - Industrial
-    - Biochemical
-    - Arsenal
-    - Experimental
-    - CivilianServices
   - type: ActivatableUI
     key: enum.ResearchConsoleUiKey.Key
   - type: UserInterface
@@ -528,7 +496,10 @@
       enum.WiresUiKey.Key:
         type: WiresBoundUserInterface
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 50
+  - type: PowerState
+    idlePowerDraw: 50
+    workingPowerDraw: 1000
   - type: Computer
     board: ResearchComputerCircuitboard
   - type: AccessReader
@@ -579,7 +550,10 @@
       enum.WiresUiKey.Key:
         type: WiresBoundUserInterface
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 50
+  - type: PowerState
+    idlePowerDraw: 50
+    workingPowerDraw: 1000
   - type: Computer
     board: AnalysisComputerCircuitboard
   - type: PointLight
@@ -606,9 +580,6 @@
       whitelist:
         components:
         - IdCard
-      blacklist: # DeltaV - don't let ID chips be used for free AA (without an agent ID)
-        tags:
-        - IdChip
     targetIdSlot:
       name: id-card-console-target-id
       ejectSound: /Audio/Machines/id_swipe.ogg
@@ -662,8 +633,6 @@
   name: body scanner computer
   description: A body scanner.
   components:
-  - type: ApcPowerReceiver
-    powerLoad: 500
   - type: Computer
     board: BodyScannerComputerCircuitboard
   - type: PointLight
@@ -713,9 +682,6 @@
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: StructuralMetallicStrong
-  - type: GuideHelp # DeltaV guide
-    guides:
-    - AlertProcedure
 
 - type: entity
   parent: ComputerComms
@@ -738,12 +704,12 @@
   - type: AccessReader
     access: [[ "NuclearOperative" ]]
   - type: CommunicationsConsole
-    title: comms-console-announcement-title-unauthorized # DeltaV
+    title: comms-console-announcement-title-nukie
     color: "#ff0000"
     canShuttle: false
     global: true #announce to everyone they're about to fuck shit up
-    sound: /Audio/Announcements/intercept.ogg # DeltaV
     announceSentBy: false # The title already says who they are.
+    sound: /Audio/Announcements/war.ogg
   - type: Computer
     board: SyndicateCommsComputerCircuitboard
   - type: PointLight
@@ -777,7 +743,7 @@
     canShuttle: false
     global: true #announce to everyone they're about to fuck shit up
     announceSentBy: false
-    sound: /Audio/Announcements/announce.ogg # DeltaV - changed from war.oog to announce.ogg
+    sound: /Audio/Announcements/war.ogg
   - type: Computer
     board: WizardCommsComputerCircuitboard
   - type: PointLight
@@ -927,7 +893,7 @@
     energy: 4.0
     color: "#b89f25"
   - type: AccessReader
-    access: [["Orders"]] # DeltaV - see Resources/Prototypes/_DV/Access/cargo.yml
+    access: [["Cargo"]]
   - type: DeviceNetwork
     deviceNetId: Wireless
     receiveFrequencyId: BasicDevice
@@ -1141,7 +1107,7 @@
     energy: 4.0
     color: "#b89f25"
   - type: AccessReader
-    access: [["Orders"]] # DeltaV - Let cargo techs skip them. Was Quartermaster
+    access: [["Quartermaster"]]
   - type: GuideHelp
     guides:
     - CargoBounties
@@ -1170,7 +1136,7 @@
     key: enum.FundingAllocationConsoleUiKey.Key
   - type: ActivatableUIRequiresAccess
   - type: AccessReader
-    access: [["Funding"]] # DeltaV - separate funding access
+    access: [["HeadOfPersonnel"]]
   - type: UserInterface
     interfaces:
       enum.FundingAllocationConsoleUiKey.Key:
@@ -1206,8 +1172,6 @@
       state: generic_keys
     - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       state: generic_panel_open
-  - type: ApcPowerReceiver
-    powerLoad: 3100 #We want this to fail first so I transferred most of the scanner and pod's power here. (3500 in total)
   - type: Computer
     board: CloningConsoleComputerCircuitboard
   - type: PointLight
@@ -1577,7 +1541,11 @@
       enum.WiresUiKey.Key:
         type: WiresBoundUserInterface
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 5
+  - type: PowerState
+    idlePowerDraw: 5
+    workingPowerDraw: 1000
+  - type: UIPowerState
   - type: DeviceNetwork
     deviceNetId: Wireless
     receiveFrequencyId: RoboticsConsole
@@ -1622,7 +1590,10 @@
     channels:
     - Xenoborg
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 50
+  - type: PowerState
+    idlePowerDraw: 50
+    workingPowerDraw: 1000
   - type: DeviceNetwork
     deviceNetId: Wireless
     receiveFrequencyId: Mothership
@@ -1649,7 +1620,10 @@
     - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       state: generic_panel_open
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 50
+  - type: PowerState
+    idlePowerDraw: 50
+    workingPowerDraw: 1000
   - type: Computer
     board: StationAiUploadCircuitboard
   - type: AccessReader
@@ -1725,7 +1699,10 @@
           True: { visible: false }
           False: { visible: true }
   - type: ApcPowerReceiver
-    powerLoad: 1000
+    powerLoad: 50
+  - type: PowerState
+    idlePowerDraw: 50
+    workingPowerDraw: 1000
   - type: Computer
     board: StationAiFixerCircuitboard
   - type: AccessReader
@@ -1781,6 +1758,9 @@
       state: generic_panel_open
   # - type: Computer
   #   board: SyndicateCommsComputerCircuitboard
+  - type: Anchorable
+    flags:
+    - Anchorable # No taking the console along!
   - type: PointLight
     radius: 1.5
     energy: 1.6

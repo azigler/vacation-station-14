@@ -22,8 +22,7 @@ public abstract class SharedFirelockSystem : EntitySystem
 
         // Access/Prying
         SubscribeLocalEvent<FirelockComponent, BeforeDoorOpenedEvent>(OnBeforeDoorOpened);
-        // DeltaV: commented out to let people pry powered firelocks by hand
-        //SubscribeLocalEvent<FirelockComponent, BeforePryEvent>(OnBeforePry);
+        SubscribeLocalEvent<FirelockComponent, BeforePryEvent>(OnBeforePry);
         SubscribeLocalEvent<FirelockComponent, GetPryTimeModifierEvent>(OnDoorGetPryTimeModifier);
         SubscribeLocalEvent<FirelockComponent, PriedEvent>(OnAfterPried);
 

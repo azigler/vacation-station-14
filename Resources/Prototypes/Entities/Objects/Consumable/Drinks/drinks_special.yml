@@ -134,7 +134,6 @@
     mixerType: None
     reactionTypes:
     - Shake
-  - type: NFShaker # Frontier
 
 - type: entity
   parent: DrinkShaker

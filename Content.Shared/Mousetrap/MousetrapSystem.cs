@@ -1,4 +1,3 @@
-using Content.Shared.Abilities; // DeltaV
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Trigger.Systems;
 using Content.Shared.StepTrigger.Systems;
@@ -21,10 +20,6 @@ public sealed class MousetrapSystem : EntitySystem
     // they should just use the new trigger conditions
     private void OnStepTriggerAttempt(Entity<MousetrapComponent> ent, ref StepTriggerAttemptEvent args)
     {
-        // DeltaV: Entities with this component always trigger mouse traps, even if wearing shoes
-        if (HasComp<AlwaysTriggerMousetrapComponent>(args.Tripper))
-            args.Cancelled = false;
-
         if (!TryComp<ItemToggleComponent>(ent, out var toggle))
             return;
 

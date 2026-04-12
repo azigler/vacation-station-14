@@ -3,7 +3,6 @@
   name: job-name-atmostech
   description: job-description-atmostech
   playTimeTracker: JobAtmosphericTechnician
-  antagAdvantage: 4 # DeltaV - Reduced TC: External Access + Fireaxe + Free Hardsuit
   requirements:
   - !type:DepartmentTimeRequirement
     department: Engineering
@@ -25,7 +24,7 @@
   id: AtmosphericTechnicianGear
   equipment:
     eyes: ClothingEyesGlassesMeson
-    #id: AtmosPDA # DeltaV: different PDAs in loadouts
+    id: AtmosPDA
     belt: ClothingBeltUtilityEngineering
     ears: ClothingHeadsetEngineering
   #storage:

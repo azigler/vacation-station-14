@@ -9,20 +9,18 @@
   access:
   - Medical
   - Maintenance
-  - Psychologist # DeltaV - Add Psychologist access
   extendedAccess:
   - Chemistry
 
 - type: startingGear
   id: PsychologistGear
   equipment:
-    #shoes: ClothingShoesLeather # DeltaV - loadouts
-    #id: PsychologistPDA # DeltaV - loadouts
+    shoes: ClothingShoesLeather
+    id: PsychologistPDA
     ears: ClothingHeadsetMedical
   storage:
     back:
     - RubberStampPsychologist
-    - BoxFolderBlue # DeltaV
 
 - type: chameleonOutfit
   id: PsychologistChameleonOutfit

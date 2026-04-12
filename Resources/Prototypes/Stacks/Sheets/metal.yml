@@ -16,5 +16,5 @@
   parent: BaseSheetStack
   id: Brass
   name: stack-brass
-  icon: { sprite: /Textures/_DV/Objects/Materials/Sheets/metal.rsi, state: brass } # DeltaV - new brass textures
+  icon: { sprite: /Textures/Objects/Materials/Sheets/metal.rsi, state: brass }
   spawn: SheetBrass1

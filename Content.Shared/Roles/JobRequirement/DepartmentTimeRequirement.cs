@@ -28,8 +28,7 @@ public sealed partial class DepartmentTimeRequirement : JobRequirement
         IPrototypeManager protoManager,
         HumanoidCharacterProfile? profile,
         IReadOnlyDictionary<string, TimeSpan> playTimes,
-        [NotNullWhen(false)] out FormattedMessage? reason,
-        bool isWhitelisted) // DeltaV
+        [NotNullWhen(false)] out FormattedMessage? reason)
     {
         reason = new FormattedMessage();
         var playtime = TimeSpan.Zero;

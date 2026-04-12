@@ -36,8 +36,6 @@ using Robust.Shared.Toolshed;
 using Robust.Shared.Utility;
 using System.Linq;
 using static Content.Shared.Configurable.ConfigurationComponent;
-using Content.Shared._Impstation.Thaven.Components; // DeltaV
-using Content.Server._Impstation.Thaven; // DeltaV
 
 namespace Content.Server.Administration.Systems
 {
@@ -68,7 +66,6 @@ namespace Content.Server.Administration.Systems
         [Dependency] private readonly AdminFrozenSystem _freeze = default!;
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly SiliconLawSystem _siliconLawSystem = default!;
-	    [Dependency] private readonly ThavenMoodsSystem _moods = default!; // DeltaV
 
         private readonly Dictionary<ICommonSession, List<EditSolutionsEui>> _openSolutionUis = new();
 
@@ -116,16 +113,6 @@ namespace Content.Server.Administration.Systems
                         _console.RemoteExecuteCommand(player, $"openahelp \"{targetActor.PlayerSession.UserId}\"");
                     verb.Impact = LogImpact.Low;
                     args.Verbs.Add(verb);
-
-                    // DeltaV - CuratorHelp
-                    Verb cHelpVerb = new();
-                    cHelpVerb.Text = Loc.GetString("chelp-verb-get-data-text");
-                    cHelpVerb.Category = VerbCategory.Admin;
-                    cHelpVerb.Icon = new SpriteSpecifier.Texture(new("/Textures/_DV/Interface/curator2.svg.192dpi.png"));
-                    cHelpVerb.Act = () =>
-                        _console.RemoteExecuteCommand(player, $"openchelp \"{targetActor.PlayerSession.UserId}\"");
-                    cHelpVerb.Impact = LogImpact.Low;
-                    args.Verbs.Add(cHelpVerb);
 
                     // Subtle Messages
                     Verb prayerVerb = new();
@@ -403,27 +390,6 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
-                // Begin DeltaV Additions - thaven moods
-                if (TryComp<ThavenMoodsComponent>(args.Target, out var moods))
-                {
-                    args.Verbs.Add(new Verb()
-                    {
-                        Text = Loc.GetString("thaven-moods-ui-verb"),
-                        Category = VerbCategory.Admin,
-                        Act = () =>
-                        {
-                            var ui = new ThavenMoodsEui(_moods, EntityManager, _adminManager);
-                            if (!_playerManager.TryGetSessionByEntity(args.User, out var session))
-                                return;
-
-                            _euiManager.OpenEui(ui, session);
-                            ui.UpdateMoods(moods, args.Target);
-                        },
-                        Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Actions/actions_borg.rsi"), "state-laws"),
-                    });
-                }
-                // End DeltaV Additions
-
                 // open camera
                 args.Verbs.Add(new Verb()
                 {
@@ -441,7 +407,6 @@ namespace Content.Server.Administration.Systems
                 });
             }
         }
-
 
         private void AddDebugVerbs(GetVerbsEvent<Verb> args)
         {
@@ -480,7 +445,7 @@ namespace Content.Server.Administration.Systems
             }
 
             // Control mob verb
-            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("mind"), "control"), player, out _) ?? false &&
+            if ((_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("mind"), "control"), player, out _) ?? false) &&
                 args.User != args.Target)
             {
                 Verb verb = new()

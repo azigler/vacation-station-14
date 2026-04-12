@@ -43,7 +43,7 @@
         - to: reinforcedGirder
           completed:
             - !type:SnapToGrid
-              southRotation: true
+              southRotation: false
           conditions:
             - !type:EntityAnchored {}
           steps:
@@ -133,35 +133,6 @@
             - material: MeatSheets
               amount: 2
               doAfter: 2
-
-        - to: paperWall #Nyano
-          completed:
-            - !type:SnapToGrid
-              southRotation: true
-          conditions:
-            - !type:EntityAnchored {}
-          steps:
-            - material: Paper
-              amount: 2
-              doAfter: 2
-
-        # Begin DeltaV Additions
-        - to: shuttleInteriorWall
-          completed:
-          - !type:SnapToGrid
-            southRotation: true
-          conditions:
-          - !type:EntityAnchored
-          steps:
-          - material: MetalRod
-            amount: 2
-            doAfter: 1
-          - tool: Screwing
-            doAfter: 1
-          - material: Steel
-            amount: 2
-            doAfter: 1
-        # End DeltaV Additions
 
     - node: wall
       entity: WallSolid
@@ -280,25 +251,6 @@
           steps:
             - tool: Prying
               doAfter: 5
-
-    # Begin DeltaV Additions
-    - node: shuttleInteriorWall
-      entity: WallShuttleInterior
-      edges:
-      - to: girder
-        completed:
-        - !type:SpawnPrototype
-          prototype: SheetSteel1
-          amount: 2
-        - !type:SpawnPrototype
-          prototype: PartRodMetal1
-          amount: 2
-        steps:
-        - tool: Welding
-          doAfter: 10
-        - tool: Screwing
-          doAfter: 1
-    # End DeltaV Additions
 
     - node: reinforcedGirder
       entity: ReinforcedGirder
@@ -562,18 +514,6 @@
           steps:
             - tool: Brushing
               doAfter: 4
-
-    - node: paperWall #Nyano
-      entity: WallPaper
-      edges:
-        - to: girder
-          completed:
-            - !type:GivePrototype
-              prototype: SheetPaper1
-              amount: 2
-          steps:
-            - tool: Prying
-              doAfter: 10
 
     - node: reinforcedWallRust
       entity: WallReinforcedRust

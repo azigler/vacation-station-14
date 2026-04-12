@@ -125,8 +125,6 @@
   - type: IconSmooth
     key: walls
     base: brick
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -156,8 +154,6 @@
   - type: IconSmooth
     key: walls
     base: clock
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -191,8 +187,6 @@
   - type: IconSmooth
     key: walls
     base: clown
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
   - type: Fixtures
     fixtures:
       fix1:
@@ -324,8 +318,6 @@
   - type: IconSmooth
     key: walls
     base: diamond
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -379,8 +371,6 @@
   - type: IconSmooth
     key: walls
     base: gold
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -407,8 +397,6 @@
   - type: IconSmooth
     key: walls
     base: ice
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -453,8 +441,6 @@
     base: plasma
   - type: RadiationBlocker
     resistance: 5
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -497,8 +483,6 @@
   - type: IconSmooth
     key: walls
     base: plastic
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -605,9 +589,9 @@
   name: reinforced wall
   components:
   - type: Sprite
-    sprite: _DV/Structures/Walls/solid.rsi #Delta V - Resprite walls
+    sprite: Structures/Walls/solid.rsi
   - type: Icon
-    sprite: _DV/Structures/Walls/solid.rsi #Delta V - Resprite walls
+    sprite: Structures/Walls/solid.rsi
     state: rgeneric
   - type: Construction
     graph: Girder
@@ -637,9 +621,6 @@
         node: girder
       - !type:DoActsBehavior
         acts: ["Destruction"]
-      - !type:PlaySoundBehavior # DeltaV
-        sound:
-          collection: MetalBreak
   - type: IconSmooth
     key: walls
     base: reinf_over
@@ -660,8 +641,6 @@
     price: 250
   - type: RadiationBlocker
     resistance: 5
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
   - type: Fixtures
     fixtures:
       fix1:
@@ -680,9 +659,9 @@
   suffix: rusted
   components:
   - type: Sprite
-    sprite: _DV/Structures/Walls/solid_rust.rsi # Delta V - Resprite Walls
+    sprite: Structures/Walls/solid_rust.rsi
   - type: Icon
-    sprite: _DV/Structures/Walls/solid_rust.rsi # Delta V - Resprite Walls
+    sprite: Structures/Walls/solid_rust.rsi
     state: rgeneric
   - type: Construction
     graph: Girder
@@ -712,8 +691,6 @@
         node: girder
       - !type:DoActsBehavior
         acts: ["Destruction"]
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: WallDiagonalBase
@@ -858,8 +835,6 @@
   - type: IconSmooth
     key: walls
     base: silver
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 #shuttle walls
 - type: entity
@@ -921,9 +896,6 @@
           collection: MetalSlam
       - !type:DoActsBehavior
         acts: ["Destruction"]
-      - !type:PlaySoundBehavior # DeltaV
-        sound:
-          collection: MetalBreak
   - type: Construction
     graph: Girder
     node: diagonalshuttleWall
@@ -936,7 +908,6 @@
   parent: BaseWall
   id: WallShuttle
   name: shuttle wall
-  suffix: Reinforced, Exterior # DeltaV - distinguish it from interior
   components:
   - type: Damageable
     damageContainer: StructuralInorganic
@@ -992,8 +963,6 @@
           5: { state: shuttle_construct-5, visible: true}
   - type: Reflect
     reflectProb: 1
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
   - type: Fixtures
     fixtures:
       fix1:
@@ -1012,13 +981,13 @@
   name: solid wall
   components:
   - type: Sprite
-    sprite: _DV/Structures/Walls/solid.rsi #Delta V - Resprite walls
+    sprite: Structures/Walls/solid.rsi
   - type: WallReplacementMarker
   - type: Construction
     graph: Girder
     node: wall
   - type: Icon
-    sprite: _DV/Structures/Walls/solid.rsi #Delta V - Resprite walls
+    sprite: Structures/Walls/solid.rsi
   - type: RCDDeconstructable
     cost: 6
     delay: 8
@@ -1048,8 +1017,6 @@
   - type: IconSmooth
     key: walls
     base: solid
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: WallDiagonalBase
@@ -1092,9 +1059,9 @@
   suffix: rusted
   components:
   - type: Sprite
-    sprite: _DV/Structures/Walls/solid_rust.rsi # Delta V - Resprite Walls
+    sprite: Structures/Walls/solid_rust.rsi
   - type: Icon
-    sprite: _DV/Structures/Walls/solid_rust.rsi # Delta V - Resprite Walls
+    sprite: Structures/Walls/solid_rust.rsi
     state: full
   - type: Construction
     graph: Girder
@@ -1124,8 +1091,6 @@
         node: girder
       - !type:DoActsBehavior
         acts: ["Destruction"]
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -1307,8 +1272,6 @@
     base: uranium
   - type: RadiationBlocker
     resistance: 6
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -1348,8 +1311,6 @@
   - type: IconSmooth
     key: woods
     base: wood
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -1423,8 +1384,6 @@
   - type: IconSmooth
     key: walls
     base: necropolis
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: BaseWall
@@ -1451,8 +1410,6 @@
     - mining
     - miningB
   - type: Appearance
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: WallDiagonalBase
@@ -1518,8 +1475,6 @@
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: WallVaultAlien
@@ -1598,7 +1553,6 @@
   - type: Icon
     sprite: Structures/Magic/forcewall.rsi
     state: forcewall
-  - type: Clickable #Nyano
 
 - type: entity
   parent: BaseWall
@@ -1625,8 +1579,6 @@
   - type: IconSmooth
     key: cobblebricks
     base: cobblebrick
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WallCosmicCult
 
 - type: entity
   parent: WallCobblebrick

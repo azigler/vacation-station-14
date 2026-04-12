@@ -14,7 +14,7 @@
   - type: InteractionOutline
   - type: Sprite
     snapCardinals: true
-    sprite: _DV/Structures/Doors/Airlocks/highsec/highsec.rsi #Delta V - Resprite Doors
+    sprite: Structures/Doors/Airlocks/highsec/highsec.rsi
     layers:
     - state: closed
       map: ["enum.DoorVisualLayers.Base"]
@@ -131,3 +131,5 @@
     tags:
       - HighSecDoor
       # This tag is used to nagivate the Airlock construction graph. It's needed because this construction graph is shared between Airlock, AirlockGlass, and HighSecDoor
+      - DoorRemoteWhitelist
+      # This tag is used by door remotes to allow or not a door remote to normally be able to interact with a door

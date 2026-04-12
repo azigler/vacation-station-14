@@ -19,8 +19,6 @@
     quickEquip: false
     slots:
     - back
-    - Belt # Mono
-    - SuitStorage # Mono
   - type: Charger
     slotId: charger_slot
     portable: true
@@ -35,14 +33,7 @@
   - type: ItemSlots
     slots:
       charger_slot:
-        ejectOnInteract: false # Mono
-        ejectOnUse: true # Mono
+        ejectOnInteract: true
         whitelist:
           components:
           - BatteryAmmoProvider
-        blacklist:
-          tags:
-          # Begin DeltaV additions - Disallows recharging of superweapons
-          - GamblagatorCartridge
-          - BeamDevastator
-          # End DeltaV additions - Disallows recharging of superweapons

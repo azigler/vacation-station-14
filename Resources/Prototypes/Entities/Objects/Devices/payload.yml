@@ -42,10 +42,6 @@
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: Tag # DeltaV: add ExplosivePayload tag to it
-    tags:
-    - ExplosivePayload
-    - Payload
 
 - type: entity
   name: chemical payload

@@ -2,22 +2,21 @@
   id: ChameleonSet
   name: thief-backpack-category-chameleon-name
   description: thief-backpack-category-chameleon-description
-  sprite: 
-    sprite: /Textures/Clothing/OuterClothing/Misc/black_hoodie.rsi
+  sprite:
+    sprite: Objects/Devices/chameleon_projector.rsi
     state: icon
   content:
-  - ClothingBackpackChameleonFill
+  - ClothingBackpackChameleonFillAgent
   - ChameleonProjector
   - FakeMindShieldImplanter
-  - AgentIDCard
 
 - type: thiefBackpackSet
   id: ToolsSet
   name: thief-backpack-category-tools-name
   description: thief-backpack-category-tools-description
-  sprite: 
-    sprite: Objects/Tools/jaws_of_life.rsi
-    state: jaws_pry
+  sprite:
+    sprite: Objects/Weapons/Bombs/c4.rsi
+    state: icon
   content:
   - WelderIndustrialAdvanced
   - ClothingEyesGlassesMeson
@@ -25,9 +24,8 @@
   - JawsOfLife
   - RemoteSignaller
   - Multitool
-  - BreachingCharge # DeltaV (From C4 to Breaching Charge [Prevent Pacifist Implant Bypass])
-  - BreachingCharge # DeltaV (From C4 to Breaching Charge [Prevent Pacifist Implant Bypass])
-  - BreachingCharge # DeltaV (From C4 to Breaching Charge [Prevent Pacifist Implant Bypass])
+  - C4
+  - C4
 
 - type: thiefBackpackSet
   id: ChemistrySet
@@ -47,7 +45,7 @@
 - type: thiefBackpackSet
   id: SyndieSet
   name: thief-backpack-category-syndie-name
-  description: thief-backpack-category-syndie-description-deltav # DeltaV
+  description: thief-backpack-category-syndie-description
   sprite:
     sprite: Objects/Specific/Syndicate/telecrystal.rsi
     state: telecrystal
@@ -55,7 +53,7 @@
   - RadioJammer
   - TraitorCodePaper
   - Emag
-  - Doorjack # DeltaV - replaces AccessBreaker
+  - AccessBreaker
   - Lighter
   - CigPackSyndicate
   - Telecrystal10 #The thief cannot use them, but it may induce communication with traitors
@@ -64,7 +62,7 @@
   id: SleeperSet
   name: thief-backpack-category-sleeper-name
   description: thief-backpack-category-sleeper-description
-  sprite: 
+  sprite:
     sprite: Objects/Tanks/anesthetic.rsi
     state: icon
   content:
@@ -77,24 +75,23 @@
   id: CommunicatorSet
   name: thief-backpack-category-communicator-name
   description: thief-backpack-category-communicator-description
-  sprite: 
-    sprite: Objects/Tools/spy_device.rsi
-    state: icon
+  sprite:
+    sprite: Objects/Devices/communication.rsi
+    state: old-radio
   content:
   - EncryptionKeyStationMaster
   - CyberPen
-  - SpyCrewMonitor
   - BriefcaseThiefBribingBundleFilled
   - VoiceMaskImplanter
   #- todo Chameleon Stamp
-  
+
 - type: thiefBackpackSet
   id: SmugglerSet
   name: thief-backpack-category-smuggler-name
   description: thief-backpack-category-smuggler-description
-  sprite: 
-    sprite: Clothing/Neck/Cloaks/void.rsi
-    state: icon
+  sprite:
+    sprite: Objects/Tools/fulton.rsi
+    state: extraction_pack
   content:
   - InvisibleCrate
   - FultonBeacon

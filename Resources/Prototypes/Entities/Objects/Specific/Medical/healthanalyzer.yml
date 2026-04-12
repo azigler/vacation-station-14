@@ -15,7 +15,6 @@
     storedRotation: -90
   - type: ActivatableUI
     key: enum.HealthAnalyzerUiKey.Key
-    requireActiveHand: false # DeltaV - Allow health analyzers to work if you switch hands
   - type: UserInterface
     interfaces:
       enum.HealthAnalyzerUiKey.Key:

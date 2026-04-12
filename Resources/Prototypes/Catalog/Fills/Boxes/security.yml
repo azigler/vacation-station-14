@@ -4,10 +4,6 @@
   id: BoxHandcuff
   description: A box full of handcuffs.
   components:
-  - type: Storage
-    whitelist:
-      components:
-      - Handcuff
   - type: EntityTableContainerFill
     containers:
       storagebase:
@@ -97,7 +93,6 @@
     layers:
     - state: box_security
     - state: sechud
-      sprite: _DV/Objects/Storage/boxes.rsi # DeltaV
 
 - type: entity
   name: secglasses box
@@ -114,7 +109,6 @@
     layers:
     - state: box_security
     - state: secglasses
-      sprite: _DV/Objects/Storage/boxes.rsi # DeltaV
 
 - type: entity
   name: sunglasses box

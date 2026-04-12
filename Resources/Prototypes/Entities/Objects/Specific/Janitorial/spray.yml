@@ -166,12 +166,10 @@
     canSend: false # No giving away infinite space cleaner!
   - type: SolutionRegeneration
     solution: drink
-    duration: 5 # Delta-V - Refill borg's mega spray 1 full use per 5 seconds
     generated:
       reagents:
       - ReagentId: SpaceCleaner
-        Quantity: 10 # Delta-V - Refill borg's mega spray 1 full use per 5 seconds
-
+        Quantity: 1
 
 # Vapor
 - type: entity

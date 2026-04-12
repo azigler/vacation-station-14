@@ -6,11 +6,8 @@
   - Brutepack
   - Ointment
   - Gauze
-  - PurifyingSalts1 # DeltaV
 
 - type: latheRecipePack
-  parent:
-  - BasicChemistryStaticDeltaV # DeltaV
   id: BasicChemistryStatic
   recipes:
   - Beaker
@@ -23,8 +20,7 @@
   - Dropper
 
 - type: latheRecipePack
-  parent:
-  - BasicChemistryStatic
+  parent: BasicChemistryStatic
   id: ChemistryStatic
   recipes:
   - Jug
@@ -32,8 +28,6 @@
   - ClothingEyesGlassesChemical
 
 - type: latheRecipePack
-  parent:
-  - SurgeryStaticShitmed # Shitmed change
   id: SurgeryStatic
   recipes:
   - Scalpel
@@ -44,8 +38,6 @@
   - Hemostat
 
 - type: latheRecipePack
-  parent:
-  - MedicalStaticDeltaV # DeltaV
   id: MedicalStatic
   recipes:
   - Implanter
@@ -66,8 +58,6 @@
   - EmergencyRollerBedSpawnFolded
 
 - type: latheRecipePack
-  parent:
-  - MedicalClothingStaticDeltaV # DeltaV
   id: MedicalClothingStatic
   recipes:
   - ClothingHandsGlovesLatex
@@ -88,8 +78,6 @@
   - MedkitCombat
 
 - type: latheRecipePack
-  parent:
-  - MedicalBoardsStaticShitmed # Shitmed change
   id: MedicalBoardsStatic
   recipes:
   - ElectrolysisUnitMachineCircuitboard
@@ -115,9 +103,6 @@
   - AdvancedJetInjector
 
 - type: latheRecipePack
-  parent:
-  - MedicalBoardsDeltaV # DeltaV
-  - MedicalBoardsShitmed # Shitmed change
   id: MedicalBoards
   recipes:
   - StasisBedMachineCircuitboard

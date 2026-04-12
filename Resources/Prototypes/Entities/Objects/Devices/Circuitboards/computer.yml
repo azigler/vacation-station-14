@@ -282,7 +282,7 @@
       prototype: ComputerTelevision
     - type: Tag
       tags:
-       - ComputerTelevisionCircuitboard
+        - ComputerTelevisionCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -327,10 +327,6 @@
     state: cpu_medical
   - type: ComputerBoard
     prototype: ComputerCrewMonitoring
-  - type: ReverseEngineering # DeltaV
-    difficulty: 2
-    recipes:
-    - CrewMonitoringComputerCircuitboard
 
 - type: entity
   parent: [BaseComputerCircuitboard, BaseCommandContraband]
@@ -412,9 +408,6 @@
     state: cpu_supply
   - type: ComputerBoard
     prototype: ComputerRadar
-  - type: ReverseEngineering
-    recipes:
-    - HandHeldMassScanner
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -479,7 +472,7 @@
     prototype: ComputerShuttleSyndie
 
 - type: entity
-  parent: [ BaseComputerCircuitboard, BaseCloningBoard ] # DeltaV
+  parent: BaseComputerCircuitboard
   id: CloningConsoleComputerCircuitboard
   name: cloning console computer board
   description: A computer printed circuit board for a cloning console.

@@ -15,7 +15,6 @@
   table: !type:AllSelector
     children:
     - id: OxygenTankFilled
-    - id: NitrogenTankFilled
     - id: ClothingOuterHardsuitEVA
     - id: ClothingHeadHelmetEVA
     - id: ClothingMaskBreath
@@ -170,7 +169,6 @@
   id: SuitStorageSec
   parent: SuitStorageBase
   suffix: Security
-  categories: [ HideSpawnMenu ] # DeltaV
   components:
   - type: EntityTableContainerFill
     containers:
@@ -184,7 +182,6 @@
   table: !type:AllSelector
     children:
     - id: OxygenTankFilled
-    - id: NitrogenTankFilled
     - id: ClothingOuterHardsuitSecurity
     - id: ClothingMaskBreath
 
@@ -218,7 +215,7 @@
 - type: entity
   id: SuitStorageRD
   parent: SuitStorageBase
-  suffix: Mystagogue # DeltaV - Epistemics Department replacing Science
+  suffix: Research Director
   components:
   - type: EntityTableContainerFill
     containers:
@@ -249,7 +246,7 @@
   - type: EntityTableContainerFill
     containers:
       entity_storage: !type:NestedSelector
-        tableId: FillLockerWardenHardsuit
+        tableId: FillLockerWardenHarduit
   - type: AccessReader
     access: [["Armory"]]
 

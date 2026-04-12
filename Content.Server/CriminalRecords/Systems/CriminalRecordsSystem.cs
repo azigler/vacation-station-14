@@ -33,11 +33,10 @@ public sealed class CriminalRecordsSystem : SharedCriminalRecordsSystem
         base.Initialize();
 
         SubscribeLocalEvent<AfterGeneralRecordCreatedEvent>(OnGeneralRecordCreated);
-        /* DeltaV - wanted list replaced by secwatch
         SubscribeLocalEvent<WantedListCartridgeComponent, CriminalRecordChangedEvent>(OnRecordChanged);
         SubscribeLocalEvent<WantedListCartridgeComponent, CartridgeUiReadyEvent>(OnCartridgeUiReady);
         SubscribeLocalEvent<WantedListCartridgeComponent, CriminalHistoryAddedEvent>(OnHistoryAdded);
-        SubscribeLocalEvent<WantedListCartridgeComponent, CriminalHistoryRemovedEvent>(OnHistoryRemoved); */
+        SubscribeLocalEvent<WantedListCartridgeComponent, CriminalHistoryRemovedEvent>(OnHistoryRemoved);
     }
 
     private void OnGeneralRecordCreated(AfterGeneralRecordCreatedEvent ev)
@@ -78,13 +77,12 @@ public sealed class CriminalRecordsSystem : SharedCriminalRecordsSystem
 
         _records.Synchronize(key);
 
-        /* DeltaV - wanted list replaced by secwatch
         var args = new CriminalRecordChangedEvent(record);
         var query = EntityQueryEnumerator<WantedListCartridgeComponent>();
         while (query.MoveNext(out var readerUid, out _))
         {
             RaiseLocalEvent(readerUid, ref args);
-        } */
+        }
     }
 
     /// <summary>
@@ -98,13 +96,12 @@ public sealed class CriminalRecordsSystem : SharedCriminalRecordsSystem
 
         record.History.Add(entry);
 
-        /* DeltaV - wanted list replaced by secwatch
         var args = new CriminalHistoryAddedEvent(entry);
         var query = EntityQueryEnumerator<WantedListCartridgeComponent>();
         while (query.MoveNext(out var readerUid, out _))
         {
             RaiseLocalEvent(readerUid, ref args);
-        } */
+        }
 
         return true;
     }
@@ -133,18 +130,16 @@ public sealed class CriminalRecordsSystem : SharedCriminalRecordsSystem
         var history = record.History[(int)index];
         record.History.RemoveAt((int) index);
 
-        /* DeltaV - wanted list replaced by secwatch
         var args = new CriminalHistoryRemovedEvent(history);
         var query = EntityQueryEnumerator<WantedListCartridgeComponent>();
         while (query.MoveNext(out var readerUid, out _))
         {
             RaiseLocalEvent(readerUid, ref args);
-        } */
+        }
 
         return true;
     }
 
-    /* DeltaV - wanted list replaced by secwatch
     private void OnRecordChanged(Entity<WantedListCartridgeComponent> ent, ref CriminalRecordChangedEvent args) =>
         StateChanged(ent);
 
@@ -185,5 +180,5 @@ public sealed class CriminalRecordsSystem : SharedCriminalRecordsSystem
         var state = new WantedListUiState(records.ToList());
 
         _cartridge.UpdateCartridgeUiState(loaderUid, state);
-    }*/
+    }
 }

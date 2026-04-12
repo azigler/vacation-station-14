@@ -6,6 +6,7 @@
   components:
   - type: Sprite
     sprite: Structures/Machines/silo.rsi
+    snapCardinals: true
     layers:
     - state: silo
       map: [ "base" ]
@@ -23,16 +24,6 @@
       - Sheet
       - RawMaterial
       - Ingot
-  # Begin DeltaV Additions
-  - type: MaterialStorageMagnetPickup
-    magnetEnabled: True
-    range: 0.30
-  # End DeltaV Additions
-  - type: AutomationSlots # Goobstation
-    slots:
-    - !type:AutomatedMaterialStorage
-      input: AutomationSlotMaterials
-      output: null
   - type: ActivatableUI
     key: enum.OreSiloUiKey.Key
   - type: ActivatableUIRequiresPower

@@ -27,8 +27,6 @@
     DrinkMugOne: 1
     DrinkMugRainbow: 2
     DrinkMugRed: 2
-    LunchboxGeneric: 10 # DeltaV - Adds Lunchbox
-    Skimmer: 2 # DeltaV - Adds skimmer
     MortarAndPestle: 1
     HandheldJuicer: 1
   contrabandInventory:

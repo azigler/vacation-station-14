@@ -1,7 +1,3 @@
-using Content.Server._DV.CosmicCult.Components; // DeltaV
-using Content.Server._DV.GameTicking.Rules.Components; // DeltaV
-using Content.Server._Harmony.GameTicking.Rules.Components; // Harmony
-using Content.Server.Administration.Commands;
 using Content.Server.Antag;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules.Components;
@@ -34,7 +30,6 @@ public sealed partial class AdminVerbSystem
     private static readonly EntProtoId DefaultThiefRule = "Thief";
     private static readonly EntProtoId DefaultChangelingRule = "Changeling";
     private static readonly EntProtoId ParadoxCloneRuleId = "ParadoxCloneSpawn";
-    private static readonly EntProtoId DefaultConspiratorRule = "Conspirators"; // Harmony
     private static readonly EntProtoId DefaultWizardRule = "Wizard";
     private static readonly EntProtoId DefaultNinjaRule = "NinjaSpawn";
     private static readonly ProtoId<StartingGearPrototype> PirateGearId = "PirateGear";
@@ -228,56 +223,7 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(ninja);
 
-        if (HasComp<HumanoidAppearanceComponent>(args.Target)) // only humanoids can be cloned
+        if (HasComp<HumanoidProfileComponent>(args.Target)) // only humanoids can be cloned
             args.Verbs.Add(paradox);
-
-        // Begin DeltaV Additions
-        var cosmicCultName = Loc.GetString("admin-verb-text-make-cosmiccultist");
-        Verb cosmiccult = new()
-        {
-            Text = cosmicCultName,
-            Category = VerbCategory.Antag,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/_DV/CosmicCult/Icons/antag_icons.rsi"), "CosmicCult"),
-            Act = () =>
-            {
-                _antag.ForceMakeAntag<CosmicCultRuleComponent>(targetPlayer, "CosmicCult");
-            },
-            Impact = LogImpact.High,
-            Message = string.Join(": ", cosmicCultName, Loc.GetString("admin-verb-make-cosmiccultist")),
-        };
-        args.Verbs.Add(cosmiccult);
-
-        var ntAgent = Loc.GetString("admin-verb-make-NTAgent");
-        Verb agent = new()
-        {
-            Text = ntAgent,
-            Category = VerbCategory.Antag,
-            Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Misc/job_icons.rsi"), "Nanotrasen"),
-            Act = () =>
-            {
-                _antag.ForceMakeAntag<NTAgentRuleComponent>(targetPlayer, "NTAgentRule");
-            },
-            Impact = LogImpact.High,
-            Message = string.Join(": ", ntAgent, Loc.GetString("admin-verb-text-make-NTAgent")),
-        };
-        args.Verbs.Add(agent);
-        // End DeltaV Additions
-
-        // Harmony start
-        var conspiratorName = Loc.GetString("admin-verb-text-make-conspirator");
-        Verb conspirator = new()
-        {
-            Text = conspiratorName,
-            Category = VerbCategory.Antag,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/_Harmony/Interface/Misc/job_icons.rsi"), "Conspirator"),
-            Act = () =>
-            {
-                _antag.ForceMakeAntag<ConspiratorRuleComponent>(targetPlayer, DefaultConspiratorRule);
-            },
-            Impact = LogImpact.High,
-            Message = string.Join(": ", conspiratorName, Loc.GetString("admin-verb-make-conspirator")),
-        };
-        args.Verbs.Add(conspirator);
-        // Harmony end
     }
 }

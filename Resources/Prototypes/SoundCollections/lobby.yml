@@ -1,44 +1,18 @@
 - type: soundCollection
   id: LobbyMusic
   files:
-    #- /Audio/Lobby/434387_Time_Lapse_of_Clouds.ogg
-    - /Audio/Lobby/a_different_reality_lagoona_remix.xm.ogg
-    - /Audio/Lobby/aggravated.it.ogg
-    - /Audio/Lobby/autumnal_equinox.xm.ogg
+    - /Audio/Lobby/thunderdome.ogg
+    - /Audio/Lobby/absconditus.ogg
+    - /Audio/Lobby/space_asshole.ogg
     - /Audio/Lobby/the_wizard.ogg
-    - /Audio/Lobby/comet_haley.ogg
-    #- /Audio/Lobby/drozerix_-_alone.xm.ogg
-    - /Audio/Lobby/drozerix_-_leisurely_voice.xm.ogg
     - /Audio/Lobby/endless_space.ogg
-    - /Audio/Lobby/marhaba.ogg
-    - /Audio/Lobby/melcom-cyberpunk.it.ogg
-    - /Audio/Lobby/midori_-_conundrum_final.it.ogg
+    - /Audio/Lobby/singuloose.ogg
+    - /Audio/Lobby/comet_haley.ogg
+    - /Audio/Lobby/title2.ogg
+    - /Audio/Lobby/title3.ogg
     - /Audio/Lobby/mod.flip-flap.ogg
-    - /Audio/Lobby/Patricia_Taxxon_-_Minute.ogg
-    - /Audio/Lobby/Patricia_Taxxon_-_Chipshop.ogg
-    - /Audio/Lobby/psirius_-_nights_of_orion.xm.ogg
-    - /Audio/Lobby/psirius_-_nymphs_of_the_forest.mptm.ogg
-    - /Audio/Lobby/superposition.ogg
-    - /Audio/Lobby/hackers.ogg
+    - /Audio/Lobby/Spac_Stac.ogg
+    - /Audio/Lobby/pwmur.ogg
+    - /Audio/Lobby/lasers_rip_apart_the_bulkhead.ogg
     - /Audio/Lobby/every_light_is_blinking_at_once.ogg
-    - /Audio/Lobby/DOS=HIGH,_UMB.ogg
-    - /Audio/Lobby/Black_Heat.ogg
-    - /Audio/Lobby/thestation.ogg
-    - /Audio/Lobby/Get_It_Done.ogg
-    - /Audio/Lobby/Undefined_Theory.ogg
-    # Begin DeltaV additions
-    - /Audio/_DV/Lobby/all_grown_up.ogg
-    - /Audio/_DV/Lobby/boss.ogg
-    - /Audio/_DV/Lobby/dinner_with_u.ogg
-    - /Audio/_DV/Lobby/man_and_moon.ogg
-    - /Audio/_DV/Lobby/Oliver_Buckland_-_espial.ogg
-    - /Audio/_DV/Lobby/Oliver_Buckland_-_flying.ogg
-    - /Audio/_DV/Lobby/Somewhere_in_Space.ogg
-    - /Audio/_DV/Lobby/Valley.ogg
-    - /Audio/_DV/Lobby/Gruntwork.ogg
-    - /Audio/_DV/Lobby/Jungle_Juice.ogg
-    - /Audio/_DV/Lobby/Adventures_in_a_cardboard_box.ogg
-    - /Audio/_DV/Lobby/When_You_Come_Home.ogg
-    - /Audio/_DV/Lobby/New_Save.ogg
-    - /Audio/_DV/Lobby/Time_on_my_hands.ogg
-    # End of DeltaV additions
+    - /Audio/Lobby/atomicamnesiammx.ogg

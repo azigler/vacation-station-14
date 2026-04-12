@@ -7,17 +7,14 @@
   - type: MagnetPickup
   - type: Sprite
     sprite: Objects/Specific/Mining/ore_bag.rsi
-    #state: icon # DeltaV: use a layer instead
-    layers: # DeltaV
-    - state: icon
-      map: [ "enum.ToggleableVisuals.Layer" ]
+    state: icon
   - type: Clothing
     sprite: Objects/Specific/Mining/ore_bag.rsi
     quickEquip: false
     slots:
     - belt
   - type: Item
-    size: Huge # DeltaV: Was Ginormous, lets it fit in conscription bag
+    size: Ginormous
   - type: Storage
     maxItemSize: Normal
     grid:
@@ -29,29 +26,6 @@
         - ArtifactFragment
         - Ore
   - type: Dumpable
-  # Begin DeltaV Additions: toggle magnet from White Dream
-  - type: ItemToggle
-    soundActivate: &soundActivate
-      collection: sparks
-      params:
-        variation: 0.25
-    soundDeactivate: *soundActivate
-  - type: ItemToggleExamine
-    on: magnet-pickup-component-magnet-on
-    off: magnet-pickup-component-magnet-off
-  - type: Appearance
-  - type: GenericVisualizer
-    visuals:
-      enum.ToggleableVisuals.Enabled:
-        enum.ToggleableVisuals.Layer:
-          True: { state: icon_on }
-          False: { state: icon }
-  - type: ReverseEngineering
-    difficulty: 2
-    recipes:
-    - OreBagOfHolding
-  # End DeltaV Additions
-  - type: NFOreBag # Frontier
 
 - type: entity
   parent: OreBag

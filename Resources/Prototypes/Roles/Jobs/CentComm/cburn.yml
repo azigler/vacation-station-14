@@ -4,24 +4,17 @@
   description: job-description-cburn
   playTimeTracker: JobCBURN
   setPreference: false
-  startingGear: CBURNGearDeltaV # DeltaV - Different startingGear
+  startingGear: CBURNGear
   icon: "JobIconCBURN"
   supervisors: job-supervisors-centcom
   canBeAntag: false
-  requirements: # DeltaV - Playtime requirements
-  - !type:DepartmentTimeRequirement
-    department: Security
-    time: 10h
-  - !type:DepartmentTimeRequirement
-    department: Medical
-    time: 5h
   accessGroups:
   - AllAccess
   access:
   - CentralCommand
   special:
   - !type:AddImplantSpecial
-    implants: [ CentCommImplant, DeathRattleImplantCentcomm ] # Delta-V - Changed Mindshield implant to Centcomm implant
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
 
 - type: startingGear
   id: CBURNGear

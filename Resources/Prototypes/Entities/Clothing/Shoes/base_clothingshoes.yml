@@ -55,10 +55,7 @@
         whitelist:
           tags:
           - Knife
-          - ConcealCarry # DeltaV - replace Sidearm tag
-  - type: Tag # Delta V - me when boots can hold objective items...
-    tags:
-    - HighRiskItem
+          - Sidearm
 
 - type: entity
   abstract: true

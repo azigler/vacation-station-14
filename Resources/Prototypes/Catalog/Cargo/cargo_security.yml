@@ -1,7 +1,7 @@
 - type: cargoProduct
   id: SecurityArmor
   icon:
-    sprite: _DV/Clothing/OuterClothing/Armor/platecarrier.rsi # DeltaV - resprite
+    sprite: Clothing/OuterClothing/Armor/bulletproof.rsi
     state: icon
   product: CrateSecurityArmor
   cost: 1250
@@ -11,7 +11,7 @@
 - type: cargoProduct
   id: SecurityHelmet
   icon:
-    sprite: _DV/Clothing/Head/Helmets/security.rsi # DeltaV - resprite
+    sprite: Clothing/Head/Helmets/security.rsi
     state: icon
   product: CrateSecurityHelmet
   cost: 550

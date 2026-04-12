@@ -21,9 +21,6 @@
   - type: Tool
     qualities:
     - Slicing
-  - type: CosmicTransmutable # DeltaV
-    transmutesTo: SwordCosmicCult
-    requiredGlyphType: CosmicGlyphBlades
 
 #Shortswords
 - type: entity
@@ -102,8 +99,10 @@
   - type: SentienceTarget
     flavorKind: station-event-random-sentience-flavor-inanimate
     weight: 0.0002 # 5,000 times less likely than 1 regular animal
-  #- type: PirateAccent # DeltaV - remove forced accents
+  - type: PirateAccent
     # not putting a BlockMovement component here cause that's funny.
+  - type: StealTarget
+    stealGroup: CaptainSword
 
 - type: entity
   name: katana
@@ -112,7 +111,7 @@
   description: Ancient craftwork made with not so ancient plasteel.
   components:
   - type: Sprite
-    sprite: _DV/Objects/Weapons/Melee/katana.rsi # DeltaV
+    sprite: Objects/Weapons/Melee/katana.rsi
   - type: MeleeWeapon
     damage:
       types:
@@ -120,7 +119,6 @@
     soundHit:
         path: /Audio/Weapons/bladeslice.ogg
   - type: Item
-    sprite: _DV/Objects/Weapons/Melee/katana.rsi # DeltaV
     storedSprite:
       state: storage
       sprite: Objects/Weapons/Melee/katana_storage_64x.rsi #Done in 64x64 because it looks way too puny in 32x32
@@ -132,9 +130,6 @@
     - Back
     - Belt
   - type: DisarmMalus
-  - type: Tag
-    tags:
-    - Katana
 
 - type: entity
   name: energy katana
@@ -152,7 +147,6 @@
       types:
         Slash: 30
   - type: Item
-    sprite: Objects/Weapons/Melee/energykatana.rsi # DeltaV - don't use the regular katana inhands
     storedSprite:
       state: storage
       sprite: Objects/Weapons/Melee/energykatana_storage_64x.rsi #Done in 64x64 because it looks way too puny in 32x32

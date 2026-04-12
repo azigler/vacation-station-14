@@ -11,7 +11,7 @@
   - type: Climbable
     vaultable: false
   - type: Sprite
-    sprite: _DV/Structures/Piping/disposal.rsi # DeltaV - Use old sprites
+    sprite: Structures/Piping/disposal.rsi
     layers:
     - state: condisposal
       map: [ "enum.DisposalUnitVisualLayers.Unanchored" ]
@@ -77,20 +77,6 @@
   - type: StaticPrice
     price: 70
   - type: PowerSwitch
-  - type: AutomationSlots # Goobstation
-    slots:
-    - !type:AutomatedContainer
-      input: AutomationSlotInput
-      output: AutomationSlotInput
-      containerId: disposals
-      maxItems: 30 # disposals doesn't have a limit this is just so you can't use it as an ME system
-    - !type:AutomatedPorts
-      sinks:
-      - Toggle
-      - DisposalFlush
-      - DisposalEject
-      sources:
-      - DisposalReady
 
 - type: entity
   id: DisposalUnit
@@ -98,7 +84,7 @@
   name: disposal unit
   components:
   - type: Sprite
-    sprite: _DV/Structures/Piping/disposal.rsi # DeltaV - Use old sprites
+    sprite: Structures/Piping/disposal.rsi
     snapCardinals: true
   - type: Construction
     graph: DisposalMachine
@@ -123,7 +109,7 @@
   description: A pneumatic mail delivery unit.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Piping/disposal.rsi # DeltaV - Use old sprites
+    sprite: Structures/Piping/disposal.rsi
     snapCardinals: true
     layers:
       - state: conmailing

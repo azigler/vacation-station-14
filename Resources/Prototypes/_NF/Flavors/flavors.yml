@@ -1,9 +1,0 @@
-﻿- type: flavor
-  id: pear
-  flavorType: Complex
-  description: flavor-complex-pear
-
-- type: flavor
-  id: basic
-  flavorType: Base
-  description: flavor-base-basic

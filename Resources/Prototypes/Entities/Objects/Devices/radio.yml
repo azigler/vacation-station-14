@@ -38,7 +38,7 @@
     channels:
     - Security
   - type: Sprite
-    sprite: _DV/Objects/Devices/securityhandy.rsi # DeltaV - resprite security radio
+    sprite: Objects/Devices/securityhandy.rsi
   - type: Item
-    sprite: _DV/Objects/Devices/securityhandy.rsi # DeltaV - resprite security radio
+    sprite: Objects/Devices/securityhandy.rsi
     heldPrefix: walkietalkie

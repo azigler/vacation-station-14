@@ -15,7 +15,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 100 # DeltaV - More reagents for chefs
+        maxVol: 50
   - type: SolutionTransfer
     # This is potentially badly-handled due to 'drink opening',
     #  but it lets the flour be tampered with, refilled, etc.
@@ -98,10 +98,10 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 100 # DeltaV - More reagents for chefs
+        maxVol: 50
         reagents:
         - ReagentId: Flour
-          Quantity: 100 # DeltaV - More reagents for chefs
+          Quantity: 50
 
 - type: entity
   parent: [ReagentPacketBase, ItemHeftyBase]
@@ -141,7 +141,7 @@
       food:
         reagents:
         - ReagentId: Cornmeal
-          Quantity: 100 # DeltaV - More reagents for chefs
+          Quantity: 50
 
 - type: entity
   parent: ReagentPacketBase
@@ -181,7 +181,7 @@
       food:
         reagents:
         - ReagentId: Rice
-          Quantity: 100 # DeltaV - More reagents for chefs
+          Quantity: 50
 
 - type: entity
   parent: ReagentPacketBase
@@ -221,7 +221,7 @@
       food:
         reagents:
         - ReagentId: Sugar
-          Quantity: 100 # DeltaV - More reagents for chefs
+          Quantity: 50
 
 - type: entity
   parent: ReagentPacketBase
@@ -725,8 +725,6 @@
   - type: SliceableFood
     count: 3
     slice: FoodButterSlice
-  - type: Extractable # DeltaV - Makes butter extractable
-    grindableSolutionName: food
 
 - type: entity
   parent: FoodBakingBase
@@ -748,8 +746,6 @@
   - type: Tag
     tags:
     - Slice
-  - type: Extractable # DeltaV - Makes butter extractable
-    grindableSolutionName: food
 
 - type: entity
   name: stick of cannabis butter
@@ -778,13 +774,15 @@
   id: FoodCheese
   description: A big wheel of delicious Cheddar.
   components:
+  - type: Item
+    size: Normal
   - type: FlavorProfile
     flavors:
       - cheesy
   - type: Sprite
     state: cheesewheel
   - type: SliceableFood
-    count: 3
+    count: 4
     slice: FoodCheeseSlice
 
 - type: entity
@@ -804,7 +802,7 @@
         maxVol: 6
         reagents:
         - ReagentId: Nutriment
-          Quantity: 5
+          Quantity: 3.75
   - type: Tag
     tags:
     - Slice

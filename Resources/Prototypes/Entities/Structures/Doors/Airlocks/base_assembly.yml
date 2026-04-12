@@ -7,7 +7,7 @@
   - type: Clickable
   - type: InteractionOutline
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/basic.rsi # Delta V - Resprite Doors
+    sprite: Structures/Doors/Airlocks/Standard/basic.rsi
     state: "assembly"
   - type: Physics
   - type: Fixtures

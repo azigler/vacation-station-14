@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Server.Administration.Managers;
-using Content.Server.Administration.Notes; // DeltaV - Admin QOL
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
 using Content.Server.Hands.Systems;
@@ -13,7 +12,6 @@ using Content.Shared.Administration.Events;
 using Content.Shared.CCVar;
 using Content.Shared.Forensics.Components;
 using Content.Shared.GameTicking;
-using Content.Shared.Ghost; // DeltaV - Admin QOL
 using Content.Shared.Hands.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Inventory;
@@ -57,7 +55,6 @@ public sealed class AdminSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
-    [Dependency] private readonly AdminNotesSystem _notes = default!; // DeltaV
 
     private readonly Dictionary<NetUserId, PlayerInfo> _playerList = new();
 
@@ -223,14 +220,12 @@ public sealed class AdminSystem : EntitySystem
         var entityName = string.Empty;
         var identityName = string.Empty;
         var sortWeight = 0;
-        var ghost = false; // DeltaV
 
         // Visible (identity) name can be different from real name
         if (session?.AttachedEntity != null)
         {
             entityName = Comp<MetaDataComponent>(session.AttachedEntity.Value).EntityName;
             identityName = Identity.Name(session.AttachedEntity.Value, EntityManager);
-            ghost = HasComp<GhostComponent>(session.AttachedEntity.Value); // DeltaV
         }
 
         var antag = false;
@@ -257,7 +252,6 @@ public sealed class AdminSystem : EntitySystem
 
         // Connection status and playtime
         var connected = session != null && session.Status is SessionStatus.Connected or SessionStatus.InGame;
-        var watchlisted = connected && _notes.ConnectedPlayerWatchlists.ContainsKey(session!.UserId); // DeltaV
 
         // Start with the last available playtime data
         var cachedInfo = GetCachedPlayerInfo(data.UserId);
@@ -283,10 +277,7 @@ public sealed class AdminSystem : EntitySystem
             data.UserId,
             connected,
             _roundActivePlayers.Contains(data.UserId),
-            overallPlaytime,
-            ghost, // DeltaV - Add ghost
-            watchlisted // DeltaV - Add watchlisted
-        );
+            overallPlaytime);
     }
 
     private void OnPanicBunkerChanged(bool enabled)
@@ -341,7 +332,7 @@ public sealed class AdminSystem : EntitySystem
         var hasAdmins = false;
         foreach (var admin in _adminManager.AllAdmins)
         {
-            if (_adminManager.HasAdminFlag(admin, AdminFlags.Ban, includeDeAdmin: PanicBunker.CountDeadminnedAdmins)) // DeltaV: Check Ban instead of Admin
+            if (_adminManager.HasAdminFlag(admin, AdminFlags.Admin, includeDeAdmin: PanicBunker.CountDeadminnedAdmins))
             {
                 hasAdmins = true;
                 break;
@@ -409,7 +400,7 @@ public sealed class AdminSystem : EntitySystem
                 _popup.PopupCoordinates(Loc.GetString("admin-erase-popup", ("user", name)), coordinates, PopupType.LargeCaution);
                 var filter = Filter.Pvs(coordinates, 1, EntityManager, _playerManager);
                 var audioParams = new AudioParams().WithVolume(3);
-                _audio.PlayStatic("/Audio/_DV/Misc/reducedtoatmos.ogg", filter, coordinates, true, audioParams); // DeltaV
+                _audio.PlayStatic("/Audio/Effects/pop_high.ogg", filter, coordinates, true, audioParams);
             }
 
             foreach (var item in _inventory.GetHandOrInventoryEntities(entity))

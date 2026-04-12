@@ -113,17 +113,6 @@
           nodeGroupID: Pipe
           rotationsEnabled: false
           volume: 1
-    - type: AutomationSlots # Goobstation
-      slots:
-      - !type:AutomatedItemSlot
-        input: AutomationSlotGasTank
-        output: AutomationSlotGasTank
-        slotId: tank_slot
-      - !type:AutomatedPorts
-        sinks:
-        - Open
-        - Close
-        - Toggle
     - type: GasPortable
     - type: GasCanister
       gasTankSlot:
@@ -135,7 +124,7 @@
     - type: StaticPrice
       price: 200
     - type: AccessReader
-      access: [["Atmospherics"], ["Engineering"]] # DeltaV - removed research
+      access: [["Atmospherics"], ["Engineering"], ["Research"]]
     - type: Lock
       locked: false
     - type: GuideHelp

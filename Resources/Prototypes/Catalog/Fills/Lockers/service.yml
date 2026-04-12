@@ -12,7 +12,7 @@
   id: FillLockerBooze
   table: !type:AllSelector
     children:
-    - id: ClothingOuterArmorDuraVest # DeltaV - ClothingOuterArmorBasicSlim replaced in favour of stabproof vest
+    - id: ClothingOuterArmorBasicSlim
     - id: WeaponShotgunDoubleBarreledRubber
     - id: DrinkShaker
     - id: ClothingEyesHudBeer
@@ -25,8 +25,10 @@
       children:
       - id: BoxBeanbag
       - id: RagItem
-    - id: LunchboxServiceFilledRandom # DeltaV Lunchboxes!
-      prob: 0.3
+    - id: PlushieLizardJobBartender
+      prob: 0.02
+    - id: PlushieLizardJobServiceworker
+      prob: 0.02
 
 #- type: entity
 #  id: LockerFormalFilled
@@ -36,7 +38,7 @@
 - type: entity
   id: ClosetChefFilled
   suffix: Filled
-  parent: LockerKitchen # DeltaV - Use DV secure lockers/sprites
+  parent: ClosetChef
   components:
   - type: EntityTableContainerFill
     containers:
@@ -54,10 +56,9 @@
     - id: FoodCondimentBottleEnzyme
     - id: DrinkSoyMilkCarton
     - !type:AllSelector
-      rolls: 3
+      rolls: 2
       children:
       - id: DrinkMilkCarton
-      - id: DrinkSoyMilkCarton
       # really, milk should go in the fridge. Unfortunately saltern only has freezers.
       # yes, I'm using this as an excuse to not have to do extra work.
       - id: ReagentContainerFlour
@@ -67,13 +68,15 @@
       children:
       - id: FoodCondimentPacketSalt
       - id: FoodCondimentPacketPepper
-    - id: LunchboxServiceFilledRandom # DeltaV Lunchboxes!
-      prob: 0.3
+    - id: PlushieLizardJobChef
+      prob: 0.02
+    - id: PlushieLizardJobServiceworker
+      prob: 0.02
 
 - type: entity
   id: ClosetJanitorFilled
   suffix: Filled
-  parent: LockerJanitor # DeltaV - Use DV secure lockers/sprites
+  parent: ClosetJanitor
   components:
   - type: EntityTableContainerFill
     containers:
@@ -99,9 +102,8 @@
       - id: FlashlightLantern
       - id: Plunger
       - id: WireBrush
-        amount: 2
-      - id: LunchboxServiceFilledRandom # DeltaV Lunchboxes!
-        prob: 0.3
+    - id: PlushieLizardJobJanitor
+      prob: 0.02
 
 - type: entity
   id: ClosetLegalFilled
@@ -120,6 +122,8 @@
     - id: BriefcaseBrownFilled
       prob: 0.80
     - id: ClothingOuterRobesJudge
+    - id: PlushieLizardJobLawyer
+      prob: 0.02
 
 - type: entity
   id: LockerBotanistFilled
@@ -148,8 +152,10 @@
     - id: ClothingUniformOveralls
     - id: ClothingHeadHatTrucker
       prob: 0.1
-    - id: LunchboxServiceFilledRandom # DeltaV Lunchboxes!
-      prob: 0.3
+    - id: PlushieLizardJobBotanist
+      prob: 0.02
+    - id: PlushieLizardJobServiceworker
+      prob: 0.02
 
 - type: entity
   id: LockerBotanistLoot
@@ -178,8 +184,8 @@
 - type: entity
   id: ClosetJanitorBombFilled
   parent: ClosetJanitorBomb
-  suffix: Ask Before Mapping, Filled # DeltaV - Some maps may have these
-  #categories: [ DoNotMap ] # DeltaV - Some maps may have these
+  suffix: DO NOT MAP, Filled
+  categories: [ DoNotMap ]
   components:
   - type: EntityTableContainerFill
     containers:

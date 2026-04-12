@@ -25,6 +25,7 @@
     - gc
     - gc_mode
     - cvar
+    - fuckrules
     - midipanic
     - replay_recording_start
     - replay_recording_stop
@@ -72,14 +73,9 @@
     - localdelete
     - fullstatereset
     - dumpentities
-    - fuckrules # DeltaV: move fuckrules to DEBUG
     - showwallmounts
     - showaccessreaders
     - quickinspect
-
-- Flags: ADMIN # DeltaV
-  Commands:
-    - adminoverlay
 
 - Flags: MAPPING
   Commands:

@@ -17,15 +17,14 @@
     allowed:
     - Electrocution
   - type: Repairable
-    doAfterDelay: 8
-    fuelCost: 15
+    damageValue: -15 # 8 seconds to repair from dead
+    doAfterDelay: 1
+    fuelCost: 0.5
   - type: Pullable
   - type: Tag
     tags:
     - DoorBumpOpener
     - SiliconEmotes
-    - SiliconOrIPCEmotes # DeltaV
-    - Honker # DeltaV - Can honk
     - Unimplantable
   - type: MobState
     allowedStates:
@@ -105,16 +104,11 @@
     tags:
     - DoorBumpOpener
     - SiliconEmotes
-    - SiliconOrIPCEmotes # DeltaV
-    - Honker # DeltaV - Can honk
     - Bot
     - Unimplantable
-  - type: Body
-    prototype: Bot
   - type: Speech
     speechVerb: Robotic
     speechSounds: Pai #couldn't decide if this should be borg or pai sounds so I flipped a coin.
-  - type: AnimatedEmotes # DeltaV - Allow bots to emote
 
 - type: entity
   parent: MobSiliconBase
@@ -260,7 +254,6 @@
   - type: Vocal
     sounds:
       Unsexed: Cluwne
-    screamAction: null # DeltaV - i have no mouth
   - type: ExplodeOnTrigger
   - type: Explosive
     explosionType: Default
@@ -275,26 +268,12 @@
   name: cleanbot
   description: The creep of automation now threatening space janitors.
   components:
-  - type: Fixtures # DeltaV - cleanbots can go beneath tables
-    fixtures:
-      fix1:
-        shape:
-          !type:PhysShapeCircle
-          radius: 0.35
-        density: 50
-        mask:
-        - SmallMobMask
-        layer:
-        - SmallMobLayer
   - type: Sprite
-    drawdepth: SmallMobs # DeltaV - cleanbots can go beneath tables
     sprite: Mobs/Silicon/Bots/cleanbot.rsi
     state: cleanbot
   - type: Construction
     graph: CleanBot
     node: bot
-  - type: SentienceTarget # DeltaV: upstream removed it, cleanbot works when player controlled
-    flavorKind: station-event-random-sentience-flavor-mechanical
   - type: Absorbent
     pickupAmount: 10
   - type: UseDelay
@@ -342,8 +321,6 @@
       Alive:
         reagent: Tricordrazine
         quantity: 30
-        minDamage: 0
-        maxDamage: 50
       Critical:
         reagent: Inaprovaline
         quantity: 15
@@ -358,7 +335,7 @@
         reagent: SpaceDrugs
         quantity: 25
   - type: Sprite
-    sprite: _DV/Mobs/Silicon/Bots/medibot.rsi # DeltaV - Changed for a sprite with a smiley face.
+    sprite: Mobs/Silicon/Bots/medibot.rsi
     state: medibot
   - type: HTN
     rootTask:
@@ -436,11 +413,6 @@
     raffle:
       settings: default
   - type: GhostTakeoverAvailable
-  - type: InteractionPopup # DeltaV - Make supplybots pettable
-    interactSuccessString: petting-success-supplybot
-    interactFailureString: petting-failure-supplybot
-    interactSuccessSound:
-      path: /Audio/Ambience/Objects/periodic_beep.ogg
   - type: Construction
     graph: SupplyBot
     node: bot
@@ -449,7 +421,6 @@
     - Cargo
     - Maintenance
     - Salvage
-    - Mail # DeltaV - Add mail access
   - type: Dumpable
   - type: Storage
     maxItemSize: Huge
@@ -478,8 +449,6 @@
     - DoorBumpOpener
     - FootstepSound
     - SiliconEmotes
-    - SiliconOrIPCEmotes # DeltaV
-    - Honker # DeltaV - Can honk
     - Bot
     - Unimplantable
   - type: ActiveRadio
@@ -516,8 +485,6 @@
   - type: Hands # This probably REALLY needs hand whitelisting, but we NEED hands for hugs, so...
   - type: ComplexInteraction # Hugging is a complex interaction, apparently.
   - type: HugBot
-  - type: Body
-    prototype: HugBot
   - type: HTN
     rootTask:
       task: HugBotCompound

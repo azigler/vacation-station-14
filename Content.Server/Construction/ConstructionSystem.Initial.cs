@@ -2,7 +2,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.Construction.Components;
-using Content.Shared._Goobstation.Construction;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Construction;
 using Content.Shared.Construction.Prototypes;
@@ -14,7 +13,6 @@ using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
 using Content.Shared.Inventory;
-using Content.Shared.Mind.Components; // Goobstation
 using Content.Shared.Storage;
 using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
@@ -63,11 +61,6 @@ namespace Content.Server.Construction
 
                 yield return item;
             }
-            // <Goobstation> - lets slimepeople and constructors use their storageAdd commentMore actions
-            if (TryComp<StorageComponent>(user, out var userStorage))
-                foreach (var userItem in userStorage.Container.ContainedEntities!)
-                    yield return userItem;
-            // </Goobstation>
 
             if (_inventorySystem.TryGetContainerSlotEnumerator(user, out var containerSlotEnumerator))
             {
@@ -301,14 +294,6 @@ namespace Content.Server.Construction
                 }
             }
 
-            // Begin Impstation Changes
-            // Inform consumed items that they have been consumed
-            foreach (var entity in container.ContainedEntities.ToArray())
-            {
-                RaiseLocalEvent(entity, new ConstructionConsumedObjectEvent(entity, newEntity));
-            }
-            // End Impstation Changes
-
             // We now get rid of all them.
             ShutdownContainers();
 
@@ -366,8 +351,7 @@ namespace Content.Server.Construction
             if (!_actionBlocker.CanInteract(user, null))
                 return false;
 
-            if (HasComp<MindContainerComponent>(user)
-                && !HasComp<HandsComponent>(user)) // goobstation - don't require hands for constructor
+            if (!HasComp<HandsComponent>(user))
                 return false;
 
             foreach (var condition in constructionPrototype.Conditions)
@@ -410,11 +394,6 @@ namespace Content.Server.Construction
                     Transform(user).Coordinates) is not { Valid: true } item)
                 return false;
 
-            // <Goobstation>
-            var constructedEv = new ConstructedEvent(item);
-            RaiseLocalEvent(user, ref constructedEv);
-            // </Goobstation>
-
             // Just in case this is a stack, attempt to merge it. If it isn't a stack, this will just normally pick up
             // or drop the item as normal.
             _stackSystem.TryMergeToHands(item, user);
@@ -424,95 +403,78 @@ namespace Content.Server.Construction
         // LEGACY CODE. See warning at the top of the file!
         private async void HandleStartStructureConstruction(TryStartStructureConstructionMessage ev, EntitySessionEventArgs args)
         {
-            // <Goobstation> - use public API
-            if (args.SenderSession.AttachedEntity is {} user)
-                await TryStartStructureConstruction(user,
-                    ev.PrototypeName,
-                    GetCoordinates(ev.Location),
-                    ev.Angle,
-                    ev.Ack,
-                    args.SenderSession);
-        }
-
-/// <summary>
-        /// Goobstation - Taken out of HandleStartStructureConstruction
-        /// Changed to return false and only send the ack event to the user.
-        /// </summary>
-        public async Task<bool> TryStartStructureConstruction(EntityUid user,
-            string prototypeName,
-            EntityCoordinates location,
-            Angle angle,
-            int ack = 0,
-            ICommonSession? senderSession = null)
-        {
-            // </Goobstation>
-            if (!PrototypeManager.TryIndex(prototypeName, out ConstructionPrototype? constructionPrototype))
+            if (!PrototypeManager.TryIndex(ev.PrototypeName, out ConstructionPrototype? constructionPrototype))
             {
-                Log.Error($"Tried to start construction of invalid recipe '{prototypeName}'!");
-                RaiseNetworkEvent(new AckStructureConstructionMessage(ack), user);
-                return false;
+                Log.Error($"Tried to start construction of invalid recipe '{ev.PrototypeName}'!");
+                RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack));
+                return;
             }
 
             if (!PrototypeManager.TryIndex(constructionPrototype.Graph, out ConstructionGraphPrototype? constructionGraph))
             {
-                Log.Error($"Invalid construction graph '{constructionPrototype.Graph}' in recipe '{prototypeName}'!");
-                RaiseNetworkEvent(new AckStructureConstructionMessage(ack), user);
-                return false;
+                Log.Error($"Invalid construction graph '{constructionPrototype.Graph}' in recipe '{ev.PrototypeName}'!");
+                RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack));
+                return;
+            }
+
+            if (args.SenderSession.AttachedEntity is not {Valid: true} user)
+            {
+                Log.Error($"Client sent {nameof(TryStartStructureConstructionMessage)} with no attached entity!");
+                return;
             }
 
             if (_whitelistSystem.IsWhitelistFail(constructionPrototype.EntityWhitelist, user))
             {
                 _popup.PopupEntity(Loc.GetString("construction-system-cannot-start"), user, user);
-                return false;
+                return;
             }
 
             if (_container.IsEntityInContainer(user))
             {
                 _popup.PopupEntity(Loc.GetString("construction-system-inside-container"), user, user);
-                return false;
+                return;
             }
 
             var startNode = constructionGraph.Nodes[constructionPrototype.StartNode];
             var targetNode = constructionGraph.Nodes[constructionPrototype.TargetNode];
             var pathFind = constructionGraph.Path(startNode.Name, targetNode.Name);
 
-            if (senderSession is {} session) // Goobstation - ignore check for constructor
+
+            if (_beingBuilt.TryGetValue(args.SenderSession, out var set))
             {
-                if (_beingBuilt.TryGetValue(session, out var set))
+                if (!set.Add(ev.Ack))
                 {
-                    if (!set.Add(ack))
-                    {
-                        _popup.PopupEntity(Loc.GetString("construction-system-already-building"), user, user);
-                        return false;
-                    }
-                }
-                else
-                {
-                    var newSet = new HashSet<int> {ack};
-                    _beingBuilt[session] = newSet;
+                    _popup.PopupEntity(Loc.GetString("construction-system-already-building"), user, user);
+                    return;
                 }
             }
+            else
+            {
+                var newSet = new HashSet<int> {ev.Ack};
+                _beingBuilt[args.SenderSession] = newSet;
+            }
+
+            var location = GetCoordinates(ev.Location);
 
             foreach (var condition in constructionPrototype.Conditions)
             {
-                if (!condition.Condition(user, location, angle.GetCardinalDir()))
+                if (!condition.Condition(user, location, ev.Angle.GetCardinalDir()))
                 {
                     Cleanup();
-                    return false;
+                    return;
                 }
             }
 
             void Cleanup()
             {
-                if (senderSession is {} session) // Goobstation - not added for constructor
-                    _beingBuilt[session].Remove(ack);
+                _beingBuilt[args.SenderSession].Remove(ev.Ack);
             }
 
             if (!_actionBlocker.CanInteract(user, null)
                 || !TryComp(user, out HandsComponent? hands) || _handsSystem.GetActiveItem((user, hands)) == null)
             {
                 Cleanup();
-                return false;
+                return;
             }
 
             var mapPos = _transformSystem.ToMapCoordinates(location);
@@ -521,24 +483,25 @@ namespace Content.Server.Construction
             if (!_interactionSystem.InRangeUnobstructed(user, mapPos, predicate: predicate))
             {
                 Cleanup();
-                return false;
+                return;
             }
 
             if (pathFind == null)
-                throw new InvalidDataException($"Can't find path from starting node to target node in construction! Recipe: {prototypeName}");
+                throw new InvalidDataException($"Can't find path from starting node to target node in construction! Recipe: {ev.PrototypeName}");
 
             var edge = startNode.GetEdge(pathFind[0].Name);
 
             if(edge == null)
-                throw new InvalidDataException($"Can't find edge from starting node to the next node in pathfinding! Recipe: {prototypeName}");
+                throw new InvalidDataException($"Can't find edge from starting node to the next node in pathfinding! Recipe: {ev.PrototypeName}");
 
             var valid = false;
 
             if (_handsSystem.GetActiveItem((user, hands)) is not {Valid: true} holding)
             {
                 Cleanup();
-                return false;
+                return;
             }
+
             // No support for conditions here!
 
             foreach (var step in edge.Steps)
@@ -560,30 +523,24 @@ namespace Content.Server.Construction
             if (!valid)
             {
                 Cleanup();
-                return false;
+                return;
             }
 
             if (await Construct(user,
-                    (ack + constructionPrototype.GetHashCode()).ToString(),
+                    (ev.Ack + constructionPrototype.GetHashCode()).ToString(),
                     constructionGraph,
                     edge,
                     targetNode,
-                    location,
-                    constructionPrototype.CanRotate ? angle : Angle.Zero) is not {Valid: true} structure)
+                    GetCoordinates(ev.Location),
+                    constructionPrototype.CanRotate ? ev.Angle : Angle.Zero) is not {Valid: true} structure)
             {
                 Cleanup();
-                return false;
+                return;
             }
 
-            // <Goobstation>
-            var constructedEv = new ConstructedEvent(structure);
-            RaiseLocalEvent(user, ref constructedEv);
-            // </Goobstation>
-
-            RaiseNetworkEvent(new AckStructureConstructionMessage(ack, GetNetEntity(structure)), user);
-            _adminLogger.Add(LogType.Construction, LogImpact.Low, $"{ToPrettyString(user):player} has turned a {prototypeName} construction ghost into {ToPrettyString(structure)} at {Transform(structure).Coordinates}");
+            RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack, GetNetEntity(structure)));
+            _adminLogger.Add(LogType.Construction, LogImpact.Low, $"{ToPrettyString(user):player} has turned a {ev.PrototypeName} construction ghost into {ToPrettyString(structure)} at {Transform(structure).Coordinates}");
             Cleanup();
-            return true;
         }
     }
 }

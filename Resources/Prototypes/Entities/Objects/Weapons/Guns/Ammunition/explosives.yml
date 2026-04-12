@@ -139,16 +139,6 @@
   - type: SpentAmmoVisuals
     state: frag
     suffix: false
-  # Begin DeltaV Additions
-  - type: Tag
-    tags:
-    - CleaningGrenade
-    - Recyclable
-    - Grenade
-  - type: PhysicalComposition
-    materialComposition:
-      Steel: 500
-  # End DeltaV Additions
 
 - type: entity
   parent: BaseGrenade

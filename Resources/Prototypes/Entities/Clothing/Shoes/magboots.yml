@@ -38,7 +38,6 @@
   - type: Tag
     tags:
     - WhitelistChameleon
-    - Magboots # DeltaV
 
 - type: entity
   parent: [ClothingShoesBootsMagBase]
@@ -136,6 +135,5 @@
   components:
   - type: Action
     itemIconStyle: BigItem
-    useDelay: 3 # DeltaV - Add delay to avoid spamming magboots to avoid lube puddles.
   - type: InstantAction
     event: !type:ToggleActionEvent

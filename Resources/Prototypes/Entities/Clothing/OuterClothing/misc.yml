@@ -82,10 +82,6 @@
     sprite: Clothing/OuterClothing/Misc/black_hoodie.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/black_hoodie.rsi
-  - type: Tag # DeltaV - It's a hoodie
-    tags:
-    - WhitelistChameleon
-    - Hoodie
 
 - type: entity
   parent: ClothingOuterBase
@@ -97,10 +93,6 @@
     sprite: Clothing/OuterClothing/Misc/grey_hoodie.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/grey_hoodie.rsi
-  - type: Tag # DeltaV - It's a hoodie
-    tags:
-    - WhitelistChameleon
-    - Hoodie
 
 - type: entity
   parent: ClothingOuterBase
@@ -130,10 +122,6 @@
     sprite: Clothing/OuterClothing/Misc/chaplain_hoodie.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodChaplainHood
-  - type: Tag # DeltaV - It's a hoodie
-    tags:
-    - WhitelistChameleon
-    - Hoodie
 
 - type: entity
   parent: ClothingOuterBase
@@ -145,8 +133,8 @@
     sprite: Clothing/OuterClothing/Misc/classicponcho.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/classicponcho.rsi
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: SpanishAccent
+  - type: AddAccentClothing
+    accent: SpanishAccent
 
 - type: entity
   parent: ClothingOuterBase
@@ -180,8 +168,8 @@
     sprite: Clothing/OuterClothing/Misc/poncho.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/poncho.rsi
-#  - type: AddAccentClothing # DeltaV - remove clothing-forced accents
-#    accent: SpanishAccent
+  - type: AddAccentClothing
+    accent: SpanishAccent
 
 - type: entity
   parent: ClothingOuterBase
@@ -196,7 +184,7 @@
 
 - type: entity
   abstract: true
-  parent: [ ClothingOuterEVASuitBase, AllowSuitStorageClothingGasTanks, BaseMagicalContraband ] # DeltaV - Make real wizard clothes space proof
+  parent: [ ClothingOuterBase, AllowSuitStorageClothingGasTanks, BaseMagicalContraband ]
   id: ClothingOuterWizardBase
   components:
   - type: WizardClothes
@@ -214,7 +202,6 @@
     sprite: Clothing/OuterClothing/Misc/violetwizard.rsi
   - type: Tag
     tags:
-    - CorgiWearable
     - WhitelistChameleon
 
 - type: entity
@@ -244,7 +231,6 @@
     sprite: Clothing/OuterClothing/Misc/redwizard.rsi
   - type: Tag
     tags:
-    - CorgiWearable
     - WhitelistChameleon
 
 - type: entity
@@ -302,13 +288,9 @@
   description: Made from the wool of slaughtered baby lambs.  The cruelty makes it softer.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/OuterClothing/Misc/hospitalgown.rsi # DeltaV - Resprite
+    sprite: Clothing/OuterClothing/Misc/hospitalgown.rsi
   - type: Clothing
-    sprite: _DV/Clothing/OuterClothing/Misc/hospitalgown.rsi # DeltaV - Resprite
-  - type: Tag # DeltaV: tank harnesses can be used for surgery
-    tags:
-    - PermissibleForSurgery
-    - WhitelistChameleon
+    sprite: Clothing/OuterClothing/Misc/hospitalgown.rsi
 
 - type: entity
   parent: ClothingOuterBase

@@ -8,7 +8,6 @@ using Content.Shared.Storage.EntitySystems;
 using Content.Shared.Verbs;
 using JetBrains.Annotations;
 using Robust.Shared.GameStates;
-using Robust.Shared.Map; // Goobstation
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -106,15 +105,6 @@ public abstract partial class SharedStackSystem : EntitySystem
 
         var localRotation = Transform(args.Used).LocalRotation;
         _storage.PlayPickupAnimation(args.Used, popupPos, userCoords, localRotation, args.User);
-    }
-
-    /// <summary>
-    /// Goobstation - virtual method to allow calling from shared.
-    /// Does nothing on the client.
-    /// </summary>
-    public virtual EntityUid? Split(Entity<StackComponent?> ent, int amount, EntityCoordinates spawnPosition)
-    {
-        return null;
     }
 
     private void OnStackStarted(Entity<StackComponent> ent, ref ComponentStartup args)

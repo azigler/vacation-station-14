@@ -670,7 +670,7 @@
     quickEquip: false
   - type: Item
     shape:
-    - 0,0,0,2
+    - 0,0,0,3
     storedRotation: -45
     inhandVisuals:
       left:
@@ -854,7 +854,7 @@
   name: jelly toast
   parent: FoodBreadSliceBase
   id: FoodBreadJellySlice
-  description: As if epistemics are gonna give up their slimes for toast! # DeltaV - Epistemics Department replacing Science
+  description: As if science are gonna give up their slimes for toast!
   components:
   - type: FlavorProfile
     flavors:
@@ -999,8 +999,8 @@
       path: /Audio/Animals/dog_bark1.ogg
     hidden: true
     damage:
-      groups:
-        Brute: 1
+      types:
+        Blunt: 1
 
 - type: entity
   parent: FoodBreadBase
@@ -1012,7 +1012,7 @@
     sprite: Objects/Consumable/Food/Baked/bread.rsi
     state: batard
   - type: Item
-    size: Tiny
+    size: Small
     storedOffset: -1,0
     heldPrefix: batard
   - type: Tag
@@ -1045,7 +1045,7 @@
     tags:
     - ClothMade
   - type: Item
-    size: Tiny
+    size: Small
     storedOffset: -1,0
     heldPrefix: batard-cotton
   - type: SolutionContainerManager

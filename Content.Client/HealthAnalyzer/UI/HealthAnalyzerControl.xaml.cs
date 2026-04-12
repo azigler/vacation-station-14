@@ -3,6 +3,7 @@ using System.Numerics;
 using Content.Shared.Atmos;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
+using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Prototypes;
@@ -20,12 +21,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 namespace Content.Client.HealthAnalyzer.UI;
 
-using Content.Client._DV.Traits.Assorted; // DeltaV
-using Content.Shared._DV.Traits.Assorted; // DeltaV
-using Content.Shared._DV.Medical; // DeltaV - Uncloneable
-using Content.Shared._DV.MedicalRecords; // DeltaV - Medical Records
-using Content.Shared._Shitmed.Targeting; // Shitmed
-
 // Health analyzer UI is split from its window because it's used by both the
 // health analyzer item and the cryo pod UI.
 
@@ -36,28 +31,7 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
     private readonly SpriteSystem _spriteSystem;
     private readonly IPrototypeManager _prototypes;
     private readonly IResourceCache _cache;
-
-    private readonly UnborgableSystem _unborgable; // DeltaV
-    private readonly RedshirtSystem _redshirt; // DeltaV
-    private readonly UncloneableSystem _uncloneable; // DeltaV
-
-    // Shitmed Change Start
-    public event Action<TargetBodyPart?, EntityUid>? OnBodyPartSelected;
-    private EntityUid _spriteViewEntity;
-
-    private readonly EntProtoId _bodyView = "AlertSpriteView";
-
-    private readonly Dictionary<TargetBodyPart, TextureButton> _bodyPartControls;
-    private EntityUid? _target;
-    // Shitmed Change End
-
-    // Begin DeltaV - Medical Records
-    private readonly ButtonGroup _triageStatusGroup = new();
-    private readonly Dictionary<TriageStatus, Button> _triageControls = new();
-
-    public event Action<TriageStatus>? OnTriageStatusChanged;
-    public event Action? OnClaimPatient;
-    // End DeltaV - Medical Records
+    private readonly DamageableSystem _damageable;
 
     public HealthAnalyzerControl()
     {
@@ -68,80 +42,19 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         _spriteSystem = _entityManager.System<SpriteSystem>();
         _prototypes = dependencies.Resolve<IPrototypeManager>();
         _cache = dependencies.Resolve<IResourceCache>();
-
-        _unborgable = _entityManager.System<UnborgableSystem>(); // DeltaV
-        _redshirt = _entityManager.System<RedshirtSystem>(); // DeltaV
-        _uncloneable = _entityManager.System<UncloneableSystem>(); // DeltaV
-        // Shitmed Change Start
-        _bodyPartControls = new Dictionary<TargetBodyPart, TextureButton>
-        {
-            { TargetBodyPart.Head, HeadButton },
-            { TargetBodyPart.Torso, ChestButton },
-            { TargetBodyPart.Groin, GroinButton },
-            { TargetBodyPart.LeftArm, LeftArmButton },
-            { TargetBodyPart.LeftHand, LeftHandButton },
-            { TargetBodyPart.RightArm, RightArmButton },
-            { TargetBodyPart.RightHand, RightHandButton },
-            { TargetBodyPart.LeftLeg, LeftLegButton },
-            { TargetBodyPart.LeftFoot, LeftFootButton },
-            { TargetBodyPart.RightLeg, RightLegButton },
-            { TargetBodyPart.RightFoot, RightFootButton },
-        };
-
-        foreach (var bodyPartButton in _bodyPartControls)
-        {
-            bodyPartButton.Value.MouseFilter = MouseFilterMode.Stop;
-            bodyPartButton.Value.OnPressed += _ => SetActiveBodyPart(bodyPartButton.Key, bodyPartButton.Value);
-        }
-        ReturnButton.OnPressed += _ => ResetBodyPart();
-        // Shitmed Change End
-
-        // Begin DeltaV - Medical Records
-        foreach (var item in Enum.GetValues<TriageStatus>())
-        {
-            var btn = new Button();
-            var ftlKey = item.ToString();
-            btn.Group = _triageStatusGroup;
-            btn.Text = Loc.GetString($"health-analyzer-window-triage-status-{ftlKey}");
-            btn.ToolTip = Loc.GetString($"health-analyzer-window-triage-status-{ftlKey}.ToolTip");
-            btn.OnPressed += _ => OnTriageStatusChanged?.Invoke(item);
-            btn.AddStyleClass("ButtonSquare");
-            StatusBox.AddChild(btn);
-            _triageControls[item] = btn;
-        }
-        StatusBox.Children.First().AddStyleClass("OpenRight");
-        StatusBox.Children.First().RemoveStyleClass("ButtonSquare");
-        StatusBox.Children.Last().AddStyleClass("OpenLeft");
-        StatusBox.Children.Last().RemoveStyleClass("ButtonSquare");
-        ClaimButton.OnPressed += _ => OnClaimPatient?.Invoke();
-        // End DeltaV - Medical Records
+        _damageable = _entityManager.System<DamageableSystem>();
     }
 
     public void Populate(HealthAnalyzerUiState state)
     {
         var target = _entityManager.GetEntity(state.TargetEntity);
-        // Begin Shitmed
-        _target = target;
-        EntityUid? part = state.Part != null ? _entityManager.GetEntity(state.Part.Value) : null;
-        var isPart = part != null;
-        // End Shitmed
 
         if (target == null
-            || !_entityManager.TryGetComponent<DamageableComponent>(isPart ? part : target, out var damageable)) // Shitmed
+            || !_entityManager.TryGetComponent<DamageableComponent>(target, out var damageable))
         {
             NoPatientDataText.Visible = true;
             return;
         }
-
-        // Begin Shitmed
-        ReturnButton.Visible = isPart;
-        PartNameLabel.Visible = isPart;
-
-        if (part != null)
-            PartNameLabel.Text = _entityManager.HasComponent<MetaDataComponent>(part)
-                ? Identity.Name(part.Value, _entityManager)
-                : Loc.GetString("health-analyzer-window-entity-unknown-value-text");
-        // End Shitmed
 
         NoPatientDataText.Visible = false;
 
@@ -157,9 +70,8 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         // Patient Information
 
-        SpriteView.SetEntity(SetupIcon(state.Body) ?? target.Value); // Shitmed Change
+        SpriteView.SetEntity(target.Value);
         SpriteView.Visible = state.ScanMode.HasValue && state.ScanMode.Value;
-        PartView.Visible = SpriteView.Visible; // Shitmed Change
         NoDataTex.Visible = !SpriteView.Visible;
 
         var name = new FormattedMessage();
@@ -170,9 +82,9 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         NameLabel.SetMessage(name);
 
         SpeciesLabel.Text =
-            _entityManager.TryGetComponent<HumanoidAppearanceComponent>(target.Value,
-                out var humanoidAppearanceComponent)
-                ? Loc.GetString(_prototypes.Index<SpeciesPrototype>(humanoidAppearanceComponent.Species).Name)
+            _entityManager.TryGetComponent<HumanoidProfileComponent>(target.Value,
+                out var humanoidComponent)
+                ? Loc.GetString(_prototypes.Index(humanoidComponent.Species).Name)
                 : Loc.GetString("health-analyzer-window-entity-unknown-species-text");
 
         // Basic Diagnostic
@@ -192,14 +104,9 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         // Total Damage
 
-        DamageLabel.Text = damageable.TotalDamage.ToString();
+        DamageLabel.Text = _damageable.GetTotalDamage(target.Value).ToString();
 
         // Alerts
-        // DeltaV traits - This is going to be horrid if we just keep adding things like this.
-        var unborgable = _unborgable.IsUnborgable(target.Value);
-        var redshirt = _redshirt.IsRedshirt(target.Value) && mobStateComponent?.CurrentState == MobState.Dead; // DeltaV - Redshirt
-        var uncloneable = _uncloneable.IsUncloneable(target.Value) && mobStateComponent?.CurrentState == MobState.Dead; // DeltaV - Unclonable
-        // END DeltaV
 
         var showAlerts = state.Unrevivable == true || state.Bleeding == true;
 
@@ -225,60 +132,16 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
                 MaxWidth = 300
             });
 
-        if (unborgable) // DeltaV
-            AlertsContainer.AddChild(new RichTextLabel
-            {
-                Text = Loc.GetString("health-analyzer-window-entity-unborgable-text"),
-                Margin = new Thickness(0, 4),
-                MaxWidth = 300
-            });
-
-        if (redshirt) // DeltaV
-            AlertsContainer.AddChild(new RichTextLabel
-            {
-                Text = Loc.GetString("health-analyzer-window-entity-redshirt-text"),
-                Margin = new Thickness(0, 4),
-                MaxWidth = 300
-            });
-
-        if (uncloneable) // DeltaV - Uncloneable
-            AlertsContainer.AddChild(new RichTextLabel
-            {
-                Text = Loc.GetString("health-analyzer-window-entity-uncloneable-text"),
-                Margin = new Thickness(0, 4),
-                MaxWidth = 300
-            });
-
         // Damage Groups
 
         var damageSortedGroups =
-            damageable.DamagePerGroup.OrderByDescending(damage => damage.Value)
+            _damageable.GetDamagePerGroup(target.Value)
+                .OrderByDescending(damage => damage.Value)
                 .ToDictionary(x => x.Key, x => x.Value);
 
-        IReadOnlyDictionary<string, FixedPoint2> damagePerType = damageable.Damage.DamageDict;
+        var damagePerType = _damageable.GetAllDamage(target.Value).DamageDict;
 
         DrawDiagnosticGroups(damageSortedGroups, damagePerType);
-
-        // Begin DeltaV - Medical Records
-        if (state.MedicalRecord is not { } records)
-        {
-            TriageControls.Visible = false;
-            return;
-        }
-
-        TriageControls.Visible = true;
-        _triageControls[records.Status].Pressed = true;
-
-        // Update claim button based on claimed status
-        if (records.ClaimedName != null)
-        {
-            ClaimButton.Text = Loc.GetString("health-analyzer-window-triage-unclaim", ("claimedBy", records.ClaimedName));
-        }
-        else
-        {
-            ClaimButton.Text = Loc.GetString("health-analyzer-window-triage-claim");
-        }
-        // End DeltaV - Medical Records
     }
 
     private static string GetStatus(MobState mobState)
@@ -293,8 +156,8 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
     }
 
     private void DrawDiagnosticGroups(
-        Dictionary<string, FixedPoint2> groups,
-        IReadOnlyDictionary<string, FixedPoint2> damageDict)
+        Dictionary<ProtoId<DamageGroupPrototype>, FixedPoint2> groups,
+        IReadOnlyDictionary<ProtoId<DamageTypePrototype>, FixedPoint2> damageDict)
     {
         GroupsContainer.RemoveAllChildren();
 
@@ -337,65 +200,6 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             }
         }
     }
-
-    // Shitmed Change Start
-    public void SetActiveBodyPart(TargetBodyPart part, TextureButton button)
-    {
-        if (_target == null)
-            return;
-
-        // Bit of the ole shitcode until we have Groins in the prototypes.
-        OnBodyPartSelected?.Invoke(part == TargetBodyPart.Groin ? TargetBodyPart.Torso : part, _target.Value);
-    }
-
-    public void ResetBodyPart()
-    {
-        if (_target == null)
-            return;
-
-        OnBodyPartSelected?.Invoke(null, _target.Value);
-    }
-
-    public void SetActiveButtons(bool isHumanoid)
-    {
-        foreach (var button in _bodyPartControls)
-            button.Value.Visible = isHumanoid;
-    }
-
-    /// <summary>
-    /// Sets up the Body Doll using Alert Entity to use in Health Analyzer.
-    /// </summary>
-    private EntityUid? SetupIcon(Dictionary<TargetBodyPart, TargetIntegrity>? body)
-    {
-        if (body is null)
-            return null;
-
-        if (!_entityManager.Deleted(_spriteViewEntity))
-            _entityManager.QueueDeleteEntity(_spriteViewEntity);
-
-        _spriteViewEntity = _entityManager.Spawn(_bodyView);
-
-        if (!_entityManager.TryGetComponent<SpriteComponent>(_spriteViewEntity, out var sprite))
-            return null;
-
-        int layer = 0;
-        foreach (var (bodyPart, integrity) in body)
-        {
-            // TODO: PartStatusUIController and make it use layers instead of TextureRects when EE refactors alerts.
-            string enumName = Enum.GetName(typeof(TargetBodyPart), bodyPart) ?? "Unknown";
-            int enumValue = (int) integrity;
-            var rsi = new SpriteSpecifier.Rsi(new ResPath($"/Textures/_Shitmed/Interface/Targeting/Status/{enumName.ToLowerInvariant()}.rsi"), $"{enumName.ToLowerInvariant()}_{enumValue}");
-            // Shitcode with love from Russia :)
-            if (!_spriteSystem.TryGetLayer(_spriteViewEntity, layer, out _, false))
-                _spriteSystem.AddTextureLayer(_spriteViewEntity, _spriteSystem.Frame0(rsi));
-            else
-                _spriteSystem.LayerSetTexture(_spriteViewEntity, layer, _spriteSystem.Frame0(rsi));
-            _spriteSystem.LayerSetScale(_spriteViewEntity, layer, new Vector2(3f, 3f));
-            layer++;
-        }
-        return _spriteViewEntity;
-    }
-    // Shitmed Change End
 
     private Texture GetTexture(string texture)
     {

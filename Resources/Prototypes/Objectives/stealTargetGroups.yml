@@ -146,7 +146,7 @@
   id: Mail
   name: steal-target-groups-mail
   sprite:
-    sprite: Nyanotrasen/Objects/Specific/Mail/mail.rsi # DeltaV
+    sprite: Objects/Specific/Cargo/mail.rsi
     state: icon
 
 - type: stealTargetGroup
@@ -162,6 +162,13 @@
   sprite:
     sprite: Objects/Tools/lantern.rsi
     state: lantern
+
+- type: stealTargetGroup
+  id: ClothingEyesHuds
+  name: steal-target-groups-huds
+  sprite:
+    sprite: Clothing/Eyes/Hud/sec.rsi
+    state: icon
 
 # Thief single item
 
@@ -234,7 +241,7 @@
   sprite:
     sprite: Objects/Devices/flatpack.rsi
     state: ame-part
-  
+
 - type: stealTargetGroup
   id: ChiefEngineerToolBelt
   name: steal-target-groups-belt-ce
@@ -257,13 +264,6 @@
     state: cpuboard
 
 - type: stealTargetGroup
-  id: ClothingEyesHudBeer
-  name: steal-target-groups-clothing-eyes-hud-beer
-  sprite:
-    sprite: Clothing/Eyes/Hud/beergoggles.rsi
-    state: icon
-
-- type: stealTargetGroup
   id: Bible
   name: steal-target-groups-bible
   sprite:
@@ -283,6 +283,13 @@
   sprite:
     sprite: Clothing/Neck/Medals/clownmedal.rsi
     state: icon
+
+- type: stealTargetGroup
+  id: WantedListCartridge
+  name: steal-target-groups-wanted-list-cartridge
+  sprite:
+    sprite: Objects/Devices/cartridge.rsi
+    state: cart-sec
 
 - type: stealTargetGroup
   id: CaptainSword
@@ -408,7 +415,7 @@
     state: fox
 
 - type: stealTargetGroup
-  id: AnimalSecurity # DeltaV - Adjusts because we have multiple possible sec animals
+  id: AnimalShiva
   name: steal-target-groups-animal-shiva
   sprite:
     sprite: Mobs/Pets/shiva.rsi

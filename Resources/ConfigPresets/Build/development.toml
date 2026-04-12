@@ -7,11 +7,6 @@ role_timers = false
 admin_job_tracking = true
 role_loadout_timers = false
 
-contraband_examine = false # DeltaV
-secret_weight_prototype = "SecretDeltaV" # DeltaV
-role_timer_override = "DeltaV" # DeltaV
-showgreentext = false # DeltaV
-
 [events]
 enabled = false
 
@@ -23,7 +18,7 @@ quick_lottery = true
 generator_enabled = false
 
 [movement]
-mob_pushing = false
+mob_pushing = true
 
 [physics]
 # Makes mapping annoying
@@ -47,12 +42,15 @@ see_own_notes = true
 new_player_threshold = 120
 
 [ic]
-random_characters = false # DeltaV - disable development random characters
+random_characters = true
 random_species_weights = ""
 ssd_sleep_time = 3600
 
-[server] # DeltaV
-rules_file = "DeltaVRuleset"
-
-[control] # DeltaV
-storage_limit = 3
+[database]
+# Change to postgres if needed
+engine = "sqlite"
+pg_host = "localhost"
+pg_port = 5432
+pg_database = "ss14"
+pg_username = "postgres"
+pg_password = "postgres"

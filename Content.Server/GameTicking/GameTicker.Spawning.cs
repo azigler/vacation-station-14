@@ -8,7 +8,6 @@ using Content.Server.Ghost;
 using Content.Server.Spawners.Components;
 using Content.Server.Speech.Components;
 using Content.Server.Station.Components;
-using Content.Shared._DV.Species; // DeltaV - Hidden species
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
@@ -197,12 +196,12 @@ namespace Content.Server.GameTicking
                     var speciesPrototypes = _prototypeManager.EnumeratePrototypes<SpeciesPrototype>();
                     foreach (var proto in speciesPrototypes)
                     {
-                        if (proto.RoundStart && !SpeciesHiderSystem.IsHidden(proto.ID)) // DeltaV - Don't include hidden species
+                        if (proto.RoundStart)
                             roundStart.Add(proto.ID);
                     }
 
                     speciesId = roundStart.Count == 0
-                        ? SharedHumanoidAppearanceSystem.DefaultSpecies
+                        ? HumanoidCharacterProfile.DefaultSpecies
                         : _robustRandom.Pick(roundStart);
                 }
                 else
@@ -212,6 +211,7 @@ namespace Content.Server.GameTicking
                 }
 
                 character = HumanoidCharacterProfile.RandomWithSpecies(speciesId);
+                character.Appearance = HumanoidCharacterAppearance.EnsureValid(character.Appearance, character.Species, character.Sex);
             }
 
             // We raise this event to allow other systems to handle spawning this player themselves. (e.g. late-join wizard, etc)
@@ -255,11 +255,7 @@ namespace Content.Server.GameTicking
                 return;
             }
 
-            // Begin DeltaV Additions - Override latejoin
-            DoSpawn(player, character, station, jobId, silent, out var mob, out var jobPrototype, out var jobName, out var clearLatejoin);
-            if (clearLatejoin)
-                lateJoin = false;
-            // End DeltaV Additions - Override latejoin
+            DoSpawn(player, character, station, jobId, silent, out var mob, out var jobPrototype, out var jobName);
 
             if (lateJoin && !silent)
             {
@@ -343,8 +339,7 @@ namespace Content.Server.GameTicking
             bool silent,
             out EntityUid mob,
             out JobPrototype jobPrototype,
-            out string jobName,
-            out bool clearLatejoin)
+            out string jobName)
         {
             PlayerJoinGame(player, silent);
 
@@ -352,26 +347,16 @@ namespace Content.Server.GameTicking
 
             DebugTools.AssertNotNull(data);
 
-            var newMind = _mind.CreateMind(data!.UserId, character.Name);
-            _mind.SetUserId(newMind, data.UserId);
-
             jobPrototype = _prototypeManager.Index<JobPrototype>(jobId);
 
-            _playTimeTrackings.PlayerRolesChanged(player);
-
-            // Delta-V: Add AlwaysUseSpawner.
-            var spawnPointType = SpawnPointType.Unset;
-            if (jobPrototype.AlwaysUseSpawner)
-            {
-                clearLatejoin = true;
-                spawnPointType = SpawnPointType.Job;
-            }
-            else
-                clearLatejoin = false;
-
-            var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character, spawnPointType: spawnPointType); // DeltaV: pass in spawn point type
+            var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character);
             DebugTools.AssertNotNull(mobMaybe);
             mob = mobMaybe!.Value;
+
+            var newMind = _mind.CreateMind(data.UserId, Name(mob));
+            _mind.SetUserId(newMind, data.UserId);
+
+            _playTimeTrackings.PlayerRolesChanged(player);
 
             _mind.TransferTo(newMind, mob);
 
@@ -449,7 +434,6 @@ namespace Content.Server.GameTicking
             _adminLogger.Add(LogType.LateJoin,
                 LogImpact.Low,
                 $"{player.Name} late joined the round as an Observer with {ToPrettyString(ghost):entity}.");
-            _respawn.SetDeathRespawnTime(player.UserId); // DeltaV - no seeing all the valids then respawning immediately
         }
 
         #region Spawn Points

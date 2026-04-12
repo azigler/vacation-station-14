@@ -75,12 +75,6 @@ public sealed partial class CryoPodComponent : Component
     public FixedPoint2 BeakerTransferAmount = 1;
 
     /// <summary>
-    /// DeltaV - Whether or not the cryo tube should inject the solution evenly.
-    /// </summary>
-    [DataField]
-    public bool InjectEvenly = true;
-
-    /// <summary>
     /// Delay applied when inserting a mob in the pod (in seconds).
     /// </summary>
     [DataField]
@@ -133,24 +127,27 @@ public enum CryoPodUiKey : byte
 [Serializable, NetSerializable]
 public sealed class CryoPodUserMessage : BoundUserInterfaceMessage
 {
-    public GasAnalyzerComponent.GasMixEntry GasMix;
+    public GasMixEntry GasMix;
     public HealthAnalyzerUiState Health;
     public FixedPoint2? BeakerCapacity;
     public List<ReagentQuantity>? Beaker;
     public List<ReagentQuantity>? Injecting;
+    public bool HasDamage;
 
     public CryoPodUserMessage(
-        GasAnalyzerComponent.GasMixEntry gasMix,
+        GasMixEntry gasMix,
         HealthAnalyzerUiState health,
         FixedPoint2? beakerCapacity,
         List<ReagentQuantity>? beaker,
-        List<ReagentQuantity>? injecting)
+        List<ReagentQuantity>? injecting,
+        bool hasDamage)
     {
         GasMix = gasMix;
         Health = health;
         BeakerCapacity = beakerCapacity;
         Beaker = beaker;
         Injecting = injecting;
+        HasDamage = hasDamage;
     }
 }
 

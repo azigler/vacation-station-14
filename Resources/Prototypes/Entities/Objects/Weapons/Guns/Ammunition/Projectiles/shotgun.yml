@@ -11,7 +11,7 @@
     damage:
       types:
         Piercing: 40
-        Structural: 40 #DeltaV increase from 15 to 40
+        Structural: 15
 
 
 - type: entity
@@ -29,7 +29,7 @@
       types:
         Blunt: 10
   - type: StaminaDamageOnCollide
-    damage: 55 # DeltaV - Modified the beanbag stamina damage, was 40.
+    damage: 40 # 3 hits to stun
 
 - type: entity
   parent: BaseBullet
@@ -189,7 +189,6 @@
     damage:
       types:
         Heat: 5
-  - type: FlareGunPellet # DeltaV - Added to whitelist against Skia.
 
 - type: entity
   parent: BaseBulletUranium

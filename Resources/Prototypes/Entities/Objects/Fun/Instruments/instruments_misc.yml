@@ -76,9 +76,6 @@
   - type: Prayable
     sentMessage: prayer-popup-notify-syndicate-sent
     notificationPrefix: prayer-chat-notify-syndicate
-  - type: MappingCategories # DeltaV
-    categories:
-    - Syndicate
 
 - type: entity
   parent: BaseHandheldInstrument
@@ -126,7 +123,6 @@
     tags:
     - Sidearm
     - BrassInstrument
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
 
 - type: entity
   parent: BaseHandheldInstrument
@@ -136,7 +132,7 @@
   components:
   - type: Instrument
     program: 1
-    bank: 1
+    bank: 100 # Defined in space-station-14.sf2
   - type: Sprite
     sprite: Objects/Fun/Instruments/bike_horn.rsi
   - type: Tag

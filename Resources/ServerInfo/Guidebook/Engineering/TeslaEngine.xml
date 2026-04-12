@@ -10,8 +10,6 @@
 
   It generates power by harnessing the lightning strikes produced by the lightning ball using Tesla Coils.
 
-  [color=red]On Delta-V, teslas require constant PA input to not decay. Keep it on at least strength 2 at all times.[/color]
-
   ## Containment Field
   The Tesla Engine requires a containment field to prevent the lightning ball from escaping and destroying the station.
 
@@ -85,7 +83,7 @@
   ## Loosed Tesla (Tesloose)
   If the lightning ball escapes the containment field, it is referred to as a loosed tesla, or tesloose.
 
-  An escaped tesla will randomly walk around the station. On Delta-V it is purely random and not attracted to devices.
+  An escaped tesla will randomly walk around the station, attracted to objects that can be powered, such as APCs, Substations, and machinery.
   It will also gladly strike crew members and mobs, shocking them.
 
   Wearing insulated gloves will protect you from being shocked by the tesla, but it won't prevent the tesla from striking you.
@@ -97,11 +95,11 @@
   The tesla can be destroyed by firing antiparticles at it using a Portable Particle Decelerator, however, the Tesla is much more powerful than the Singularity, and it will take a lot of antiparticles to destroy it.
   A group of people using decelerators is recommended to destroy a tesloose.
 
-  Portable Particle Decelerators can be either researched and made by the Epistemics Department, or they can be bought from Logistics.
+  Portable Particle Decelerators can be either researched and made by the Research Department, or they can be bought from Cargo.
 
   <Box>
     <GuideEntityEmbed Entity="WeaponParticleDecelerator"/>
   </Box>
 
-  Teslas will run out of energy and decay on Delta-V, so it's not a guaranteed round ender!
+
 </Document>

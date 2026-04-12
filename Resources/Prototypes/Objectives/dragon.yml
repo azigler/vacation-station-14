@@ -24,7 +24,7 @@
     min: 3
     max: 3
     title: objective-carp-rifts-title
-    description: deltav-objective-carp-rifts-description  # DeltaV - Dragons do not despawn
+    description: objective-carp-rifts-description
   - type: CarpRiftsCondition
 
 - type: entity

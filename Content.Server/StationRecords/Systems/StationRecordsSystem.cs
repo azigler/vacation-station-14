@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Content.Server.Access.Systems;
-using Content.Server.Forensics;
 using Content.Shared.Access.Components;
-using Content.Shared.Access.Systems; // DeltaV
 using Content.Shared.Forensics.Components;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
@@ -98,8 +96,7 @@ public sealed class StationRecordsSystem : SharedStationRecordsSystem
         TryComp<FingerprintComponent>(player, out var fingerprintComponent);
         TryComp<DnaComponent>(player, out var dnaComponent);
 
-        var prints = fingerprintComponent?.Fingerprint ?? CompOrNull<FiberComponent>(player)?.Fiberprint; // DeltaV - IPCs use fibers
-        CreateGeneralRecord(station, idUid.Value, profile.Name, profile.Age, profile.Species, profile.Gender, jobId, prints, dnaComponent?.DNA, profile, records); // DeltaV - use prints var
+        CreateGeneralRecord(station, idUid.Value, profile.Name, profile.Age, profile.Species, profile.Gender, jobId, fingerprintComponent?.Fingerprint, dnaComponent?.DNA, profile, records);
     }
 
 
@@ -154,17 +151,12 @@ public sealed class StationRecordsSystem : SharedStationRecordsSystem
             return;
         }
 
-        // DeltaV - use id card if possible
-        Entity<IdCardComponent>? card = null;
-        if (idUid != null && _idCard.TryFindIdCard(idUid.Value, out var card2))
-            card = card2;
-
         var record = new GeneralStationRecord()
         {
             Name = name,
             Age = age,
-            JobTitle = card?.Comp.LocalizedJobTitle ?? jobPrototype.LocalizedName, // DeltaV
-            JobIcon = card?.Comp.JobIcon ?? jobPrototype.Icon, // DeltaV
+            JobTitle = jobPrototype.LocalizedName,
+            JobIcon = jobPrototype.Icon,
             JobPrototype = jobId,
             Species = species,
             Gender = gender,
@@ -349,12 +341,10 @@ public sealed class StationRecordsSystem : SharedStationRecordsSystem
                 !someRecord.JobTitle.ToLower().Contains(filterLowerCaseValue),
             StationRecordFilterType.Species =>
                 !someRecord.Species.ToLower().Contains(filterLowerCaseValue),
-            // DeltaV - start of silicon bio filters fix
-            StationRecordFilterType.Prints => someRecord.Fingerprint == null
-                || IsFilterWithSomeCodeValue(someRecord.Fingerprint, filterLowerCaseValue),
-            StationRecordFilterType.DNA => someRecord.DNA == null
-                || IsFilterWithSomeCodeValue(someRecord.DNA, filterLowerCaseValue),
-            // DeltaV - end of silicon bio filters fix
+            StationRecordFilterType.Prints => someRecord.Fingerprint != null
+                && IsFilterWithSomeCodeValue(someRecord.Fingerprint, filterLowerCaseValue),
+            StationRecordFilterType.DNA => someRecord.DNA != null
+                && IsFilterWithSomeCodeValue(someRecord.DNA, filterLowerCaseValue),
             _ => throw new IndexOutOfRangeException(nameof(filter.Type)),
         };
     }

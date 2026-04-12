@@ -21,8 +21,8 @@
   name: engineering duffel bag
   description: A large duffel bag for holding extra tools and supplies.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/engineering.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/engineering.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -30,8 +30,8 @@
   name: atmospherics duffel bag
   description: A large duffel bag made of fire resistant fibers. Smells like plasma.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/atmospherics.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/atmospherics.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -39,8 +39,8 @@
   name: medical duffel bag
   description: A large duffel bag for holding extra medical supplies.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/medical.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/medical.rsi
 
 - type: entity
   parent: [ClothingBackpackDuffel, BaseCommandContraband]
@@ -48,8 +48,8 @@
   name: captain's duffel bag
   description: A large duffel bag for holding extra captainly goods.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/captain.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/captain.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -75,17 +75,17 @@
   name: security duffel bag
   description: A large duffel bag for holding extra security related goods.
   components:
-    - type: Sprite
-      sprite: _DV/Clothing/Back/Duffels/security.rsi # DeltaV - resprite security duffel bags
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/security.rsi
 
 - type: entity
   parent: [ClothingBackpackDuffel, BaseSecurityContraband]
   id: ClothingBackpackDuffelBrigmedic
-  name: corpsman duffel bag # DeltaV - rename brigmedic to corpsman
+  name: brigmedic duffel bag
   description: A large duffel bag for holding extra medical related goods.
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Back/Duffels/brigmedic.rsi # DeltaV - resprite
+    sprite: Clothing/Back/Duffels/brigmedic.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -93,8 +93,8 @@
   name: chemistry duffel bag
   description: A large duffel bag for holding extra beakers and test tubes.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/chemistry.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/chemistry.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -102,8 +102,8 @@
   name: virology duffel bag
   description: A large duffel bag made of hypo-allergenic fibers. It's designed to help prevent the spread of disease. Smells like monkey.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/virology.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/virology.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -111,8 +111,8 @@
   name: genetics duffel bag
   description: A large duffel bag for holding extra genetic mutations.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/genetics.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/genetics.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -129,11 +129,11 @@
 - type: entity
   parent: ClothingBackpackDuffel
   id: ClothingBackpackDuffelScience
-  name: epistemics duffel bag # DeltaV - Epistemics Department replacing Science
+  name: science duffel bag
   description: A large duffel bag for holding extra science related goods.
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/science.rsi
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/science.rsi
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -147,8 +147,8 @@
 - type: entity
   parent: ClothingBackpackDuffel
   id: ClothingBackpackDuffelCargo
-  name: logistics duffel bag # DeltaV - Logistics Department replacing Cargo
-  description: A large duffel bag for stealing logistics's precious loot. # DeltaV - Logistics Department replacing Cargo
+  name: cargo duffel bag
+  description: A large duffel bag for stealing cargo's precious loot.
   components:
     - type: Sprite
       sprite: Clothing/Back/Duffels/cargo.rsi
@@ -175,20 +175,14 @@
   - type: Storage
     grid:
     - 0,0,8,4
-  - type: ReverseEngineering # DeltaV: can RE any valid bag for BoH
-    difficulty: 4
-    recipes:
-    - ClothingBackpackHolding
-    - ClothingBackpackDuffelHolding
-    - ClothingBackpackSatchelHolding
 
 - type: entity
   parent: [ ClothingBackpackDuffelSyndicate, BaseSyndicateContraband ]
   id: ClothingBackpackDuffelSyndicateBundle
   abstract: true
   components:
-    - type: Tag
-      tags: [] # ignore "WhitelistChameleon" tag
+  - type: Tag
+    tags: [] # ignore "WhitelistChameleon" tag
 
 - type: entity
   parent: ClothingBackpackDuffel
@@ -202,13 +196,13 @@
   parent: ClothingBackpackDuffelSyndicate
   id: ClothingBackpackDuffelSyndicateAmmo
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/syndicate.rsi
-      state: icon-ammo
-    - type: Item
-      heldPrefix: ammo
-    - type: Clothing
-      equippedPrefix: ammo
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/syndicate.rsi
+    state: icon-ammo
+  - type: Item
+    heldPrefix: ammo
+  - type: Clothing
+    equippedPrefix: ammo
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateAmmo
@@ -222,13 +216,13 @@
   parent: ClothingBackpackDuffelSyndicate
   id: ClothingBackpackDuffelSyndicateMedical
   components:
-    - type: Sprite
-      sprite: Clothing/Back/Duffels/syndicate.rsi
-      state: icon-med
-    - type: Item
-      heldPrefix: med
-    - type: Clothing
-      equippedPrefix: med
+  - type: Sprite
+    sprite: Clothing/Back/Duffels/syndicate.rsi
+    state: icon-med
+  - type: Item
+    heldPrefix: med
+  - type: Clothing
+    equippedPrefix: med
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateMedical

@@ -357,13 +357,11 @@
 
 # Lathes
 - type: latheRecipe
-  abstract: true # DeltaV
   parent: [ BaseCircuitboardRecipe, BaseResearchMachineRecipeCategory ]
   id: ProtolatheMachineCircuitboard
   result: ProtolatheMachineCircuitboard
 
 - type: latheRecipe
-  abstract: true # DeltaV
   parent: [ BaseGoldCircuitboardRecipe, BaseResearchMachineRecipeCategory ]
   id: ProtolatheHyperConvectionMachineCircuitboard
   result: ProtolatheHyperConvectionMachineCircuitboard
@@ -374,7 +372,6 @@
   result: CircuitImprinterMachineCircuitboard
 
 - type: latheRecipe
-  abstract: true # DeltaV
   parent: [ BaseGoldCircuitboardRecipe, BaseResearchMachineRecipeCategory ]
   id: CircuitImprinterHyperConvectionMachineCircuitboard
   result: CircuitImprinterHyperConvectionMachineCircuitboard
@@ -405,13 +402,11 @@
   result: OreProcessorIndustrialMachineCircuitboard
 
 - type: latheRecipe
-  abstract: true # DeltaV
   parent: [ BaseCircuitboardRecipe, BaseGeneralMachineRecipeCategory ]
   id: AutolatheMachineCircuitboard
   result: AutolatheMachineCircuitboard
 
 - type: latheRecipe
-  abstract: true # DeltaV
   parent: [ BaseGoldCircuitboardRecipe, BaseGeneralMachineRecipeCategory ]
   id: AutolatheHyperConvectionMachineCircuitboard
   result: AutolatheHyperConvectionMachineCircuitboard
@@ -433,7 +428,7 @@
 
 # Cell chargers
 - type: latheRecipe
-  parent: [ BaseCircuitboardRecipe, BaseGeneralMachineRecipeCategory ] # DeltaV - Circuitboard, was CheapElectronics
+  parent: [ BaseCheapElectronicsRecipe, BaseGeneralMachineRecipeCategory ]
   id: BorgChargerCircuitboard
   result: BorgChargerCircuitboard
 

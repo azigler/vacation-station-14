@@ -26,9 +26,9 @@ public sealed partial class IdCardConsoleComponent : Component
         public readonly string FullName;
         public readonly string JobTitle;
         public readonly List<ProtoId<AccessLevelPrototype>> AccessList;
-        public readonly ProtoId<JobPrototype> JobPrototype;
+        public readonly ProtoId<JobPrototype>? JobPrototype;
 
-        public WriteToTargetIdMessage(string fullName, string jobTitle, List<ProtoId<AccessLevelPrototype>> accessList, ProtoId<JobPrototype> jobPrototype)
+        public WriteToTargetIdMessage(string fullName, string jobTitle, List<ProtoId<AccessLevelPrototype>> accessList, ProtoId<JobPrototype>? jobPrototype)
         {
             FullName = fullName;
             JobTitle = jobTitle;
@@ -39,18 +39,13 @@ public sealed partial class IdCardConsoleComponent : Component
 
     // Put this on shared so we just send the state once in PVS range rather than every time the UI updates.
 
-
     [DataField, AutoNetworkedField]
     public List<ProtoId<AccessLevelPrototype>> AccessLevels = new()
     {
-        // DeltaV note: make sure any additions to this list are also added to both:
-        //  1. AllAccess in  Resources\Prototypes\Access\misc.yml
-        //  2. ComputerIdAdmeme in  Resources\Prototypes\_DV\Entities\Structures\Machines\computers.yml
         "Armory",
         "Atmospherics",
         "Bar",
-        //"Brig", Delta V: Removed Brig Access
-        "Boxer",  // DeltaV - Add Boxer access
+        "Brig",
         "Detective",
         "Captain",
         "Cargo",
@@ -58,11 +53,8 @@ public sealed partial class IdCardConsoleComponent : Component
         "Chemistry",
         "ChiefEngineer",
         "ChiefMedicalOfficer",
-        "Clown", // DeltaV - Add Clown access
-        "Corpsman", // DeltaV - Add Corpsman access
         "Command",
         "Cryogenics",
-        "EmergencyShuttleRepealAll", // DeltaV - fix mismatch with Access/misc.yml
         "Engineering",
         "External",
         "GenpopEnter",
@@ -73,32 +65,15 @@ public sealed partial class IdCardConsoleComponent : Component
         "Janitor",
         "Kitchen",
         "Lawyer",
-        "Library",  // DeltaV - Add Library access
         "Maintenance",
         "Medical",
-        "Mime", // DeltaV - Add Mime access
-        "Musician", // DeltaV - Add Musician access
-        "Paramedic", // DeltaV - Add Paramedic access
-        "Psychologist", // DeltaV - Add Psychologist access
         "Quartermaster",
-        "Reporter", // DeltaV - Add Reporter access
         "Research",
         "ResearchDirector",
         "Salvage",
         "Security",
         "Service",
         "Theatre",
-        "Orders", // DeltaV - Orders, see Resources/Prototypes/_DV/Access/cargo.yml
-        "Mail", // Nyanotrasen - Mail, see Resources/Prototypes/Nyanotrasen/Access/cargo.yml
-        "Mantis", // DeltaV - Psionic Mantis, see Resources/Prototypes/_DV/Access/epistemics.yml
-        "Zookeeper",  // DeltaV - Add Zookeeper access
-        "ChiefJustice",  // DeltaV - Add Chief Justice access
-        "Justice",  // DeltaV - Add Justice access
-        "Prosecutor", // Delta V - Add Prosecutor access
-        "Robotics", // DeltaV
-        "Clerk", // Delta V - Add Clerk access
-        "Surgery", // Delta V - Add Surgery access
-        "Funding", // DeltaV - Add Funding access
     };
 
     [Serializable, NetSerializable]

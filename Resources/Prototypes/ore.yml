@@ -102,7 +102,7 @@
   id: RandomOreDistributionStandard
   weights:
     OreSteel: 10
-    OreCoal: 12 # DeltaV: increased slightly from 10 so there is a surplus to give to chem
+    OreCoal: 10
     OreSpaceQuartz: 8
     OreGold: 2
     OrePlasma: 4

@@ -37,7 +37,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawGold: 200 # DeltaV - was 100
+      RawGold: 100
   - type: Extractable
     grindableSolutionName: goldore
   - type: SolutionContainerManager
@@ -107,7 +107,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawIron: 200 # DeltaV - was 100
+      RawIron: 100
   - type: Extractable
     grindableSolutionName: ironore
   - type: SolutionContainerManager
@@ -140,7 +140,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawPlasma: 300 # DeltaV - was 100
+      RawPlasma: 100
   - type: PointLight
     radius: 1.2
     energy: 0.6
@@ -182,7 +182,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawSilver: 300 # DeltaV - was 100
+      RawSilver: 100
   - type: Extractable
     grindableSolutionName: silverore
   - type: SolutionContainerManager
@@ -219,7 +219,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawQuartz: 150 # DeltaV - was 100
+      RawQuartz: 100
   - type: Extractable
     grindableSolutionName: quartzore
   - type: SolutionContainerManager
@@ -252,7 +252,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      RawUranium: 300 # DeltaV
+      RawUranium: 100
   - type: PointLight
     radius: 1.2
     energy: 0.8
@@ -359,7 +359,7 @@
           Quantity: 0.1
   - type: PhysicalComposition
     materialComposition:
-      Coal: 200 # DeltaV
+      Coal: 100
   - type: Item
     heldPrefix: coal
 

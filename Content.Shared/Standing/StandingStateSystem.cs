@@ -10,6 +10,7 @@ using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 
 namespace Content.Shared.Standing;
+
 public sealed class StandingStateSystem : EntitySystem
 {
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
@@ -93,6 +94,7 @@ public sealed class StandingStateSystem : EntitySystem
         // TODO: This should actually log missing comps...
         if (!Resolve(uid, ref standingState, false))
             return false;
+
         // Optional component.
         Resolve(uid, ref appearance, ref hands, false);
 
@@ -114,6 +116,7 @@ public sealed class StandingStateSystem : EntitySystem
 
         // Seemed like the best place to put it
         _appearance.SetData(uid, RotationVisuals.RotationState, RotationState.Horizontal, appearance);
+
         // Change collision masks to allow going under certain entities like flaps and tables
         ChangeLayers((uid, standingState));
 
@@ -124,7 +127,7 @@ public sealed class StandingStateSystem : EntitySystem
 
         if (playSound)
         {
-            _audio.PlayPredicted(standingState.DownSound, uid, null);
+            _audio.PlayPredicted(standingState.DownSound, uid, uid);
         }
 
         return true;
@@ -138,20 +141,18 @@ public sealed class StandingStateSystem : EntitySystem
         // TODO: This should actually log missing comps...
         if (!Resolve(uid, ref standingState, false))
             return false;
+
         // Optional component.
         Resolve(uid, ref appearance, false);
 
         if (standingState.Standing)
             return true;
 
-        // DeltaV - Unsure if this is needed after ripping out the old laying down system. Left it in in case.
-        //if (TryComp(uid, out BuckleComponent? buckle) && buckle.Buckled && !_buckle.TryUnbuckle(uid, uid, buckleComp: buckle))
-        //    return false;
-
         if (!force)
         {
             var msg = new StandAttemptEvent();
             RaiseLocalEvent(uid, msg, false);
+
             if (msg.Cancelled)
                 return false;
         }
@@ -230,7 +231,6 @@ public sealed class DownedEvent : EntityEventArgs, IInventoryRelayEvent
 {
     public SlotFlags TargetSlots { get; } = SlotFlags.FEET;
 }
-
 
 /// <summary>
 /// Raised on an inhand entity being held by an entity who is dropping items as part of an attempted state change to down.

@@ -232,9 +232,9 @@
   description: The sound of it brings fear.
   components:
   - type: Sprite
-    state: whistle # DeltaV - replace sec with whistle
+    state: sec
   - type: Clothing
-    equippedPrefix: whistle # DeltaV - replace sec with whistle
+    equippedPrefix: sec
   - type: Whistle
     distance: 5
 
@@ -322,8 +322,6 @@
   - type: Sprite
     sprite: Objects/Fun/rubber_chicken.rsi
     state: icon
-  - type: Speech # DeltaV - chicken pai makes evil sound
-    speechSounds: RubberChicken
   - type: EmitSoundOnUse
     sound: &SoundRubberChicken
       collection: RubberChicken
@@ -363,12 +361,12 @@
   - type: ItemToggle
   - type: UseDelay
     delay: 1
-#  - type: ItemToggleActiveSound # DeltaV - No more annoying clicking
-#    activeSound:
-#      path: /Audio/Items/newton_cradle.ogg
-#      params:
-#        volume: -9
-#        maxDistance: 3
+  - type: ItemToggleActiveSound
+    activeSound:
+      path: /Audio/Items/newton_cradle.ogg
+      params:
+        volume: -9
+        maxDistance: 3
 
 - type: entity
   parent: BaseItem

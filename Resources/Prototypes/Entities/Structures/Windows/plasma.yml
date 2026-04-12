@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     drawdepth: WallTops
-    sprite: _DV/Structures/Windows/plasma_window.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/plasma_window.rsi
   - type: Icon
-    sprite: _DV/Structures/Windows/plasma_window.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/plasma_window.rsi
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: Glass
@@ -15,7 +15,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 200 # DeltaV - Increased health cap by 50
+        damage: 150
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -24,7 +24,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 80 # DeltaV - Increased health by 5 (less than uranium)
+        damage: 75
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -52,8 +52,6 @@
     price: 100
   - type: RadiationBlocker
     resistance: 2
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WindowCosmicCult
 
 - type: entity
   id: PlasmaWindowDirectional
@@ -66,10 +64,10 @@
     - Window
   components:
   - type: Sprite
-    sprite: _DV/Structures/Windows/directional.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/directional.rsi
     state: plasma_window
   - type: Icon
-    sprite: _DV/Structures/Windows/directional.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/directional.rsi
     state: plasma_window
   - type: Construction
     graph: WindowDirectional
@@ -94,7 +92,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 40 # DeltaV - Increased health by 3 (less than uranium)
+        damage: 37
       behaviors:
       - !type:PlaySoundBehavior
         sound:

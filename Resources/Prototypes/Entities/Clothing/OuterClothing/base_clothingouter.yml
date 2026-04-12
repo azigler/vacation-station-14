@@ -8,7 +8,6 @@
     - outerClothing
   - type: Sprite
     state: icon
-  - type: AllowSuitStorage # DeltaV - allow suit storage for all outer clothing, no whitelist
 
 - type: entity
   abstract: true
@@ -24,18 +23,20 @@
     walkModifier: 0.9
     sprintModifier: 0.9
   - type: HeldSpeedModifier
-  - type: Tag
-    tags:
-      - WhitelistChameleon
 
 - type: entity
   abstract: true
   parent: ClothingOuterBase
   id: ClothingOuterStorageBase
   components:
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,2
   - type: Storage
     grid:
     - 0,0,2,1
+    maxItemSize: Small
   - type: ContainerContainer
     containers:
       storagebase: !type:Container
@@ -100,7 +101,6 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
       storagebase: !type:Container
         ents: []
 
@@ -138,13 +138,11 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
   - type: GroupExamine
   - type: Tag
     tags:
     - Hardsuit
     - WhitelistChameleon
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
   - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET
   - type: DamageOnInteractProtection
@@ -155,9 +153,6 @@
   - type: HideLayerClothing
     slots:
     - Tail
-  - type: CosmicTransmutable # DeltaV
-    transmutesTo: ClothingOuterHardsuitCosmicCult
-    requiredGlyphType: CosmicGlyphWarding
 
 - type: entity
   abstract: true
@@ -180,9 +175,6 @@
   - type: HeldSpeedModifier
   - type: Item
     size: Huge
-  - type: Tag
-    tags:
-    - HidesHarpyWings # DeltaV: Used by harpies to help render their hardsuit sprites
   - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET
   - type: DamageOnInteractProtection
@@ -193,9 +185,6 @@
   - type: HideLayerClothing
     slots:
     - Tail
-  - type: CosmicTransmutable # DeltaV
-    transmutesTo: ClothingOuterHardsuitCosmicCult
-    requiredGlyphType: CosmicGlyphWarding
 
 - type: entity
   parent: ClothingOuterBase
@@ -209,7 +198,6 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-      toggleable-under-clothing: !type:ContainerSlot {} # DeltaV - Allow hats under toggleable clothing
       storagebase: !type:Container
         ents: []
 
@@ -219,4 +207,6 @@
   id: ClothingOuterBaseMedium
   components:
   - type: Item
-    size: Huge
+    size: Large
+    shape:
+    - 0,0,2,3

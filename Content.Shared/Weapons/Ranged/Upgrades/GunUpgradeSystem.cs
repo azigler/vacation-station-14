@@ -1,5 +1,4 @@
 using System.Linq;
-using Content.Shared._DV.Weapons.Ranged.Upgrades; // DeltaV
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Examine;
@@ -17,7 +16,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Weapons.Ranged.Upgrades;
 
-public sealed partial class GunUpgradeSystem : EntitySystem // DeltaV - made partial
+public sealed class GunUpgradeSystem : EntitySystem
 {
     [Dependency] private readonly ISharedAdminLogManager _adminLog = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
@@ -67,7 +66,6 @@ public sealed partial class GunUpgradeSystem : EntitySystem // DeltaV - made par
 
     private void OnAfterInteractUsing(Entity<UpgradeableGunComponent> ent, ref AfterInteractUsingEvent args)
     {
-        TryExtract(ent, ref args); // DeltaV
         if (args.Handled || !args.CanReach || !TryComp<GunUpgradeComponent>(args.Used, out var upgradeComponent))
             return;
 
@@ -80,19 +78,11 @@ public sealed partial class GunUpgradeSystem : EntitySystem // DeltaV - made par
         if (_entityWhitelist.IsWhitelistFail(ent.Comp.Whitelist, args.Used))
             return;
 
-        // DeltaV - add coutn check to allow having no tags
-        if (upgradeComponent.Tags.Count > 0 && GetCurrentUpgradeTags(ent).ToHashSet().IsSupersetOf(upgradeComponent.Tags))
+        if (GetCurrentUpgradeTags(ent).ToHashSet().IsSupersetOf(upgradeComponent.Tags))
         {
             _popup.PopupPredicted(Loc.GetString("upgradeable-gun-popup-already-present"), ent, args.User);
             return;
         }
-
-        // Begin DeltaV Additions
-        var attemptEv = new GunUpgradeAttemptEvent(ent, args.User);
-        RaiseLocalEvent(args.Used, ref attemptEv);
-        if (attemptEv.Cancelled)
-            return;
-        // End DeltaV Additions
 
         _audio.PlayPredicted(ent.Comp.InsertSound, ent, args.User);
         _popup.PopupClient(Loc.GetString("gun-upgrade-popup-insert", ("upgrade", args.Used),("gun", ent.Owner)), args.User);
@@ -100,10 +90,6 @@ public sealed partial class GunUpgradeSystem : EntitySystem // DeltaV - made par
         args.Handled = _container.Insert(args.Used, _container.GetContainer(ent, ent.Comp.UpgradesContainerId));
 
         _adminLog.Add(LogType.Action, LogImpact.Low, $"{ToPrettyString(args.User):player} inserted gun upgrade {ToPrettyString(args.Used)} into {ToPrettyString(ent.Owner)}.");
-        // Begin DeltaV Additions
-        var ev = new GunUpgradeInstalledEvent(ent);
-        RaiseLocalEvent(args.Used, ref ev);
-        // End DeltaV Additions
     }
 
     private void OnFireRateRefresh(Entity<GunUpgradeFireRateComponent> ent, ref GunRefreshModifiersEvent args)

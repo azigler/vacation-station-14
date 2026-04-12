@@ -12,7 +12,7 @@
   - type: Transform
     anchored: true
   - type: Sprite
-    sprite: _NF/Structures/conveyor.rsi # Frontier
+    sprite: Structures/conveyor.rsi
     state: conveyor_stopped_cw
     drawdepth: HighFloorObjects
   - type: ApcPowerReceiver
@@ -29,10 +29,7 @@
           - 0.50,0.50
           - -0.50,0.50
         layer:
-        - Impassable
-        - MidImpassable
-        - LowImpassable
-        - DoorPassable
+        - ConveyorMask
         hard: False
   - type: Conveyor
   - type: DeviceNetwork
@@ -46,7 +43,6 @@
       - Forward
       - Off
   - type: Appearance
-  - type: SyncSprite # DeltaV
   - type: GenericVisualizer
     visuals:
       enum.ConveyorVisuals.State:

@@ -4,9 +4,6 @@
   antagonist: true
   setPreference: false
   objective: roles-antag-space-ninja-objective
-  requirements:
-  - !type:OverallPlaytimeRequirement # DeltaV - Playtime requirement
-    time: 72h
   guides: [ SpaceNinja ]
 
 #Ninja Gear

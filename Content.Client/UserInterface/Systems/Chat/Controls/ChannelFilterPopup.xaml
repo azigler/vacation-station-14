@@ -15,15 +15,6 @@
                     <!-- End custom background -->
                     <TextEdit Name="HighlightEdit" MinHeight="150" Margin="5 5"/>
                 </PanelContainer>
-                <!-- DeltaV - Message Auto-highlighting -->
-                <Label Name="AutoHighlightLabel" Text="{Loc 'hud-chatbox-auto-highlights'}"/>
-                <PanelContainer>
-                    <PanelContainer.PanelOverride>
-                        <gfx:StyleBoxFlat BackgroundColor="#323446"/>
-                    </PanelContainer.PanelOverride>
-                    <TextEdit Name="AutoHighlightEdit" MinHeight="150" Margin="5 5" Editable="false" />
-                </PanelContainer>
-                <!-- END DeltaV -->
                 <Button Name="HighlightButton" Text="{Loc 'hud-chatbox-highlights-button'}" ToolTip="{Loc 'hud-chatbox-highlights-tooltip'}"/>
             </BoxContainer>
         </BoxContainer>

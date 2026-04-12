@@ -1,4 +1,4 @@
-<!-- If you are new to the Delta-V repository, please read the [Contributing Guidelines](https://github.com/DeltaV-Station/Delta-v/blob/master/CONTRIBUTING.md) -->
+<!-- Guidelines: https://docs.spacestation14.io/en/getting-started/pr-guideline -->
 
 ## About the PR
 <!-- What did you change? -->
@@ -11,22 +11,17 @@
 
 ## Media
 <!-- Attach media if the PR makes in-game changes (clothing, items, features, etc).
-Small fixes/refactors are exempt. -->
+Small fixes/refactors are exempt. Media may be used in SS14 progress reports with credit. -->
 
 ## Requirements
 <!-- Confirm the following by placing an X in the brackets without spaces inside (for example: [X] ): -->
-- [ ] I have tested all added content and changes.
+- [ ] I have read and am following the [Pull Request and Changelog Guidelines](https://docs.spacestation14.com/en/general-development/codebase-info/pull-request-guidelines.html).
 - [ ] I have added media to this PR or it does not require an in-game showcase.
 <!-- You should understand that not following the above may get your PR closed at maintainer’s discretion -->
 
-## Licensing
-<!-- This is for the benefit of other forks wishing to port features from DeltaV
-Our repository is AGPL, meaning projects using the MIT license would have to ask for permission from the PR author (ideally that's you, reading this) before being allowed to port it over
-This just saves them the trouble. Note that AGPL or MIT licensing is only applicable to SOFTWARE, and that assets such as textures and audio have their own licensing scheme that is defined in the codebase itself. -->
-- [ ] I confirm that I am the creator of the code in this PR, and allow licensing it under the following license(s), or that the original author(s) has given me permission to do so:
-  - [X] AGPL (https://github.com/DeltaV-Station/Delta-v/blob/master/LICENSE-AGPLv3.txt) <!-- This one is required to contribute to DeltaV -->
-  - [X] MIT (https://github.com/DeltaV-Station/Delta-v/blob/master/LICENSE-MIT.txt) <!-- Optional - A lot of other SS14 forks use MIT -->
-    <!-- Feel free to add more licenses as you see fit -->
+## Breaking changes
+<!-- List any breaking changes, including namespaces, public class/method/field changes, prototype renames; and provide instructions for fixing them.
+This will be posted in #codebase-changes. -->
 
 **Changelog**
 <!-- Add a Changelog entry to make players aware of new features or changes that could affect gameplay.

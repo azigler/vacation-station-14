@@ -158,8 +158,6 @@
   - type: DeviceNetwork
     receiveFrequencyId: TurretControlAI
     transmitFrequencyId: TurretAI
-  - type: StationAiVision #DeltaV
-    range: 0
 
 - type: entity
   parent: WeaponEnergyTurretStationBase
@@ -186,7 +184,6 @@
   components:
   - type: AccessReader
     access: [["StationAi"], ["Command"]]
-  - type: StationAiTurret #DeltaV
   - type: TurretTargetSettings
     exemptAccessLevels:
     - Command
@@ -197,5 +194,3 @@
   - type: DeviceNetwork
     receiveFrequencyId: TurretControl
     transmitFrequencyId: Turret
-  - type: StationAiVision #DeltaV
-    range: 0

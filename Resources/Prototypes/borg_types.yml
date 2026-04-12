@@ -13,6 +13,7 @@
     - BorgModuleScience #until sciborgs are added
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleTool
   - BorgModuleInflatable
   - BorgModuleArtifact
@@ -47,19 +48,11 @@
     - BorgModuleEngineering
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleTool
   - BorgModuleConstruction
   - BorgModuleRCD
   - BorgModuleCable
-
-  lawset: Engineer # DeltaV - Custom lawset
-  job: StationEngineer # DeltaV - borg job requirements
-  addComponents: # DeltaV - fibers, departmental access
-  - type: AccessReader
-    access: [["Command"], ["Robotics"], ["Engineering"]]
-  - type: Fiber
-    fiberMaterial: fibers-plasteel
-    fiberColor: fibers-orange
 
   radioChannels:
   - Engineering
@@ -92,19 +85,11 @@
     - BorgModuleCargo
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleTool
   - BorgModuleMining
   - BorgModuleTraversal
   - BorgModuleAppraisal
-
-  lawset: Salvage #DeltaV - Custom Lawset
-  job: SalvageSpecialist # DeltaV - borg job requirements
-  addComponents: # DeltaV - fibers, departmental access
-  - type: Fiber
-    fiberMaterial: fibers-plasteel
-    fiberColor: fibers-brown
-  - type: AccessReader
-    access: [["Command"], ["Robotics"], ["Salvage"]]
 
   radioChannels:
   - Supply
@@ -138,17 +123,9 @@
     - BorgModuleJanitor
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleCleaning
   - BorgModuleCustodial
-
-  lawset: Janitor # DeltaV - Custom lawset
-  job: Janitor # DeltaV - borg job requirements
-  addComponents: # DeltaV - fibers, departmental access
-  - type: Fiber
-    fiberMaterial: fibers-plasteel
-    fiberColor: fibers-purple
-  - type: AccessReader
-    access: [["Command"], ["Robotics"], ["Janitor"]]
 
   radioChannels:
   - Science
@@ -182,6 +159,7 @@
     - BorgModuleMedical
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleChemical
   - BorgModuleTopicals
   - BorgModuleRescue
@@ -190,30 +168,14 @@
   - Science
   - Medical
 
-  lawset: Medical # DeltaV: Custom lawset
-  job: MedicalDoctor # DeltaV - borg job requirements
-
   addComponents:
   - type: SolutionScanner
   - type: ShowHealthBars
     damageContainers:
     - Biological
-    - BiologicalMetaphysical # DeltaV - Kitsune
   - type: ShowHealthIcons
     damageContainers:
     - Biological
-    - BiologicalMetaphysical # DeltaV - Kitsune
-  - type: FabricateCandy # DeltaV - The medical cyborg can generate candies filled with medicine.
-    actions:
-    - ActionFabricateLollipop
-    - ActionFabricateGumball
-  - type: Fiber # DeltaV - white plasteel fibers
-    fiberMaterial: fibers-plasteel
-    fiberColor: fibers-white
-  - type: AccessReader # DeltaV - departmental access
-    access: [["Command"], ["Robotics"], ["Medical"]]
-  - type: SurgeryTarget # Shitmed
-  - type: Sanitized # Shitmed
 
   # Visual
   inventoryTemplateId: borgDutch
@@ -247,6 +209,7 @@
     - BorgModuleService
 
   defaultModules:
+  - BorgModulePrying
   - BorgModuleMusique
   - BorgModuleService
   - BorgModuleClowning
@@ -255,11 +218,6 @@
   radioChannels:
   - Science
   - Service
-
-  job: Bartender # DeltaV - borg job requirements
-  addComponents: # DeltaV - departmental access
-  - type: AccessReader
-    access: [["Command"], ["Robotics"], ["Service"]]
 
   # Visual
   inventoryTemplateId: borgTall

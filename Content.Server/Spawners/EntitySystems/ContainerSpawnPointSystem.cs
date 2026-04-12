@@ -29,10 +29,6 @@ public sealed class ContainerSpawnPointSystem : EntitySystem
         if (args.SpawnResult != null)
             return;
 
-        // DeltaV - Ignore these two desired spawn types
-        if (args.DesiredSpawnPointType is SpawnPointType.Observer or SpawnPointType.LateJoin)
-            return;
-
         // If it's just a spawn pref check if it's for cryo (silly).
         if (args.HumanoidCharacterProfile?.SpawnPriority != SpawnPriorityPreference.Cryosleep &&
             (!_proto.Resolve(args.Job, out var jobProto) || jobProto.JobEntity == null))
@@ -47,16 +43,6 @@ public sealed class ContainerSpawnPointSystem : EntitySystem
         {
             if (args.Station != null && _station.GetOwningStation(uid, xform) != args.Station)
                 continue;
-
-            // DeltaV - Custom override for override spawnpoints, only used for prisoners currently. This shouldn't run for any other jobs
-            if (args.DesiredSpawnPointType == SpawnPointType.Job)
-            {
-                if (spawnPoint.SpawnType != SpawnPointType.Job || spawnPoint.Job != args.Job)
-                    continue;
-
-                possibleContainers.Add((uid, spawnPoint, container, xform));
-                continue;
-            }
 
             // If it's unset, then we allow it to be used for both roundstart and midround joins
             if (spawnPoint.SpawnType == SpawnPointType.Unset)

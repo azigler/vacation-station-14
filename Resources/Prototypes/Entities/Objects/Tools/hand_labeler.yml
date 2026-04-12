@@ -26,6 +26,3 @@
         tags:
           - Structure
     - type: PhysicalComposition
-    - type: Tag # DeltaV - fish labeler
-      tags:
-      - HandLabeler

@@ -3,7 +3,6 @@
   id: SmartFridge
   name: SmartFridge
   description: A refrigerated storage unit for keeping items cold and fresh.
-  categories: [ HideSpawnMenu ] # DeltaV - apparently we can't migrate abstract/disabled prototypes
   components:
   - type: StationAiWhitelist
   - type: Vocalizer
@@ -28,20 +27,20 @@
     radius: 1.2
     energy: 3.0
     color: "#9dc5c9"
-  #- type: Machine # DeltaV - Put these components on ours
-  #  board: SmartFridgeCircuitboard
+  - type: Machine
+    board: SmartFridgeCircuitboard
   - type: ContainerContainer
     containers:
       smart_fridge_inventory: !type:Container
       machine_board: !type:Container
       machine_parts: !type:Container
-  #- type: Construction # DeltaV - Put these components on ours
-  #  graph: Machine
-  #  node: machine
-  #  containers:
-  #  - machine_parts
-  #  - machine_board
-  #  - smart_fridge_inventory
+  - type: Construction
+    graph: Machine
+    node: machine
+    containers:
+    - machine_parts
+    - machine_board
+    - smart_fridge_inventory
   - type: LitOnPowered
   - type: ApcPowerReceiver
     powerLoad: 200
@@ -121,10 +120,9 @@
 - type: entity
   parent: SmartFridge
   id: SmartFridgeMedical
-  categories: [ HideSpawnMenu ]
   suffix: Medical
   components:
   - type: SmartFridge
-    #flavorText: smart-fridge-request-chemistry
+    flavorText: smart-fridge-request-chemistry
   - type: AccessReader
     access: [["Medical"]]

@@ -38,7 +38,7 @@
       - MobRandomEngineerCorpse
 
 - type: entity
-  name: Random Logistics Corpse Spawner # DeltaV - Logistics Department replacing Cargo
+  name: Random Cargo Corpse Spawner
   id: RandomCargoCorpseSpawner
   parent: SalvageHumanCorpseSpawner
   components:
@@ -64,7 +64,7 @@
       - MobRandomMedicCorpse
 
 - type: entity
-  name: Random Epistemics Corpse Spawner # DeltaV - Epistemics Department replacing Science
+  name: Random Science Corpse Spawner
   id: RandomScienceCorpseSpawner
   parent: SalvageHumanCorpseSpawner
   components:
@@ -80,7 +80,6 @@
   name: Random Security Corpse Spawner
   id: RandomSecurityCorpseSpawner
   parent: SalvageHumanCorpseSpawner
-  categories: [ HideSpawnMenu ] # DeltaV - Prevent security corpses from being mapped in
   components:
   - type: Sprite
     layers:
@@ -88,7 +87,7 @@
       - state: green
   - type: ConditionalSpawner
     prototypes:
-      - MobRandomServiceCorpse # DeltaV - Prevent Security corpses from spawning and instead spawn Service corpses
+      - MobRandomSecurityCorpse
 
 - type: entity
   name: Random Command Corpse Spawner

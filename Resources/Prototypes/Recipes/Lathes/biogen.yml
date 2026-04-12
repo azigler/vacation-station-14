@@ -1,5 +1,3 @@
-# DeltaV - for context, default coco pod produces 2 biomass!
-
 - type: latheRecipe
   id: BioGenMonkeyCube
   result: MonkeyCube
@@ -28,7 +26,7 @@
     state: cloth
   completetime: 1
   materials:
-    Biomass: 6 # DeltaV - was 10
+    Biomass: 10
 
 - type: latheRecipe
   id: BioGenMaterialCardboard1
@@ -40,7 +38,7 @@
     state: cardboard
   completetime: 1
   materials:
-    Biomass: 4 # DeltaV - was 5
+    Biomass: 5
 
 - type: latheRecipe
   id: BioGenPaper
@@ -49,7 +47,7 @@
   - Materials
   completetime: 1
   materials:
-    Biomass: 1 # DeltaV - was 2
+    Biomass: 2
 
 - type: latheRecipe
   id: BioGenPaperRolling1
@@ -67,7 +65,7 @@
   - Materials
   completetime: 3
   materials:
-    Biomass: 2 # DeltaV - was 3
+    Biomass: 3
 
 - type: latheRecipe
   id: BioGenPlantBGone
@@ -132,7 +130,7 @@
     state: bottle-1
   completetime: 1
   materials:
-    Biomass: 10 # DeltaV - was 15
+    Biomass: 15
 
 - type: latheRecipe
   id: BioGenRobustHarvest
@@ -145,7 +143,7 @@
     state: bottle-1
   completetime: 1
   materials:
-    Biomass: 14 # DeltaV - was 15
+    Biomass: 15
 
 - type: latheRecipe
   id: BioGenMilk
@@ -158,7 +156,7 @@
     state: icon
   completetime: 1
   materials:
-    Biomass: 8 # DeltaV - was 12
+    Biomass: 12
 
 - type: latheRecipe
   id: BioGenMilkSoy
@@ -171,7 +169,7 @@
     state: icon
   completetime: 1
   materials:
-    Biomass: 8 # DeltaV - was 12
+    Biomass: 12
 
 - type: latheRecipe
   id: BioGenEthanol
@@ -184,7 +182,7 @@
     state: icon
   completetime: 1
   materials:
-    Biomass: 12 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenCream
@@ -197,7 +195,7 @@
     state: icon
   completetime: 1
   materials:
-    Biomass: 12 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenBlackpepper
@@ -210,7 +208,7 @@
     state: packet-pepper
   completetime: 1
   materials:
-    Biomass: 12 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenEnzyme
@@ -223,7 +221,7 @@
     state: bottle-empty
   completetime: 1
   materials:
-    Biomass: 12 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenFlour
@@ -236,7 +234,7 @@
     state: flour-big
   completetime: 1
   materials:
-    Biomass: 10 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenSugar
@@ -249,7 +247,7 @@
     state: sugar-big
   completetime: 1
   materials:
-    Biomass: 10 # DeltaV - was 18
+    Biomass: 18
 
 - type: latheRecipe
   id: BioGenDiseaseSwab

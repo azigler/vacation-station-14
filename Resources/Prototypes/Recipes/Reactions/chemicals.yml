@@ -50,7 +50,7 @@
     Oxygen:
       amount: 1
   products:
-    Acetone: 3 # Funkychem - was 2
+    Acetone: 2
 
 - type: reaction
   id: FoamingAgent
@@ -284,7 +284,7 @@
     Carbon:
       amount: 1
   products:
-    Oil: 4 # Funkychem - should hopefully offset hydrogen use, was 3
+    Oil: 3
 
 - type: reaction
   id: Fluorosurfactant
@@ -349,8 +349,6 @@
   impact: Medium
   minTemp: 370
   reactants:
-    Uranium:
-      amount: 1
     Vestine:
       amount: 2
     SpaceGlue:
@@ -369,7 +367,7 @@
     Water:
       amount: 1
   products:
-    ChloralHydrate: 3 # DeltaV: make chloral hydrate less outrageously expensive
+    ChloralHydrate: 1
 
 - type: reaction
   id: Pax

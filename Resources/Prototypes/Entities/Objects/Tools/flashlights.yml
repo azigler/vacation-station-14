@@ -74,10 +74,6 @@
     quickEquip: false
     slots:
       - Belt
-  - type: PhysicalComposition # DeltaV - Made flashlights recycleable
-    materialComposition:
-      Steel: 100
-      Plastic: 100
 
 - type: entity
   name: seclite
@@ -119,7 +115,6 @@
         Blunt: 10
     soundHit:
       collection: MetalThud
-    bluntStaminaDamageFactor: 2.0 # DeltaV - seclite is now a viable nonlethal takedown tool against unarmoured targets.
   - type: Item
     sprite: Objects/Tools/seclite.rsi
   - type: PointLight

@@ -44,9 +44,6 @@ binds:
 - function: Walk
   type: State
   key: Shift
-- function: ToggleStanding
-  type: State
-  key: R
 # Shuttle
 - function: ShuttleStrafeUp
   type: State
@@ -69,6 +66,7 @@ binds:
 - function: ShuttleBrake
   type: State
   key: Space
+# Camera
 - function: CameraRotateLeft
   type: State
   key: NumpadNum7
@@ -169,26 +167,6 @@ binds:
   type: State
   key: X
   mod1: Shift
-  # DeltaV - Begin custom keybinds
-- function: NanoChatNavigateUp
-  type: State
-  key: Up
-  mod1: Alt
-- function: NanoChatNavigateDown
-  type: State
-  key: Down
-  mod1: Alt
-- function: NanoChatNavigateUpUnread
-  type: State
-  key: Up
-  mod1: Alt
-  mod2: Shift
-- function: NanoChatNavigateDownUnread
-  type: State
-  key: Down
-  mod1: Alt
-  mod2: Shift
-  # DeltaV - End custom keybinds
 - function: MoveStoredItem
   type: State
   key: MouseLeft
@@ -266,10 +244,6 @@ binds:
 - function: OpenAHelp
   type: State
   key: F1
-- function: OpenAHelpCuratorChat # DeltaV
-  type: State
-  key: F1
-  mod1: Shift
 - function: OpenInventoryMenu
   type: State
   key: I

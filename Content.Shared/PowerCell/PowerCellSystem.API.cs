@@ -71,16 +71,6 @@ public sealed partial class PowerCellSystem
             return true;
         }
 
-        // Begin DeltaV additions - event-based search for battery
-        var evt = new SearchForBatteryEvent();
-        RaiseLocalEvent(ent, ref evt);
-        if (evt.Handled && evt.Uid.HasValue)
-        {
-            battery = (evt.Uid.Value, evt.Component!);
-            return true;
-        }
-        // End DeltaV additions - event-based search for battery
-
         battery = null;
         return false;
     }
@@ -99,16 +89,6 @@ public sealed partial class PowerCellSystem
         }
         if (TryGetBatteryFromSlot(ent, out battery))
             return true;
-
-        // Begin DeltaV additions - event-based search for battery
-        var evt = new SearchForBatteryEvent();
-        RaiseLocalEvent(ent, ref evt);
-        if (evt.Handled && evt.Uid.HasValue)
-        {
-            battery = (evt.Uid.Value, evt.Component!);
-            return true;
-        }
-        // End DeltaV additions - event-based search for battery
 
         battery = null;
         return false;
@@ -248,20 +228,3 @@ public sealed partial class PowerCellSystem
         return _battery.GetMaxUses(battery.Value.AsNullable(), cost);
     }
 }
-
-// Begin DeltaV - event-based search for battery
-
-/// <summary>
-/// Event raised to search for batteries within an entity
-/// </summary>
-[ByRefEvent]
-public struct SearchForBatteryEvent
-{
-    public EntityUid? Uid;
-
-    public BatteryComponent? Component;
-
-    public bool Handled;
-}
-
-// End DeltaV - event-based search for battery

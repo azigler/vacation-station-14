@@ -45,7 +45,7 @@
       food:
         maxVol: 12
         reagents:
-        - ReagentId: SalicylicAcid # Funkychem - bicaridine -> salicylic acid
+        - ReagentId: Bicaridine
           Quantity: 5
         - ReagentId: Nutriment
           Quantity: 5

@@ -16,16 +16,10 @@ public sealed class ItemCabinetSystem : EntitySystem
     [Dependency] private readonly OpenableSystem _openable = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
 
-    private EntityQuery<ItemCabinetComponent> _cabinetQuery = default!; // DeltaV
-    private EntityQuery<ItemSlotsComponent> _slotsQuery = default!; // DeltaV
-
     /// <inheritdoc/>
     public override void Initialize()
     {
         base.Initialize();
-
-        _cabinetQuery = GetEntityQuery<ItemCabinetComponent>(); // DeltaV
-        _slotsQuery = GetEntityQuery<ItemSlotsComponent>(); // DeltaV
 
         SubscribeLocalEvent<ItemCabinetComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<ItemCabinetComponent, MapInitEvent>(OnMapInit);
@@ -48,7 +42,7 @@ public sealed class ItemCabinetSystem : EntitySystem
 
     private void UpdateAppearance(Entity<ItemCabinetComponent> ent)
     {
-        _appearance.SetData(ent, ItemCabinetVisuals.ContainsItem, HasItem((ent, ent.Comp)));
+        _appearance.SetData(ent, ItemCabinetVisuals.ContainsItem, HasItem(ent));
     }
 
     private void OnContainerModified(EntityUid uid, ItemCabinetComponent component, ContainerModifiedMessage args)
@@ -70,16 +64,11 @@ public sealed class ItemCabinetSystem : EntitySystem
     /// <summary>
     /// Tries to get the cabinet's item slot.
     /// </summary>
-    public bool TryGetSlot(Entity<ItemCabinetComponent?> ent, [NotNullWhen(true)] out ItemSlot? slot) // DeltaV - made component optional
+    public bool TryGetSlot(Entity<ItemCabinetComponent> ent, [NotNullWhen(true)] out ItemSlot? slot)
     {
         slot = null;
-        // Begin DeltaV Changes: Use queries instead of TryComp
-        if (!_cabinetQuery.Resolve(ent, ref ent.Comp))
+        if (!TryComp<ItemSlotsComponent>(ent, out var slots))
             return false;
-
-        if (!_slotsQuery.TryComp(ent, out var slots))
-            return false;
-        // End DeltaV Changes
 
         return _slots.TryGetSlot(ent, ent.Comp.Slot, out slot, slots);
     }
@@ -87,7 +76,7 @@ public sealed class ItemCabinetSystem : EntitySystem
     /// <summary>
     /// Returns true if the cabinet contains an item.
     /// </summary>
-    public bool HasItem(Entity<ItemCabinetComponent?> ent) // DeltaV - made component optional
+    public bool HasItem(Entity<ItemCabinetComponent> ent)
     {
         return TryGetSlot(ent, out var slot) && slot.HasItem;
     }
@@ -97,7 +86,7 @@ public sealed class ItemCabinetSystem : EntitySystem
     /// </summary>
     public void SetSlotLock(Entity<ItemCabinetComponent> ent, bool closed)
     {
-        if (!_slotsQuery.TryComp(ent, out var slots)) // DeltaV - use query
+        if (!TryComp<ItemSlotsComponent>(ent, out var slots))
             return;
 
         if (_slots.TryGetSlot(ent, ent.Comp.Slot, out var slot, slots))

@@ -1,4 +1,3 @@
-using Content.Shared._EE.Flight; // DeltaV - Harpy Flight
 using Content.Shared.Alert;
 using Content.Shared.Inventory;
 using Content.Shared.Throwing;
@@ -17,13 +16,12 @@ public abstract partial class SharedGravitySystem : EntitySystem
 {
     [Dependency] protected readonly IGameTiming Timing = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly SharedFlightSystem _flight = default!; // DeltaV - Harpy Flight
 
     public static readonly ProtoId<AlertPrototype> WeightlessAlert = "Weightless";
 
-    protected EntityQuery<GravityComponent> GravityQuery;
-    private EntityQuery<GravityAffectedComponent> _weightlessQuery;
-    private EntityQuery<PhysicsComponent> _physicsQuery;
+    [Dependency] protected readonly EntityQuery<GravityComponent> GravityQuery = default!;
+    [Dependency] private readonly EntityQuery<GravityAffectedComponent> _weightlessQuery = default!;
+    [Dependency] private readonly EntityQuery<PhysicsComponent> _physicsQuery = default!;
 
     public override void Initialize()
     {
@@ -45,10 +43,6 @@ public abstract partial class SharedGravitySystem : EntitySystem
         // Impulse
         SubscribeLocalEvent<GravityAffectedComponent, ShooterImpulseEvent>(OnShooterImpulse);
         SubscribeLocalEvent<GravityAffectedComponent, ThrowerImpulseEvent>(OnThrowerImpulse);
-
-        GravityQuery = GetEntityQuery<GravityComponent>();
-        _weightlessQuery = GetEntityQuery<GravityAffectedComponent>();
-        _physicsQuery = GetEntityQuery<PhysicsComponent>();
     }
 
     public override void Update(float frameTime)
@@ -70,9 +64,6 @@ public abstract partial class SharedGravitySystem : EntitySystem
 
         if (entity.Comp2.BodyType is BodyType.Static or BodyType.Kinematic)
             return false;
-
-        if (_flight.IsFlying(entity.Owner)) // DeltaV - Harpy Flight
-            return true;
 
         // Check if something other than the grid or map is overriding our gravity
         var ev = new IsWeightlessEvent();

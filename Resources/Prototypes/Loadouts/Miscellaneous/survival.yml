@@ -18,18 +18,7 @@
     - Human
     - Moth
     - Reptilian
-    # Begin DeltaV additions
-    - Felinid
-    - Harpy
-    - Oni
     - Vulpkanin
-    - Rodentia
-    - Chitinid
-    - Thaven
-    - Kitsune
-    - Avali
-    - Ovinia
-    # End DeltaV additions
 
 - type: loadoutEffectGroup
   id: EffectSpeciesVox
@@ -87,18 +76,7 @@
     - Dwarf
     - Human
     - Reptilian
-    # Begin DeltaV additions
-    - Felinid
-    - Harpy
-    - Oni
     - Vulpkanin
-    - Rodentia
-    - Chitinid
-    - Thaven
-    - Kitsune
-    - Avali
-    - Ovinia
-    # End DeltaV additions
 
 - type: loadoutEffectGroup
   id: OxygenBreatherMimeMoth

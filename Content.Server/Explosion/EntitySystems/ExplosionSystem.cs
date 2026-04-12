@@ -6,7 +6,6 @@ using Content.Server.Atmos.EntitySystems;
 using Content.Server.Destructible;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.NPC.Pathfinding;
-using Content.Server.Station.Systems; // DeltaV - Admin QOL
 using Content.Shared.Atmos.Components;
 using Content.Shared.Camera;
 using Content.Shared.CCVar;
@@ -18,6 +17,7 @@ using Content.Shared.Explosion.Components;
 using Content.Shared.Explosion.EntitySystems;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
+using Content.Shared.Maps;
 using Content.Shared.Projectiles;
 using Content.Shared.Throwing;
 using Robust.Server.GameStates;
@@ -29,6 +29,7 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 namespace Content.Server.Explosion.EntitySystems;
@@ -42,6 +43,7 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
@@ -56,7 +58,6 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
     [Dependency] private readonly FlammableSystem _flammableSystem = default!;
     [Dependency] private readonly DestructibleSystem _destructibleSystem = default!;
     [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
-    [Dependency] private readonly StationSystem _stationSystem = default!; // DeltaV
 
     private EntityQuery<FlammableComponent> _flammableQuery;
     private EntityQuery<PhysicsComponent> _physicsQuery;
@@ -65,6 +66,7 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
     private EntityQuery<DestructibleComponent> _destructibleQuery;
     private EntityQuery<DamageableComponent> _damageableQuery;
     private EntityQuery<AirtightComponent> _airtightQuery;
+    private EntityQuery<TileHistoryComponent> _tileHistoryQuery;
 
     /// <summary>
     ///     "Tile-size" for space when there are no nearby grids to use as a reference.
@@ -107,6 +109,7 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
         _destructibleQuery = GetEntityQuery<DestructibleComponent>();
         _damageableQuery = GetEntityQuery<DamageableComponent>();
         _airtightQuery = GetEntityQuery<AirtightComponent>();
+        _tileHistoryQuery = GetEntityQuery<TileHistoryComponent>();
 
         _prototypeManager.PrototypesReloaded += ReloadExplosionPrototypes;
     }
@@ -252,47 +255,19 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
         if (!addLog)
             return;
 
-        // DeltaV - check if on station START
-        string? stationName = null;
-        var station = _stationSystem.GetOwningStation(gridPos?.EntityId);
-        // just in case: is the user on station?
-        if (station is null && user is not null)
-        {
-            station = _stationSystem.GetOwningStation(user);
-        }
-
-        if (station is not null)
-        {
-            if (_stationSystem.TryGetNetEntity(station, out var stationNetEnt))
-            {
-                stationName = _stationSystem.GetStationNames().Find(x => x.Entity == stationNetEnt).Name;
-            }
-        }
-        // DeltaV - check if on station END
-
         if (user == null)
         {
-            _adminLogger.Add(LogType.Explosion, station is not null ? LogImpact.Extreme : LogImpact.High, // DeltaV - Set to Extreme if onStation (always alert), add station name if available
-                $"{ToPrettyString(uid):entity} exploded ({typeId}) at {(stationName != null ? $"{stationName} " : "")}Pos:{(posFound ? $"{gridPos:coordinates}" : "[Grid or Map not found]")} with intensity {totalIntensity} slope {slope}");
+            _adminLogger.Add(LogType.Explosion, LogImpact.High,
+                $"{ToPrettyString(uid):entity} exploded ({typeId}) at Pos:{(posFound ? $"{gridPos:coordinates}" : "[Grid or Map not found]")} with intensity {totalIntensity} slope {slope}");
         }
         else
         {
             var alertMinExplosionIntensity = _cfg.GetCVar(CCVars.AdminAlertExplosionMinIntensity);
             var logImpact = (alertMinExplosionIntensity > -1 && totalIntensity >= alertMinExplosionIntensity)
                 ? LogImpact.Extreme
-                : LogImpact.Medium; // DeltaV - If false, Medium instead of High
-
-            // DeltaV - Set to Extreme if onStation (always alert) START
-            if (station is not null)
-                logImpact = LogImpact.Extreme;
-            // DeltaV - Set to Extreme if onStation (always alert) END
-
+                : LogImpact.High;
             if (posFound)
-            {
-                _adminLogger.Add(LogType.Explosion,
-                    logImpact,
-                    $"{ToPrettyString(user.Value):user} caused {ToPrettyString(uid):entity} to explode ({typeId}) at {(stationName != null ? $"{stationName} " : "")}Pos:{gridPos:coordinates} with intensity {totalIntensity} slope {slope}"); // DeltaV - Add stationName to log message if available
-            }
+                _adminLogger.Add(LogType.Explosion, logImpact, $"{ToPrettyString(user.Value):user} caused {ToPrettyString(uid):entity} to explode ({typeId}) at Pos:{gridPos:coordinates} with intensity {totalIntensity} slope {slope}");
             else
                 _adminLogger.Add(LogType.Explosion, logImpact, $"{ToPrettyString(user.Value):user} caused {ToPrettyString(uid):entity} to explode ({typeId}) at Pos:[Grid or Map not found] with intensity {totalIntensity} slope {slope}");
         }
@@ -427,7 +402,8 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
             visualEnt,
             queued.Cause,
             _map,
-            _damageableSystem);
+            _damageableSystem,
+            _tileHistoryQuery);
     }
 
     private void CameraShake(float range, MapCoordinates epicenter, float totalIntensity)

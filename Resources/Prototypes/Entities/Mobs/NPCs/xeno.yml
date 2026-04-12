@@ -24,7 +24,7 @@
   - type: Prying
     pryPowered: true
     force: true
-    speedModifier: 3 # DeltaV - Was 1.5
+    speedModifier: 1.5
     useSound:
       path: /Audio/Items/crowbar.ogg
   - type: Reactive
@@ -60,7 +60,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      150: Dead # DeltaV - Was 50
+      50: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       25: 0.5
@@ -78,11 +78,8 @@
      collection: AlienClaw
     animation: WeaponArcBite
     damage:
-# Begin Delta V Changes
       types:
-        Slash: 12
-        Structural: 35
-# End DeltaV Changes
+        Piercing: 6
   - type: DamageStateVisuals
     states:
       Alive:
@@ -97,16 +94,16 @@
     spawned:
     - id: FoodMeatXeno
       amount: 5
-#  - type: GhostRole # Delta V - Moves ghost role from parent to child
-#    allowMovement: true
-#    allowSpeech: true
-#    makeSentient: true
-#    name: ghost-role-information-xeno-name
-#    description: ghost-role-information-xeno-description
-#    rules: ghost-role-information-xeno-rules
-#    raffle:
-#      settings: default
-#  - type: GhostTakeoverAvailable
+  - type: GhostRole
+    allowMovement: true
+    allowSpeech: true
+    makeSentient: true
+    name: ghost-role-information-xeno-name
+    description: ghost-role-information-xeno-description
+    rules: ghost-role-information-xeno-rules
+    raffle:
+      settings: default
+  - type: GhostTakeoverAvailable
   - type: TypingIndicator
     proto: alien
   - type: Temperature
@@ -124,18 +121,11 @@
     molsPerSecondPerUnitMass: 0.0005
   - type: Speech
     speechVerb: LargeMob
-    speechSounds: Xenonid # DeltaV: Use RMC's speech sounds for sentient xenos
-  - type: PotentialPsionic #Nyano - Summary: makes potentially psionic.
-    chance: -2
-  - type: Psionic #Nyano - Summary: makes psionic by default.
-    removable: false
-  - type: NightVision #Delta-v - Added nightvision
-    color: "#808080"
 
 - type: entity
   name: praetorian
   parent: MobXeno
-  id: MobXenoPraetorianNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoPraetorian
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -147,7 +137,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      250: Dead  # DeltaV - Was 100
+      100: Dead
   - type: Stamina
     baseCritThreshold: 300
   - type: SlowOnDamage
@@ -164,15 +154,11 @@
         - MobMask
         layer:
         - MobLayer
-  - type: MeleeWeapon # DeltaV - Make Xenos Scary
-    damage:
-      types:
-        Slash: 20
 
 - type: entity
   name: drone
   parent: MobXeno
-  id: MobXenoDroneNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoDrone
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -184,16 +170,14 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      160: Dead # DeltaV - Was 80
+      80: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       40: 0.7
   - type: MeleeWeapon
     damage:
-# Begin DeltaV Changes
       types:
-        Slash: 10
-# End DeltaV Changes
+        Slash: 6
   - type: MovementSpeedModifier
     baseSprintSpeed: 4
   - type: Fixtures
@@ -211,7 +195,7 @@
 - type: entity
   name: queen
   parent: MobXeno
-  id: MobXenoQueenNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoQueen
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -223,18 +207,15 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      600: Dead # DeltaV - Was 300
+      300: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       150: 0.7
   - type: MovementSpeedModifier
   - type: MeleeWeapon
     damage:
-# Begin DeltaV Changes
-     types:
-       Slash: 35
-       Structural: 60
-# End DeltaV Changes
+      types:
+        Slash: 12
   - type: Fixtures
     fixtures:
       fix1:
@@ -253,7 +234,7 @@
 - type: entity
   name: ravager
   parent: MobXeno
-  id: MobXenoRavagerNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoRavager
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -265,17 +246,13 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      200: Dead # DeltaV - Was 100
+      100: Dead
   - type: MovementSpeedModifier
     baseSprintSpeed: 4
   - type: MeleeWeapon
-    attackRate: 2 # DeltaV - One of the deadliest if you get too close
     damage:
-# Begin DeltaV Changes
-     types:
-       Slash: 20
-       Structural: 40
-# End DeltaV Changes
+      types:
+        Slash: 10
   - type: SlowOnDamage
     speedModifierThresholds:
       50: 0.7
@@ -294,7 +271,7 @@
 - type: entity
   name: runner
   parent: MobXeno
-  id: MobXenoRunnerNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoRunner
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -306,12 +283,9 @@
   - type: MovementSpeedModifier
     baseSprintSpeed: 6.0
   - type: MeleeWeapon
-# Begin DeltaV Changes
-    attackRate: 2
     damage:
-     types:
-       Slash: 10
-# End DeltaV Changes
+      types:
+        Slash: 5
   - type: Fixtures
     fixtures:
       fix1:
@@ -323,15 +297,11 @@
         - MobMask
         layer:
         - MobLayer
-  - type: MobThresholds # DeltaV - Make Xenos Scary
-    thresholds:
-      0: Alive
-      125: Dead
 
 - type: entity
   name: rouny
-  parent: MobXenoRunnerNPC # Delta V - These no longer inherit the ghost takeover comp
-  id: MobXenoRounyNPC # Delta V - These no longer inherit the ghost takeover comp
+  parent: MobXenoRunner
+  id: MobXenoRouny
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -346,7 +316,7 @@
 - type: entity
   name: spitter
   parent: MobXeno
-  id: MobXenoSpitterNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoSpitter
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -358,7 +328,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      100: Dead # DeltaV - Was 50
+      50: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       25: 0.7
@@ -491,8 +461,8 @@
 # Mob mapped to Xeno Station that can not be ghostrole / pry
 
 - type: entity
-  name: lone praetorian
-  description: The last of its kind.
+  name: '"Dale"'
+  description: A praetorian left over from the station's initial security sweep. Has a pair of bloodied dog tags engraved with the name "Pvt. Dale" stuck in its maw.
   parent: SimpleSpaceMobBase
   id: MobXenoLonePraetorianNoGhost
   components:
@@ -536,8 +506,8 @@
      collection: AlienClaw
     animation: WeaponArcBite
     damage:
-     groups:
-       Brute: 5
+      types:
+        Slash: 5
   - type: DamageStateVisuals
     states:
       Alive:

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     # Hey there fork dev! If you like to include your own contributors in this then you can probably just change this to your own repo
     # Do this in dump_github_contributors.ps1 too into your own repo
-    if: github.repository == 'DeltaV-Station/Delta-v'
+    if: github.repository == 'space-wizards/space-station-14'
 
     steps:
       - uses: actions/checkout@v4.2.2
@@ -34,34 +34,21 @@ jobs:
       # Uncomment this and comment the other line if you do this.
       # https://github.com/stefanzweifel/git-auto-commit-action#push-to-protected-branches
 
-      # - name: Commit new credit files
-      #   uses: stefanzweifel/git-auto-commit-action@v7
-      #   with:
-      #     commit_message: Update Credits
-      #     commit_author: DeltaV-Bot <github@deltav.gay>
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Commit new credit files
+      #  uses: stefanzweifel/git-auto-commit-action@v4
+      #  with:
+      #    commit_message: Update Credits
+      #    commit_author: PJBot <pieterjan.briers+bot@gmail.com>
 
       # This will make a PR
       - name: Set current date as env variable
         run: echo "NOW=$(date +'%Y-%m-%dT%H-%M-%S')" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Update Credits
           title: Update Credits
           body: This is an automated Pull Request. This PR updates the github contributors in the credits section.
-          author: DeltaV-Bot <github@deltav.gay>
+          author: PJBot <pieterjan.briers+bot@gmail.com>
           branch: automated/credits-${{env.NOW}}
-
-      - name: Auto-merge PR with bypass
-        if: steps.cpr.outputs.pull-request-number != ''
-        env:
-          GH_TOKEN: ${{secrets.CREDITS_TOKEN}}
-        run: |
-          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} \
-            --squash \
-            --admin \
-            --delete-branch \
-            --repo ${{ github.repository }}

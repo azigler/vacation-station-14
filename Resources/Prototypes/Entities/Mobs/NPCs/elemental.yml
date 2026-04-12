@@ -39,7 +39,7 @@
         acts: [ "Destruction" ]
   - type: ZombieImmune
   - type: ProtectedFromStepTriggers
-  #- type: StunVisuals # DeltaV - No stars
+  - type: StunVisuals
 
 - type: entity
   abstract: true
@@ -386,6 +386,7 @@
     solution: bloodstream
   - type: DrainableSolution
     solution: bloodstream
+  - type: ForceAttack
 
 - type: entity
   parent: MarkerBase

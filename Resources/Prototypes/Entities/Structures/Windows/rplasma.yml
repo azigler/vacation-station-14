@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     drawdepth: WallTops
-    sprite: _DV/Structures/Windows/reinforced_plasma_window.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/reinforced_plasma_window.rsi
   - type: Icon
-    sprite: _DV/Structures/Windows/reinforced_plasma_window.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/reinforced_plasma_window.rsi
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: RGlass
@@ -26,7 +26,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 175 # DeltaV - Increased health by 25 (less than uranium)
+        damage: 150
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -67,10 +67,10 @@
     - Window
   components:
   - type: Sprite
-    sprite: _DV/Structures/Windows/directional.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/directional.rsi
     state: plasma_reinforced_window
   - type: Icon
-    sprite: _DV/Structures/Windows/directional.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/directional.rsi
     state: plasma_reinforced_window
   - type: Construction
     graph: WindowDirectional
@@ -82,19 +82,21 @@
     trackAllDamage: true
     damageOverlay:
       sprite: Structures/Windows/cracks_directional.rsi
+  - type: Damageable
+    damageModifierSet: RGlass
   - type: RadiationBlocker
     resistance: 2
   - type: Destructible
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 200 # DeltaV - Increased health cap by 50
+        damage: 150
       behaviors: #excess damage, don't spawn entities.
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
     - trigger:
         !type:DamageTrigger
-        damage: 110 # DeltaV - Increased health by 35 (less than uranium)
+        damage: 75
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -111,8 +113,6 @@
         acts: [ "Destruction" ]
   - type: StaticPrice
     price: 66
-  - type: CosmicCorruptible # DeltaV - Cosmic Cult
-    convertTo: WindowCosmicCult
 
 - type: entity
   parent: ReinforcedPlasmaWindow
@@ -125,7 +125,7 @@
   components:
   - type: Sprite
     drawdepth: WallTops
-    sprite: _DV/Structures/Windows/reinforced_plasma_diagonal.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/reinforced_plasma_diagonal.rsi
     state: state0
   - type: Tag
     tags:
@@ -136,7 +136,7 @@
     key: windows
     base: state
   - type: Icon
-    sprite: _DV/Structures/Windows/reinforced_plasma_diagonal.rsi #Delta V - Resprite windows
+    sprite: Structures/Windows/reinforced_plasma_diagonal.rsi
     state: state0
   - type: Fixtures
     fixtures:

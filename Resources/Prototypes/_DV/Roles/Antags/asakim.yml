@@ -1,8 +1,0 @@
-- type: antag
-  id: Asakim
-  name: roles-antag-asakim-name
-  objective: roles-antag-asakim-objective
-  antagonist: true
-  requirements:
-  - !type:OverallPlaytimeRequirement
-    time: 48h

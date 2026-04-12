@@ -122,7 +122,7 @@
   description: So soft it almost makes you want to take a nap...
   components:
   - type: Sprite
-    sprite: _DV/Mobs/Ghosts/revenant.rsi # DeltaV - Custom revenant sprite
+    sprite: Mobs/Ghosts/revenant.rsi
     state: icon
     noRot: true
   - type: Item
@@ -987,17 +987,6 @@
   - type: FoodSequenceElement
     entries:
       CottonBurger: MousePlushie
-  # Begin DeltaV additions - make cats attack mouse toys to play with them
-  - type: Damageable
-    damageContainer: StructuralInorganic # not actually destructible, just lets it be attacked
-  - type: MobState
-  - type: MobThresholds
-    thresholds:
-      0: Alive # always be considered alive
-  - type: NpcFactionMember
-    factions:
-    - Mouse
-  # End DeltaV additions
 
 - type: entity
   parent: BasePlushie
@@ -1177,10 +1166,9 @@
     state: icon
   - type: EmitSoundOnUse
     sound: &PlushieMothSound
-      path: /Audio/Voice/Moth/moth_squeak.ogg # DeltaV - Give back the mothplushie the squeak
+      path: /Audio/Voice/Moth/moth_chitter.ogg
   - type: EmitSoundOnLand
-    sound: 
-      path: /Audio/Voice/Moth/moth_scream.ogg # DeltaV - Make the mothplushie scream on landing
+    sound: *PlushieMothSound
   - type: EmitSoundOnActivate
     sound: *PlushieMothSound
   - type: EmitSoundOnTrigger
@@ -1199,9 +1187,6 @@
   - type: FoodSequenceElement
     entries:
       CottonBurger: MothPlushie
-  - type: Construction # DeltaV - Mothroach hide craft, see Prototypes/Nyanotrasen/Recipes/Crafting/Graphs/fun/mothplushie.yml
-    graph: MothPlushie
-    node: plush
 
 - type: entity
   parent: BasePlushie

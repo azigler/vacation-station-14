@@ -78,7 +78,6 @@
       - id: GroundCannabis
         amount: !type:RangeNumberSelector
           range: 1, 6
-    - id: ClothingHeadsetPrison # DeltaV - Added prisoner headsets
 
 #- type: entity
 #  id: WardrobePajamaFilled
@@ -268,6 +267,8 @@
     - id: ClothingUniformJumpsuitChaplain
     - id: ClothingShoesColorBlack
     - id: ClothingUniformJumpskirtChaplain
+    - id: PlushieLizardJobChaplain
+      prob: 0.02
 
 - type: entity
   id: WardrobeSecurityFilled
@@ -289,8 +290,7 @@
     - id: ClothingShoesBootsJack
     - id: ClothingEyesGlassesSunglasses
     - id: ClothingHeadHelmetBasic
-    - id: ClothingOuterArmorPlateCarrier # DeltaV - ClothingOuterArmorBasic replaced in favour of plate carrier and stabproof vest
-    - id: ClothingOuterArmorDuraVest # DeltaV - ClothingOuterArmorBasicSlim replaced in favour of plate carrier and stabproof vest
+    - id: ClothingOuterArmorBasic
     - id: ClothingUniformJumpskirtSec
 
 - type: entity
@@ -315,6 +315,8 @@
     - id: ClothingUniformJumpskirtCargo
     - id: ClothingHandsGlovesFingerless
     - id: AppraisalTool
+    - id: PlushieLizardJobCargotechnician
+      prob: 0.02
 
 - type: entity
   id: WardrobeSalvageFilled

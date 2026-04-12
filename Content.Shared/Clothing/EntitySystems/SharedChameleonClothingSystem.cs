@@ -66,12 +66,20 @@ public abstract class SharedChameleonClothingSystem : EntitySystem
 
     private void OnGotEquipped(EntityUid uid, ChameleonClothingComponent component, GotEquippedEvent args)
     {
-        component.User = args.Equipee;
+        if (Timing.ApplyingState)
+            return; // Already networked as part of the same gamestate
+
+        component.User = args.EquipTarget;
+        Dirty(uid, component);
     }
 
     private void OnGotUnequipped(EntityUid uid, ChameleonClothingComponent component, GotUnequippedEvent args)
     {
+        if (Timing.ApplyingState)
+            return; // Already networked as part of the same gamestate
+
         component.User = null;
+        Dirty(uid, component);
     }
 
     // Updates chameleon visuals and meta information.
@@ -139,7 +147,7 @@ public abstract class SharedChameleonClothingSystem : EntitySystem
 
         args.Verbs.Add(new InteractionVerb()
         {
-            Text = Loc.GetString(ent.Comp.VerbNameOverride ?? "chameleon-component-verb-text"), // Delta-V: Override for the name of the Chameleon Verb
+            Text = Loc.GetString("chameleon-component-verb-text"),
             Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
             Act = () => UI.TryToggleUi(ent.Owner, ChameleonUiKey.Key, user)
         });

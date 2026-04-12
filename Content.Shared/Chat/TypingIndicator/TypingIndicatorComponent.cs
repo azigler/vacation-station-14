@@ -1,4 +1,4 @@
-using Robust.Shared.GameStates;
+﻿using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Chat.TypingIndicator;
@@ -8,7 +8,7 @@ namespace Content.Shared.Chat.TypingIndicator;
 ///     Added automatically when player poses entity.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-// [Access(typeof(SharedTypingIndicatorSystem))] CD - Restricted access breaks synth trait because it rewrites the speech bubble over the default race indicator
+[Access(typeof(SharedTypingIndicatorSystem))]
 public sealed partial class TypingIndicatorComponent : Component
 {
     /// <summary>
@@ -16,10 +16,4 @@ public sealed partial class TypingIndicatorComponent : Component
     /// </summary>
     [DataField("proto"), AutoNetworkedField]
     public ProtoId<TypingIndicatorPrototype> TypingIndicatorPrototype = "default";
-
-    /// <summary>
-    ///  DeltaV - Allow the indicator to be temporarily overriden
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public ProtoId<TypingIndicatorPrototype>? TypingIndicatorOverridePrototype;
 }

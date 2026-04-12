@@ -58,9 +58,6 @@
     damage:
       types:
         Radiation: 10
-  - type: Psionic #Nyano - Summary: makes psionic on creation.
-  - type: GlimmerSource #Nyano - Summary: makes this a potential source of Glimmer.
-    active: false
 
 - type: entity
   id: AnomalyPyroclastic
@@ -945,13 +942,11 @@
     - Cryptobiolin
     - Dylovene
     - Arithrazine
-    - SalicylicAcid # Funkychem - bicaridine -> salicylic acid
+    - Bicaridine
     - Cryoxadone
     - Dermaline
     - Dexalin
-    - Oxandrolone # Funkychem - oxandrolone
-    - Convermol # Funkychem - dex+ -> convermol
-    - Salbutamol # Funkychem - dex+ -> salbutamol
+    - DexalinPlus
     - Epinephrine
     - Leporazine
     - Ambuzol
@@ -976,7 +971,6 @@
     - Honk
     - Carpetium
     - JuiceThatMakesYouWeh
-    - ExoticReagent # Funkychem - base for exotic chems
   - type: Edible
     edible: Drink
     solution: anomaly

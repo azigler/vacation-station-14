@@ -127,7 +127,7 @@
   color: saddlebrown
   recognizable: true
   metabolisms:
-    Food:
+    Digestion:
       effects:
       - !type:SatiateHunger
         factor: 0.5
@@ -159,16 +159,11 @@
   - !type:PlantAdjustHealth
     amount: -2
   metabolisms:
-    Food:
+    Digestion:
       effects:
       # eating salt on its own kinda sucks, kids
       - !type:SatiateThirst
         factor: -0.5
-  tileReactions: # Imp
-    - !type:EnsureTileReaction
-      components:
-        - type: RevealRevenantOnCollide
-          popupText: revenant-revealed-salt
 
 - type: reagent
   id: Syrup
@@ -183,7 +178,7 @@
   tileReactions:
     - !type:SpillTileReaction
   metabolisms:
-    Food:
+    Digestion:
       # 12 diona blood for 1 unit of syrup, this stuff better be worthwhile.
       effects:
       - !type:SatiateHunger

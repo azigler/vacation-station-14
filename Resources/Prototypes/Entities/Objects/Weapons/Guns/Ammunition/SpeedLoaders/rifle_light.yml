@@ -5,9 +5,6 @@
   description: 5-round 'stripper clip' for quickly reloading the Kardashev-Mosin. Intended to hold general-purpose kinetic ammunition.
   components:
   - type: SpeedLoader
-  - type: Tag # DeltaV - Keep Tag
-    tags:
-      - SpeedLoaderRifle
   - type: BallisticAmmoProvider
     mayTransfer: true
     whitelist:

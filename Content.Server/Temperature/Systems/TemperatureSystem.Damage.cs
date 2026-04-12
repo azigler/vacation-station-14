@@ -1,7 +1,6 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Body.Components;
 using Content.Server.Temperature.Components;
-using Content.Shared._DV.CosmicCult.Components; // DeltaV
 using Content.Shared.Alert;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
@@ -28,7 +27,6 @@ public sealed partial class TemperatureSystem
     private EntityQuery<TemperatureDamageComponent> _tempDamageQuery;
     private EntityQuery<ContainerTemperatureComponent> _containerTemperatureQuery;
     private EntityQuery<ThermalRegulatorComponent> _thermalRegulatorQuery;
-    private EntityQuery<TemperatureImmunityComponent> _immuneQuery; // DeltaV
 
     /// <summary>
     ///     All the components that will have their damage updated at the end of the tick.
@@ -67,7 +65,6 @@ public sealed partial class TemperatureSystem
         _tempDamageQuery = GetEntityQuery<TemperatureDamageComponent>();
         _containerTemperatureQuery = GetEntityQuery<ContainerTemperatureComponent>();
         _thermalRegulatorQuery = GetEntityQuery<ThermalRegulatorComponent>();
-        _immuneQuery = GetEntityQuery<TemperatureImmunityComponent>(); // DeltaV
     }
 
     private void UpdateDamage()
@@ -143,7 +140,7 @@ public sealed partial class TemperatureSystem
         float threshold;
         float idealTemp;
 
-        if (!_tempDamageQuery.TryComp(entity, out var thresholds) || _immuneQuery.HasComp(entity)) // DeltaV - hide alerts if immune)
+        if (!_tempDamageQuery.TryComp(entity, out var thresholds))
         {
             _alerts.ClearAlertCategory(entity.Owner, TemperatureAlertCategory);
             return;
@@ -184,11 +181,6 @@ public sealed partial class TemperatureSystem
 
     private void EnqueueDamage(Entity<TemperatureDamageComponent> ent, ref OnTemperatureChangeEvent args)
     {
-        // Begin DeltaV Additions - cosmic cult temperature immunity
-        if (_immuneQuery.HasComp(ent))
-            return;
-        // End DeltaV Additions
-
         if (ShouldUpdateDamage.Add(ent) && !ent.Comp.TakingDamage)
             ent.Comp.LastUpdate = _gameTiming.CurTime;
     }

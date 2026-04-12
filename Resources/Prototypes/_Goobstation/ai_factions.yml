@@ -1,8 +1,0 @@
-- type: npcFaction
-  id: DevilFaction
-  hostile:
-  - NanoTrasen
-  - Syndicate
-  - Zombie
-  - Revolutionary
-  - Wizard

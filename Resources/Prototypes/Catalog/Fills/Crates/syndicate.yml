@@ -6,9 +6,6 @@
   components:
     - type: SurplusBundle
       totalPrice: 50
-    - type: MappingCategories # DeltaV
-      categories:
-      - Syndicate
 
 - type: entity
   parent: CrateSyndicate
@@ -24,9 +21,6 @@
         - id: ClothingOuterHardsuitJuggernaut
         - !type:NestedSelector
           tableId: SyndicateHardsuitExtrasEntityTable
-  - type: MappingCategories # DeltaV
-    categories:
-    - Syndicate
 
 - type: entity
   parent: [ CrateSyndicate, StorePresetUplink, BaseSyndicateContraband ]
@@ -36,6 +30,3 @@
   components:
     - type: SurplusBundle
       totalPrice: 125
-    - type: MappingCategories # DeltaV
-      categories:
-      - Syndicate

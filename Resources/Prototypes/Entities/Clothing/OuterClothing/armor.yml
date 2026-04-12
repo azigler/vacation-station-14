@@ -21,8 +21,6 @@
         Slash: 0.70
         Piercing: 0.70 #Can save you, but bullets will still hurt. Will take about 10 shots from a Viper before critting, as opposed to 7 while unarmored and 16~ with a bulletproof vest.
         Heat: 0.80
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.75 # Decent at stopping disablers
   - type: ExplosionResistance
     damageCoefficient: 0.90
 
@@ -33,7 +31,6 @@
   components:
   - type: Tag
     tags:
-    - CorgiWearable
     - WhitelistChameleon
 
 #Alternate / slim basic armor vest
@@ -85,9 +82,9 @@
         Blunt: 0.9
         Slash: 0.9
         Piercing: 0.9
-        Heat: 0.75 # DeltaV - changed from 60% resistant to 25%
+        Heat: 0.4 # this technically means it protects against fires pretty well? -heat is just for lasers and stuff, not atmos temperature
   - type: Reflect
-    reflectProb: 0.75 # DeltaV - changed from 100% reflect to 75%
+    reflectProb: 1
     reflects:
       - Energy
     reflectingInHands: false
@@ -105,7 +102,7 @@
     sprite: Clothing/OuterClothing/Vests/detvest.rsi
 
 - type: entity
-  parent: [ClothingOuterBaseLarge, AllowSuitStorageClothing]
+  parent: [ ClothingOuterBaseMedium, AllowSuitStorageClothing ]
   id: ClothingOuterArmorBaseCarapace
   abstract: true
   components:
@@ -119,13 +116,7 @@
         Caustic: 0.9
   - type: ExplosionResistance
     damageCoefficient: 0.65
-  - type: ClothingSpeedModifier
-    walkModifier: 1.0
-    sprintModifier: 1.0
-  - type: HeldSpeedModifier
   - type: GroupExamine
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.7 # Some protection against disablers, but you're better off with a vest
 
 - type: entity
   parent: [ClothingOuterArmorBaseCarapace, BaseCommandContraband]
@@ -139,7 +130,6 @@
     sprite: Clothing/OuterClothing/Armor/captain_carapace.rsi
   - type: Tag
     tags:
-    - CorgiWearable
     - WhitelistChameleon
 
 - type: entity
@@ -155,7 +145,7 @@
 
 #Web vest
 - type: entity
-  parent: [ClothingOuterStorageBase, AllowSuitStorageClothing, BaseSyndicateContraband]
+  parent: [ClothingOuterArmorBase, ClothingOuterStorageBase, BaseSyndicateContraband]
   id: ClothingOuterVestWeb
   name: web vest
   description: A synthetic armor vest. This one has added webbing and ballistic plates.
@@ -171,16 +161,12 @@
         Slash: 0.6
         Piercing: 0.3
         Heat: 0.9
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.6
-  - type: ExplosionResistance
-    damageCoefficient: 0.9
   - type: StaticPrice
     price: 1500
 
 #Elite web vest
 - type: entity
-  parent: [ClothingOuterStorageBase, AllowSuitStorageClothing, BaseSyndicateContraband]
+  parent: [ClothingOuterArmorBase, AllowSuitStorageClothing, BaseSyndicateContraband]
   id: ClothingOuterVestWebElite
   name: elite web vest
   description: A synthetic armor vest. This one has added webbing and heat resistant fibers.
@@ -201,8 +187,6 @@
         Heat: 0.3
         Radiation: 0.5
         Caustic: 0.5
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.6 # twice as good as web vest
   - type: ExplosionResistance
     damageCoefficient: 0.5
   - type: FireProtection
@@ -228,8 +212,6 @@
         Slash: 0.7
         Piercing: 0.5
         Heat: 0.9
-  - type: ExplosionResistance
-    damageCoefficient: 0.9
 
 
 # Armor covering multiple body parts including limbs
@@ -256,12 +238,10 @@
         Piercing: 0.35
         Heat: 0.35
         Caustic: 0.5
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.35
   - type: ExplosionResistance
     damageCoefficient: 0.35
-  #- type: StaminaResistance
-  #  damageCoefficient: 0.45
+  - type: StaminaResistance # do not add these to other equipment or mobs, we don't want to microbalance these everywhere
+    damageCoefficient: 0.45
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
@@ -374,8 +354,6 @@
         Heat: 0.5
         Radiation: 0
         Caustic: 0.75
-  - type: StaminaResistance # DeltaV
-    damageCoefficient: 0.1
   - type: GroupExamine
   - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET

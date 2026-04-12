@@ -148,24 +148,6 @@ namespace Content.Shared.StatusEffect
             return false;
         }
 
-        // Begin Imp Changes
-        public bool TryAddStatusEffect(EntityUid uid, string key, TimeSpan time, bool refresh, Component component,
-            StatusEffectsComponent? status = null)
-        {
-            if (!Resolve(uid, ref status, false))
-                return false;
-
-            if (TryAddStatusEffect(uid, key, time, refresh, status))
-            {
-                EntityManager.AddComponent(uid, component, true);
-                status.ActiveEffects[key].RelevantComponent = Factory.GetComponentName(component.GetType());
-                return true;
-            }
-
-            return false;
-        }
-        // End Imp Changes
-
         /// <summary>
         ///     Tries to add a status effect to an entity with a certain timer.
         /// </summary>
@@ -378,7 +360,7 @@ namespace Content.Shared.StatusEffect
 
             if (!_prototypeManager.TryIndex<StatusEffectPrototype>(key, out var proto))
                 return false;
-            if (!proto.AlwaysAllowed && !status.AllowedEffects.Contains(key)) // Imp
+            if (!status.AllowedEffects.Contains(key) && !proto.AlwaysAllowed)
                 return false;
 
             return true;

@@ -29,12 +29,6 @@ public sealed partial class ArmorComponent : Component
     /// </summary>
     [DataField]
     public bool ShowArmorOnExamine = true;
-
-    /// <summary>
-    /// DeltaV - Gets the effective stamina melee damage coefficient, based on the armor's blunt protection.
-    /// </summary>
-    [ViewVariables]
-    public float StaminaMeleeDamageCoefficient => Modifiers.Coefficients.GetValueOrDefault("Blunt", 1.0f);
 }
 
 /// <summary>

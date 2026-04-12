@@ -18,7 +18,7 @@ device-frequency-prototype-name-mothership = Mothership
 device-frequency-prototype-name-surveillance-camera-test = Subnet Test
 device-frequency-prototype-name-surveillance-camera-engineering = Engineering Cameras
 device-frequency-prototype-name-surveillance-camera-security = Security Cameras
-device-frequency-prototype-name-surveillance-camera-science = Epistemics Cameras
+device-frequency-prototype-name-surveillance-camera-science = Science Cameras
 device-frequency-prototype-name-surveillance-camera-supply = Supply Cameras
 device-frequency-prototype-name-surveillance-camera-command = Command Cameras
 device-frequency-prototype-name-surveillance-camera-service = Service Cameras
@@ -55,3 +55,5 @@ device-net-id-apc = Apc
 device-net-id-atmos-devices = Atmos Devices
 device-net-id-reserved = Reserved
 
+# Unknown
+device-address-unknown = ????-????

@@ -5,7 +5,6 @@
   name: job-name-cmo
   description: job-description-cmo
   playTimeTracker: JobChiefMedicalOfficer
-  antagAdvantage: 6 # DeltaV - Reduced TC: Head of Staff
   requirements:
     - !type:RoleTimeRequirement
       role: JobChemist
@@ -19,7 +18,6 @@
   weight: 10
   startingGear: CMOGear
   icon: "JobIconChiefMedicalOfficer"
-  requireAdminNotify: true # DeltaV
   supervisors: job-supervisors-captain
   canBeAntag: false
   access:
@@ -28,29 +26,20 @@
   - Maintenance
   - Chemistry
   - ChiefMedicalOfficer
-  #- Brig # DeltaV - Removed brig access
+  - Brig
   - Cryogenics
-  # Begin DeltaV Additions
-  - Paramedic
-  - External # Paramedics need this access, this is more for promoting
-  - Psychologist
-  - Surgery
-  # End DeltaV Additions
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
-      - type: PsionicBonusChance # DeltaV - makes it more likely to become psionic.
-        flatBonus: 0.025
 
 - type: startingGear
   id: CMOGear
   equipment:
     id: CMOPDA
     ears: ClothingHeadsetCMO
-    belt: ClothingBeltMedicalFilled
   storage:
     back:
     - Flash

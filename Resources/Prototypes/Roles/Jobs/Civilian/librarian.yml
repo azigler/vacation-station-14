@@ -5,25 +5,22 @@
   playTimeTracker: JobLibrarian
   startingGear: LibrarianGear
   icon: "JobIconLibrarian"
-  supervisors: job-supervisors-rd # DeltaV - Moved to epistemics department
+  supervisors: job-supervisors-hop
   access:
   - Service
   - Maintenance
-  - Library # DeltaV - Add Library access
-  - Research # DeltaV - Moved to epistemics department
 
 - type: startingGear
   id: LibrarianGear
   equipment:
     shoes: ClothingShoesBootsLaceup
     id: LibrarianPDA
-    ears: ClothingHeadsetScience # DeltaV - moved to epi
+    ears: ClothingHeadsetService
     pocket1: d20Dice
     pocket2: HandLabeler # for making named bestsellers
   storage:
     back:
     - BookRandom
-    - BookRestorationKit # DeltaV - new tool important for their job
 
 - type: chameleonOutfit
   id: LibrarianChameleonOutfit

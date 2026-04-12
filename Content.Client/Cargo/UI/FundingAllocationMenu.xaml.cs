@@ -97,11 +97,11 @@ public sealed partial class FundingAllocationMenu : FancyWindow
 
         if (_allowPrimaryCutAdjustment)
         {
-            HelpLabel.Text = Loc.GetString("cargo-funding-alloc-console-label-help-adjustible-dv"); // DeltaV - it's called Logistics
+            HelpLabel.Text = Loc.GetString("cargo-funding-alloc-console-label-help-adjustible");
         }
         else
         {
-            HelpLabel.Text = Loc.GetString("cargo-funding-alloc-console-label-help-non-adjustible-dv", // DeltaV - it's called Logistics
+            HelpLabel.Text = Loc.GetString("cargo-funding-alloc-console-label-help-non-adjustible",
                 ("percent", (int) (bank.PrimaryCut * 100)));
         }
 

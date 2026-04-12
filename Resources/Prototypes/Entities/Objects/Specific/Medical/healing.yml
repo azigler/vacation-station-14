@@ -4,10 +4,10 @@
   abstract: true
   components:
   - type: Sprite
-    sprite: _DV/Objects/Specific/medical.rsi # DeltaV - Resprited some medical items
+    sprite: Objects/Specific/Medical/medical.rsi
   - type: Item
     size: Small
-    sprite: _DV/Objects/Specific/medical.rsi # DeltaV - Resprited some medical items
+    sprite: Objects/Specific/Medical/medical.rsi
     heldPrefix: ointment
   # Inherited
   - type: StaticPrice
@@ -33,7 +33,6 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
       types:
         Heat: -5
@@ -82,7 +81,6 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
       types:
         Heat: -10
@@ -131,10 +129,11 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
-      groups:
-        Brute: -15 # 5 for each type in the group
+      types:
+        Blunt: -5
+        Piercing: -5
+        Slash: -5
     healingBeginSound:
       path: "/Audio/Items/Medical/brutepack_begin.ogg"
       params:
@@ -178,10 +177,11 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
-      groups:
-        Brute: -30 # 10 for each type in the group
+      types:
+        Blunt: -10
+        Piercing: -10
+        Slash: -10
     bloodlossModifier: -10 # a suture should stop ongoing bleeding
     healingBeginSound:
       path: "/Audio/Items/Medical/brutepack_begin.ogg"
@@ -225,7 +225,6 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
       types:
         Bloodloss: -0.5 #lowers bloodloss damage
@@ -272,11 +271,9 @@
     - type: Healing
       damageContainers:
         - Biological
-        - BiologicalMetaphysical # DeltaV
       damage:
-        groups:
-          Brute: 5 # Tourniquets HURT!
         types:
+          Blunt: 5 # Tourniquets HURT
           Asphyxiation: 5 # Essentially Stopping all blood reaching a part of your body
       bloodlossModifier: -10 # Tourniquets stop bleeding
       delay: 0.5
@@ -312,7 +309,6 @@
   - type: Healing
     damageContainers:
       - Biological
-      - BiologicalMetaphysical # DeltaV
     damage:
       types:
         Slash: -5
@@ -354,6 +350,12 @@
   - type: Stack
     stackType: AloeCream
     count: 10
+  - type: Item
+    storedRotation: 90
+    storedOffset: 4, 0
+    storedSprite:
+      state: cream
+      sprite: Objects/Specific/Hydroponics/aloe.rsi
 
 - type: entity
   parent: BaseHealingItem
@@ -369,10 +371,14 @@
     damageContainers:
     - Biological
     damage:
-      groups: # these are all split across multiple types
-        Brute: -150
-        Burn: -150
-        Toxin: -150
+      types: # these are all split across multiple types
+        Blunt: -50
+        Piercing: -50
+        Slash: -50
+        Heat: -50
+        Cold: -50
+        Shock: -50
+        Poison: -150
     bloodlossModifier: -20
     delay: 1
     selfHealPenaltyMultiplier: 0
@@ -407,7 +413,6 @@
         reagents:
         - ReagentId: Dexalin
           Quantity: 10
-
 
 - type: entity
   name: pill canister
@@ -829,40 +834,33 @@
       storagebase: !type:GroupSelector
         children:
         - id: PillDexalin
-          amount: &Range1to6 !type:RangeNumberSelector
-            range: 1, 6
+          amount: 1, 6
         - id: PillDylovene
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillHyronalin
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillPotassiumIodide
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillIron
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillCopper
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillKelotane
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillDermaline
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillTricordrazine
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillBicaridine
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillCharcoal
-          amount: *Range1to6
-        - id: PillAmbuzol
-          weight: 0.75
-          amount: *Range1to6
-        - id: PillAmbuzolPlus
-          weight: 0.75
-          amount: *Range1to6
+          amount: 1, 6
         - id: PillSpaceDrugs
           weight: 0.75
-          amount: *Range1to6
+          amount: 1, 6
         - id: StrangePill
           weight: 0.75
-          amount: *Range1to6
+          amount: 1, 6
 
 # Syringes
 - type: entity
@@ -1075,3 +1073,37 @@
         reagents:
         - ReagentId: Stimulants
           Quantity: 15
+
+# Entity Tables
+- type: entityTable
+  id: RandomSafePillTable
+  table: !type:GroupSelector
+    children:
+    - id: PillBicaridine
+    - id: PillCharcoal
+    - id: PillCopper
+    - id: PillDermaline
+    - id: PillDexalin
+    - id: PillDylovene
+    - id: PillHyronalin
+    - id: PillIron
+    - id: PillKelotane
+    - id: PillPotassiumIodide
+    - id: PillTricordrazine
+    - id: StrangePill
+
+- type: entityTable
+  id: RandomSafeSyringeTable
+  table: !type:GroupSelector
+    children:
+    - id: SyringeBicaridine
+    - id: SyringeDermaline
+    - id: SyringeEphedrine
+    - id: SyringeEthylredoxrazine
+    - id: SyringeHyronalin
+    - id: SyringeInaprovaline
+    - id: SyringeIpecac
+    - id: SyringePhalanximine
+    - id: SyringeSaline
+    - id: SyringeSigynate
+    - id: SyringeTranexamicAcid

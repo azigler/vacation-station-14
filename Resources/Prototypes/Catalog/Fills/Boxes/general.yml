@@ -221,10 +221,10 @@
         - id: DrinkMREFlask
         - id: FoodSnackNutribrick
         - id: FoodSnackMREBrownie
-        - id: FoodTinMRE # DeltaV - Replaced FoodCondimentPacketKetchup with this (tinned meat)
+        - id: FoodCondimentPacketKetchup
   - type: Sprite
     layers:
-      - state: box_olive
+      - state: box
       - state: writing
 
 - type: entity
@@ -307,6 +307,7 @@
     whitelist:
       tags:
         - TrashBag
+        - TrashBagBlue
   - type: Sprite
     layers:
       - state: box
@@ -333,7 +334,7 @@
       - EncryptionKey
 
 - type: entity
-  name: logistics encryption key box # DeltaV - Logistics Department replacing Cargo
+  name: cargo encryption key box
   parent: BoxEncryptionKeyPassenger
   id: BoxEncryptionKeyCargo
   components:
@@ -388,7 +389,7 @@
         amount: 4
 
 - type: entity
-  name: epistemics encryption key box # DeltaV - Epistemics Department replacing Science
+  name: science encryption key box
   parent: BoxEncryptionKeyPassenger
   id: BoxEncryptionKeyScience
   components:

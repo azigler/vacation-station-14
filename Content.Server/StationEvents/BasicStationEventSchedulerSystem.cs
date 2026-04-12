@@ -1,7 +1,5 @@
 using System.Linq;
 using Content.Server.Administration;
-using Content.Server.Chat.Managers; // DeltaV
-using Content.Server._DV.StationEvents.NextEvent; // DeltaV
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
 using Content.Server.StationEvents.Components;
@@ -11,7 +9,6 @@ using Content.Shared.GameTicking.Components;
 using JetBrains.Annotations;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
-using Robust.Shared.Timing; // DeltaV
 using Robust.Shared.Toolshed;
 using Robust.Shared.Toolshed.TypeParsers;
 using Robust.Shared.Utility;
@@ -25,26 +22,14 @@ namespace Content.Server.StationEvents
     [UsedImplicitly]
     public sealed class BasicStationEventSchedulerSystem : GameRuleSystem<BasicStationEventSchedulerComponent>
     {
-        [Dependency] private readonly IChatManager _chatManager = default!; // DeltaV
-        [Dependency] private readonly IGameTiming _timing = default!; // DeltaV
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly EventManagerSystem _event = default!;
-        [Dependency] private readonly NextEventSystem _next = default!; // DeltaV
 
         protected override void Started(EntityUid uid, BasicStationEventSchedulerComponent component, GameRuleComponent gameRule,
             GameRuleStartedEvent args)
         {
             // A little starting variance so schedulers dont all proc at once.
-            component.TimeUntilNextEvent = RobustRandom.NextFloat(component.MinimumTimeUntilFirstEvent, component.MinimumTimeUntilFirstEvent + 120);
-
-            // Begin DeltaV Additions: init NextEventComp
-            if (TryComp<NextEventComponent>(uid, out var nextEventComponent)
-                && _event.TryGenerateRandomEvent(component.ScheduledGameRules, TimeSpan.FromSeconds(component.TimeUntilNextEvent)) is {} firstEvent)
-            {
-                _chatManager.SendAdminAlert(Loc.GetString("station-event-system-run-event-delayed", ("eventName", firstEvent), ("seconds", (int)component.TimeUntilNextEvent)));
-                _next.UpdateNextEvent(nextEventComponent, firstEvent, GameTicker.RoundDuration() + TimeSpan.FromSeconds(component.TimeUntilNextEvent));
-            }
-            // End DeltaV Additions
+            component.TimeUntilNextEvent = RobustRandom.NextFloat(component.MinimumTimeUntilFirstEvent, component.MinimumTimeUntilFirstEvent + component.MaximumSpanUntilFirstEvent);
         }
 
         protected override void Ended(EntityUid uid, BasicStationEventSchedulerComponent component, GameRuleComponent gameRule,
@@ -72,25 +57,6 @@ namespace Content.Server.StationEvents
                     eventScheduler.TimeUntilNextEvent -= frameTime;
                     continue;
                 }
-
-                // Begin DeltaV Additions: events using NextEventComponent
-                if (TryComp<NextEventComponent>(uid, out var nextEventComponent)) // If there is a nextEventComponent use the stashed event instead of running it directly.
-                {
-                    ResetTimer(eventScheduler); // Time needs to be reset ahead of time since we need to chose events based on the next time it will run.
-                    var nextEventTime = GameTicker.RoundDuration() + TimeSpan.FromSeconds(eventScheduler.TimeUntilNextEvent);
-                    if (_event.TryGenerateRandomEvent(eventScheduler.ScheduledGameRules, nextEventTime) is not {} generatedEvent)
-                        continue;
-
-                    _chatManager.SendAdminAlert(Loc.GetString("station-event-system-run-event-delayed", ("eventName", generatedEvent), ("seconds", (int)eventScheduler.TimeUntilNextEvent)));
-                    // Cycle the stashed event with the new generated event and time.
-                    var storedEvent = _next.UpdateNextEvent(nextEventComponent, generatedEvent, nextEventTime);
-                    if (string.IsNullOrEmpty(storedEvent)) //If there was no stored event don't try to run it.
-                        continue;
-
-                    GameTicker.AddGameRule(storedEvent);
-                    continue;
-                }
-                // End DeltaV Additions: events using NextEventComponent
 
                 _event.RunRandomEvent(eventScheduler.ScheduledGameRules);
                 ResetTimer(eventScheduler);
@@ -166,14 +132,15 @@ namespace Content.Server.StationEvents
                     // sim an event
                     curTime += TimeSpan.FromSeconds(compMinMax.Next(_random));
 
-                    var available = _stationEvent.AvailableEvents(false, playerCount, curTime);
-                    if (!_stationEvent.TryBuildLimitedEvents(basicScheduler.ScheduledGameRules, available, out var selectedEvents))
+                    if (!_stationEvent.TryBuildLimitedEvents(basicScheduler.ScheduledGameRules,
+                            out var selectedEvents,
+                            currentTime: curTime,
+                            playerCount: playerCount))
                     {
                         continue; // doesnt break because maybe the time is preventing events being available.
                     }
 
-                    var ev = _stationEvent.FindEvent(selectedEvents);
-                    if (ev == null)
+                    if (_stationEvent.FindEvent(selectedEvents) is not { } ev)
                         continue;
 
                     occurrences[ev] += 1;
@@ -184,7 +151,7 @@ namespace Content.Server.StationEvents
         }
 
         [CommandImplementation("lsprob")]
-        public IEnumerable<(string, float)> LsProb([CommandArgument] EntProtoId eventSchedulerProto)
+        public IEnumerable<(string, double)> LsProb([CommandArgument] EntProtoId eventSchedulerProto)
         {
             _compFac ??= IoCManager.Resolve<IComponentFactory>();
             _stationEvent ??= GetSys<EventManagerSystem>();
@@ -195,20 +162,18 @@ namespace Content.Server.StationEvents
             if (!eventScheduler.TryGetComponent<BasicStationEventSchedulerComponent>(out var basicScheduler, _compFac))
                 yield break;
 
-            var available = _stationEvent.AvailableEvents();
-            if (!_stationEvent.TryBuildLimitedEvents(basicScheduler.ScheduledGameRules, available, out var events))
-                yield break;
+            var sortedEvents
+                = _stationEvent.ListLimitedEvents(basicScheduler.ScheduledGameRules)
+                .OrderBy(x => -x.Item2);
 
-            var totalWeight = events.Sum(x => x.Value.Weight); // Well this shit definitely isnt correct now, and I see no way to make it correct.
-                                                               // Its probably *fine* but it wont be accurate if the EntityTableSelector does any subsetting.
-            foreach (var (proto, comp) in events)              // The only solution I see is to do a simulation, and we already have that, so...!
+            foreach (var eventProb in sortedEvents)
             {
-                yield return (proto.ID, comp.Weight / totalWeight);
+                yield return eventProb;
             }
         }
 
         [CommandImplementation("lsprobtheoretical")]
-        public IEnumerable<(string, float)> LsProbTime([CommandArgument] EntProtoId eventSchedulerProto, [CommandArgument] int playerCount, [CommandArgument] float time)
+        public IEnumerable<(EntProtoId, double)> LsProbTime([CommandArgument] EntProtoId eventSchedulerProto, [CommandArgument] int playerCount, [CommandArgument] float time)
         {
             _compFac ??= IoCManager.Resolve<IComponentFactory>();
             _stationEvent ??= GetSys<EventManagerSystem>();
@@ -221,22 +186,21 @@ namespace Content.Server.StationEvents
 
             var timemins = time * 60;
             var theoryTime = TimeSpan.Zero + TimeSpan.FromSeconds(timemins);
-            var available = _stationEvent.AvailableEvents(false, playerCount, theoryTime);
-            if (!_stationEvent.TryBuildLimitedEvents(basicScheduler.ScheduledGameRules, available, out var untimedEvents))
-                yield break;
 
-            var events = untimedEvents.Where(pair => pair.Value.EarliestStart <= timemins).ToList();
+            var sortedEvents
+                = _stationEvent.ListLimitedEvents(basicScheduler.ScheduledGameRules,
+                        currentTime: theoryTime,
+                        playerCount: playerCount)
+                    .OrderBy(x => -x.Item2);
 
-            var totalWeight = events.Sum(x => x.Value.Weight); // same subsetting issue as lsprob.
-
-            foreach (var (proto, comp) in events)
+            foreach (var eventProb in sortedEvents)
             {
-                yield return (proto.ID, comp.Weight / totalWeight);
+                yield return eventProb;
             }
         }
 
         [CommandImplementation("prob")]
-        public float Prob([CommandArgument] EntProtoId eventSchedulerProto, [CommandArgument] string eventId)
+        public double Prob([CommandArgument] EntProtoId eventSchedulerProto, [CommandArgument] string eventId)
         {
             _compFac ??= IoCManager.Resolve<IComponentFactory>();
             _stationEvent ??= GetSys<EventManagerSystem>();
@@ -247,18 +211,15 @@ namespace Content.Server.StationEvents
             if (!eventScheduler.TryGetComponent<BasicStationEventSchedulerComponent>(out var basicScheduler, _compFac))
                 return 0f;
 
-            var available = _stationEvent.AvailableEvents();
-            if (!_stationEvent.TryBuildLimitedEvents(basicScheduler.ScheduledGameRules, available, out var events))
-                return 0f;
-
-            var totalWeight = events.Sum(x => x.Value.Weight); // same subsetting issue as lsprob.
-            var weight = 0f;
-            if (events.TryFirstOrNull(p => p.Key.ID == eventId, out var pair))
+            foreach (var (proto, prob) in _stationEvent.ListLimitedEvents(basicScheduler.ScheduledGameRules))
             {
-                weight = pair.Value.Value.Weight;
+                if (eventSchedulerProto != proto)
+                    continue;
+
+                return prob;
             }
 
-            return weight / totalWeight;
+            return 0f;
         }
     }
 }

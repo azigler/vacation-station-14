@@ -24,10 +24,4 @@ public sealed partial class LimitedChargesComponent : Component
     /// </summary>
     [DataField(customTypeSerializer:typeof(TimeOffsetSerializer)), AutoNetworkedField]
     public TimeSpan LastUpdate;
-
-    /// <summary>
-    /// DeltaV - If disabled the action will not disable when no charges remain. Use if you want to handle no charges differently.
-    /// </summary>
-    [DataField]
-    public bool DisableWhenEmpty = true;
 }

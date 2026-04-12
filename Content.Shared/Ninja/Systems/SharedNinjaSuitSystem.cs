@@ -98,7 +98,7 @@ public abstract class SharedNinjaSuitSystem : EntitySystem
     /// </summary>
     private void OnUnequipped(Entity<NinjaSuitComponent> ent, ref GotUnequippedEvent args)
     {
-        var user = args.Equipee;
+        var user = args.EquipTarget;
         if (_ninja.NinjaQuery.TryComp(user, out var ninja))
             UserUnequippedSuit(ent, (user, ninja));
     }
@@ -113,14 +113,8 @@ public abstract class SharedNinjaSuitSystem : EntitySystem
 
         var uid = ent.Owner;
         var comp = ent.Comp;
-
-        // DeltaV
-        if (!_toggle.TryDeactivate(uid, user))
+        if (_toggle.TryDeactivate(uid, user) || !disable)
             return;
-
-        if (!disable)
-            return;
-        // End DeltaV
 
         // previously cloaked, disable abilities for a short time
         _audio.PlayPredicted(comp.RevealSound, uid, user);

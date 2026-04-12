@@ -56,10 +56,6 @@
     sprite: Clothing/Shoes/Boots/combatboots.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Boots/combatboots.rsi
-  # Begin DeltaV additions
-  - type: ClothingSlowOnDamageModifier
-    modifier: 0.5
-  # End DeltaV additions
 
 - type: entity
   parent: ClothingShoesMilitaryBase
@@ -117,7 +113,7 @@
 - type: entity
   parent: ClothingShoesBaseWinterBoots
   id: ClothingShoesBootsWinterCargo
-  name: logistics winter boots #Delta V: Rename Logistics
+  name: cargo winter boots
   components:
   - type: Sprite
     sprite: Clothing/Shoes/Boots/winterbootscargo.rsi
@@ -140,9 +136,9 @@
   name: medical winter boots
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Shoes/Boots/winterbootsmed.rsi # Delta V - Recolor to match department color
+    sprite: Clothing/Shoes/Boots/winterbootsmed.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Shoes/Boots/winterbootsmed.rsi # Delta V - Recolor to match department color
+    sprite: Clothing/Shoes/Boots/winterbootsmed.rsi
 
 - type: entity
   parent: ClothingShoesBaseWinterBoots
@@ -160,13 +156,9 @@
   name: security winter boots
   components:
   - type: Sprite
-    sprite: _DV/Clothing/Shoes/Boots/winterbootssec.rsi # DeltaV - resprite boots to meet standards
+    sprite: Clothing/Shoes/Boots/winterbootssec.rsi
   - type: Clothing
-    sprite: _DV/Clothing/Shoes/Boots/winterbootssec.rsi # DeltaV - resprite boots to meet standards
-  # Begin DeltaV additions
-  - type: ClothingSlowOnDamageModifier
-    modifier: 0.5
-  # End DeltaV additions
+    sprite: Clothing/Shoes/Boots/winterbootssec.rsi
 
 - type: entity
   parent: [ClothingShoesBaseWinterBoots, BaseSyndicateContraband]

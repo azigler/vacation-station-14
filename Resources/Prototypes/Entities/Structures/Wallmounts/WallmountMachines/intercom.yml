@@ -39,7 +39,7 @@
   - type: Sprite
     noRot: false
     drawdepth: SmallObjects
-    sprite: _DV/Structures/Wallmounts/intercom.rsi # DeltaV - Add sprite rotation
+    sprite: Structures/Wallmounts/intercom.rsi
     layers:
     - state: base
     - state: unshaded
@@ -115,13 +115,14 @@
           False: { visible: false }
 
 - type: entity
+  parent: BaseWallmountMetallic
   id: IntercomAssembly
   name: intercom assembly
   description: An intercom. It doesn't seem very helpful right now.
   components:
   - type: Sprite
     drawdepth: SmallObjects
-    sprite: _DV/Structures/Wallmounts/intercom.rsi # DeltaV - Add sprite rotation
+    sprite: Structures/Wallmounts/intercom.rsi
     layers:
     - state: build
     - state: panel
@@ -256,7 +257,7 @@
 - type: entity
   id: IntercomScience
   parent: Intercom
-  suffix: Epistemics # DeltaV - Epistemics Department replacing Science
+  suffix: Science
   components:
   - type: ContainerFill
     containers:

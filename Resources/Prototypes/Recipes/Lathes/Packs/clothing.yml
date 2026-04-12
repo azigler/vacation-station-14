@@ -8,8 +8,6 @@
   - ClothingUniformJumpsuitLoungewear
 
 - type: latheRecipePack
-  parent:
-  - ClothingCargoDeltaV # DeltaV
   id: ClothingCargo
   recipes:
   - ClothingUniformJumpsuitCargo
@@ -24,8 +22,6 @@
   - ClothingUniformJumpsuitQMFormal
 
 - type: latheRecipePack
-  parent:
-  - ClothingCommandDeltaV # DeltaV
   id: ClothingCommand
   recipes:
   # Captain
@@ -37,7 +33,6 @@
   - ClothingUniformJumpskirtCapFormalDress
   # HoP
   - ClothingHeadHatHopcap
-  - ClothingHeadHatBeretHop
   - ClothingUniformJumpsuitHoP
   - ClothingUniformJumpskirtHoP
   # Generic
@@ -47,8 +42,6 @@
   - ClothingUniformJumpsuitCommandGeneric
 
 - type: latheRecipePack
-  parent:
-  - ClothingEngineeringDeltaV # DeltaV
   id: ClothingEngineering
   recipes:
   - ClothingHeadHatBeretEngineering
@@ -62,8 +55,6 @@
   - ClothingUniformJumpskirtSeniorEngineer
 
 - type: latheRecipePack
-  parent:
-  - ClothingMedicalDeltaV # DeltaV
   id: ClothingMedical
   recipes:
   - ClothingUniformJumpsuitChemistry
@@ -83,8 +74,6 @@
   - ClothingHeadHatParamedicsoft
 
 - type: latheRecipePack
-  parent:
-  - ClothingEpistemics # DeltaV
   id: ClothingScience
   recipes:
   - ClothingHeadHatBeretRND
@@ -96,8 +85,6 @@
   - ClothingUniformJumpskirtSeniorResearcher
 
 - type: latheRecipePack
-  parent:
-  - ClothingSecurityDeltaV # DeltaV
   id: ClothingSecurity
   recipes:
   - ClothingUniformJumpsuitDetective
@@ -130,8 +117,6 @@
   - ClothingUniformJumpskirtWarden
 
 - type: latheRecipePack
-  parent:
-  - ClothingServiceDeltaV # DeltaV
   id: ClothingService
   recipes:
   - ClothingUniformJumpsuitBartender
@@ -155,8 +140,6 @@
   - ClothingUniformJumpsuitMusician
 
 - type: latheRecipePack
-  parent:
-  - WinterCoatsDeltaV # DeltaV
   id: WinterCoats
   recipes:
   - ClothingOuterWinterCap
@@ -222,8 +205,6 @@
   - CarpetSkyBlue
 
 - type: latheRecipePack
-  parent:
-  - ClothingCentcommDeltaV # DeltaV
   id: ClothingCentComm
   recipes:
   - ClothingHeadHatCentcomcap
@@ -235,8 +216,6 @@
   - ClothingUniformJumpsuitCentcomOfficial
 
 - type: latheRecipePack
-  parent:
-  - ClothingSyndieDeltaV # DeltaV
   id: ClothingSyndie
   recipes:
   - ClothingHeadHatSyndieMAA

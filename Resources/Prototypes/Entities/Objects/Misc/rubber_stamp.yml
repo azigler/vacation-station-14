@@ -21,9 +21,6 @@
     size: Tiny
   - type: StealTarget
     stealGroup: Stamp
-  - type: MappingCategories # DeltaV
-    categories:
-    - Stamps
 
 - type: entity
   name: alternate rubber stamp
@@ -39,8 +36,6 @@
       params:
         volume: -2
         maxDistance: 5
-  - type: MappingCategories # DeltaV - approved/denied are fine
-    categories: []
 
 - type: entity
   name: captain's rubber stamp
@@ -174,7 +169,7 @@
     state: stamp-mime
 
 - type: entity
-  name: logistics officer's rubber stamp # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster's rubber stamp
   parent: [RubberStampBase, BaseCommandContraband]
   id: RubberStampQm
   categories: [ DoNotMap ]
@@ -187,7 +182,7 @@
     state: stamp-qm
 
 - type: entity
-  name: mystagogue's rubber stamp # DeltaV - Epistemics Department replacing Science
+  name: research director's rubber stamp
   parent: [RubberStampBase, BaseCommandContraband]
   id: RubberStampRd
   categories: [ DoNotMap ]
@@ -288,8 +283,6 @@
     stampState: "paper_stamp-greytide"
   - type: Sprite
     state: stamp-greytide
-  - type: MappingCategories # DeltaV - This can spawn in maints lockers
-    categories: []
 
 - type: entity
   name: psychologist's rubber stamp

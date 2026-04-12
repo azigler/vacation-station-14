@@ -21,8 +21,8 @@ namespace Content.Client.Flash
         [Dependency] private readonly IGameTiming _timing = default!;
         [Dependency] private readonly IConfigurationManager _configManager = default!;
 
-        private readonly StatusEffectsSystem _statusSys;
         private readonly SharedFlashSystem _flash;
+        private readonly StatusEffectsSystem _statusSys;
 
         public override OverlaySpace Space => OverlaySpace.WorldSpace;
         private readonly ShaderInstance _shader;

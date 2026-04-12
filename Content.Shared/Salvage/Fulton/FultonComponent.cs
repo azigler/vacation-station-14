@@ -32,7 +32,7 @@ public sealed partial class FultonComponent : Component
     /// How long the fulton will remain before teleporting to the beacon.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("duration")]
-    public TimeSpan FultonDuration = TimeSpan.FromSeconds(30); // Delta-V - was 45 seconds
+    public TimeSpan FultonDuration = TimeSpan.FromSeconds(45);
 
     [ViewVariables(VVAccess.ReadWrite), DataField("whitelist"), AutoNetworkedField]
     public EntityWhitelist? Whitelist = new()

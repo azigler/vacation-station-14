@@ -28,7 +28,6 @@ public sealed class VocalSystem : EntitySystem
         SubscribeLocalEvent<VocalComponent, SexChangedEvent>(OnSexChanged);
         SubscribeLocalEvent<VocalComponent, EmoteEvent>(OnEmote);
         SubscribeLocalEvent<VocalComponent, ScreamActionEvent>(OnScreamAction);
-        SubscribeLocalEvent<VocalComponent, SoundsChangedEvent>(OnSoundsChanged); // DeltaV - support for changing vocal sounds on the go. Why it wasn't there in the first place is beyond me.
     }
 
     /// <summary>
@@ -70,13 +69,6 @@ public sealed class VocalSystem : EntitySystem
     {
         LoadSounds(uid, component, args.NewSex);
     }
-
-// Begin DeltaV additions
-    private void OnSoundsChanged(EntityUid uid, VocalComponent component, ref SoundsChangedEvent args)
-    {
-        LoadSounds(uid, component);
-    }
-// End DeltaV additions
 
     private void OnEmote(EntityUid uid, VocalComponent component, ref EmoteEvent args)
     {
@@ -125,7 +117,7 @@ public sealed class VocalSystem : EntitySystem
         if (component.Sounds == null)
             return;
 
-        sex ??= CompOrNull<HumanoidAppearanceComponent>(uid)?.Sex ?? Sex.Unsexed;
+        sex ??= CompOrNull<HumanoidProfileComponent>(uid)?.Sex ?? Sex.Unsexed;
 
         if (!component.Sounds.TryGetValue(sex.Value, out var protoId))
             return;

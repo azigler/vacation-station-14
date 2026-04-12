@@ -59,7 +59,6 @@
         - SurveillanceCameraGeneral
         - SurveillanceCameraMedical
         - SurveillanceCameraCommand
-        - SurveillanceCameraAI #DeltaV
 
 - type: entity
   parent: SurveillanceCameraRouterBase
@@ -82,8 +81,8 @@
 - type: entity
   parent: SurveillanceCameraRouterBase
   id: SurveillanceCameraRouterScience
-  name: epistemics camera router # DeltaV
-  suffix: Epistemics # DeltaV - Epistemics Department replacing Science
+  name: science camera router
+  suffix: Science
   components:
     - type: SurveillanceCameraRouter
       subnetFrequency: SurveillanceCameraScience
@@ -91,8 +90,8 @@
 - type: entity
   parent: SurveillanceCameraRouterBase
   id: SurveillanceCameraRouterSupply
-  name: logistics camera router # DeltaV
-  suffix: Logistics # DeltaV
+  name: supply camera router
+  suffix: Supply
   components:
     - type: SurveillanceCameraRouter
       subnetFrequency: SurveillanceCameraSupply

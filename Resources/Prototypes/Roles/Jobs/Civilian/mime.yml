@@ -1,7 +1,7 @@
 - type: job
   id: Mime
   name: job-name-mime
-  description: job-description-mime-delta # DeltaV
+  description: job-description-mime
   playTimeTracker: JobMime
   requirements:
     - !type:OverallPlaytimeRequirement
@@ -12,15 +12,12 @@
   access:
   - Theatre
   - Maintenance
-  - Mime # DeltaV - Add Mime access
-  - Service # DeltaV - They work in service don't they?
   special:
   - !type:AddComponentSpecial
     components:
-    - type: Psionic # Nyano - Summary: Makes the mime psionic.
     - type: MimePowers
-      preventWriting: false # DeltaV
-    #- type: FrenchAccent # DeltaV - remove forced accents
+      preventWriting: true
+    - type: FrenchAccent
 
 - type: startingGear
   id: MimeGear
@@ -29,7 +26,6 @@
     shoes: ClothingShoesColorWhite
     id: MimePDA
     pocket1: CrayonMime
-    pocket2: Paper # DeltaV
     ears: ClothingHeadsetService
   storage:
     back:

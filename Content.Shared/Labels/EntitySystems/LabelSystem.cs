@@ -4,9 +4,7 @@ using Content.Shared.Examine;
 using Content.Shared.Labels.Components;
 using Content.Shared.NameModifier.EntitySystems;
 using Content.Shared.Paper;
-using Content.Shared.Tag; // DeltaV
 using Robust.Shared.Containers;
-using Robust.Shared.Prototypes; // DeltaV
 using Robust.Shared.Utility;
 
 namespace Content.Shared.Labels.EntitySystems;
@@ -16,10 +14,8 @@ public sealed partial class LabelSystem : EntitySystem
     [Dependency] private readonly NameModifierSystem _nameModifier = default!;
     [Dependency] private readonly ItemSlotsSystem _itemSlots = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-    [Dependency] private readonly TagSystem _tag = default!; // DeltaV
 
     public const string ContainerName = "paper_label";
-    public static readonly ProtoId<TagPrototype> PreventTag = "PreventLabel"; // DeltaV - no labelling felenids
 
     public override void Initialize()
     {
@@ -56,8 +52,6 @@ public sealed partial class LabelSystem : EntitySystem
     /// <param name="metadata">metadata component for resolve</param>
     public void Label(EntityUid uid, string? text, MetaDataComponent? metadata = null, LabelComponent? label = null)
     {
-        if (_tag.HasTag(uid, PreventTag)) // DeltaV - Prevent labelling felinids
-            return;
         label ??= EnsureComp<LabelComponent>(uid);
 
         label.CurrentLabel = text == null ? null : FormattedMessage.EscapeText(text);

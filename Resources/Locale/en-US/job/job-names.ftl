@@ -2,8 +2,7 @@ job-name-atmostech = Atmospheric Technician
 job-name-bartender = Bartender
 job-name-borg = Cyborg
 job-name-botanist = Botanist
-# DeltaV - Changed Brigmedic to Corpsman
-#job-name-brigmedic = Brigmedic
+job-name-brigmedic = Brigmedic
 job-name-cadet = Security Cadet
 job-name-captain = Captain
 job-name-cargotech = Cargo Technician
@@ -30,20 +29,15 @@ job-name-hop = Head of Personnel
 job-name-hos = Head of Security
 job-name-intern = Medical Intern
 job-name-janitor = Janitor
-# DeltaV - Changed Lawyer to Attorney
-#job-name-lawyer = Lawyer
-# DeltaV - Changed Librarian to Archivist
-#job-name-librarian = Librarian
+job-name-lawyer = Lawyer
+job-name-librarian = Librarian
 job-name-mime = Mime
 job-name-musician = Musician
 job-name-paramedic = Paramedic
-# DeltaV - Changes Passenger to Assistant. job-name-passenger is used in a dozen other places as the default job so we dont want to change that overly much.
-job-name-passenger = Assistant
+job-name-passenger = Passenger
 job-name-psychologist = Psychologist
-# DeltaV - Hopefully makes LO maintaining easier
-# job-name-qm = Quartermaster
-# DeltaV - Changed RD to Mystagogue
-# job-name-rd = Research Director
+job-name-qm = Quartermaster
+job-name-rd = Research Director
 job-name-reporter = Reporter
 job-name-research-assistant = Research Assistant
 job-name-salvagespec = Salvage Specialist
@@ -59,13 +53,13 @@ job-name-warden = Warden
 # these are required for the agent ID job icon tooltips
 # I am keeping them for roleplaying opportunities
 job-name-geneticist = Geneticist
-#job-name-boxer = Boxer # DeltaV - Keeping boxer/Zookeper job
+job-name-boxer = Boxer
 job-name-no-id = No ID
 job-name-prisoner = Prisoner
 job-name-roboticist = Roboticist
 job-name-unknown = Unknown
 job-name-virologist = Virologist
-#job-name-zookeeper = Zookeeper # DeltaV - Keeping Boxer/Zookeper job
+job-name-zookeeper = Zookeeper
 
 # antagonist jobs
 job-name-ninja = Ninja
@@ -97,7 +91,7 @@ JobChiefEngineer = Chief Engineer
 JobChiefMedicalOfficer = Chief Medical Officer
 JobClown = Clown
 JobDetective = Detective
-JobBrigmedic = Corpsman
+JobBrigmedic = Brigmedic
 JobERTChaplain = ERT Chaplain
 JobERTEngineer = ERT Engineer
 JobERTJanitor = ERT Janitor
@@ -116,10 +110,10 @@ JobMusician = Musician
 JobParamedic = Paramedic
 JobPassenger = Passenger
 JobPsychologist = Psychologist
-JobQuartermaster = Logistics Officer
+JobQuartermaster = Quartermaster
 JobReporter = Reporter
 JobResearchAssistant = Research Assistant
-JobResearchDirector = Mystagogue
+JobResearchDirector = Research Director
 JobSalvageSpecialist = Salvage Specialist
 JobScientist = Scientist
 JobSecurityCadet = Security Cadet

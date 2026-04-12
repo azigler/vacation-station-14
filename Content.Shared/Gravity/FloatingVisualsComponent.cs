@@ -22,6 +22,5 @@ public sealed partial class FloatingVisualsComponent : Component
     [DataField, AutoNetworkedField]
     public bool CanFloat;
 
-    [DataField] // imp. made this a read/write datafield instead of readonly to fix a bug with anomalites.
-    public string AnimationKey = "gravity";
+    public readonly string AnimationKey = "gravity";
 }

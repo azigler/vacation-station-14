@@ -22,6 +22,5 @@
           type: WarDeclaratorBoundUserInterface
     - type: WarDeclarator
       message: war-declarator-default-message
-      sound: /Audio/Announcements/war.ogg
     - type: AccessReader
       access: [["NuclearOperative"]]

@@ -215,8 +215,8 @@
 - type: entity
   parent: BaseFigurine
   id: ToyFigurineQuartermaster
-  name: logistics officer figure # DeltaV - Logistics Department replacing Cargo
-  description: A figurine depicting the glorious head of the Logistics department. # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster figure
+  description: A figurine depicting the glorious head of the Cargo department.
   components:
   - type: Sprite
     state: qm
@@ -259,8 +259,8 @@
 - type: entity
   parent: BaseFigurine
   id: ToyFigurineResearchDirector
-  name: mystagogue figure # DeltaV - Epistemics Department replacing Science
-  description: A figurine depicting the glorious head of the Epistemics department. # DeltaV - Epistemics Department replacing Science
+  name: research director figure
+  description: A figurine depicting the glorious head of the Science department.
   components:
   - type: Sprite
     state: rd

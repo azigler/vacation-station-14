@@ -227,10 +227,9 @@
   - !type:AiInteractWireAction
   - !type:AccessWireAction
 
-# DeltaV - we use our own version of this
-#- type: wireLayout
-#  id: APC
-#  dummyWires: 3
-#  wires:
-#  - !type:AccessWireAction
-#  - !type:AiInteractWireAction
+- type: wireLayout
+  id: APC
+  dummyWires: 3
+  wires:
+  - !type:AccessWireAction
+  - !type:AiInteractWireAction

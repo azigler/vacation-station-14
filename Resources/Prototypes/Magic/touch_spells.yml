@@ -1,4 +1,4 @@
-﻿# Smite-like spell that you click on someone else to use
+# Smite-like spell that you click on someone else to use
 - type: entity
   abstract: true
   parent: BaseAction
@@ -6,7 +6,7 @@
   components:
   - type: Action
     itemIconStyle: BigAction
-    useDelay: 300 # DeltaV - fix delay because jesus christ
+    useDelay: 90
   - type: TargetAction
     interactOnMiss: false
   - type: EntityTargetAction
@@ -30,7 +30,6 @@
   description: Instantly gibs a target.
   components:
   - type: Action
-    useDelay: 300
     sound: !type:SoundPathSpecifier
       path: /Audio/Magic/disintegrate.ogg
     icon:

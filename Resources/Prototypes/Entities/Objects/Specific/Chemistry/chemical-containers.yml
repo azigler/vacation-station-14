@@ -5,15 +5,10 @@
   description: Used to contain a very large amount of chemicals or solutions. Chugging is extremely ill-advised.
   components:
   - type: Sprite
-    sprite: _DV/Objects/Specific/Chemistry/jug.rsi # DeltaV - Resprited some medical items
-    layers:
-      - state: jug
-      - state: jug1
-        map: [ "enum.SolutionContainerLayers.Fill" ]
-        visible: false
+    sprite: Objects/Specific/Chemistry/jug.rsi
   - type: Item
     size: Normal
-    sprite: _DV/Objects/Specific/Chemistry/jug.rsi # DeltaV - Resprited some medical items
+    sprite: Objects/Specific/Chemistry/jug.rsi
   - type: SolutionContainerManager
     solutions:
       drink:
@@ -21,8 +16,6 @@
   - type: SolutionContainerVisuals
     maxFillLevels: 6
     inHandsMaxFillLevels: 5
-    fillBaseName: jug # DeltaV - Resprited some medical items
-    inHandsFillBaseName: -fill- # DeltaV - Resprited some medical items
   - type: ExaminableSolution
     exactVolume: true # Chemistry item
   - type: StaticPrice

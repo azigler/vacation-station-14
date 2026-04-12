@@ -8,8 +8,6 @@
 
 - type: latheRecipePack
   id: PartsStatic
-  parent:
-  - PartsStaticDeltaV # DeltaV
   recipes:
   - Igniter
   - ModularReceiver
@@ -26,7 +24,7 @@
   - LightBulb
   - LedLightBulb
   - DimLightBulb
-  #- WarmLightBulb # DeltaV - this doesn't exist
+  - WarmLightBulb
 
 - type: latheRecipePack
   id: PowerCellsStatic
@@ -56,8 +54,6 @@
 
 # Things you'd expect sci salv and engi to make use of
 - type: latheRecipePack
-  parent:
-  - EquipmentDeltaV # DeltaV
   id: Equipment
   recipes:
   - HandHeldMassScanner
@@ -75,4 +71,4 @@
   - WeaponProtoKineticAccelerator
   - PKAUpgradeDamage
   - PKAUpgradeRange
-  #- PKAUpgradeFireRate # DeltaV - removal of fire rate upgrade for better feel
+  - PKAUpgradeFireRate

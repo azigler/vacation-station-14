@@ -5,8 +5,6 @@ using Content.Shared.Inventory;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Temperature;
 using Content.Shared.Projectiles;
-using Content.Shared._Goobstation.Temperature.Components;
-using Content.Shared._Goobstation.Temperature;
 using Content.Shared.Temperature.Components;
 using Content.Shared.Temperature.Systems;
 
@@ -27,9 +25,6 @@ public sealed partial class TemperatureSystem : SharedTemperatureSystem
         SubscribeLocalEvent<InternalTemperatureComponent, MapInitEvent>(OnInit);
 
         SubscribeLocalEvent<ChangeTemperatureOnCollideComponent, ProjectileHitEvent>(ChangeTemperatureOnCollide);
-
-        SubscribeLocalEvent<SpecialLowTempImmunityComponent, TemperatureImmunityEvent>(OnCheckLowTemperatureImmunity); // Goob edit
-        SubscribeLocalEvent<SpecialHighTempImmunityComponent, TemperatureImmunityEvent>(OnCheckHighTemperatureImmunity); // Goob edit
 
         InitializeDamage();
     }
@@ -64,37 +59,13 @@ public sealed partial class TemperatureSystem : SharedTemperatureSystem
         UpdateDamage();
     }
 
-    // Goob start
-    private void OnCheckLowTemperatureImmunity(Entity<SpecialLowTempImmunityComponent> ent, ref TemperatureImmunityEvent args)
-    {
-        if (args.CurrentTemperature < args.IdealTemperature)
-            args.CurrentTemperature = args.IdealTemperature;
-    }
-
-    private void OnCheckHighTemperatureImmunity(Entity<SpecialHighTempImmunityComponent> ent, ref TemperatureImmunityEvent args)
-    {
-        if (args.CurrentTemperature > args.IdealTemperature)
-            args.CurrentTemperature = args.IdealTemperature;
-    }
-    // Goob end
-
     public void ForceChangeTemperature(EntityUid uid, float temp, TemperatureComponent? temperature = null)
     {
         if (!TemperatureQuery.Resolve(uid, ref temperature))
             return;
 
         var lastTemp = temperature.CurrentTemperature;
-
-        // Goob start
-        temperature.CurrentTemperature = temp;
-
-        var tempEv = new TemperatureImmunityEvent(temperature.CurrentTemperature);
-        RaiseLocalEvent(uid, tempEv);
-        temperature.CurrentTemperature = tempEv.CurrentTemperature;
-
-        float delta = temperature.CurrentTemperature - temp;
-        // Goob end
-
+        var delta = temperature.CurrentTemperature - temp;
         temperature.CurrentTemperature = temp;
         RaiseLocalEvent(uid, new OnTemperatureChangeEvent(temperature.CurrentTemperature, lastTemp, delta), broadcast: true);
     }

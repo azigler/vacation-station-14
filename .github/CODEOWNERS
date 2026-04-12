@@ -1,34 +1,43 @@
 # Last match in file takes precedence.
 
-# C# code
-/Content.*/ @DeltaV-Station/maintainers
+# Sorting by path instead of by who added it one day :(
+# this isn't how codeowners rules work pls read the first comment instead of trying to force a sorting order
 
-# Any assets
-/Resources/ @DeltaV-Station/maintainers
+/Resources/ConfigPresets/WizardsDen/  @crazybrain23
+/Content.*/Administration/ @DrSmugleaf @crazybrain23
+/Resources/ServerInfo/ @crazybrain23
+/Resources/ServerInfo/Guidebook/ServerRules/ @crazybrain23
 
-# Server config files
-/Resources/ConfigPresets/ @Toby222
+/Resources/Prototypes/Maps/** @Emisse @ArtisticRoomba @spanky-spanky
+/Resources/Maps/** @Emisse @ArtisticRoomba @spanky-spanky
 
-# Lobby art and music - automatically direction issues since its immediately visible to players
-/Resources/Audio/Lobby/ @DeltaV-Station/direction
-/Resources/Textures/LobbyScreens/ @DeltaV-Station/direction
+/Resources/Prototypes/Body/ @DrSmugleaf @sowelipililimute # suffering
+/Resources/Prototypes/Entities/Mobs/Player/ @DrSmugleaf
+/Resources/Prototypes/Entities/Mobs/Species/ @DrSmugleaf
+/Resources/Prototypes/Guidebook/rules.yml @crazybrain23
+/Content.*/Body/ @DrSmugleaf @sowelipililimute
+/Content.*/Humanoid/ @sowelipililimute
+/Content.Client/Lobby/UI/Humanoid* @sowelipililimute
+/Content.YAMLLinter @DrSmugleaf
+/Content.Shared/Damage/ @DrSmugleaf
 
-# Maps
-/Resources/Maps/ @DeltaV-Station/maptainers
-/Resources/Prototypes/Maps/ @DeltaV-Station/maptainers
-/Content.IntegrationTests/Tests/PostMapInitTest.cs @DeltaV-Station/maptainers
+/Content.*/Anomaly/ @TheShuEd
+/Resources/Prototypes/Entities/Structures/Specific/anomalies.yml @TheShuEd
 
-# Server rules
-/Resources/ServerInfo/Guidebook/DeltaV/Rules/ @DeltaV-Station/head-administrators
+/Content.*/Forensics/ @ficcialfaint
 
-# Wiki
-/.wiki/ @DeltaV-Station/direction
+/Content.*/Trigger/ @slarticodefast
 
-# Tools and scripts
-/Tools/ @Toby222
+/Content.*/Stunnable/ @Princess-Cheeseballs
+/Content.*/Nutrition/ @Princess-Cheeseballs
+/Content.*/EntityEffects @Princess-Cheeseballs @sowelipililimute
 
-# Workflows, codeowners, templates, etc.
-/.github/ @Toby222
+# SKREEEE
+/Content.*.Database/ @PJB3005 @DrSmugleaf
+/Content.Shared.Database/Log*.cs @PJB3005 @DrSmugleaf @crazybrain23
+/Pow3r/ @PJB3005
+/Content.Server/Power/Pow3r/ @PJB3005
 
-# Standalone files in the root repo
-/* @Toby222
+/Content.Server/Discord/ @Simyon264
+
+/Content.*/Atmos/** @ArtisticRoomba

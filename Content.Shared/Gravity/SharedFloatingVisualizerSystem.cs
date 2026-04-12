@@ -1,13 +1,12 @@
 using System.Numerics;
 using Robust.Shared.Map;
-using Content.Shared._EE.Flight.Events;
 
 namespace Content.Shared.Gravity;
 
 /// <summary>
 /// Handles offsetting a sprite when there is no gravity
 /// </summary>
-public abstract partial class SharedFloatingVisualizerSystem : EntitySystem // DeltaV - Made Partial for Harpy Flying
+public abstract class SharedFloatingVisualizerSystem : EntitySystem
 {
     [Dependency] private readonly SharedGravitySystem _gravity = default!;
 
@@ -17,8 +16,6 @@ public abstract partial class SharedFloatingVisualizerSystem : EntitySystem // D
 
         SubscribeLocalEvent<FloatingVisualsComponent, ComponentStartup>(OnComponentStartup);
         SubscribeLocalEvent<FloatingVisualsComponent, WeightlessnessChangedEvent>(OnWeightlessnessChanged);
-
-        SubscribeNetworkEvent<FlightEvent>(OnFlight);
     }
 
     /// <summary>

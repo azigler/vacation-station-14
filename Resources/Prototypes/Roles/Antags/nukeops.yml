@@ -6,30 +6,21 @@
   objective: roles-antag-nuclear-operative-objective
   requirements:
   - !type:OverallPlaytimeRequirement
-    time: 30h # DeltaV - was 5h
-  - !type:DepartmentTimeRequirement # DeltaV - engi dept time requirement
-    department: Engineering
-    time: 2h
-  - !type:RoleTimeRequirement # DeltaV - salvage time requirement
-    role: JobSalvageSpecialist
-    time: 2h
-  - !type:DepartmentTimeRequirement # DeltaV - Security dept time requirement
-    department: Security
-    time: 10h
+    time: 5h
   guides: [ NuclearOperatives ]
 
 - type: antag
   id: NukeopsMedic
-  name: roles-antag-nuclear-operative-corpsman-name # DeltaV
+  name: roles-antag-nuclear-operative-agent-name
   antagonist: true
   setPreference: true
-  objective: roles-antag-nuclear-operative-corpsman-objective # DeltaV
+  objective: roles-antag-nuclear-operative-agent-objective
   requirements:
   - !type:OverallPlaytimeRequirement
-    time: 30h # DeltaV - was 5h
-  - !type:RoleTimeRequirement # Delta V - they should be able to make basic chems
+    time: 5h
+  - !type:RoleTimeRequirement
     role: JobChemist
-    time: 4h # DeltaV
+    time: 3h
   guides: [ NuclearOperatives ]
 
 - type: antag
@@ -38,18 +29,14 @@
   antagonist: true
   setPreference: true
   objective: roles-antag-nuclear-operative-commander-objective
-  guides: [ NuclearOperatives ]
   requirements:
   - !type:OverallPlaytimeRequirement
-    time: 60h # DeltaV - was 5h
-  - !type:DepartmentTimeRequirement # DeltaV - Security dept time requirement
+    time: 5h
+  - !type:DepartmentTimeRequirement
     department: Security
-    time: 10h # DeltaV - was 5h
-  - !type:DepartmentTimeRequirement # DeltaV - Command dept time requirement
-    department: Command
-    time: 10h
-  - !type:WhitelistRequirement # DeltaV - Whitelist requirement
+    time: 5h
   # should be changed to nukie playtime when thats tracked (wyci)
+  guides: [ NuclearOperatives ]
 
 - type: startingGear
   id: SyndicateOperativeGearFullNoUplink
@@ -69,16 +56,14 @@
     back:
     - WeaponPistolViper
     - PinpointerSyndicateNuclear
-    # - DeathAcidifierImplanter # DeltaV - more TC less acid
-    - BionicVoiceMaskImplanter # DeltaV - Voice masking implant
+    - DeathAcidifierImplanter
 
 #Nuclear Operative Gear
 - type: startingGear
   id: SyndicateOperativeGearFull
   parent: SyndicateOperativeGearFullNoUplink
   equipment:
-    pocket2: BaseUplinkRadio45TC # DeltaV - removal of armor
-    outerClothing: ClothingOuterCoatSyndieCap # DeltaV - removal of armor
+    pocket2: BaseUplinkRadio40TC
 
 - type: chameleonOutfit
   id: NukeopsOutfit
@@ -96,8 +81,7 @@
   equipment:
     id: SyndiCommanderPDA
     neck: SyndicateWhistle
-    pocket2: CommanderUplinkRadio45TC # DeltaV - allows them to buy commander armor
-    outerClothing: ClothingOuterCoatSyndieCapArmored # DeltaV - removal of armor
+    outerClothing: ClothingOuterHardsuitSyndieCommander
   inhand:
   - NukeOpsDeclarationOfWar
 
@@ -115,11 +99,10 @@
   id: SyndicateOperativeMedicFull
   parent: SyndicateOperativeGearFull
   equipment:
-    pocket2: AgentUplinkRadio45TC # DeltaV - allows them to buy Agent armor
     eyes: ClothingEyesHudSyndicateAgent
-    outerClothing: ClothingOuterCoatCybersunWindbreaker # DeltaV - removal of armor
-#    shoes: ClothingShoesBootsMagSyndie # DeltaV - removal of armor
-    id: SyndiAgentPDA
+    outerClothing: ClothingOuterHardsuitSyndieMedic
+    shoes: ClothingShoesBootsMagSyndie
+    id: SyndiCorpsmanPDA
     belt: ClothingBeltMilitaryWebbingMedFilled
   storage:
     back:
@@ -131,9 +114,7 @@
     - PinpointerSyndicateNuclear
     - HandheldHealthAnalyzer
     - CombatMedipen
-    # - DeathAcidifierImplanter # DeltaV - more TC less acid
-    - BionicVoiceMaskImplanter # DeltaV - Voice masking implant
-    - OmnimedToolSyndie # Shitmed
+    - DeathAcidifierImplanter
 
 - type: chameleonOutfit
   id: NukeopsMedicOutfit
@@ -149,4 +130,4 @@
   id: SyndicateLoneOperativeGearFull
   parent: SyndicateOperativeGearFull
   equipment:
-    pocket2: BaseUplinkRadio65TC # DeltaV - more TC less armor
+    pocket2: BaseUplinkRadio60TC

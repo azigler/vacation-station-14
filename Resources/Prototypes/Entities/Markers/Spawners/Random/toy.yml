@@ -39,19 +39,6 @@
     - id: PlushieArachind
     - id: PlushiePenguin
     - id: PlushieVulp
-      # Begin DeltaV - see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - id: PlushieMothRandom # Nyano - random moth plushies
-    - id: PlushieMort
-    - id: PlushieIPC
-    - id: PlushieFelinid
-    - id: PlushieOni
-    - id: PlushieHarpy
-    - id: PlushieRodentia
-    - id: PlushieFeroxi
-    - id: PlushieChitinid
-    - id: PlushieKitsune
-    - id: PlushieThaven # IMP port
-    # End DeltaV
     - !type:GroupSelector
       children:
       - id: PlushieBee
@@ -215,26 +202,6 @@
     - id: ToyFigurineSkeleton
     - id: ToyNuke
     - id: ToyFigurineOwlman
-    - id: ToyFigurineDevil # Goobstation
-    # Begin DeltaV Additions
-    - id: ToyFigurineCosmicCultist # DeltaV Figurine, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - id: ToyFigurineCJ
-    - id: ToyFigurineClerk
-    - id: ToyFigurineCorpsman
-    - id: ToyFigurineGladiator
-    - id: ToyFigurineMantis
-    - id: ToyFigurinePrisoner
-    - id: ToyFigurinePrisonGuard
-    - id: ToyFigurineProsec
-    - id: ToyFigurineRoboticist
-    - id: ToyFigurineSlimechem
-    - id: ToyFigurineLPO
-    - id: ToyFigurineRecruiter
-    - id: ToyFigurineNeuroticist
-    - id: ToyZero # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - id: ToyRenault # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    - id: ToySiobhan # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-    # End DeltaV Additions
     - !type:NestedSelector
       tableId: AllFigurineMechsTable
 
@@ -327,6 +294,7 @@
     - id: NukeDiskFake
     - id: DiceBag
     - id: SpectralLocator
+    - id: Magic9Ball
     - id: BarberScissors
     - id: SprayFlowerPin
     - id: ClothingShoesSkates

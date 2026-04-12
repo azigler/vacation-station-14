@@ -7,9 +7,6 @@
   placement:
     mode: SnapgridCenter
   components:
-  - type: EmitSoundOnLand # DeltaV
-    sound:
-      path: /Audio/_DV/Effects/metalpipe.ogg
   - type: Visibility
     layer: 1
   - type: Item
@@ -117,10 +114,6 @@
     guides:
     - Pipes
     - PipeNetworks
-  - type: Tag
-    tags:
-    - Pipe
-    - GasPipeHalf
 
 - type: entity
   parent: GasPipeBase
@@ -155,7 +148,6 @@
     - 0,0,0,2
   - type: MeleeWeapon
     attackRate: 1
-    wideAnimationRotation: 1 # DeltaV
     damage:
       types:
         Blunt: 8

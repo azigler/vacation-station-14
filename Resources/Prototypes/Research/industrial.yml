@@ -13,7 +13,6 @@
   - MiningDrill
   - MineralScannerEmpty
   - OreProcessorIndustrialMachineCircuitboard
-  - SalvageExpeditionsComputerCircuitboard # DeltaV
   - ClothingMaskWeldingGas
   - ClothingShoesBootsJump
 
@@ -66,22 +65,9 @@
   tier: 1
   cost: 10000
   recipeUnlocks:
-  # Begin DeltaV Removals - replaced by upgrade kits + departmental techfabs
-  #- AutolatheHyperConvectionMachineCircuitboard
-  #- ProtolatheHyperConvectionMachineCircuitboard
-  #- CircuitImprinterHyperConvectionMachineCircuitboard
-  # End DeltaV Removals
-  # Begin DeltaV Additions
-  - LatheUpgradeKitHyper
-  - LatheUpgradeKitCryo
-  # End DeltaV Additions
-  # Begin Goobstation Additions
-  - UpgradeKitAutomation
-  - RoboticArmCircuitboard
-  - StorageBinCircuitboard
-  - InteractorCircuitboard
-  - ConstructorCircuitboard
-  # End Goobstation Additions
+  - AutolatheHyperConvectionMachineCircuitboard
+  - ProtolatheHyperConvectionMachineCircuitboard
+  - CircuitImprinterHyperConvectionMachineCircuitboard
   - SheetifierMachineCircuitboard
 
 - type: technology
@@ -113,7 +99,6 @@
   recipeUnlocks:
   - ThermomachineFreezerMachineCircuitBoard
   - GasRecyclerMachineCircuitboard
-  - AlertsComputerCircuitboard # DeltaV - Allows atmos computers to be researched
 
 - type: technology
   id: RipleyAPLU
@@ -164,7 +149,6 @@
   - HellfireFreezerMachineCircuitBoard
   - PortableScrubberMachineCircuitBoard
   - HolofanProjector
-  - FireExtinguisherBluespace # DeltaV
   technologyPrerequisites:
   - AtmosphericTech
 
@@ -182,8 +166,8 @@
     - PowerDrill
     - JawsOfLife
     - BorgModuleAdvancedTool
-    #- Fulton # DeltaV - seperate tech Aerial Extraction
-    #- FultonBeacon # DeltaV - seperate tech Aerial Extraction
+    - Fulton
+    - FultonBeacon
 
 - type: technology
   id: MassExcavation

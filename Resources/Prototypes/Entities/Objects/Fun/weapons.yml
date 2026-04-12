@@ -110,7 +110,6 @@
       tags:
       - CartridgeCap
       - SpeedLoaderCap
-      - ConcealCarry # DeltaV - can be stowed in military boots for now
     proto: CartridgeCap
     capacity: 6
     chambers: [ True, True, True, True, True, True ]
@@ -229,8 +228,6 @@
       shader: unshaded
       map: [ "blade" ]
   - type: EnergySword
-    colorOptions: # DeltaV - revert toy sword appearance
-    - DodgerBlue
   - type: ItemToggle
     soundActivate:
       path: /Audio/Weapons/ebladeon.ogg
@@ -268,11 +265,11 @@
         Blunt: 0
   - type: ItemToggleMeleeWeapon
     activatedSoundOnHit:
-      collection: RubberHammer # DeltaV - toy sword makes squeaky sounds
+      path: /Audio/Weapons/eblade1.ogg
       params:
         variation: 0.250
     activatedSoundOnHitNoDamage:
-      collection: RubberHammer # DeltaV - toy sword makes squeaky sounds
+      path: /Audio/Weapons/eblade1.ogg
       params:
         variation: 0.250
     activatedSoundOnSwing:

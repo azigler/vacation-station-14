@@ -138,9 +138,8 @@
   materials:
     Steel: 2000
     Silver: 750
-    Plasma: 1250 #Higher Plasma due to it needing less bluespace
+    Plasma: 1500
     Uranium: 150
-    Bluespace: 300 # DeltaV: Bluespace Exists
 
 - type: latheRecipe
   parent: ClothingBackpackHolding
@@ -156,11 +155,6 @@
   parent: ClothingBackpackHolding
   id: OreBagOfHolding
   result: OreBagOfHolding
-  materials: # DeltaV: slightly cheaper than BoH
-    Steel: 2000
-    Silver: 750
-    Plasma: 1000 # DeltaV: Bluespace Exists so less plasma used, no uranium
-    Bluespace: 200 # DeltaV: Bluespace Exists
 
 - type: latheRecipe
   id: ClothingMaskWeldingGas
@@ -171,7 +165,6 @@
     Glass: 200
 
 - type: latheRecipe
-  abstract: true # DeltaV - LRP
   id: WeaponForceGun
   result: WeaponForceGun
   categories:
@@ -199,7 +192,6 @@
     Steel: 700
     Glass: 100
     Uranium: 200
-    Bluespace: 300 # DeltaV
 
 - type: latheRecipe
   id: WeaponProtoKineticAccelerator
@@ -213,7 +205,6 @@
     Silver: 100
 
 - type: latheRecipe
-  abstract: true # DeltaV - LRP
   id: WeaponTetherGun
   result: WeaponTetherGun
   categories:

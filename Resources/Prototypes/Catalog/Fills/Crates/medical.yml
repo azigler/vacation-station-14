@@ -35,8 +35,6 @@
           amount: 2
         - id: BoxBottle
           amount: 2
-        - id: Skimmer # DeltaV - Add skimmers
-          amount: 2
 
 - type: entity
   parent: CrateMedical
@@ -75,13 +73,9 @@
         - id: Retractor
         - id: Cautery
         - id: Drill
-        - id: SawElectric # Shitmed Change
+        - id: Saw
         - id: Hemostat
         - id: ClothingMaskSterile
-        # Shitmed Change
-        - id: BoneGel
-        - id: BoxLatexGloves
-        - id: BoxSterileMask
 
 - type: entity
   parent: CrateMedical
@@ -96,24 +90,11 @@
         - id: UniformScrubsColorGreen
         - id: UniformScrubsColorPurple
         - id: UniformScrubsColorBlue
-# DeltaV adds cyan through white scrubs
-        - id: UniformScrubsColorCyan
-        - id: UniformScrubsColorBlack
-        - id: UniformScrubsColorPink
-        - id: UniformScrubsColorRainbow
-        - id: UniformScrubsColorWhite
         - id: ClothingHeadHatSurgcapBlue
         - id: ClothingHeadHatSurgcapPurple
         - id: ClothingHeadHatSurgcapGreen
-# DeltaV adds cyan through white surgcaps
-        - id: ClothingHeadHatSurgcapCyan
-        - id: ClothingHeadHatSurgcapBlack
-        - id: ClothingHeadHatSurgcapPink
-        - id: ClothingHeadHatSurgcapRainbow
-        - id: ClothingHeadHatSurgcapWhite
         - id: ClothingMaskSterile
-# DeltaV nerfs amount from 3 to 1(more items)
-          amount: 1
+          amount: 3
 
 - type: entity
   parent: CrateMedical

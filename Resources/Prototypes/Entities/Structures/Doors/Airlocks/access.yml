@@ -11,7 +11,7 @@
     layoutId: AirlockService
 
 - type: entity
-  parent: AirlockJustice # DeltaV - Lawyer is in Justice Dept
+  parent: AirlockServiceLocked
   id: AirlockLawyerLocked
   suffix: Lawyer, Locked
   components:
@@ -38,7 +38,7 @@
       board: [ DoorElectronicsServiceTheatre ]
 
 - type: entity
-  parent: AirlockScienceLocked # DeltaV - Chapel is in Epistemics
+  parent: AirlockServiceLocked
   id: AirlockChapelLocked
   suffix: Chapel, Locked
   components:
@@ -103,7 +103,7 @@
 - type: entity
   parent: AirlockExternal
   id: AirlockExternalCargoLocked
-  suffix: External, Logistics, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: External, Cargo, Locked
   components:
   - type: ContainerFill
     containers:
@@ -225,7 +225,7 @@
 - type: entity
   parent: AirlockCargo
   id: AirlockCargoLocked
-  suffix: Logistics, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: Cargo, Locked
   components:
   - type: ContainerFill
     containers:
@@ -288,7 +288,7 @@
 - type: entity
   parent: AirlockScience
   id: AirlockScienceLocked
-  suffix: Epistemics, Locked # DeltaV - Epistemics Department replacing Science
+  suffix: Science, Locked
   components:
   - type: ContainerFill
     containers:
@@ -297,7 +297,7 @@
 - type: entity
   parent: AirlockScience
   id: AirlockMedicalScienceLocked
-  suffix: Medical/Epistemics, Locked # DeltaV - Epistemics Department replacing Science
+  suffix: Medical/Science, Locked
   components:
   - type: ContainerFill
     containers:
@@ -378,7 +378,7 @@
 - type: entity
   parent: AirlockCommand
   id: AirlockQuartermasterLocked
-  suffix: Logistics Officer, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: Quartermaster, Locked
   components:
   - type: ContainerFill
     containers:
@@ -402,15 +402,14 @@
     containers:
       board: [ DoorElectronicsDetective ]
 
-#Delta V: Removed Brig Access
-#- type: entity
-#  parent: AirlockSecurity
-#  id: AirlockBrigLocked
-#  suffix: Brig, Locked
-#  components:
-#  - type: ContainerFill
-#    containers:
-#      board: [ DoorElectronicsBrig ]
+- type: entity
+  parent: AirlockSecurity
+  id: AirlockBrigLocked
+  suffix: Brig, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsBrig ]
 
 - type: entity
   parent: AirlockSecurity
@@ -463,8 +462,8 @@
     layoutId: AirlockService
 
 - type: entity
-  parent: AirlockJusticeGlass
-  id: AirlockLawyerGlassLocked # DeltaV - Lawyer is in Justice Dept
+  parent: AirlockServiceGlassLocked
+  id: AirlockLawyerGlassLocked
   suffix: Lawyer, Locked
   components:
   - type: ContainerFill
@@ -520,7 +519,7 @@
 - type: entity
   parent: AirlockExternalGlass
   id: AirlockExternalGlassCargoLocked
-  suffix: External, Glass, Logistics, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: External, Glass, Cargo, Locked
   components:
   - type: ContainerFill
     containers:
@@ -600,7 +599,7 @@
       board: [ DoorElectronicsHydroponics ]
 
 - type: entity
-  parent: AirlockScienceGlass  # DeltaV - Chapel is in Epistemics
+  parent: AirlockServiceGlassLocked
   id: AirlockChapelGlassLocked
   suffix: Chapel, Locked
   components:
@@ -612,7 +611,6 @@
   parent: AirlockStandardGlass
   id: AirlockChapelStandardGlassLocked
   suffix: Chapel, Locked
-  categories: [ HideSpawnMenu ] # DeltaV - Chapel is Epistemics and redundant
   components:
   - type: ContainerFill
     containers:
@@ -641,7 +639,7 @@
 - type: entity
   parent: AirlockCargoGlass
   id: AirlockCargoGlassLocked
-  suffix: Logistics, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: Cargo, Locked
   components:
   - type: ContainerFill
     containers:
@@ -704,7 +702,7 @@
 - type: entity
   parent: AirlockScienceGlass
   id: AirlockScienceGlassLocked
-  suffix: Epistemics, Locked # DeltaV - Epistemics Department replacing Science
+  suffix: Science, Locked
   components:
   - type: ContainerFill
     containers:
@@ -713,7 +711,7 @@
 - type: entity
   parent: AirlockScienceGlass
   id: AirlockMedicalScienceGlassLocked
-  suffix: Medical/Epistemics, Locked # DeltaV - Epistemics Department replacing Science
+  suffix: Medical/Science, Locked
   components:
   - type: ContainerFill
     containers:
@@ -794,7 +792,7 @@
 - type: entity
   parent: AirlockCommandGlass
   id: AirlockQuartermasterGlassLocked
-  suffix: Logistics Officer, Locked # DeltaV - Logistics Department replacing Cargo
+  suffix: Quartermaster, Locked
   components:
   - type: ContainerFill
     containers:
@@ -818,15 +816,14 @@
     containers:
       board: [ DoorElectronicsDetective ]
 
-#Delta V: Removed Brig Access
-#- type: entity
-#  parent: AirlockSecurityGlass
-#  id: AirlockBrigGlassLocked
-#  suffix: Brig, Locked
-#  components:
-#  - type: ContainerFill
-#    containers:
-#      board: [ DoorElectronicsBrig ]
+- type: entity
+  parent: AirlockSecurityGlass
+  id: AirlockBrigGlassLocked
+  suffix: Brig, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsBrig ]
 
 - type: entity
   parent: AirlockSecurityGlass
@@ -906,218 +903,217 @@
   id: AirlockMaintSalvageLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCargoLocked
   id: AirlockMaintCargoLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCommandLocked
   id: AirlockMaintCommandLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockEngineeringLocked
   id: AirlockMaintEngiLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockAtmosphericsLocked
   id: AirlockMaintAtmoLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockBarLocked
   id: AirlockMaintBarLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockBarKitchenLocked
   id: AirlockMaintBarKitchenLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
-  parent: AirlockMaintRnDLocked # DeltaV - Chapel is in Epistemics
+  parent: AirlockChapelLocked
   id: AirlockMaintChapelLocked
-  suffix: Chapel, Locked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockHydroponicsLocked
   id: AirlockMaintHydroLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockJanitorLocked
   id: AirlockMaintJanitorLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockLawyerLocked
   id: AirlockMaintLawyerLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockServiceLocked
   id: AirlockMaintServiceLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockTheatreLocked
   id: AirlockMaintTheatreLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockServiceTheatreLocked
   id: AirlockMaintServiceTheatreLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockKitchenLocked
   id: AirlockMaintKitchenLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockFreezerKitchenHydroLocked
   id: AirlockMaintKitchenHydroLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalLocked
   id: AirlockMaintMedLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalMorgueLocked
   id: AirlockMedicalMorgueMaintLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChemistryLocked
   id: AirlockMaintChemLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockScienceLocked
   id: AirlockMaintRnDLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalScienceLocked
   id: AirlockMaintRnDMedLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockSecurityLocked
   id: AirlockMaintSecLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockDetectiveLocked
   id: AirlockMaintDetectiveLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockHeadOfPersonnelLocked
   id: AirlockMaintHOPLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCaptainLocked
   id: AirlockMaintCaptainLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChiefEngineerLocked
   id: AirlockMaintChiefEngineerLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChiefMedicalOfficerLocked
   id: AirlockMaintChiefMedicalOfficerLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockHeadOfSecurityLocked
   id: AirlockMaintHeadOfSecurityLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockResearchDirectorLocked
   id: AirlockMaintResearchDirectorLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockQuartermasterLocked
   id: AirlockMaintQuartermasterLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockArmoryLocked
   id: AirlockMaintArmoryLocked
   components:
   - type: Sprite
-    sprite: _DV/Structures/Doors/Airlocks/Standard/maint.rsi # DeltaV - Changed to our sprites
+    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockSyndicate

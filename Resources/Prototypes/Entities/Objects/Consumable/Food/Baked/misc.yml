@@ -280,9 +280,6 @@
           Quantity: 2
         - ReagentId: Vitamin
           Quantity: 1
-  - type: FlavorProfile # DeltaV - custom flavor, see Resources/Locale/en-US/deltav/flavors/flavor_profiles.ftl
-    flavors:
-     - nuggie
 
 # Waffles/Pancakes
 
@@ -814,10 +811,6 @@
           Quantity: 2
         - ReagentId: Vitamin
           Quantity: 1
-  - type: DamageOtherOnHit
-    damage:
-      types:
-        Blunt: 0 # so the damage stats icon doesn't immediately give away the syndie ones
 
 - type: entity
   parent: FoodBakedCroissant
@@ -884,9 +877,6 @@
           Quantity: 2
         - ReagentId: Vitamin
           Quantity: 3
-  - type: FoodSequenceElement # DeltaV - unlimited power
-    entries:
-      Burger: GrilledCheese
 
 - type: entity
   parent: FoodBakedGrilledCheeseSandwich
@@ -920,3 +910,27 @@
           Quantity: 2
         - ReagentId: Vitamin
           Quantity: 3
+
+# Entity Tables
+
+- type: entityTable
+  id: FoodRandomCakeTable
+  table: !type:GroupSelector
+    children:
+    - id: FoodCakeApple
+    - id: FoodCakeBirthday
+    - id: FoodCakeBlueberry
+    - id: FoodCakePlain
+    - id: FoodCakeCarrot
+    - id: FoodCakeCheese
+    - id: FoodCakeChocolate
+    - id: FoodCakeChristmas
+    - id: FoodCakeClown
+    - id: FoodCakeLemon
+    - id: FoodCakeLime
+    - id: FoodCakeOrange
+    - id: FoodCakePumpkin
+    - id: FoodCakeSlime
+    - id: FoodCakeSpaceman
+    - id: FoodCakeVanilla
+    - id: FoodCakeLemoon

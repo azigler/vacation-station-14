@@ -32,7 +32,6 @@ namespace Content.Client.PDA
         private string _stationName = Loc.GetString("comp-pda-ui-unknown");
         private string _alertLevel = Loc.GetString("comp-pda-ui-unknown");
         private string _instructions = Loc.GetString("comp-pda-ui-unknown");
-        private string _currentDate = Loc.GetString("comp-pda-ui-unknown"); // DeltaV - PDA date
         
 
         private int _currentView;
@@ -126,13 +125,6 @@ namespace Content.Client.PDA
                 _clipboard.SetText(_instructions);
             };
 
-            // Begin DeltaV additions
-            CurrentDateButton.OnPressed += _ =>
-            {
-                _clipboard.SetText(_currentDate);
-            };
-            // End DeltaV additions
-
             
 
 
@@ -146,7 +138,7 @@ namespace Content.Client.PDA
 
             if (state.PdaOwnerInfo.ActualOwnerName != null)
             {
-                _pdaOwner = FormattedMessage.EscapeText(state.PdaOwnerInfo.ActualOwnerName); // DeltaV - Escape actual owner
+                _pdaOwner = state.PdaOwnerInfo.ActualOwnerName;
                 PdaOwnerLabel.SetMarkup(Loc.GetString("comp-pda-ui-owner",
                     ("actualOwnerName", _pdaOwner)));
                 PdaOwnerLabel.Visible = true;
@@ -159,8 +151,8 @@ namespace Content.Client.PDA
 
             if (state.PdaOwnerInfo.IdOwner != null || state.PdaOwnerInfo.JobTitle != null)
             {
-                _owner = FormattedMessage.EscapeText(state.PdaOwnerInfo.IdOwner ?? Loc.GetString("comp-pda-ui-unknown")); // DeltaV - Escape owner and job
-                _jobTitle = FormattedMessage.EscapeText(state.PdaOwnerInfo.JobTitle ?? Loc.GetString("comp-pda-ui-unassigned")); // DeltaV - Escape owner and job
+                _owner = state.PdaOwnerInfo.IdOwner ?? Loc.GetString("comp-pda-ui-unknown");
+                _jobTitle = state.PdaOwnerInfo.JobTitle ?? Loc.GetString("comp-pda-ui-unassigned");
                 IdInfoLabel.SetMarkup(Loc.GetString("comp-pda-ui",
                     ("owner", _owner),
                     ("jobTitle", _jobTitle)));
@@ -195,14 +187,6 @@ namespace Content.Client.PDA
                 "comp-pda-ui-station-alert-level-instructions",
                 ("instructions", _instructions))
             );
-            // Begin DeltaV additions
-            if (state.PdaOwnerInfo.CurrentDate is { } curDate)
-                _currentDate = curDate.ToString("dd MMMM yyyy");
-                CurrentDateLabel.SetMarkup(Loc.GetString(
-                    "comp-pda-ui-current-date",
-                    ("date", _currentDate)
-                ));
-            // End DeltaV additions
 
             AddressLabel.Text = state.Address?.ToUpper() ?? " - ";
 

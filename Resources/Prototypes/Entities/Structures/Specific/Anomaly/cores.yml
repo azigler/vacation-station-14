@@ -49,10 +49,6 @@
   - type: IgnitionSource
     temperature: 400
     ignited: true
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomalitePyroclastic
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -66,10 +62,6 @@
     energy: 10
     color: "#1e070e"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteGravity
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -83,10 +75,6 @@
     energy: 2.7
     color: "#befaff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteIce
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -101,10 +89,6 @@
     energy: 3.5
     color: "#cb5b7e"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteFlesh
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -118,10 +102,6 @@
     energy: 3.5
     color: "#5ca8cb"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteRock
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -135,10 +115,6 @@
     energy: 3.5
     color: "#ffffff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteLiquid
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -152,10 +128,6 @@
     energy: 3.5
     color: "#00ccff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteBluespace
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -170,10 +142,6 @@
     color: "#ffffaa"
     castShadows: false
   - type: Electrified
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteElectricity
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -189,10 +157,6 @@
     energy: 2.0
     color: "#6270bb"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteFlora
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: [ BaseAnomalyCore, BaseShadow ]
@@ -206,10 +170,6 @@
     energy: 2.0
     color: "#793a80"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteShadow
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -223,10 +183,6 @@
     energy: 2.0
     color: "#56c1e8"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteTech
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyCore
@@ -270,10 +226,6 @@
     energy: 2.7
     color: "#fca3c0"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomalitePyroclastic
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -287,10 +239,6 @@
     energy: 10
     color: "#1e070e"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteGravity
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -304,10 +252,6 @@
     energy: 2.7
     color: "#befaff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteIce
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -322,10 +266,6 @@
     energy: 3.5
     color: "#cb5b7e"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteFlesh
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -339,10 +279,6 @@
     energy: 3.5
     color: "#5ca8cb"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteRock
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -356,10 +292,6 @@
     energy: 3.5
     color: "#ffffff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteLiquid
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -373,10 +305,6 @@
     energy: 3.5
     color: "#00ccff"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteBluespace
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -390,10 +318,6 @@
     energy: 2.0
     color: "#ffffaa"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteElectricity
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -409,10 +333,6 @@
     energy: 2.0
     color: "#6270bb"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteFlora
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: [ BaseAnomalyInertCore, BaseShadow ]
@@ -426,10 +346,6 @@
     energy: 2.0
     color: "#793a80"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteShadow
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore
@@ -443,10 +359,6 @@
     energy: 2.0
     color: "#56c1e8"
     castShadows: false
-  - type: Summonable # imp
-    requiresBibleUser: false
-    specialItem: SpawnPointGhostAnomaliteTech
-    lives: 1 #DeltaV - Anomalite Limited Respawns
 
 - type: entity
   parent: BaseAnomalyInertCore

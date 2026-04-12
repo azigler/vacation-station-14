@@ -39,9 +39,6 @@
         maxVol: 30
   - type: RefillableSolution
     solution: hypospray
-  - type: ExaminableSolution
-    solution: hypospray
-    exactVolume: true
   - type: UseDelay
     delay: 0.5
   - type: StaticPrice
@@ -103,8 +100,6 @@
         maxVol: 10
   - type: RefillableSolution
     solution: hypospray
-  - type: ExaminableSolution
-    solution: hypospray
   - type: SolutionContainerVisuals
     maxFillLevels: 2
     fillBaseName: borghypo_fill
@@ -145,9 +140,6 @@
     allowedModes:
     - JetInjectorDynamicMode
     - JetInjectorInjectMode
-  - type: Tag
-    tags:
-    - JetInjector
 
 - type: entity
   parent: JetInjector
@@ -222,7 +214,6 @@
         maxVol: 15
   - type: ExaminableSolution
     solution: pen
-    exactVolume: true
   - type: Injector
     solutionName: pen
     currentTransferAmount: null
@@ -241,12 +232,6 @@
     price: 75 # These are limited supply items.
   - type: TrashOnSolutionEmpty
     solution: pen
-  - type: CosmicTransmutable # DeltaV - cosmic cult
-    transmutesTo: CosmicMedipen
-    requiredGlyphType: CosmicGlyphBlades # Well I mean it DOES have a needle in it
-  - type: Tag #deltav
-    tags:
-    - ChemicalMedipen
 
 - type: entity
   parent: ChemicalMedipen
@@ -498,6 +483,7 @@
 - type: entity
   parent: ChemicalMedipen
   id: AirlossAutoInjector
+  name: airloss auto-injector
   description: A single-dose, non-refillable medipen containing saline and dexalin plus, used to quickly and easily treat blood loss and asphyxiation.
   components:
   - type: Item
@@ -524,14 +510,12 @@
   - type: SolutionContainerManager
     solutions:
       pen:
-        maxVol: 30 # Funkychem - was 40
+        maxVol: 40
         reagents:
         - ReagentId: Saline
-          Quantity: 15 # Funkychem - was 20
-        - ReagentId: Salbutamol # Funkychem - was dex+
-          Quantity: 15 # Funkychem - was 20
-  - type: Tag
-    tags: []
+          Quantity: 20
+        - ReagentId: DexalinPlus
+          Quantity: 20
 
 - type: entity
   parent: ChemicalMedipen
@@ -565,7 +549,7 @@
       pen:
         maxVol: 30
         reagents:
-          - ReagentId: Stabilizine # DeltaV - replace lepo
+          - ReagentId: Leporazine
             Quantity: 10
           - ReagentId: Barozine
             Quantity: 20
@@ -681,9 +665,9 @@
         maxVol: 30
         reagents:
         - ReagentId: Omnizine
-          Quantity: 20 # DeltaV - Was 25
+          Quantity: 25
         - ReagentId: TranexamicAcid
-          Quantity: 10 # DeltaV - Was 5
+          Quantity: 5
   - type: StaticPrice
     price: 1500
 

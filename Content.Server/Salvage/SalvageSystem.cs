@@ -1,5 +1,4 @@
 using Content.Server.Radio.EntitySystems;
-using Content.Shared._DV.Salvage.Systems; // DeltaV
 using Content.Shared.Radio;
 using Content.Shared.Salvage;
 using Robust.Server.GameObjects;
@@ -38,7 +37,6 @@ namespace Content.Server.Salvage
         [Dependency] private readonly LabelSystem _labelSystem = default!;
         [Dependency] private readonly MapLoaderSystem _loader = default!;
         [Dependency] private readonly MetaDataSystem _metaData = default!;
-        [Dependency] private readonly MiningPointsSystem _points = default!; // DeltaV
         [Dependency] private readonly RadioSystem _radioSystem = default!;
         [Dependency] private readonly SharedAudioSystem _audio = default!;
         [Dependency] private readonly SharedTransformSystem _transform = default!;

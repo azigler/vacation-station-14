@@ -4,14 +4,14 @@
   id: MeteorSwarmDustEventsTable
   table: !type:AllSelector # we need to pass a list of rules, since rules have further restrictions to consider via StationEventComp
     children:
-    - id: GameRuleSpaceDustMinor
-    - id: GameRuleSpaceDustMajor
+    - id: SpaceDustMinor
+    - id: SpaceDustMajor
 
 - type: entityTable
   id: MeteorSwarmSmallChanceEventsTable
   table: !type:AllSelector # we need to pass a list of rules, since rules have further restrictions to consider via StationEventComp
     children:
-    - id: GameRuleMeteorSwarmSmall
+    - id: MeteorSwarmSmall
       prob: 0.15
 
 - type: entityTable
@@ -29,14 +29,14 @@
     children:
     - !type:NestedSelector
         tableId: MeteorSwarmDustEventsTable
-    - id: GameRuleMeteorSwarmSmall
-    - id: GameRuleMeteorSwarmMedium
-    - id: GameRuleMeteorSwarmLarge
-    - id: GameRuleUristSwarm
-    - id: GameRuleClownSwarm
-    - id: GameRuleCowSwarm
-    - id: GameRulePotatoSwarm
-    - id: GameRuleFunSwarm
+    - id: MeteorSwarmSmall
+    - id: MeteorSwarmMedium
+    - id: MeteorSwarmLarge
+    - id: UristSwarm
+    - id: ClownSwarm
+    - id: CowSwarm
+    - id: PotatoSwarm
+    - id: FunSwarm
     - id: ImmovableRodSpawn
 
 - type: weightedRandomEntity
@@ -59,44 +59,34 @@
   parent: BaseGameRule
   id: MeteorSwarmScheduler
   components:
-  - type: NextEvent # DeltaV: Queue Event
   - type: GameRule
   - type: BasicStationEventScheduler
     minimumTimeUntilFirstEvent: 600 # 10 min
     minMaxEventTiming:
       min: 750 # 12.5 min
       max: 930 # 17.5 min
-    scheduledGameRules: !type:EntSelector # DeltaV: use old event
-      id: MeteorSwarm
+    scheduledGameRules: !type:NestedSelector
+      tableId: BasicMeteorSwarmEventsTable
 
 - type: entity
   parent: BaseGameRule
   id: MeteorSwarmMildScheduler
   components:
-  - type: NextEvent # DeltaV: Queue Event
   - type: GameRule
   - type: BasicStationEventScheduler
     minimumTimeUntilFirstEvent: 600 # 10 min
     minMaxEventTiming:
       min: 750 # 12.5 min
       max: 930 # 17.5 min
-    scheduledGameRules: !type:EntSelector # DeltaV: use old event but rarer (only used for allatonce so doesnt matter)
-      id: MeteorSwarm
-      prob: 0.25
+    scheduledGameRules: !type:NestedSelector
+      tableId: MeteorSwarmMildTable
 
 - type: entity
   parent: BaseGameRule
   id: KesslerSyndromeScheduler
   components:
-  - type: NextEvent # DeltaV: Queue Event
   - type: GameRule
   - type: RampingStationEventScheduler
-    timeKeyPoints: # DeltaV
-    - 14, 16
-    - 32, 8
-    - 32, 6
-    - 8, 4
-    - 32, 12
     scheduledGameRules: !type:NestedSelector
       tableId: BasicMeteorSwarmEventsTable
 
@@ -104,7 +94,7 @@
 
 - type: entity
   parent: BaseGameRule
-  id: GameRuleMeteorSwarm
+  id: MeteorSwarm
   abstract: true
   components:
   - type: GameRule
@@ -112,13 +102,11 @@
     reoccurrenceDelay: 1
     earliestStart: 12
     minimumPlayers: 25
-  - type: PrecognitionResult # DeltaV - Precogniton
-    message: psionic-power-precognition-meteor-swarm-result-message
   - type: MeteorSwarm
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleSpaceDustMinor
+  parent: MeteorSwarm
+  id: SpaceDustMinor
   components:
   - type: StationEvent
     weight: 44
@@ -138,15 +126,15 @@
       max: 5
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleSpaceDustMajor
+  parent: MeteorSwarm
+  id: SpaceDustMajor
   components:
   - type: StationEvent
     weight: 22
     minimumPlayers: 0
   - type: MeteorSwarm
     announcement: station-event-space-dust-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     nonDirectional: true
     meteors:
       MeteorSpaceDust: 1
@@ -158,8 +146,8 @@
       max: 12
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleMeteorSwarmSmall
+  parent: MeteorSwarm
+  id: MeteorSwarmSmall
   components:
   - type: StationEvent
     weight: 18
@@ -170,8 +158,8 @@
       MeteorMedium: 3
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleMeteorSwarmMedium
+  parent: MeteorSwarm
+  id: MeteorSwarmMedium
   components:
   - type: StationEvent
     weight: 10
@@ -182,8 +170,8 @@
       MeteorLarge: 1
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleMeteorSwarmLarge
+  parent: MeteorSwarm
+  id: MeteorSwarmLarge
   components:
   - type: StationEvent
     weight: 5
@@ -194,16 +182,14 @@
       MeteorLarge: 4
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleUristSwarm
+  parent: MeteorSwarm
+  id: UristSwarm
   components:
   - type: StationEvent
     weight: 0.05
-  - type: PrecognitionResult # DeltaV - Precogniton
-    message: psionic-power-precognition-game-rule-urist-swarm-result-message
   - type: MeteorSwarm
     announcement: station-event-meteor-urist-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     meteors:
       MeteorUrist: 1
     waves:
@@ -220,14 +206,12 @@
   - type: StationEvent
     startAnnouncement: station-event-immovable-rod-start-announcement
     startAudio:
-      path: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+      path: /Audio/Announcements/attention.ogg
     weight: 3.5
     reoccurrenceDelay: 1
     duration: 1
     earliestStart: 30
     minimumPlayers: 25
-  - type: PrecognitionResult # DeltaV - Precogniton
-    message: psionic-power-precognition-immovable-rod-spawn-result-message
   - type: ImmovableRodRule
     rodPrototypes:
     - id: ImmovableRodKeepTilesStill
@@ -259,14 +243,14 @@
       orGroup: rodProto
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleCowSwarm
+  parent: MeteorSwarm
+  id: CowSwarm
   components:
   - type: StationEvent
     weight: 0.05
   - type: MeteorSwarm
     announcement: station-event-meteor-cow-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     meteors:
       MeteorCow: 1
     waves:
@@ -277,14 +261,14 @@
       max: 10
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleClownSwarm
+  parent: MeteorSwarm
+  id: ClownSwarm
   components:
   - type: StationEvent
     weight: 0.05
   - type: MeteorSwarm
     announcement: station-event-meteor-clown-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     meteors:
       MeteorClown: 1
     waves:
@@ -295,14 +279,14 @@
       max: 10
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRulePotatoSwarm
+  parent: MeteorSwarm
+  id: PotatoSwarm
   components:
   - type: StationEvent
     weight: 0.05
   - type: MeteorSwarm
     announcement: station-event-meteor-potato-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     meteors:
       MeteorPotato: 1
     waves:
@@ -313,14 +297,14 @@
       max: 10
 
 - type: entity
-  parent: GameRuleMeteorSwarm
-  id: GameRuleFunSwarm
+  parent: MeteorSwarm
+  id: FunSwarm
   components:
   - type: StationEvent
     weight: 0.03
   - type: MeteorSwarm
     announcement: station-event-fun-swarm-start-announcement
-    announcementSound: /Audio/_DV/Announcements/attention.ogg # DeltaV: custom announcer
+    announcementSound: /Audio/Announcements/attention.ogg
     meteors:
       MeteorClown: 1
       MeteorCow: 1

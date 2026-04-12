@@ -5,7 +5,7 @@
   components:
   - type: Sprite
   - type: Item
-    size: Large # DeltaV - was Huge
+    size: Huge
   - type: Clothing
     sprite: Objects/Weapons/Guns/Battery/laser_retro.rsi
     quickEquip: false
@@ -25,11 +25,6 @@
     startingCharge: 1000
   - type: StaticPrice
     price: 500
-  - type: Cautery # Shitmed
-    speed: 0.9
-  - type: SurgeryTool # Shitmed
-    endSound:
-      path: /Audio/Weapons/Guns/Gunshots/laser.ogg
 
 - type: entity
   parent: [BaseWeaponBattery, BaseGunWieldable]
@@ -58,8 +53,8 @@
     availableModes:
     - SemiAuto
   - type: BatteryAmmoProvider
-    proto: RedMediumLaser # Delta V - was RedLaser
-    fireCost: 33.3 # Delta V - was 62.5
+    proto: RedLaser
+    fireCost: 62.5
   - type: StaticPrice
     price: 420
   - type: Tag
@@ -104,11 +99,6 @@
   - type: ContainerContainer
     containers:
       cell_slot: !type:ContainerSlot
-  - type: Cautery # Shitmed
-    speed: 0.9
-  - type: SurgeryTool # Shitmed
-    endSound:
-      path: /Audio/Weapons/Guns/Gunshots/laser.ogg
 
 - type: entity
   id: BaseWeaponBatterySmall
@@ -123,7 +113,6 @@
   - type: Tag
     tags:
     - Sidearm
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
   - type: Clothing
     sprite: Objects/Weapons/Guns/Battery/taser.rsi
     quickEquip: false
@@ -141,7 +130,6 @@
   - type: Tag
     tags:
     - Sidearm
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
   - type: Clothing
     sprite: Objects/Weapons/Guns/Battery/taser.rsi
     quickEquip: false
@@ -278,33 +266,6 @@
   parent: [BaseLaserRifle, BaseGunWieldable, BaseSecurityContraband]
   id: WeaponLaserCarbine
   description: Favoured by Nanotrasen Security for being cheap and easy to use.
-  components:
-  - type: Item
-    size: Large
-  - type: Sprite
-    sprite: Objects/Weapons/Guns/Battery/laser_gun.rsi
-    layers:
-    - state: base
-      map: ["enum.GunVisualLayers.Base"]
-    - state: mag-unshaded-4
-      map: ["enum.GunVisualLayers.MagUnshaded"]
-      shader: unshaded
-  - type: MagazineVisuals
-    magState: mag
-    steps: 5
-    zeroVisible: false
-  - type: Appearance
-  - type: Clothing
-    sprite: Objects/Weapons/Guns/Battery/laser_gun.rsi
-  - type: Gun
-    selectedMode: SemiAuto
-    availableModes:
-    - SemiAuto
-  - type: BatteryAmmoProvider
-    proto: RedMediumLaser # Delta-V was RedLaser
-    fireCost: 33.3 # Delta-V was 62.5
-  - type: StaticPrice
-    price: 420
 
 - type: entity
   name: practice laser carbine
@@ -317,18 +278,7 @@
   - type: BatteryAmmoProvider
     proto: RedLaserPractice
     fireCost: 62.5
-    # Start DeltaV additions
-  - type: Sprite
-    sprite: _DV/Objects/Weapons/Guns/Battery/laser_gun_practice.rsi
-    layers:
-    - state: base
-      map: ["enum.GunVisualLayers.Base"]
-    - state: mag-unshaded-4
-      map: ["enum.GunVisualLayers.MagUnshaded"]
-      shader: unshaded
-  - type: Clothing
-    sprite: _DV/Objects/Weapons/Guns/Battery/laser_gun_practice.rsi
-    # End DeltaV additions
+  - type: PacifismAllowedGun
 
 - type: entity
   name: pulse pistol
@@ -470,19 +420,12 @@
   - type: Clothing
     sprite: Objects/Weapons/Guns/Battery/laser_cannon.rsi
   - type: Gun
-    fireRate: .7 # Delta V - was 1.5
+    fireRate: 1.5
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/laser_cannon.ogg
   - type: BatteryAmmoProvider
-    proto: RedSniperLaser # Delta V was - RedHeavyLaser
-    fireCost: 40 # Delta V - was 100
-  # Begin DeltaV additions
-  - type: SpeedModifiedOnWield
-    walkModifier: 0.85
-    sprintModifier: 0.85
-  - type: CursorOffsetRequiresWield
-  - type: EyeCursorOffset
-  # End DeltaV additions
+    proto: RedHeavyLaser
+    fireCost: 100
   - type: Tag
     tags:
     - TurretCompatibleWeapon
@@ -590,7 +533,6 @@
     tags:
     - Taser
     - Sidearm
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
   - type: PacifismAllowedGun
 
 - type: entity
@@ -673,7 +615,6 @@
     tags:
     - Taser
     - Sidearm
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
   - type: Sprite
     sprite: Objects/Weapons/Guns/Battery/taser.rsi
     layers:
@@ -689,8 +630,7 @@
     slots:
     - Belt
   - type: Gun
-    fireRate: 0.2 # DeltaV - No taser spam, was 0.5
-    resetOnHandSelected: false # DeltaV - Makes it so you dont have to wait 10 seconds to shoot a taser after pulling it out
+    fireRate: 0.5
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/taser.ogg
     projectileSpeed: 25
@@ -703,10 +643,6 @@
     zeroVisible: true
   - type: Appearance
   - type: PacifismAllowedGun
-  - type: UseDelayOnShoot # DeltaV - No taser spam (provides a cooldown indicator)
-  - type: UseDelay # DeltaV - No taser spam (provides a cooldown indicator)
-    delay: 5
-
 
 - type: entity
   name: elite taser
@@ -759,7 +695,6 @@
     - HighRiskItem
     - Sidearm
     - WeaponAntiqueLaser
-    - ConcealCarry # DeltaV - can be stowed in military boots for now
     - LaserWeapon
   - type: StaticPrice
     price: 750
@@ -859,10 +794,9 @@
     price: 100
 
 - type: entity
-  name: experimental C.H.I.M.P. handcannon
   parent: [WeaponPistolCHIMP, BaseSyndicateContraband]
   id: WeaponPistolCHIMPUpgraded
-  description: This C.H.I.M.P. seems to have a greater punch than usual...
+  suffix: Syndicate
   components:
   - type: BatteryWeaponFireModes
     fireModes:
@@ -945,11 +879,8 @@
     heldPrefix: energy
   - type: GunRequiresWield #remove when inaccuracy on spreads is fixed
   - type: Battery
-    maxCharge: 720 # Delta V - Was 480
-    startingCharge: 720
-  - type: BatterySelfRecharger #Delta V - Self recharging not removed
-    autoRechargeRate: 72 # Delta V - Was 10
-    autoRechargePauseTime: 30
+    maxCharge: 480
+    startingCharge: 480
 
 - type: entity
   name: energy magnum
@@ -977,9 +908,8 @@
     tags:
     - HighRiskItem
     - Sidearm
-    - ConcealCarry # Delta V - boot storage yay
   - type: StealTarget
-    stealGroup: HoSSidearm # Delta V - to work along side the X-01
+    stealGroup: WeaponEnergyMagnum
   - type: Gun
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/laser_cannon.ogg
@@ -990,7 +920,7 @@
     fireModes:
     - proto: BulletLaserMagnum
       fireCost: 150
-    - proto: BulletEnergyGunLaser #Delta V - Energy guns pierce by default
+    - proto: BulletLaserWindowPiercingMagnum
       fireCost: 150
     - proto: BulletDisabler
       fireCost: 62.5
@@ -1047,6 +977,14 @@
   parent: [WeaponAdvancedLaser, BaseXenoborgContraband]
   id: WeaponLaserGunXenoborg
   name: xenoborg laser gun
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Battery/xenoborg_laser_gun.rsi
+    layers:
+    - state: base
+      map: [ "enum.GunVisualLayers.Base" ]
+    - state: mag-unshaded-4
+      map: [ "enum.GunVisualLayers.MagUnshaded" ]
 
 - type: entity
   parent: [WeaponLaserCannon, BaseXenoborgContraband]

@@ -997,7 +997,7 @@
         - ReagentId: Hooch
           Quantity: 30
   - type: Icon
-    sprite: _DV/Objects/Consumable/Drinks/hooch.rsi # DeltaV: sprite changed
+    sprite: Objects/Consumable/Drinks/glass_brown2.rsi
     state: icon
 
 - type: entity
@@ -1628,7 +1628,7 @@
         - ReagentId: Posca
           Quantity: 30
   - type: Icon
-    sprite: _DV/Objects/Consumable/Drinks/posca.rsi # DeltaV: sprite changed
+    sprite: Objects/Consumable/Drinks/glass_light_yellow.rsi
     state: icon
 
 - type: entity
@@ -1743,23 +1743,21 @@
     sprite: Objects/Consumable/Drinks/royrogers.rsi
     state: icon
 
-# Begin DeltaV Removals - Commented out in favor of our sake/soju
-#- type: entity
-#  parent: DrinkGlass
-#  id: DrinkSakeGlass
-#  suffix: sake
-#  components:
-#  - type: SolutionContainerManager
-#    solutions:
-#      drink:
-#        maxVol: 30
-#        reagents:
-#        - ReagentId: Sake
-#          Quantity: 30
-#  - type: Icon
-#    sprite: Objects/Consumable/Drinks/sakeglass.rsi
-#    state: icon
-# End DeltaV Removals
+- type: entity
+  parent: DrinkGlass
+  id: DrinkSakeGlass
+  suffix: sake
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        maxVol: 30
+        reagents:
+        - ReagentId: Sake
+          Quantity: 30
+  - type: Icon
+    sprite: Objects/Consumable/Drinks/sakeglass.rsi
+    state: icon
 
 - type: entity
   parent: DrinkGlass

@@ -13,18 +13,18 @@
   - !type:ListingLimitedStockCondition
     stock: 1
 
-# - type: listing # DeltaV - lol this shit is wild
-#   id: SpellbookRodForm
-#   name: spellbook-polymorph-rod-name
-#   description: spellbook-polymorph-rod-desc
-#   productAction: ActionPolymorphWizardRod
-#   cost:
-#     WizCoin: 3
-#   categories:
-#   - SpellbookOffensive
-#   conditions:
-#   - !type:ListingLimitedStockCondition
-#     stock: 1
+- type: listing
+  id: SpellbookRodForm
+  name: spellbook-polymorph-rod-name
+  description: spellbook-polymorph-rod-desc
+  productAction: ActionPolymorphWizardRod
+  cost:
+    WizCoin: 3
+  categories:
+  - SpellbookOffensive
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
 
 - type: listing
   id: SpellbookSmite
@@ -39,18 +39,18 @@
   - !type:ListingLimitedStockCondition
     stock: 1
 
-# - type: listing # DeltaV - commented out in case of confusion where cluwnes are considered KOS by some
-#   id: SpellbookCluwne
-#   name: spellbook-cluwne-name
-#   description: spellbook-cluwne-desc
-#   productAction: ActionCluwne
-#   cost:
-#     WizCoin: 3
-#   categories:
-#   - SpellbookOffensive
-#   conditions:
-#   - !type:ListingLimitedStockCondition
-#     stock: 1
+- type: listing
+  id: SpellbookCluwne
+  name: spellbook-cluwne-name
+  description: spellbook-cluwne-desc
+  productAction: ActionCluwne
+  cost:
+    WizCoin: 3
+  categories:
+  - SpellbookOffensive
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
 
 - type: listing
   id: SpellbookSlip
@@ -282,8 +282,21 @@
 - type: listing
   id: SpellbookEventSummonGhosts
   name: spellbook-event-summon-ghosts-name
-  description: spellbook-event-summon-ghosts-description-deltav # DeltaV
+  description: spellbook-event-summon-ghosts-description
   productAction: ActionSummonGhosts
+  cost:
+    WizCoin: 0
+  categories:
+  - SpellbookEvents
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: SpellbookEventSummonGuns
+  name: spellbook-event-summon-guns-name
+  description: spellbook-event-summon-guns-description
+  productAction: ActionSummonGuns
   cost:
     WizCoin: 2
   categories:
@@ -293,33 +306,19 @@
     stock: 1
   disableRefund: true
 
-#- type: listing # DeltaV - Commented out
-#  id: SpellbookEventSummonGuns
-#  name: spellbook-event-summon-guns-name
-#  description: spellbook-event-summon-guns-description
-#  productAction: ActionSummonGuns
-#  cost:
-#    WizCoin: 2
-#  categories:
-#  - SpellbookEvents
-#  conditions:
-#  - !type:ListingLimitedStockCondition
-#    stock: 1
-#  disableRefund: true
-
-#- type: listing # DeltaV - Commented out
-#  id: SpellbookEventSummonMagic
-#  name: spellbook-event-summon-magic-name
-#  description: spellbook-event-summon-magic-description
-#  productAction: ActionSummonMagic
-#  cost:
-#    WizCoin: 2
-#  categories:
-#  - SpellbookEvents
-#  conditions:
-#  - !type:ListingLimitedStockCondition
-#    stock: 1
-#  disableRefund: true
+- type: listing
+  id: SpellbookEventSummonMagic
+  name: spellbook-event-summon-magic-name
+  description: spellbook-event-summon-magic-description
+  productAction: ActionSummonMagic
+  cost:
+    WizCoin: 2
+  categories:
+  - SpellbookEvents
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+  disableRefund: true
 
 # Upgrades
 - type: listing

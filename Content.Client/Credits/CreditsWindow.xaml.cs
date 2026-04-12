@@ -33,12 +33,9 @@ public sealed partial class CreditsWindow : DefaultWindow
 
     private static readonly Dictionary<string, int> PatronTierPriority = new()
     {
-        // Begin DeltaV Changes
-        ["Fund our stations"] = 1,
-        ["$5 dollar tier"] = 2,
-        ["Tip Jar"] = 3,
-        ["Previous Donors"] = 4
-        // End DeltaV Changes
+        ["Nuclear Operative"] = 1,
+        ["Syndicate Agent"] = 2,
+        ["Revolutionary"] = 3,
     };
 
     private readonly List<FormattedMessage> _attributions = [];

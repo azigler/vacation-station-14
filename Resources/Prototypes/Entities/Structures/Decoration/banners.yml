@@ -50,8 +50,8 @@
 - type: entity
   id: BannerCargo
   parent: BannerBase
-  name: logistics banner
-  description: A banner displaying the colors of the logistics department. Not. Cargonia. # DeltaV - Logistics Department replacing Cargo
+  name: cargo banner
+  description: A banner displaying the colors of the cargo department. Not. Cargonia.
   components:
   - type: Sprite
     sprite: Structures/Decoration/banner.rsi
@@ -100,8 +100,8 @@
 - type: entity
   id: BannerScience
   parent: BannerBase
-  name: epistemics banner # DeltaV - Epistemics Department replacing Science
-  description: A banner displaying the colors of the epistemics department. Where science has no bounds, and regulations are rarely followed. # DeltaV - Epistemics Department replacing Science
+  name: science banner
+  description: A banner displaying the colors of the science department. Where science has no bounds, and regulations are rarely followed.
   components:
   - type: Sprite
     sprite: Structures/Decoration/banner.rsi
@@ -111,10 +111,10 @@
   id: BannerSecurity
   parent: BannerBase
   name: security banner
-  description: A simple but ornate grey banner with a stylised white shield. Reassuring and ominous in equal measures. # DeltaV - change from "A banner displaying the colors of the security department. You're surprised it's not vandalised."
+  description: A banner displaying the colors of the security department. You're surprised it's not vandalised.
   components:
   - type: Sprite
-    sprite: _DV/Structures/Decoration/banner.rsi # DeltaV - resprite sec banner
+    sprite: Structures/Decoration/banner.rsi
     state: banner_security
 
 - type: entity

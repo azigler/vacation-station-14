@@ -1,4 +1,3 @@
-﻿using Content.Shared.Abilities;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Robust.Shared.Prototypes;
@@ -90,6 +89,7 @@ public abstract class SharedRatKingSystem : EntitySystem
         _action.StartUseDelay(component.ActionOrderCheeseEmEntity);
         _action.StartUseDelay(component.ActionOrderLooseEntity);
     }
+
     public void UpdateAllServants(EntityUid uid, RatKingComponent component)
     {
         foreach (var servant in component.Servants)

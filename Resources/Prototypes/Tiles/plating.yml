@@ -4,7 +4,6 @@
   friction: 1.5
   heatCapacity: 10000
   isSubfloor: true
-  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
   footstepSounds:
     collection: FootstepPlating
   baseTurf: Lattice
@@ -15,12 +14,14 @@
   id: Plating
   parent: BasePlating
   name: tiles-plating
-  sprite: /Textures/_DV/Tiles/plating.png #Delta V - Resprite Tile
+  sprite: /Textures/Tiles/plating.png
 
 - type: tile
   id: PlatingRCD
   parent: Plating
+  name: tiles-rcd-plating
   baseWhitelist:
+    - Space
     - TrainLattice
     - FloorPlanetDirt
     - FloorDesert

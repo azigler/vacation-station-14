@@ -1,9 +1,8 @@
-# DeltaV note: these are completely reorganized for nuke core extraction
 - type: entity
-  abstract: true
   parent: [BaseStructure, StructureWheeled, BaseMajorContraband]
-  id: BaseNuclearBomb
+  id: NuclearBomb
   name: nuclear fission explosive
+  description: You probably shouldn't stick around to see if this is armed.
   components:
   - type: Transform
     anchored: true
@@ -62,23 +61,6 @@
         - MachineMask
         layer:
         - HalfWallLayer
-  - type: InteractionOutline
-  - type: CargoSellBlacklist
-  - type: ArrivalsBlacklist
-  - type: WarpPoint
-    follow: true
-    location: nuclear bomb
-  - type: StealTarget
-    stealGroup: NuclearBomb
-  - type: Construction
-    graph: NuclearBomb
-    deconstructionTarget: disarmed
-
-- type: entity
-  parent: BaseNuclearBomb
-  id: NuclearBomb
-  description: You probably shouldn't stick around to see if this is armed.
-  components:
   - type: PointLight
     enabled: false
     radius: 4
@@ -108,6 +90,7 @@
         - NukeDisk
     alertLevelOnActivate: delta
     alertLevelOnDeactivate: green
+  - type: InteractionOutline
   - type: ActivatableUI
     key: enum.NukeUiKey.Key
   - type: UserInterface
@@ -116,12 +99,12 @@
         type: NukeBoundUserInterface
   - type: StaticPrice
     price: 50000 # YOU STOLE A NUCLEAR FISSION EXPLOSIVE?!
+  - type: CargoSellBlacklist
+  - type: ArrivalsBlacklist
   - type: ItemSlots
   - type: ContainerContainer
     containers:
       Nuke: !type:ContainerSlot
-  - type: Construction # DeltaV: Plutonium core extraction
-    node: nuke
   - type: StealTarget
     stealGroup: NuclearBomb
   - type: Tag
@@ -187,7 +170,7 @@
         shape:
           !type:PhysShapeCircle
           radius: 0.45
-        density: 255 
+        density: 255
         mask:
         - MachineMask
         layer:

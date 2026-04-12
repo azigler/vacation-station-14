@@ -2,8 +2,6 @@
   id: LockerFillQuarterMaster
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillQuarterMasterDeltaV
     - id: BoxEncryptionKeyCargo
     - id: BoxFolderQmClipboard
     - id: BoxQMCircuitboards
@@ -13,7 +11,9 @@
     - id: ClothingHeadsetAltCargo
     - id: DoorRemoteCargo
     - id: AstroNavCartridge
-    #- id: ClothingHandsKnuckleDustersQM # DeltaV - No weaponry for LO.
+    - id: ClothingHandsKnuckleDustersQM
+    - id: PlushieLizardJobQuartermaster
+      prob: 0.02
 
 - type: entity
   id: LockerQuarterMasterFilled
@@ -30,30 +30,29 @@
   id: LockerFillCaptainNoLaser
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillCaptainDeltaV
-    #- id: CaptainIDCard # DeltaV - Replaced by the spare ID system
-    #- id: CigarGoldCase # DeltaV - Moved to dresser
-    #  prob: 0.25
+    - id: CaptainIDCard
+    - id: CigarGoldCase
+      prob: 0.25
     - id: ClothingBeltSheathFilled
     - id: ClothingHeadsetAltCommand
     - id: ClothingOuterArmorCaptainCarapace
-    - id: ClothingOuterWinterCapArmored #DeltaV
     - id: BoxCaptainCircuitboards
     - id: DoorRemoteCustom
-    #- id: MedalCase # DeltaV - Moved to dresser
+    - id: MedalCase
     - id: NukeDisk
     - id: PinpointerNuclear
-    #- id: PlushieNuke # DeltaV - Moved to dresser
-    #  prob: 0.1
+    - id: PlushieNuke
+      prob: 0.1
     - id: RubberStampCaptain
     - id: SpaceCash1000
     - id: WeaponDisabler
     - id: ClothingEyesGlassesCommand
-    - id: HeadSkeleton # A skull to accompany your skeleton crew
+    - id: OrganSkeletonPersonHead # A skull to accompany your skeleton crew
       conditions:
       - !type:PlayerCountCondition
         max: 15
+    - id: PlushieLizardJobCaptain
+      prob: 0.02
 
 # No laser table + Laser table
 - type: entityTable
@@ -88,7 +87,7 @@
 # No Laser + Laser locker
 - type: entity
   id: LockerCaptainFilled
-  suffix: DO NOT MAP, USE GLASS BOX # DeltaV
+  suffix: Filled, AntiqueLaser
   parent: LockerCaptain
   components:
   - type: EntityTableContainerFill
@@ -107,7 +106,7 @@
       entity_storage: !type:AllSelector
         children:
         - !type:NestedSelector
-          tableId: LockerFillCaptainNoLaser # DeltaV - no laser
+          tableId: LockerFillCaptainLaser
         - !type:NestedSelector
           tableId: FillCaptainHardsuit
 
@@ -115,28 +114,28 @@
   id: LockerFillHeadOfPersonnel
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillHeadOfPersonnelDeltaV
-    #- id: AccessConfigurator # DeltaV - Moved to PTech
-    #- id: BoxEncryptionKeyPassenger # DeltaV - PTech
-    #- id: BoxEncryptionKeyService # DeltaV - PTech
-    #- id: BoxHeadset # DeltaV - PTech
+    - id: AccessConfigurator
+    - id: BoxEncryptionKeyPassenger
+    - id: BoxEncryptionKeyService
+    - id: BoxHeadset
     - id: BoxHoPCircuitboards
     - id: BoxHoPStamps
-    #- id: BoxID # DeltaV - PTech
-    #- id: BoxPDA # DeltaV - PTech
-    #- id: CigarGoldCase # DeltaV - moved to Dresser
-    #  prob: 0.25
+    - id: BoxID
+    - id: BoxPDA
+    - id: CigarGoldCase
+      prob: 0.25
       # Fuck the HoP they don't deserve fucking cigars.
       # Yes they do fuck you.
     - id: ClothingBackpackIan
       prob: 0.5
-    - id: ClothingHeadsetAltService # DeltaV - HoP is now a service role, replaces their all channels headset.
+    - id: ClothingHeadsetCommand
     - id: ClothingNeckGoldmedal
     - id: DoorRemoteService
     - id: HoPIDCard
-    #- id: WeaponDisabler # DeltaV - There is no reason for the service head to have a disabler.
+    - id: WeaponDisabler
     - id: ClothingEyesHudCommand
+    - id: PlushieLizardJobHeadofpersonnel
+      prob: 0.02
 
 - type: entity
   id: LockerHeadOfPersonnelFilled
@@ -153,25 +152,22 @@
   id: LockerFillChiefEngineerNoHardsuit
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillChiefEngineerDeltaV
     - id: AccessConfigurator
     - id: BoxEncryptionKeyEngineering
     - id: CigarCase
       prob: 0.15
     - id: ClothingBeltChiefEngineerFilled
     - id: ClothingEyesGlassesMeson
-    #- id: ClothingHandsGlovesColorYellow # DeltaV - Moved to dresser
+    - id: ClothingHandsGlovesColorYellow
     - id: ClothingHeadsetAltEngineering
     - id: DoorRemoteEngineering
     - id: BoxCECircuitboards
-    - id: RCDRecharging # DeltaV - Replaces normal RCD
+    - id: RCD
     - id: RCDAmmo
     - id: RubberStampCE
     - id: MetalFoamGrenade
-    - id: AirGrenade # DeltaV
-    - id: HolotapeProjector # DeltaV - engineering tape
-    - id: BoxFolderCeClipboard # DeltaV - Power Digi-Board
+    - id: PlushieLizardJobChiefengineer
+      prob: 0.02
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable
@@ -215,21 +211,19 @@
   id: LockerFillChiefMedicalOfficerNoHardsuit
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillChiefMedicalOfficerDeltaV
-    - id: BoxEncryptionKeyMedical
-    - id: ClothingBackpackDuffelSurgeryFilled
     - id: ClothingEyesHudMedical
-    #- id: ClothingHandsGlovesNitrile # DeltaV - Moved to dresser
-    - id: ClothingHeadsetAltMedical
-    #- id: ClothingMaskSterile # DeltaV - Moved to ClothingBackpackDuffelSurgeryFilled
-    - id: DoorRemoteMedical
+    - id: ClothingBeltMedicalFilled
     - id: HandheldCrewMonitor
     - id: Hypospray
-    - id: BoxCMOCircuitboards
-    - id: MedkitFilled
-    - id: RubberStampCMO
     - id: MedTekCartridge
+    # Standard command gear
+    - id: RubberStampCMO
+    - id: ClothingHeadsetAltMedical
+    - id: DoorRemoteMedical
+    - id: BoxEncryptionKeyMedical
+    - id: BoxCMOCircuitboards
+    - id: PlushieLizardJobChiefmedicalofficer
+      prob: 0.02
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable
@@ -271,8 +265,6 @@
   id: LockerFillResearchDirectorNoHardsuit
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillResearchDirectorDeltaV
     - id: Intellicard
     - id: BoxEncryptionKeyScience
     - id: BoxRDCircuitboards
@@ -281,7 +273,8 @@
     - id: DoorRemoteResearch
     - id: HandTeleporter
     - id: RubberStampRd
-    - id: BibleMystagogue  # DeltaV - steal objective and source of abilities
+    - id: PlushieLizardJobResearchdirector
+      prob: 0.02
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable
@@ -289,7 +282,7 @@
   table: !type:AllSelector
     children:
     - id: ClothingMaskBreath
-    - id: ClothingOuterHardsuitMystagogueLabcoat
+    - id: ClothingOuterHardsuitRd
     - id: OxygenTankFilled
 
 # No hardsuit locker
@@ -323,19 +316,16 @@
   id: LockerFillHeadOfSecurityNoHardsuit
   table: !type:AllSelector
     children:
-    - !type:NestedSelector # DeltaV
-      tableId: LockerFillHeadOfSecurityDeltaV
-    - id: BookSecretDocuments
-    #- id: WeaponEnergyMagnum # DeltaV - Replaced with the HoSBriefcase
-    #- id: BookSpaceLaw # DeltaV - Moved to dresser
+    - id: WeaponEnergyMagnum
+    - id: BookSpaceLaw
     - id: BoxEncryptionKeySecurity
-    #- id: CigarGoldCase # DeltaV - Moved to dresser
-    #  prob: 0.50
+    - id: CigarGoldCase
+      prob: 0.50
     - id: ClothingBeltSecurityFilled
     - id: ClothingEyesGlassesSecurity
     - id: ClothingHeadsetAltSecurity
-    #- id: ClothingOuterCoatHoSTrench # DeltaV - Moved to dresser
-    #- id: ClothingShoesBootsJack # DeltaV - Moved to dresser
+    - id: ClothingOuterCoatHoSTrench
+    - id: ClothingShoesBootsJack
     - id: FlashlightSeclite
     - id: DoorRemoteSecurity
     - id: HoloprojectorSecurity
@@ -343,8 +333,10 @@
     - id: BoxHoSCircuitboards
     - id: WeaponDisabler
     - id: WeaponTaser
-    #- id: WantedListCartridge # DeltaV - replaced by secwatch
+    - id: WantedListCartridge
     - id: DrinkHosFlask
+    - id: PlushieLizardJobHeadofsecurity
+      prob: 0.02
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable
@@ -352,10 +344,9 @@
   table: !type:AllSelector
     children:
     - id: ClothingMaskGasSwat
-    - id: ClothingOuterHardsuitCombatHoS # DeltaV - ClothingOuterHardsuitSecurityRed replaced in favour of head of security's advanced combat hardsuit.
+    - id: ClothingOuterHardsuitSecurityRed
     - id: JetpackSecurityFilled
     - id: OxygenTankFilled
-    - id: ClothingShoesBootsSecurityMagboots # DeltaV - Added security magboots.
 
 # No hardsuit locker
 - type: entity

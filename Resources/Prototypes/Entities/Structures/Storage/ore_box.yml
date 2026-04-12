@@ -8,7 +8,6 @@
     price: 500
   - type: Anchorable
   - type: InteractionOutline
-  - type: Dumpable #DeltaV
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: Wood
@@ -52,7 +51,7 @@
           False: { visible: true }
   - type: Storage
     grid:
-    - 0,0,19,9 # DeltaV: Expanded to ore bag of holding storage
+    - 0,0,9,5
     maxItemSize: Normal
     storageOpenSound: /Audio/Effects/closetopen.ogg
     storageCloseSound: /Audio/Effects/closetclose.ogg

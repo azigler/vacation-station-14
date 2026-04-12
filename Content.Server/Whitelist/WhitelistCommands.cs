@@ -1,9 +1,7 @@
 using Content.Server.Administration;
 using Content.Server.Database;
-using Content.Server.Players.PlayTimeTracking;
 using Content.Shared.Administration;
 using Content.Shared.CCVar;
-using Content.Shared.Players;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
@@ -11,7 +9,7 @@ using Robust.Shared.Network;
 
 namespace Content.Server.Whitelist;
 
-[AdminCommand(AdminFlags.Whitelist)] // DeltaV - Custom permission for whitelist
+[AdminCommand(AdminFlags.Ban)]
 public sealed class AddWhitelistCommand : LocalizedCommands
 {
     [Dependency] private readonly IPlayerLocator _locator = default!;
@@ -27,11 +25,6 @@ public sealed class AddWhitelistCommand : LocalizedCommands
             return;
         }
 
-        var db = IoCManager.Resolve<IServerDbManager>();
-        var loc = IoCManager.Resolve<IPlayerLocator>();
-        var player = IoCManager.Resolve<IPlayerManager>();
-        var playtime = IoCManager.Resolve<PlayTimeTrackingManager>();
-
         var name = string.Join(' ', args).Trim();
         var data = await _locator.LookupIdByNameOrIdAsync(name);
 
@@ -45,16 +38,7 @@ public sealed class AddWhitelistCommand : LocalizedCommands
                 return;
             }
 
-            await db.AddToWhitelistAsync(guid);
-
-            // Nyanotrasen - Update whitelist status in player data.
-            if (player.TryGetPlayerDataByUsername(name, out var playerData) &&
-                player.TryGetSessionByUsername(name, out var session))
-            {
-                playerData.ContentData()!.Whitelisted = true;
-                playtime.QueueSendWhitelist(session);
-            }
-
+            await _dbManager.AddToWhitelistAsync(guid);
             shell.WriteLine(Loc.GetString("cmd-whitelistadd-added", ("username", data.Username)));
             return;
         }
@@ -73,7 +57,7 @@ public sealed class AddWhitelistCommand : LocalizedCommands
     }
 }
 
-[AdminCommand(AdminFlags.Ban), AdminCommand(AdminFlags.Whitelist)] // DeltaV - Custom permission for whitelist.
+[AdminCommand(AdminFlags.Ban)]
 public sealed class RemoveWhitelistCommand : LocalizedCommands
 {
     [Dependency] private readonly IPlayerLocator _locator = default!;
@@ -90,11 +74,6 @@ public sealed class RemoveWhitelistCommand : LocalizedCommands
             return;
         }
 
-        var db = IoCManager.Resolve<IServerDbManager>();
-        var loc = IoCManager.Resolve<IPlayerLocator>();
-        var player = IoCManager.Resolve<IPlayerManager>();
-        var playtime = IoCManager.Resolve<PlayTimeTrackingManager>();
-
         var name = string.Join(' ', args).Trim();
         var data = await _locator.LookupIdByNameOrIdAsync(name);
 
@@ -108,16 +87,7 @@ public sealed class RemoveWhitelistCommand : LocalizedCommands
                 return;
             }
 
-            await db.RemoveFromWhitelistAsync(guid);
-
-            // Nyanotrasen - Update whitelist status in player data.
-            if (player.TryGetPlayerDataByUsername(name, out var playerData) &&
-                player.TryGetSessionByUsername(name, out var session))
-            {
-                playerData.ContentData()!.Whitelisted = false;
-                playtime.QueueSendWhitelist(session);
-            }
-
+            await _dbManager.RemoveFromWhitelistAsync(guid);
             shell.WriteLine(Loc.GetString("cmd-whitelistremove-removed", ("username", data.Username)));
             return;
         }

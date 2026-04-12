@@ -17,7 +17,7 @@
           steps:
             - material: MetalRod
               amount: 2
-              doAfter: 2 # DeltaV
+              doAfter: 2.5
         - to: railingCornerSmall
           completed:
             - !type:SnapToGrid { }
@@ -44,7 +44,7 @@
             - !type:DeleteEntity
           steps:
             - tool: Screwing
-              doAfter: 0.5 # DeltaV
+              doAfter: 0.25
 
     - node: railingCorner
       entity: RailingCorner
@@ -70,7 +70,7 @@
             - !type:DeleteEntity
           steps:
             - tool: Screwing
-              doAfter: 0.5 # DeltaV
+              doAfter: 0.25
 
     - node: railingRound
       entity: RailingRound

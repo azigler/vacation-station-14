@@ -4,7 +4,6 @@ using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
-using Content.Shared._DV.Mind; // DeltaV
 
 namespace Content.Shared.Mind;
 
@@ -33,13 +32,6 @@ public sealed class MindExamineSystem : EntitySystem
     {
         if (!args.IsInDetailsRange)
             return;
-
-        // Begin DeltaV Addition
-        var ev = new ShowSSDIndicatorEvent();
-        RaiseLocalEvent(ent, ref ev);
-        if (ev.Hidden)
-            return;
-        // End DeltaV Addition
 
         var message = ent.Comp.State switch
         {

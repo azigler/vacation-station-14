@@ -1,14 +1,12 @@
 - type: department
-  id: Logistics # DeltaV - Logistics Department replacing Cargo
-  name: department-Logistics # DeltaV
-  description: department-Logistics-description # DeltaV
+  id: Cargo
+  name: department-Cargo
+  description: department-Cargo-description
   color: "#A46106"
   roles:
   - CargoTechnician
   - Quartermaster
   - SalvageSpecialist
-  - Courier # DeltaV - Courier, see Resources/Prototypes/_DV/Roles/Jobs/Cargo/courier.yml
-  - CargoAssistant # DeltaV
 
 - type: department
   id: Civilian
@@ -19,24 +17,19 @@
   roles:
   - Bartender
   - Botanist
-  - Boxer # DeltaV - Keep Zookeeper/Boxer
-  # - Chaplain # DeltaV - Move Chaplain into Epistemics
+  - Chaplain
   - Chef
   - Clown
   - HeadOfPersonnel
   - Janitor
-  # - Lawyer # DeltaV - Move Lawyer into Justice
-  # - Librarian # DeltaV - Move Librarian into Epistemics
+  - Lawyer
+  - Librarian
   - Mime
   - Musician
   - Passenger
   - Reporter
   - Visitor
-  - Zookeeper # DeltaV - Keep Zookeeper/Boxer
   - ServiceWorker
-  - MartialArtist # Nyanotrasen - MartialArtist, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/martialartist.yml
-  - Prisoner # Nyanotrasen - Prisoner, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/prisoner.yml
-  - Gladiator # Nyanotrasen - Gladiator, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/gladiator.yml
 
 - type: department
   id: CentralCommand
@@ -69,7 +62,6 @@
   - HeadOfSecurity
   - ResearchDirector
   - Quartermaster
-  - ChiefJustice # DeltaV - chief justice is in command staff
   - CentralCommandOfficial
   - CBURN
   - ERTLeader
@@ -79,7 +71,6 @@
   - ERTSecurity
   - ERTEngineer
   - DeathSquad
-  - StationAi # DeltaV - added for playtime trackers
   primary: false
   weight: 100
 
@@ -106,8 +97,6 @@
   - MedicalIntern
   - Psychologist
   - Paramedic
-  - MedicalBorg # Delta V - Medical Borg, see Resources/Prototypes/_DV/Roles/Jobs/Medical/medicalborg.yml
-  - Surgeon # Delta V - Surgeon, see Resources/Prototypes/_DV/Roles/Jobs/Medical/surgeon.yml
 
 - type: department
   id: Security
@@ -121,23 +110,16 @@
   - SecurityOfficer
   - Detective
   - Warden
-  - PrisonGuard # Nyanotrasen - PrisonGuard, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Security/prisonguard.yml
-  - Brigmedic # DeltaV - Brigmedic, see Resources/Prototypes/_DV/Roles/Jobs/Security/brigmedic.yml
-  - SecurityBorg # Delta-V : Security Borg
 
 - type: department
-  id: Epistemics # DeltaV - Epistemics Department replacing Science
-  name: department-Epistemics # DeltaV
-  description: department-Epistemics-description # DeltaV
+  id: Science
+  name: department-Science
+  description: department-Science-description
   color: "#D381C9"
   roles:
   - ResearchDirector
   - Scientist
   - ResearchAssistant
-  - Chaplain # DeltaV - Move Chaplain into Epistemics
-  - ForensicMantis # Nyanotrasen - ForensicMantis, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Epistemics/forensicmantis.yml
-  - Roboticist # DeltaV: Roboticist job
-  - Librarian # DeltaV - Move Librarian into epistemics as curator
 
 - type: department
   id: Silicon
@@ -146,10 +128,7 @@
   color: "#D381C9"
   roles:
   - Borg
-  - MedicalBorg # DeltaV - roundstart mediborg job
-  - SecurityBorg # Delta-V : Security Borg
   - StationAi
-  primary: false # DeltaV - removed from primary dept
 
 - type: department
   id: Specific
@@ -158,12 +137,6 @@
   color: "#9FED58"
   weight: 10
   roles:
-  - Boxer # DeltaV - Keep Zookeeper/Boxer
   - Reporter
-  - Zookeeper # DeltaV - Keep Zookeeper/Boxer
   - Psychologist
-  - MartialArtist # Nyanotrasen - MartialArtist, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/martialartist.yml
-  - Gladiator # Nyanotrasen - Gladiator, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/gladiator.yml
-  - Prisoner # Nyanotrasen - Prisoner, see Resrouces/Prototypes/Nyanotrasen/Roles/Jobs/Wildcards/prisoner.yml
-  - Brigmedic # DeltaV - Corpsman, see Resources/Prototypes/_DV/Roles/Jobs/Security/brigmedic.yml
   primary: false

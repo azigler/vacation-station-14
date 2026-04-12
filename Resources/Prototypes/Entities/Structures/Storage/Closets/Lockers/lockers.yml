@@ -36,7 +36,7 @@
 - type: entity
   id: LockerQuarterMaster
   parent: LockerBaseSecure
-  name: logistics officer's locker # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster's locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -259,7 +259,7 @@
     stateDoorOpen: paramed_open
     stateDoorClosed: paramed_door
   - type: AccessReader
-    access: [ [ "Paramedic" ] ] # DeltaV - Change Medical access to Paramedic
+    access: [ [ "Medical" ] ]
 
 
 # Chemical
@@ -281,7 +281,6 @@
   id: LockerChiefMedicalOfficer
   parent: LockerBaseSecure
   name: chief medical officer's locker
-  description: A standard-issue Nanotrasen storage unit. Looking closer, there are some letters etched into the side of the locker. A.G., S.H., S.D., M.N., & A.N. # DeltaV - Honoring Quanteey. I hope you're well.
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -294,8 +293,8 @@
 # Science
 - type: entity
   id: LockerResearchDirector
-  parent: LockerBaseSecure # DeltaV - replaced the parent (previously LockerBase) with LockerBaseSecure to ensure locker had 75 health instead of 50
-  name: mystagogue's locker # DeltaV - Epistemics Department replacing Science
+  parent: LockerBase
+  name: research director's locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -311,19 +310,17 @@
   name: scientist's locker
   components:
   - type: Appearance
-  - type: Sprite # DeltaV - label locker with "E" for epi
-    sprite: _DV/Structures/Storage/closet.rsi
   - type: EntityStorageVisuals
-    stateBaseClosed: epi # DeltaV
-    stateDoorOpen: epi_open # DeltaV
-    stateDoorClosed: epi_door # DeltaV
+    stateBaseClosed: science
+    stateDoorOpen: science_open
+    stateDoorClosed: science_door
   - type: AccessReader
     access: [ [ "Research" ] ]
 
 # HoS
 - type: entity
   id: LockerHeadOfSecurity
-  parent: CommandLockerBaseSecureDeltaV # DeltaV - resprite security lockers, altered health due to being command locker
+  parent: LockerBaseSecure
   name: head of security's locker
   components:
   - type: Appearance
@@ -337,7 +334,7 @@
 # Warden
 - type: entity
   id: LockerWarden
-  parent: LockerBaseSecureDeltaV # DeltaV - resprite security lockers
+  parent: LockerBaseSecure
   name: warden's locker
   components:
   - type: Appearance
@@ -351,8 +348,8 @@
 # Brigmedic
 - type: entity
   id: LockerBrigmedic
-  parent: LockerBaseSecureDeltaV # DeltaV - resprite security lockers
-  name: corpsman locker # DeltaV - rename brigmedic to corpsman
+  parent: LockerBaseSecure
+  name: brigmedic locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -360,12 +357,12 @@
     stateDoorOpen: armory_open
     stateDoorClosed: brigmedic_door
   - type: AccessReader
-    access: [["Corpsman"]] # DeltaV - add corpsman access
+    access: [["Medical"]]
 
 # Security Officer
 - type: entity
   id: LockerSecurity
-  parent: LockerBaseSecureDeltaV # DeltaV - resprite security lockers
+  parent: LockerBaseSecure
   name: security officer's locker
   components:
   - type: Appearance
@@ -394,16 +391,6 @@
     - entity_storage
   - type: StaticPrice
     price: 660
-    # Begin DeltaV additions - adjusted the health of gun safes to be 50 health stronger than LockerBaseSecure
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 125
-      behaviors:
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
-    # End DeltaV additions
 
 - type: entity
   id: GunSafeBaseSecure
@@ -467,6 +454,7 @@
         hard: True
         restitution: 0
         friction: 0.4
+  - type: EntityStorage
 
 - type: entity
   parent: LockerPrisoner
@@ -527,28 +515,21 @@
 # Detective
 - type: entity
   id: LockerDetective
-  parent: LockerBaseSecureDeltaV # DeltaV - resprite security lockers
-  name: detective's locker # DeltaV - rename from detective's cabinet
+  parent: LockerBooze
+  name: detective's cabinet
+  description: Usually cold and empty... like your heart.
   components:
-  - type: EntityStorageVisuals # DeltaV - set appearance of det's locker
-    stateBaseClosed: det
-    stateDoorOpen: det_open
-    stateDoorClosed: det_door
   - type: AccessReader
     access: [["Detective"]]
 
 - type: entity
   id: LockerEvidence
-  parent: LockerBaseSecureDeltaV # DeltaV - resprite security lockers
+  parent: LockerSecurity
   name: evidence locker
   description: To store bags of bullet casings and detainee belongings.
   components:
-  - type: EntityStorageVisuals # DeltaV - set appearance of evidence locker
-    stateBaseClosed: evidence
-    stateDoorOpen: evidence_open
-    stateDoorClosed: evidence_door
   - type: AccessReader
-    access: [["Security"], ["Prosecutor"], ["Clerk"]] # DeltaV - allow Pros and Clerk access to Evidence
+    access: [["Security"]]
 
 # Syndicate
 - type: entity
@@ -601,7 +582,7 @@
   components:
   - type: Appearance
   - type: AccessReader
-    access: [["Clown"]] # DeltaV - clown access
+    access: [["Theatre"]]
   - type: EntityStorageVisuals
     stateBaseClosed: clown
     stateDoorOpen: clown_open
@@ -615,7 +596,7 @@
   components:
   - type: Appearance
   - type: AccessReader
-    access: [["Mime"]] # DeltaV - mime access
+    access: [["Theatre"]]
   - type: EntityStorageVisuals
     stateBaseClosed: mime
     stateDoorOpen: mime_open

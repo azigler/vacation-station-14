@@ -52,7 +52,6 @@
   id: EngineeringBoardsStatic
   recipes:
   - SpaceHeaterMachineCircuitBoard
-  - KitchenFreezerMachineCircuitBoard # Delta V
 
 ## Dynamic
 
@@ -62,12 +61,10 @@
   - PowerDrill
   - WelderExperimental
   - JawsOfLife
-  #- Fulton # DeltaV - moved to MiningDeltaV
-  #- FultonBeacon # DeltaV - moved to MiningDeltaV
+  - Fulton
+  - FultonBeacon
 
 - type: latheRecipePack
-  parent:
-  - AtmosToolsDeltaV # DeltaV
   id: AtmosTools
   recipes:
   - HolofanProjector
@@ -78,8 +75,6 @@
   - WeaponParticleDecelerator
 
 - type: latheRecipePack
-  parent:
-  - EngineeringBoardsDeltaV # DeltaV
   id: EngineeringBoards
   recipes:
   - ThermomachineFreezerMachineCircuitBoard

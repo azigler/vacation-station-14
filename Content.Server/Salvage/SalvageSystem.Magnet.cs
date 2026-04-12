@@ -9,6 +9,7 @@ using Content.Shared.Salvage.Magnet;
 using Robust.Shared.Exceptions;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 
 namespace Content.Server.Salvage;
 
@@ -48,12 +49,11 @@ public sealed partial class SalvageSystem
         }
 
         var index = args.Index;
-        var user = args.Actor; // DeltaV
         async void TryTakeMagnetOffer()
         {
             try
             {
-                await TakeMagnetOffer((station.Value, dataComp), index, (uid, component), user); // DeltaV: pass the user
+                await TakeMagnetOffer((station.Value, dataComp), index, (uid, component));
             }
             catch (Exception e)
             {
@@ -107,7 +107,7 @@ public sealed partial class SalvageSystem
                 {
                     EndMagnet((uid, magnetData));
                 }
-                else if (!magnetData.Announced && (magnetData.EndTime.Value - curTime).TotalSeconds < 59) //DeltaV: was 31 seconds. Increased to give time to actually fulton a crate out.
+                else if (!magnetData.Announced && (magnetData.EndTime.Value - curTime).TotalSeconds < 31)
                 {
                     var magnet = GetMagnet((uid, magnetData));
 
@@ -279,15 +279,11 @@ public sealed partial class SalvageSystem
         }
     }
 
-    private async Task TakeMagnetOffer(Entity<SalvageMagnetDataComponent> data, int index, Entity<SalvageMagnetComponent> magnet, EntityUid user) // DeltaV: add user param
+    private async Task TakeMagnetOffer(Entity<SalvageMagnetDataComponent> data, int index, Entity<SalvageMagnetComponent> magnet)
     {
         var seed = data.Comp.Offered[index];
 
         var offering = GetSalvageOffering(seed);
-        // Begin DeltaV Addition: make wrecks cost mining points to pull
-        if (offering.Cost > 0 && !(_points.TryFindIdCard(user) is {} idCard && _points.RemovePoints(idCard, offering.Cost)))
-            return;
-        // End DeltaV Addition
         var salvMap = _mapSystem.CreateMap();
         var salvMapXform = Transform(salvMap);
 

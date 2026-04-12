@@ -1,12 +1,12 @@
 # For mantles
-#- type: loadoutEffectGroup # DeltaV - No time requirement
-#  id: MasterCE
-#  effects: 
-#  - !type:JobRequirementLoadoutEffect
-#    requirement:
-#      !type:RoleTimeRequirement
-#     role: JobChiefEngineer
-#      time: 20h
+- type: loadoutEffectGroup
+  id: MasterCE
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChiefEngineer
+      time: 20h
 
 # Jumpsuit
 - type: loadout
@@ -49,6 +49,14 @@
   id: ChiefEngineerMantle
   equipment:
     neck: ClothingNeckMantleCE
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MasterCE
+
+- type: startingGear
+  id: ChiefEngineerMantle
+  equipment:
+    neck: ClothingNeckMantleCE
 
 # OuterClothing
 - type: loadout
@@ -61,8 +69,3 @@
   id: BrownShoes
   equipment:
     shoes: ClothingShoesColorBrown
-
-- type: loadout
-  id: ChiefEngineerWinterBoots
-  equipment:
-    shoes: ClothingShoesBootsWinterChiefEngineer

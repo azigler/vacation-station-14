@@ -792,9 +792,9 @@
     - type: GhostRole
       name: ghost-role-information-syndie-disaster-victim-name
       description: ghost-role-information-syndie-disaster-victim-description
-      rules: ghost-role-information-syndicate-refugee-rules # DeltaV - Removed free agent mention on the rules for a custom one. Was ghost-role-information-freeagent-rules
+      rules: ghost-role-information-freeagent-rules
       mindRoles:
-      - MindRoleGhostRoleNeutral # DeltaV - replace free agent with neutral to be in line with its rules
+      - MindRoleGhostRoleFreeAgent
       raffle:
         settings: short
     - type: Loadout

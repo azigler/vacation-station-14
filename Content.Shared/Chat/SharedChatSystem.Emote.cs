@@ -1,5 +1,4 @@
 using System.Collections.Frozen;
-using System.Collections.Immutable;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Speech;
 using Robust.Shared.Audio;
@@ -200,10 +199,10 @@ public abstract partial class SharedChatSystem
         }
 
         // Check if the emote is available for all
-        //if (!emote.Available) // DeltaV - Allow people to emote things. Don't worry, they don't get sound if their species doesn't have it natively.
-        //{
-        //    return false;
-        //}
+        if (!emote.Available)
+        {
+            return false;
+        }
 
         return true;
     }
@@ -252,16 +251,10 @@ public abstract partial class SharedChatSystem
             return false;
         }
 
-        // DeltaV - Added if to prevent vocal emote from going to chat if its blocked
-        if (!beforeEv.Cancelled)
-        {
-            var ev = new EmoteEvent(proto);
-            RaiseLocalEvent(uid, ref ev);
-            return true;
-        }
+        var ev = new EmoteEvent(proto);
+        RaiseLocalEvent(uid, ref ev);
 
-        return false;
-        // END DeltaV
+        return true;
     }
 
     private string TrimPunctuation(string textInput)

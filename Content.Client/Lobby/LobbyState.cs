@@ -13,8 +13,8 @@ using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
-using Content.Client._Impstation.ReadyManifest; // Impstation - Ready Manifest
 
 namespace Content.Client.Lobby
 {
@@ -29,10 +29,10 @@ namespace Content.Client.Lobby
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly IVoteManager _voteManager = default!;
         [Dependency] private readonly ClientsidePlaytimeTrackingManager _playtimeTracking = default!;
+        [Dependency] private readonly IPrototypeManager _protoMan = default!;
 
         private ClientGameTicker _gameTicker = default!;
         private ContentAudioSystem _contentAudioSystem = default!;
-        private ReadyManifestSystem _readyManifest = default!; // Impstation - Ready Manifest
 
         protected override Type? LinkedScreenType { get; } = typeof(LobbyGui);
         public LobbyGui? Lobby;
@@ -50,7 +50,6 @@ namespace Content.Client.Lobby
             _gameTicker = _entityManager.System<ClientGameTicker>();
             _contentAudioSystem = _entityManager.System<ContentAudioSystem>();
             _contentAudioSystem.LobbySoundtrackChanged += UpdateLobbySoundtrackInfo;
-            _readyManifest = _entityManager.EntitySysManager.GetEntitySystem<ReadyManifestSystem>(); // Impstation - Ready Manifest
 
             chatController.SetMainChat(true);
 
@@ -72,7 +71,6 @@ namespace Content.Client.Lobby
             Lobby.CharacterPreview.CharacterSetupButton.OnPressed += OnSetupPressed;
             Lobby.ReadyButton.OnPressed += OnReadyPressed;
             Lobby.ReadyButton.OnToggled += OnReadyToggled;
-            Lobby.ManifestButton.OnPressed += OnManifestPressed; // Impstation - Ready Manifest
 
             _gameTicker.InfoBlobUpdated += UpdateLobbyUi;
             _gameTicker.LobbyStatusUpdated += LobbyStatusUpdated;
@@ -93,7 +91,6 @@ namespace Content.Client.Lobby
             Lobby!.CharacterPreview.CharacterSetupButton.OnPressed -= OnSetupPressed;
             Lobby!.ReadyButton.OnPressed -= OnReadyPressed;
             Lobby!.ReadyButton.OnToggled -= OnReadyToggled;
-            Lobby!.ManifestButton.OnPressed -= OnManifestPressed; // Impstation - Ready Manifest
 
             Lobby = null;
         }
@@ -123,12 +120,6 @@ namespace Content.Client.Lobby
         private void OnReadyToggled(BaseButton.ButtonToggledEventArgs args)
         {
             SetReady(args.Pressed);
-        }
-
-        // Impstation - Ready Manifest
-        private void OnManifestPressed(BaseButton.ButtonEventArgs args)
-        {
-            _readyManifest.RequestReadyManifest();
         }
 
         public override void FrameUpdate(FrameEventArgs e)
@@ -193,7 +184,6 @@ namespace Content.Client.Lobby
                 Lobby!.ReadyButton.ToggleMode = false;
                 Lobby!.ReadyButton.Pressed = false;
                 Lobby!.ObserveButton.Disabled = false;
-                Lobby!.ManifestButton.Disabled = true; //imp
             }
             else
             {
@@ -203,7 +193,6 @@ namespace Content.Client.Lobby
                 Lobby!.ReadyButton.ToggleMode = true;
                 Lobby!.ReadyButton.Disabled = false;
                 Lobby!.ObserveButton.Disabled = true;
-                Lobby!.ManifestButton.Disabled = false; // imp
             }
 
             if (_gameTicker.ServerInfoBlob != null)
@@ -212,7 +201,7 @@ namespace Content.Client.Lobby
             }
 
             var minutesToday = _playtimeTracking.PlaytimeMinutesToday;
-            if (minutesToday > 150) // DeltaV - 2.5 hours
+            if (minutesToday > 60)
             {
                 Lobby!.PlaytimeComment.Visible = true;
 
@@ -220,8 +209,8 @@ namespace Content.Client.Lobby
 
                 var chosenString = minutesToday switch
                 {
-                    < 270 => "lobby-state-playtime-comment-normal", // DeltaV - Before 4.5 hours
-                    < 420 => "lobby-state-playtime-comment-concerning", // DeltaV - Before 7 hours
+                    < 180 => "lobby-state-playtime-comment-normal",
+                    < 360 => "lobby-state-playtime-comment-concerning",
                     < 720 => "lobby-state-playtime-comment-grasstouchless",
                     _ => "lobby-state-playtime-comment-selfdestructive"
                 };
@@ -263,15 +252,22 @@ namespace Content.Client.Lobby
 
         private void UpdateLobbyBackground()
         {
-            if (_gameTicker.LobbyBackground != null)
+            if (_protoMan.TryIndex(_gameTicker.LobbyBackground, out var proto))
             {
-                Lobby!.Background.Texture = _resourceCache.GetResource<TextureResource>(_gameTicker.LobbyBackground );
+                Lobby!.Background.Texture = _resourceCache.GetResource<TextureResource>(proto.Background);
+
+                var markup = Loc.GetString("lobby-state-background-text",
+                    ("backgroundTitle", Loc.GetString(proto.Title)),
+                    ("backgroundArtist", Loc.GetString(proto.Artist)));
+
+                Lobby!.LobbyBackground.SetMarkup(markup);
             }
             else
             {
                 Lobby!.Background.Texture = null;
-            }
 
+                Lobby!.LobbyBackground.SetMarkup(Loc.GetString("lobby-state-background-no-background-text"));
+            }
         }
 
         private void SetReady(bool newReady)
