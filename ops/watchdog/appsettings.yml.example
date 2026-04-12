@@ -37,15 +37,20 @@ Serilog:
         rollingInterval: Day
         retainedFileCountLimit: 14
         shared: true
-    # TODO(vs-2p3): enable Loki sink once the log aggregator is deployed.
-    # - Name: GrafanaLoki
-    #   Args:
-    #     uri: http://localhost:3100
-    #     labels:
-    #       - key: app
-    #         value: ss14-watchdog
-    #       - key: instance
-    #         value: vacation-station
+    # Loki sink (vs-2p3): pushes watchdog logs into the Loki instance running
+    # in ops/observability/docker-compose.yml. `Name` is the Loki label that
+    # dashboards key off — keep it in sync with the game server's [loki]
+    # name (`vacation-station`) so a single query can span both processes.
+    - Name: GrafanaLoki
+      Args:
+        uri: http://localhost:3100
+        labels:
+          - key: app
+            value: ss14-watchdog
+          - key: instance
+            value: vacation-station
+          - key: Server
+            value: vacation-station-watchdog
   Enrich:
     - FromLogContext
 

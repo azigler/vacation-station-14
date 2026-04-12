@@ -1,0 +1,122 @@
+# Vacation Station 14 — Observability stack (vs-2p3)
+#
+# Prometheus (metrics) + Loki (logs) + Grafana (visualization), co-hosted on
+# the game-server box. Designed to be self-contained:
+#
+# - All three services sit on an internal bridge network `observability`.
+# - Prometheus and Loki bind ONLY to 127.0.0.1 on the host, so they are not
+#   reachable from the public internet. The operator can still curl them for
+#   debugging.
+# - Grafana listens on 127.0.0.1:3000 and is fronted by Caddy for HTTPS from
+#   the outside world (see docs/OPERATIONS.md "Observability").
+# - Prometheus scrapes the SS14 server on the host via `host.docker.internal`
+#   (Docker's host-gateway alias) on port 44880.
+# - Data is persisted to named volumes so container rebuilds don't drop state.
+#
+# Operator bootstrap is documented in docs/OPERATIONS.md. Before first `up`:
+#   1. ops/observability/secrets/grafana_admin_password.txt  (not in git)
+#   2. ops/observability/.env                                (not in git)
+# Examples of both live alongside this file.
+#
+# Image pins — chosen as currently-stable releases in the Prometheus 2.5x,
+# Loki 3.x, and Grafana 11 lines. Bump deliberately; don't float tags.
+
+name: vs14-observability
+
+networks:
+  observability:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  loki-data:
+  grafana-data:
+
+secrets:
+  grafana_admin_password:
+    file: ./secrets/grafana_admin_password.txt
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    networks: [observability]
+    # Expose only to the loopback on the host. Operators on the box can curl
+    # localhost:9090; the internet cannot.
+    ports:
+      - "127.0.0.1:9090:9090"
+    # host.docker.internal resolves to the Docker bridge gateway, which lets
+    # us scrape the SS14 game server running on the host at 127.0.0.1:44880.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  loki:
+    image: grafana/loki:3.2.1
+    restart: unless-stopped
+    networks: [observability]
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+    command: ["-config.file=/etc/loki/config.yml"]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    restart: unless-stopped
+    networks: [observability]
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+    # Grafana also needs to reach the Postgres instance on the host for the
+    # dashboards that visualise SS14.Admin data (grafana-postgresql-datasource).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      # Admin password is sourced from a docker secret so the value never
+      # appears in env / docker inspect output. Operator populates
+      # ./secrets/grafana_admin_password.txt (ignored by git).
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      # Auto-install the Postgres datasource plugin on first boot. The plugin
+      # is required for the SS14.Admin dashboards that ship in vs-13x.
+      GF_INSTALL_PLUGINS: grafana-postgresql-datasource
+      # POSTGRES_PASSWORD is expanded into the provisioned datasource below.
+      # Operator supplies it via ops/observability/.env (gitignored).
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in ops/observability/.env}
+    secrets:
+      - grafana_admin_password
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

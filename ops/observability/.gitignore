@@ -1,0 +1,10 @@
+# Secrets and local runtime state for the observability stack.
+# Only the .example / .yml config templates are tracked.
+
+.env
+secrets/*.txt
+!secrets/.gitkeep
+
+# If an operator ever switches named volumes to bind mounts for debugging,
+# keep the data out of git.
+data/

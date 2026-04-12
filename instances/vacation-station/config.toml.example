@@ -82,6 +82,36 @@ advertise = false
 mode = 1
 
 # -----------------------------------------------------------------------------
+# METRICS — Prometheus scrape endpoint on the SS14 server.
+# -----------------------------------------------------------------------------
+#
+# Exposes Robust.Server internals (player count, tick times, entity count,
+# GC stats, etc.) on TCP 44880 for the Prometheus container in the
+# ops/observability/ stack (vs-2p3). Bound to localhost — Prometheus reaches
+# it via Docker's host-gateway alias (host.docker.internal). Do NOT open
+# 44880 on the public firewall.
+
+[metrics]
+enabled = true
+host = "localhost"
+port = 44880
+
+# -----------------------------------------------------------------------------
+# LOKI — log aggregation push target.
+# -----------------------------------------------------------------------------
+#
+# Robust.Server ships Serilog.Sinks.Loki; enabling this pushes structured
+# logs to the Loki container on localhost:3100 (vs-2p3). The `name` value
+# is emitted as the `Server` label on every log line and MUST match the
+# Prometheus `server` label in ops/observability/prometheus.yml, so that
+# dashboards (vs-13x) can join logs and metrics on a single server identity.
+
+[loki]
+enabled = true
+address = "http://localhost:3100"
+name = "vacation-station"
+
+# -----------------------------------------------------------------------------
 # CONSOLE — first-boot admin bootstrap.
 # -----------------------------------------------------------------------------
 

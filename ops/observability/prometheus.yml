@@ -1,0 +1,37 @@
+# Vacation Station 14 — Prometheus scrape config
+#
+# Targets are reached via `host.docker.internal`, Docker's host-gateway alias,
+# because the SS14 server and Watchdog run on the host rather than in a
+# sibling container. See docker-compose.yml `extra_hosts`.
+#
+# The `server: vacation-station` label MUST match the `name` field in the
+# SS14 server's [loki] config block — downstream dashboards (vs-13x) join
+# logs and metrics on that label.
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: vacation-station
+
+scrape_configs:
+  # SS14 game server — Robust.Server exposes Prometheus metrics natively on
+  # port 44880 when [metrics] enabled=true in config.toml. Job name must be
+  # `gameservers` for the dashboards shipped in vs-13x to resolve.
+  - job_name: gameservers
+    static_configs:
+      - targets: ["host.docker.internal:44880"]
+        labels:
+          server: vacation-station
+          instance: vacation-station
+
+  # TODO(vs-2p3): SS14.Watchdog does not expose /metrics by default. If we
+  # later wire up a prometheus-net endpoint in the watchdog, flip this job on.
+  # Leaving the stanza here so the shape is documented.
+  # - job_name: watchdog
+  #   static_configs:
+  #     - targets: ["host.docker.internal:5000"]
+  #       labels:
+  #         server: vacation-station
+  #   metrics_path: /metrics

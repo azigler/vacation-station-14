@@ -1,0 +1,20 @@
+# Vacation Station 14 — Grafana dashboard provider (vs-2p3)
+#
+# File provider watches /var/lib/grafana/dashboards/ for JSON dashboards.
+# vs-13x will drop the actual SS14 dashboards (player counts, tick timings,
+# log panels, admin DB panels) into ops/observability/grafana/dashboards/,
+# which the docker-compose mounts into the container at that path.
+
+apiVersion: 1
+
+providers:
+  - name: vacation-station
+    orgId: 1
+    folder: Vacation Station
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true

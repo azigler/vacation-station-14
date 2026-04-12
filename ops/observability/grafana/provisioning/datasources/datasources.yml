@@ -1,0 +1,42 @@
+# Vacation Station 14 — Grafana provisioned datasources (vs-2p3)
+#
+# Prometheus is the default datasource. Loki sits alongside it for log
+# queries. The Postgres datasource targets the SS14.Admin / game-server
+# database on the host; its password is provided by the operator via the
+# $POSTGRES_PASSWORD env var (see ops/observability/.env.example).
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 15s
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+    jsonData:
+      maxLines: 5000
+
+  - name: Postgres
+    type: postgres
+    access: proxy
+    # Grafana resolves host.docker.internal via the container's extra_hosts
+    # entry; Postgres on the host listens on 127.0.0.1:5432.
+    url: host.docker.internal:5432
+    user: vs14
+    editable: false
+    jsonData:
+      database: vacation_station
+      sslmode: disable
+      postgresVersion: 1600
+      timescaledb: false
+    secureJsonData:
+      password: $POSTGRES_PASSWORD

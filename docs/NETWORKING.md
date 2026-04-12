@@ -214,6 +214,33 @@ sudo ufw enable
 # SS14 status API on TCP 1212 stays localhost-only — Caddy fronts it.
 ```
 
+## Fronting Grafana with Caddy (vs-2p3)
+
+The observability stack (`ops/observability/docker-compose.yml`) binds
+Grafana to `127.0.0.1:3000` by design — operators reach it over HTTPS via
+Caddy, never directly. The Caddyfile block:
+
+```
+grafana.yourdomain.com {
+    reverse_proxy 127.0.0.1:3000
+}
+```
+
+Prerequisites:
+
+- DNS `A` record for `grafana.yourdomain.com` pointing at the host.
+- `80/tcp` and `443/tcp` open in ufw and the cloud firewall (ACME HTTP-01
+  plus HTTPS).
+- Prometheus (`127.0.0.1:9090`) and Loki (`127.0.0.1:3100`) are NOT exposed
+  externally and do NOT need a Caddy block — they stay on localhost for
+  operator-only debugging via SSH port-forward.
+- The SS14 metrics port (`44880/tcp`) stays closed to the public internet;
+  Prometheus scrapes it from inside the container over
+  `host.docker.internal`. The table above mentions it as "optional", but
+  the intended deployment leaves it firewalled.
+
+See `docs/OPERATIONS.md` "Observability" for the full bring-up runbook.
+
 ## Common Issues
 
 ### Hub advertising fails with "Unable to contact status address"
