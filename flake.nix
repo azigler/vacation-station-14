@@ -22,13 +22,23 @@
   outputs =
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      # Linux-only: shell.nix pulls Linux-native graphics/audio stack
-      # (libdrm, mesa, xorg, alsa). Darwin was never supported by the
-      # inherited Delta-V shell.nix; listing it here would break
-      # `nix flake check` on macOS for no benefit.
+      # Cross-platform: shell.nix branches deps on stdenv (Linux pulls the
+      # full client runtime, darwin gets a server-only subset). Windows is
+      # not listed — contributors use WSL2 and get the x86_64-linux shell
+      # (see docs/DEVELOPMENT.md "Windows (via WSL2)").
+      #
+      # Note: `packages.dev-services` (the services-flake postgres + prom +
+      # loki + grafana stack) is gated to Linux only. services-flake's
+      # service modules target Linux process supervision semantics and
+      # some of the bundled services (loki, grafana provisioning paths)
+      # don't reliably evaluate on darwin. macOS contributors run the
+      # docker-compose observability stack instead — see the platform
+      # matrix in `.claude/skills/nix/SKILL.md`.
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
       ];
 
       imports = [
@@ -131,7 +141,12 @@
         {
           devShells.default = import ./shell.nix { inherit pkgs; };
 
-          process-compose."dev-services" = {
+          # services-flake dev stack: Linux only. The process-compose-flake
+          # module always registers a `dev-services` package output; we
+          # null it out on darwin so `nix flake check --all-systems`
+          # doesn't try to evaluate the Linux-specific service modules.
+          # Darwin contributors: use `ops/observability/docker-compose.yml`.
+          process-compose."dev-services" = lib.mkIf pkgs.stdenv.isLinux {
             imports = [
               inputs.services-flake.processComposeModules.default
             ];

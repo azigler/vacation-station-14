@@ -56,9 +56,13 @@ nix develop                                 # alternative: manual shell
 nix run .#dev-services                      # local dev stack (postgres/prom/loki/grafana)
 ```
 
-System-install (`./setup.ubuntu.sh`) remains supported and is the only
-path for production hosts. See `.claude/skills/nix/SKILL.md` and
-`docs/DEVELOPMENT.md` for detail.
+The flake evaluates on `x86_64-linux`, `aarch64-linux`, `x86_64-darwin`,
+and `aarch64-darwin`. Linux gets the full client+server shell, macOS gets
+a server-only shell (client needs a Linux VM), and Windows contributors
+run the same nix flow inside WSL2. System-install (`./setup.ubuntu.sh`)
+remains supported and is the only path for production hosts. See
+`.claude/skills/nix/SKILL.md` and `docs/DEVELOPMENT.md` for detail,
+including the WSL2 subsection and platform-support matrix.
 
 ## Build & Test
 

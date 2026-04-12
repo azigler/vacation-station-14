@@ -11,8 +11,25 @@
 }:
 
 let
-  dependencies = with pkgs; [
+  # Cross-platform deps. Build toolchain + ops validation tools — these all
+  # work identically on linux and darwin.
+  commonDeps = with pkgs; [
     dotnet-sdk_10
+    python3
+    pre-commit
+    nixfmt
+    # VS - ops validation tools (pinned for reproducible subagent/contributor env)
+    shellcheck
+    yamllint
+    prometheus # provides promtool
+    grafana-loki # provides loki + logcli
+    grafana # provides grafana-cli
+  ];
+
+  # Linux-only client runtime: graphics (X11/Wayland/mesa), audio (ALSA),
+  # gtk/atk/glib accessibility stack, libdrm. These pull an X11 dep chain
+  # that does not build on darwin. Server-only dev on darwin skips them.
+  linuxDeps = with pkgs; [
     icu
     glfw
     libGL
@@ -46,27 +63,29 @@ let
     dbus
     at-spi2-core
     cups
-    python3
-    # DeltaV
-    pre-commit
     wayland
-    nixfmt
-    # VS - ops validation tools (pinned for reproducible subagent/contributor env)
-    shellcheck
-    yamllint
-    prometheus # provides promtool
-    grafana-loki # provides loki + logcli
-    grafana # provides grafana-cli
   ];
+
+  # Darwin: no client-runtime deps here. Content.Client on macOS links
+  # against Apple frameworks (Metal, CoreAudio) at build time, not via
+  # nix-packaged libraries. macOS contributors needing to RUN the client
+  # should use a Linux VM — the darwin dev shell is server-only.
+  darwinDeps = [ ];
+
+  dependencies =
+    commonDeps
+    ++ pkgs.lib.optionals pkgs.stdenv.isLinux linuxDeps
+    ++ pkgs.lib.optionals pkgs.stdenv.isDarwin darwinDeps;
 in
 pkgs.mkShell {
   name = "space-station-14-devshell";
-  buildInputs = [ pkgs.gtk3 ];
   packages = dependencies;
   shellHook = ''
-    export GLIBC_TUNABLES=glibc.rtld.dynamic_sort=1
-    export ROBUST_SOUNDFONT_OVERRIDE=${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM2-2.sf2
-    export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH
-    export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath dependencies}
+    ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+      export GLIBC_TUNABLES=glibc.rtld.dynamic_sort=1
+      export ROBUST_SOUNDFONT_OVERRIDE=${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM2-2.sf2
+      export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH
+      export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath dependencies}
+    ''}
   '';
 }

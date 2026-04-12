@@ -25,9 +25,84 @@ nix develop
 
 Connect via launcher → Direct Connect → `localhost`.
 
-**Flake is Linux-only** (`x86_64-linux` + `aarch64-linux`) — `shell.nix`
-pulls libdrm/mesa/xorg which don't build on darwin. macOS contributors: use
-a Linux VM or the system-install path below.
+### Platform notes
+
+The flake supports `x86_64-linux`, `aarch64-linux`, `x86_64-darwin`, and
+`aarch64-darwin` natively. `shell.nix` branches deps on `stdenv` — Linux
+pulls the full client runtime (X11/Wayland/mesa/ALSA/gtk), darwin gets a
+server-only shell with just the build toolchain + ops-validation tools.
+
+- **Linux** — clone + `direnv allow`. Full client + server. `nix run
+  .#dev-services` works.
+- **macOS** — clone + `direnv allow`. Server-only dev shell (dotnet build,
+  Content.Server, tests, ops tools). Running the client (Content.Client)
+  requires a Linux VM — Content.Client's X11/GL/audio stack is not packaged
+  for darwin, and wiring Metal/CoreAudio is out of scope here.
+  `nix run .#dev-services` is Linux-only; macOS contributors use
+  `ops/observability/docker-compose.yml` for dev observability.
+- **Windows** — no native nix on Windows. Use WSL2 (subsection below).
+
+See `.claude/skills/nix/SKILL.md` for the full platform-support matrix.
+
+### Windows (via WSL2)
+
+Windows contributors run the entire nix dev path inside a WSL2 Ubuntu
+distro. Steps:
+
+1. **Install WSL2 + Ubuntu** (admin PowerShell):
+   ```powershell
+   wsl --install -d Ubuntu-24.04
+   ```
+   Reboot if prompted, then launch "Ubuntu" from the Start menu and finish
+   the first-run user setup.
+
+2. **Install nix** inside the WSL shell. We recommend the
+   [Determinate Systems installer](https://determinate.systems/posts/determinate-nix-installer/)
+   because it enables flakes by default and includes a clean uninstaller:
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf -L \
+     https://install.determinate.systems/nix | sh -s -- install
+   ```
+   (Official multi-user installer from <https://nixos.org/download.html>
+   also works, but you'll need to enable flakes in `~/.config/nix/nix.conf`.)
+
+3. **Install direnv**:
+   ```bash
+   sudo apt install direnv
+   echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+   exec bash
+   ```
+
+4. **Clone the repo inside the WSL filesystem**, NOT on `/mnt/c/...`:
+   ```bash
+   cd ~
+   git clone https://github.com/azigler/vacation-station-14.git
+   cd vacation-station-14
+   direnv allow
+   ```
+   Crossing the Windows/Linux filesystem boundary (`/mnt/c`) kills build
+   performance and breaks inotify — always keep the repo under
+   `~/` (e.g. `~/vacation-station-14`).
+
+5. **Build and run**:
+   ```bash
+   dotnet run --project Content.Server     # server — reliable under WSL2
+   nix run .#dev-services                  # dev postgres/prom/loki/grafana
+   ```
+
+**Client (Content.Client):** WSLg (Windows 11+) forwards X11/Wayland and
+PulseAudio to the host, so `dotnet run --project Content.Client` often
+launches a window — but OpenGL and audio through WSLg are experimental and
+you should expect rendering glitches, vsync problems, or audio dropouts.
+For a reliable Windows client experience, use the
+[SS14 launcher](https://spacestation14.io/about/nightly/) on the Windows
+side and connect it to a server running inside WSL2 (direct-connect to
+`localhost`, since WSL2 forwards localhost ports to the host).
+
+**Do not recommend:**
+- Running nix natively on Windows (it doesn't exist).
+- Cloning to `/mnt/c/...` and accessing from WSL — the performance hit is
+  severe and tooling misbehaves.
 
 ## Quick Start (system-install, non-Nix)
 
@@ -50,11 +125,13 @@ See [setup.ubuntu.sh](../setup.ubuntu.sh) for the automated install.
 
 ## What's in the Nix dev shell
 
-`shell.nix` pins: `dotnet-sdk_10`, Python 3, pre-commit, full client stack
-(glfw, openal, freetype, fluidsynth, X11/Wayland, audio), and ops validation
+`shell.nix` pins: `dotnet-sdk_10`, Python 3, pre-commit, and ops validation
 tools (`shellcheck`, `yamllint`, `prometheus` → provides `promtool`,
 `grafana-loki` → provides `loki` + `logcli`, `grafana` → provides
-`grafana-cli`). Everything pinned in `flake.lock` — identical across
+`grafana-cli`). On Linux the shell additionally pins the full client
+runtime (glfw, openal, freetype, fluidsynth, gtk3, X11/Wayland, mesa,
+ALSA, dbus). On darwin those client-runtime deps are omitted — the shell
+is server-only there. Everything pinned in `flake.lock` — identical across
 contributors and CI.
 
 ## Dev Services Stack
