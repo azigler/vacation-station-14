@@ -7,7 +7,7 @@
 # - Prometheus and Loki bind ONLY to 127.0.0.1 on the host, so they are not
 #   reachable from the public internet. The operator can still curl them for
 #   debugging.
-# - Grafana listens on 127.0.0.1:3000 and is fronted by Caddy for HTTPS from
+# - Grafana listens on 127.0.0.1:3200 and is fronted by Caddy for HTTPS from
 #   the outside world (see docs/OPERATIONS.md "Observability").
 # - Prometheus scrapes the SS14 server on the host via `host.docker.internal`
 #   (Docker's host-gateway alias) on port 44880.
@@ -96,7 +96,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "127.0.0.1:3000:3000"
+      # Published on 3200 (not 3000 — that collides with Node.js / Vite /
+      # Vercel dev servers that operators often run). Container-internal
+      # port stays 3000 (grafana's default). Bumps here must be mirrored
+      # in docs/OPERATIONS.md, docs/NETWORKING.md, docs/DEVELOPMENT.md,
+      # flake.nix (dev stack), and .claude/skills/nix/SKILL.md.
+      - "127.0.0.1:3200:3000"
     environment:
       # Admin password is sourced from a docker secret so the value never
       # appears in env / docker inspect output. Operator populates

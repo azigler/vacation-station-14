@@ -67,19 +67,19 @@ advertise = false
 # AUTH — Wizards Den account requirement.
 # -----------------------------------------------------------------------------
 #
-#   0 = AllowGuest    — anyone, no account needed (dev / LAN)
-#   1 = Optional      — guests allowed, authenticated clients get verified
-#                       identity (good default for a new public server —
-#                       lets people try before signing up, gives us a real
-#                       username for admin actions)
-#   2 = Required      — must be signed in; recommended for anti-griefing
-#                       once community is established
+# Per Robust.Shared/Network/AuthMode.cs (Optional=0, Required=1, Disabled=2):
+#   0 = Optional  — guests allowed, authenticated clients get verified
+#                   identity. Good default for a new public server: lets
+#                   people try before signing up, gives us a real username
+#                   for admin actions. THIS VALUE.
+#   1 = Required  — must be signed in with a Wizards Den account.
+#                   Recommended once community is established for anti-grief.
+#   2 = Disabled  — guest-only; Wizden accounts ignored. Dev / private LAN.
 #
-# We start at 1 and can tighten to 2 after launch. Flipping this value
-# requires a server restart.
+# Flipping this value requires a server restart.
 
 [auth]
-mode = 1
+mode = 0
 
 # -----------------------------------------------------------------------------
 # METRICS — Prometheus scrape endpoint on the SS14 server.
