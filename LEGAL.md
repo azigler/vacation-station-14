@@ -154,6 +154,37 @@ per-asset.
 As CC-BY-SA **plus** non-commercial restriction. Compliant as long
 as VS14 remains non-monetized.
 
+## License verification record
+
+Primary-source verification of every upstream we currently integrate
+(one row per integration). Re-run verification when adopting a new
+upstream or when an existing upstream's license changes.
+
+| Upstream | Source of truth | License | Verified (UTC date) |
+|---|---|---|---|
+| Space Station 14 (`upstream-sw`) | [`LICENSE.TXT`](LICENSE.TXT) at repo root (pulled in Phase 1) | MIT | 2026-04-12 |
+| RobustToolbox (engine submodule) | [`RobustToolbox/LICENSE-MIT.TXT`](RobustToolbox/LICENSE-MIT.TXT) + [`LICENSE-GPLv3.TXT`](RobustToolbox/LICENSE-GPLv3.TXT) + [`LICENSE-ASSETS.TXT`](RobustToolbox/LICENSE-ASSETS.TXT) | MIT (code) + GPLv3 (select components) + CC-BY-SA 3.0 (assets) | 2026-04-12 |
+| Delta-V Station (`upstream-dv`, future `_DV/` cherry-picks) | Upstream `LEGAL.md` + `LICENSE-MIT.txt` + `LICENSE-AGPLv3.txt` | AGPLv3 (post-boundary content) + MIT (pre-boundary upstream) | 2026-04-12 |
+| VS14 (authored, this repo) | [`LICENSE-AGPLv3.txt`](LICENSE-AGPLv3.txt) | AGPLv3 (post-Flavor-A boundary commit `86a6f6a3`) | 2026-04-12 |
+
+Additional upstreams (`_NF/` Frontier, `_EE/` Einstein Engines,
+`_Starlight/`, `_HardLight/`) get new rows when their first
+cherry-pick lands in Phase 5.
+
+### RobustToolbox's tri-license
+
+The engine's MIT license applies to most code. A small set of
+components that derive from GPL'd third-party code (see the
+`RobustToolbox/LICENSE-GPLv3.TXT` header commentary) are GPLv3-only.
+Assets under `RobustToolbox/Resources/` are CC-BY-SA 3.0. Practical
+impact for VS14: we distribute Robust.Server compiled from this
+engine as part of our game server binary, which means the combined
+distribution must comply with all three licenses simultaneously —
+this is identical to every SS14 server's compliance posture, so no
+special VS14 action is needed beyond preserving the upstream
+LICENSE files inside the `RobustToolbox/` submodule (which git
+submodules do automatically).
+
 ## Wizards Den OAuth
 
 VS14 uses Wizards Den as identity provider (matches the launcher's
