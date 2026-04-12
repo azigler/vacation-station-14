@@ -80,7 +80,7 @@ fi
 
 # --- SS14 runtime system libraries ---
 
-SERVER_LIBS="libsodium23 libssl3"
+SERVER_LIBS="libsodium23 libssl3 libunwind8"
 CLIENT_LIBS="libfreetype6 libglfw3 libopenal1 libfluidsynth3"
 
 if [ "$MODE" = "dev" ]; then

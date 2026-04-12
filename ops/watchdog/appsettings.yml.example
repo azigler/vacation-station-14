@@ -90,7 +90,13 @@ Servers:
       #              to this once we stand up a build/publish pipeline;
       #              see docs/OPERATIONS.md for the migration path.
       UpdateType: Local
-      # Uncomment when switching to Manifest:
+      # Local provider still needs an Updates block — CurrentVersion is a
+      # free-form string the watchdog compares against to decide whether to
+      # restart on deploy. Bump it (or the contents of binaries/) when you
+      # roll a new build.
+      Updates:
+        CurrentVersion: "1"
+      # When switching to Manifest later, replace the block above with:
       # Updates:
       #   ManifestUrl: https://cdn.example.com/vacation-station/manifest.json
 
