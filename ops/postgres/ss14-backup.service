@@ -16,7 +16,10 @@ ExecStart=/opt/vacation-station/ops/postgres/backup.sh
 # Hardening
 NoNewPrivileges=true
 ProtectSystem=strict
-ProtectHome=true
+# Read-only (not hidden) so symlinks like /opt/vacation-station →
+# /home/ubuntu/vacation-station-14 resolve. The backup script only reads
+# /opt/vacation-station; writes go to /var/backups/vacation-station.
+ProtectHome=read-only
 PrivateTmp=true
 ReadWritePaths=/var/backups/vacation-station
 

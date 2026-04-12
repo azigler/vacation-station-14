@@ -6,7 +6,7 @@
 #   ./setup.ubuntu.sh --server     # server-only (no GPU/audio libs)
 #   ./setup.ubuntu.sh --runtime    # runtime only (no SDK, for prebuilt server)
 #
-# Tested on Ubuntu 22.04, 24.04.
+# Tested on Ubuntu 22.04, 24.04, 25.10.
 
 set -euo pipefail
 
@@ -52,13 +52,25 @@ fi
 
 if ! dotnet --list-sdks 2>/dev/null | grep -q "^10\." \
    && ! dotnet --list-runtimes 2>/dev/null | grep -q "Microsoft.NETCore.App 10\."; then
-    echo ">>> Installing Microsoft apt feed for .NET 10..."
-    TMP_DEB=$(mktemp --suffix=.deb)
-    curl -sSL -o "$TMP_DEB" \
-        "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb"
-    sudo dpkg -i "$TMP_DEB"
-    rm -f "$TMP_DEB"
-    sudo apt-get update -qq
+    # Ubuntu 25.10+ ships .NET 10 natively in the archive; older releases
+    # need the Microsoft feed.
+    USE_MS_FEED=1
+    case "$VERSION_ID" in
+        22.04|24.04) USE_MS_FEED=1 ;;
+        25.*|26.*|27.*|28.*|29.*|3*.*) USE_MS_FEED=0 ;;
+    esac
+
+    if [ "$USE_MS_FEED" = "1" ]; then
+        echo ">>> Installing Microsoft apt feed for .NET 10 (Ubuntu $VERSION_ID)..."
+        TMP_DEB=$(mktemp --suffix=.deb)
+        curl -sSL -o "$TMP_DEB" \
+            "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb"
+        sudo dpkg -i "$TMP_DEB"
+        rm -f "$TMP_DEB"
+        sudo apt-get update -qq
+    else
+        echo ">>> Ubuntu $VERSION_ID ships .NET 10 natively; skipping Microsoft feed."
+    fi
 
     echo ">>> Installing $DOTNET_PKG..."
     sudo apt-get install -y $DOTNET_PKG
