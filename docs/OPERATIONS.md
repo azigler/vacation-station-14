@@ -372,8 +372,8 @@ Robust.Server's native Prometheus endpoint on `localhost:44880`; logs come
 from the server and watchdog via Serilog's Loki sink. Grafana provides the
 UI and is fronted by Caddy for HTTPS.
 
-Dashboards land in bead **vs-13x**; alerting is explicitly out of scope for
-vs-2p3.
+Dashboards are auto-provisioned from `ops/observability/grafana/dashboards/`
+(see the "Dashboards" subsection below). Alerting is explicitly out of scope.
 
 ### Layout
 
@@ -578,10 +578,83 @@ entry afterwards.
   `ops/observability/secrets/grafana_admin_password.txt`. If the file is
   missing, the container fails healthcheck and restarts in a loop.
 
-### What's next (vs-13x)
+### Dashboards
 
-Bead **vs-13x** delivers the initial dashboard set (game server health,
-log panels, watchdog state, Postgres panels). Dashboards drop into
-`ops/observability/grafana/dashboards/` and are picked up automatically
-by the provisioned file provider. Alerting is deliberately not covered
-here — consider it future work.
+Two dashboards ship in-repo at `ops/observability/grafana/dashboards/`,
+adapted from the upstream SS14 community exports:
+
+| File                  | Dashboard UID         | Title                                 | Purpose                                                                 |
+|-----------------------|-----------------------|---------------------------------------|-------------------------------------------------------------------------|
+| `game-servers.json`   | `vs14-game-servers`   | Vacation Station - Game Servers       | Fleet overview: player count, tick time, CPU, round length, connections |
+| `perf-metrics.json`   | `vs14-perf-metrics`   | Vacation Station - Perf Metrics       | Per-server deep-dive with a Loki logs panel and tick/entity histograms  |
+
+**Upstream source** for future diffs:
+<https://docs.spacestation14.com/en/community/infrastructure-reference/grafana-dashboards.html>
+(rendered from `space-wizards/docs/src/en/community/infrastructure-reference/grafana-dashboards.md`).
+
+#### Auto-provisioning
+
+On Grafana startup, two mounts wire everything up:
+
+```yaml
+volumes:
+  - ./grafana/provisioning:/etc/grafana/provisioning:ro
+  - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+```
+
+- `provisioning/datasources/datasources.yml` registers Prometheus, Loki, and
+  Postgres under stable names. Dashboard JSONs reference those datasources
+  by name (`"uid": "Prometheus"`, `"uid": "Loki"`, `"uid": "Postgres"`);
+  Grafana resolves name-as-uid against the provisioned set.
+- `provisioning/dashboards/dashboards.yml` runs the file provider against
+  `/var/lib/grafana/dashboards`, polling every 30 s. Every `*.json` in that
+  directory surfaces in the "Vacation Station" folder.
+
+#### Updating a dashboard
+
+```bash
+# Edit the JSON (directly, or paste from a UI export — see below)
+$EDITOR ops/observability/grafana/dashboards/game-servers.json
+# File provider notices within 30 s; or force a re-scan:
+cd ops/observability && docker compose restart grafana
+```
+
+The pinned `uid` fields (`vs14-game-servers`, `vs14-perf-metrics`) let
+Grafana recognise the provisioned dashboard across restarts and apply
+edits in-place rather than creating duplicates.
+
+#### Customising or adding panels
+
+The intended workflow for fork-specific changes:
+
+1. In Grafana UI, clone the dashboard (Settings → Save As) and iterate
+   against real data. The provisioned copies are marked read-only
+   (`allowUiUpdates: false`), so your working copy becomes a separate
+   dashboard with its own uid.
+2. When the panel set is stable, export JSON via
+   *Dashboard → Share → Export → Save to file*. Untick "Export for sharing
+   externally" so datasource uids stay bound (to our provisioned names)
+   rather than being templated back into `${DS_…}` inputs.
+3. Copy the exported JSON over the provisioned file, restore the pinned
+   `uid` + `title`, and commit. Run the JSON through `python -m json.tool`
+   to keep the diff readable.
+4. Net-new dashboards that are purely VS-original go in the same directory
+   with a `vs14-<slug>` uid; no other wiring needed.
+
+If you need to remove the upstream-derived panels entirely (e.g. to slim
+down the fleet dashboard for a single-server deployment), delete the
+relevant panel objects from the JSON — the file provider picks up the
+shrunken dashboard on the next poll.
+
+#### Known adaptation caveats
+
+- The Game Servers dashboard's TPS alert retains the upstream notification
+  channel uid (`N5nihcmMk`); Grafana will log a "missing notifier" warning
+  until the alert is rewritten against a local contact point. Non-fatal.
+- A handful of `byName` field-override matchers reference upstream server
+  names (e.g. `wizards_den_eu_west`). These no-op in our single-instance
+  deployment and are preserved verbatim as documentation of the upstream
+  intent — safe to prune on the first UI-driven edit pass.
+- The `$Server` template variable is rewritten to
+  `label_values(ss14_round_length{job="gameservers"}, server)`, defaulting
+  to `vacation-station` to match the label set in `prometheus.yml`.
