@@ -327,23 +327,22 @@ dotnet run --project Content.Packaging server --hybrid-acz --platform linux-x64
 
 ## Upstream Sync
 
-We track Delta-V upstream. Periodic merges:
+VS14 tracks multiple upstreams, each with its own integration mode
+(engine submodule, scoped base-content refresh, sibling-fork cherry-
+pick, deploy-as-is submodule). The authoritative per-upstream table
+lives in [`upstream-sync.md`](upstream-sync.md); the per-mode
+workflow lives in [`.claude/skills/upstream-sync/SKILL.md`](../.claude/skills/upstream-sync/SKILL.md).
 
-```bash
-git fetch upstream
-git log --oneline upstream/master -10    # review incoming
-git merge upstream/master
-# resolve conflicts: always keep _VS code, merge upstream carefully
-dotnet build && dotnet test Content.Tests --no-build
-git push
-```
-
-Conflict resolution rules:
-- `_VS/` files — keep ours
-- `_DV/` files — take theirs (upstream Delta-V)
-- Upstream files we modified — merge carefully, preserve our `// VS` annotations
-- `.github/` workflows — take theirs unless we have VS overrides
-- `RobustToolbox` submodule — take theirs
+Conflict resolution bias:
+- `_VS/` — keep ours
+- `_<FORK>/` (e.g. `_DV/`, `_NF/`) — respect upstream intent; annotate
+  resolution edits with `// <FORK> - …`
+- Unprefixed `Content.*` (SS14 base) — re-apply `// VS` annotations
+  on top of upstream changes
+- `.github/` workflows — keep ours unless deliberately pulling
+  upstream's
+- `RobustToolbox/` submodule — bumped only in dedicated engine-bump
+  commits; never modified by cherry-picks
 
 ## Writing New Content
 
@@ -371,6 +370,7 @@ Quick pattern: new C# code goes in `Content.Server/_VS/FeatureName/`, new protot
 ## SS14 Reference
 
 - [Upstream SS14 developer docs](https://docs.spacestation14.com/)
-- [Delta-V Station](https://github.com/DeltaV-Station/Delta-v) (our direct upstream)
-- [Space Station 14](https://github.com/space-wizards/space-station-14) (original project)
-- [RobustToolbox](https://github.com/space-wizards/RobustToolbox) (engine)
+- [Space Station 14](https://github.com/space-wizards/space-station-14) (base; `upstream-sw`)
+- [RobustToolbox](https://github.com/space-wizards/RobustToolbox) (engine; submodule pin)
+- [Delta-V Station](https://github.com/DeltaV-Station/Delta-v) (sibling fork; `upstream-dv`, cherry-pick source)
+- [`upstream-sync.md`](upstream-sync.md) — authoritative list of tracked upstreams
