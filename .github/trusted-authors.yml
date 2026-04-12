@@ -1,0 +1,13 @@
+# Trusted authors for automated PR handling.
+#
+# Consumed by:
+#   .github/workflows/pr-triage.yml   -- to auto-apply the `auto-merge` label
+#   .github/workflows/auto-merge.yml  -- to gate auto-merge eligibility
+#
+# Promotion policy lives in docs/OPERATIONS.md ("Automated PR handling").
+# Grow `humans` organically -- only add someone after a sustained track
+# record of clean, well-scoped PRs.
+bots:
+  - dependabot[bot]
+  - renovate[bot]
+humans: []  # grow organically

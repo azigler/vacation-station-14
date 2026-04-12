@@ -1,0 +1,8 @@
+# Banned authors whose PRs are auto-closed by pr-triage.yml.
+#
+# Use sparingly. A ban is a last resort for repeat bad-faith submitters;
+# the default posture ("absorb by default, reject only on principle")
+# lives in the `/vibe-maintainer` skill and CONTRIBUTING.md.
+#
+# Format: GitHub login (no `@`, no URL). Bots use the `[bot]` suffix.
+users: []

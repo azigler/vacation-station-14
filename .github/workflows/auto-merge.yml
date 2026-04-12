@@ -1,0 +1,136 @@
+name: "PR Auto-merge"
+
+# Watches PRs carrying the `auto-merge` label and squash-merges them
+# once they satisfy the trust + quality gates:
+#
+#   * label `auto-merge` present
+#   * CI green across all status checks
+#   * size bucket == XS (tight change)
+#   * no `needsreview` / `S: Needs Review` label
+#   * PR has soaked for AUTO_MERGE_SOAK_HOURS (default 12) since it was
+#     labeled -- gives the maintainer time to intervene before merge
+#
+# If CI turns red while the PR is soaking, the label is stripped and a
+# comment is posted.
+#
+# See docs/OPERATIONS.md -> "Automated PR handling" for tuning.
+
+on:
+  pull_request_target:
+    types: [labeled, unlabeled, synchronize, reopened]
+  workflow_run:
+    # Re-evaluate every time a CI workflow finishes; the job body filters
+    # down to PRs actually carrying `auto-merge`.
+    workflows: ["build-test-debug", "YAML Linter"]
+    types: [completed]
+  schedule:
+    # Safety-net: if we missed a trigger, sweep every 30 minutes.
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  checks: read
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  # Soak window in hours. Start conservative; tune in OPERATIONS.md.
+  AUTO_MERGE_SOAK_HOURS: "12"
+  AUTO_MERGE_LABEL: "auto-merge"
+  # Any of these labels block auto-merge. Matches the `labeler-needsreview`
+  # upstream convention plus our own explicit escape hatch.
+  AUTO_MERGE_BLOCKLIST: "needsreview,S: Needs Review,do-not-merge,status/blocked"
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/workflows/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve PR set
+        id: prset
+        run: |
+          set -euo pipefail
+          # Priority order: explicit pull_request event > workflow_run head
+          # > full sweep of open PRs carrying the label.
+          prs=""
+          case "${{ github.event_name }}" in
+            pull_request_target)
+              prs="${{ github.event.pull_request.number }}"
+              ;;
+            workflow_run)
+              # workflow_run does not name the PR directly; look up open PRs
+              # whose head SHA matches the completed run.
+              sha="${{ github.event.workflow_run.head_sha }}"
+              prs=$(gh pr list --repo "$GH_REPO" --state open \
+                      --search "$sha" --json number --jq '.[].number' || true)
+              ;;
+            *)
+              prs=$(gh pr list --repo "$GH_REPO" --state open \
+                      --label "$AUTO_MERGE_LABEL" \
+                      --json number --jq '.[].number' || true)
+              ;;
+          esac
+          echo "Candidate PRs: $prs"
+          {
+            echo "prs<<EOF"
+            echo "$prs"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Evaluate and merge
+        env:
+          PR_LIST: ${{ steps.prset.outputs.prs }}
+        run: |
+          set -euo pipefail
+          if [ -z "$PR_LIST" ]; then
+            echo "No candidate PRs."
+            exit 0
+          fi
+          while read -r pr; do
+            [ -z "$pr" ] && continue
+            echo "::group::Evaluate PR #$pr"
+            .github/workflows/scripts/auto-merge-eval.sh "$pr" || \
+              echo "auto-merge-eval.sh failed for #$pr (continuing)"
+            echo "::endgroup::"
+          done <<< "$PR_LIST"
+
+      # ------------------------------------------------------------------
+      # Optional Discord notification on merge.
+      #
+      # Pairs with vs-2l2 (Discord integration). Left commented until the
+      # webhook secret is provisioned. To enable:
+      #   1. Add repo secret DISCORD_OPS_WEBHOOK.
+      #   2. Uncomment the step below.
+      # The eval script writes a marker file at $GITHUB_WORKSPACE/.auto-merged
+      # containing one PR number per line for the run.
+      # ------------------------------------------------------------------
+      # - name: Notify Discord on merge
+      #   if: always()
+      #   env:
+      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_OPS_WEBHOOK }}
+      #   run: |
+      #     set -euo pipefail
+      #     [ -f .auto-merged ] || exit 0
+      #     [ -z "${DISCORD_WEBHOOK:-}" ] && exit 0
+      #     while read -r pr; do
+      #       [ -z "$pr" ] && continue
+      #       title=$(gh pr view "$pr" --repo "$GH_REPO" --json title --jq .title)
+      #       url=$(gh pr view "$pr" --repo "$GH_REPO" --json url --jq .url)
+      #       curl -sS -H "Content-Type: application/json" \
+      #         -d "{\"content\":\"auto-merged PR #$pr: $title ($url)\"}" \
+      #         "$DISCORD_WEBHOOK"
+      #     done < .auto-merged
