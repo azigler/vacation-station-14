@@ -41,6 +41,25 @@ When modifying non-`_VS` files, annotate changes:
 PascalCase, category prefix. Append `VS` suffix when disambiguation needed:
 `ClothingHeadHatChefVS`, `FoodRecipePastaVS`
 
+## Dev Environment
+
+**Nix is the primary dev path.** The flake pins the entire build + ops
+toolchain (`dotnet-sdk_10`, graphics libs, `shellcheck`, `yamllint`,
+`promtool`, `loki`, `grafana-cli`, pre-commit). `services-flake` additionally
+provides a local postgres + prometheus + loki + grafana stack.
+
+```bash
+direnv allow                                # one-time per worktree
+# cd-triggered env load handles the rest
+
+nix develop                                 # alternative: manual shell
+nix run .#dev-services                      # local dev stack (postgres/prom/loki/grafana)
+```
+
+System-install (`./setup.ubuntu.sh`) remains supported and is the only
+path for production hosts. See `.claude/skills/nix/SKILL.md` and
+`docs/DEVELOPMENT.md` for detail.
+
 ## Build & Test
 
 ```bash
@@ -51,10 +70,6 @@ dotnet test Content.Tests --no-build        # unit tests
 dotnet test Content.IntegrationTests --no-build  # integration tests
 dotnet run --project Content.YAMLLinter     # validate prototypes
 ```
-
-Alternative: a nix flake (`flake.nix`/`shell.nix`/`.envrc`) is inherited from
-Delta-V for reproducible dev environments. Optional — not required by hooks or
-skills. See `docs/DEVELOPMENT.md` for details.
 
 ### Nix env in worktree subagents
 

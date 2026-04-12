@@ -1,19 +1,46 @@
 # Developing Vacation Station 14
 
-## Quick Start
+**Nix is the primary dev path.** It pins the entire build + ops toolchain
+(`dotnet-sdk_10`, `shellcheck`, `yamllint`, `promtool`, `loki`, `grafana-cli`,
+…), and `services-flake` boots a local postgres/prometheus/loki/grafana stack
+without docker or sudo. See [`/nix` skill](../.claude/skills/nix/SKILL.md)
+for the concise reference.
+
+## Quick Start (Nix)
+
+```bash
+git clone https://github.com/azigler/vacation-station-14.git
+cd vacation-station-14
+direnv allow                           # one-time per clone
+# cd-triggered env load now handles the rest
+
+dotnet run --project Content.Server    # headless
+dotnet run --project Content.Client    # needs GPU/audio
+```
+
+Without direnv:
+```bash
+nix develop
+```
+
+Connect via launcher → Direct Connect → `localhost`.
+
+**Flake is Linux-only** (`x86_64-linux` + `aarch64-linux`) — `shell.nix`
+pulls libdrm/mesa/xorg which don't build on darwin. macOS contributors: use
+a Linux VM or the system-install path below.
+
+## Quick Start (system-install, non-Nix)
+
+Same path a production host uses. Only choose this if you don't want nix.
 
 ```bash
 git clone https://github.com/azigler/vacation-station-14.git
 cd vacation-station-14
 ./setup.ubuntu.sh
-dotnet run --project Content.Server    # headless
-dotnet run --project Content.Client    # needs GPU/audio
+dotnet run --project Content.Server
 ```
 
-Connect via launcher → Direct Connect → `localhost`.
-
-## Prerequisites
-
+Prerequisites:
 - .NET 10 SDK
 - Python 3.7+ (for `RUN_THIS.py`)
 - Git
@@ -21,35 +48,14 @@ Connect via launcher → Direct Connect → `localhost`.
 
 See [setup.ubuntu.sh](../setup.ubuntu.sh) for the automated install.
 
-## Alternative: Nix / direnv
+## What's in the Nix dev shell
 
-The repo inherits a nix flake from Delta-V for reproducible dev environments.
-If you already use nix, this is the fastest setup:
-
-```bash
-# One-time: install direnv (if not already) and allow this repo
-sudo apt install direnv   # or your package manager
-# Add `eval "$(direnv hook bash)"` (or zsh equivalent) to your shell rc
-
-direnv allow              # one-time per-repo
-# Shell now auto-enters the dev shell when you cd into the repo
-```
-
-Without direnv:
-```bash
-nix develop               # enter dev shell manually
-```
-
-**Caveats:**
-- The flake pulls ~3-5 GB of deps including full client stack (X11, mesa,
-  gtk3, audio). For server-only hosts, prefer `./setup.ubuntu.sh --server`.
-- Nix flake is an alternative path, not required. Hooks and skills work with
-  system `dotnet` installed via apt.
-- Flake is maintained upstream (Delta-V) — we inherit changes through
-  `upstream-sync`.
-
-Nix contents (`shell.nix`): .NET 10 SDK, Python 3, pre-commit, glfw, openal,
-freetype, fluidsynth, X11/Wayland libs, and various audio stack packages.
+`shell.nix` pins: `dotnet-sdk_10`, Python 3, pre-commit, full client stack
+(glfw, openal, freetype, fluidsynth, X11/Wayland, audio), and ops validation
+tools (`shellcheck`, `yamllint`, `prometheus` → provides `promtool`,
+`grafana-loki` → provides `loki` + `logcli`, `grafana` → provides
+`grafana-cli`). Everything pinned in `flake.lock` — identical across
+contributors and CI.
 
 ## Dev Services Stack
 
