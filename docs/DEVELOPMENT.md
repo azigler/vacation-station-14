@@ -51,6 +51,121 @@ nix develop               # enter dev shell manually
 Nix contents (`shell.nix`): .NET 10 SDK, Python 3, pre-commit, glfw, openal,
 freetype, fluidsynth, X11/Wayland libs, and various audio stack packages.
 
+## Dev Services Stack
+
+For local validation of observability configs and DB migrations without
+touching the production (apt + systemd + docker-compose) path, the flake
+ships a `process-compose`-based stack via
+[services-flake](https://community.flake.parts/services-flake).
+
+```bash
+nix run .#dev-services
+```
+
+That boots four services as user processes (no sudo, no docker) bound to
+`localhost`, with state under `.data/` (gitignored). The TUI is
+process-compose; `F10` exits, arrow keys select a process to inspect its
+logs.
+
+### Endpoints
+
+| Service     | URL / port             | Notes |
+|-------------|------------------------|-------|
+| Postgres    | `localhost:5432`       | db `vacation_station`, user `vs14` |
+| Prometheus  | `http://localhost:9090` | scrapes `localhost:44880` (SS14 server) |
+| Loki        | `http://localhost:3100` | push + query API |
+| Grafana     | `http://localhost:3000` | provisioned datasources + dashboards |
+
+### Dev-only credentials (do NOT reuse in prod)
+
+These are literals embedded in `flake.nix` for dev convenience. The
+production path (vs-3ty postgres, vs-2p3 observability) uses a 32-byte
+random postgres password loaded from `/etc/vacation-station/postgres.env`
+and a separate grafana admin password via docker secrets — none of which
+are ever committed.
+
+| Credential               | Value                |
+|--------------------------|----------------------|
+| Postgres user / password | `vs14 / dev-only-insecure` |
+| Grafana admin / password | `admin / admin`      |
+
+### Wiring a dev SS14 server
+
+Point `server_config.toml` (or equivalent cvars):
+
+```toml
+[database]
+engine = "postgres"
+pg_host = "localhost"
+pg_port = 5432
+pg_database = "vacation_station"
+pg_username = "vs14"
+pg_password = "dev-only-insecure"
+
+[metrics]
+enabled = true
+host = "localhost"
+port = 44880
+
+[loki]
+enabled = true
+name = "vacation-station"   # must match the Prometheus `server` label
+address = "http://localhost:3100"
+```
+
+Prometheus will start scraping `localhost:44880` once the SS14 server is
+up and the `[metrics]` endpoint is live. Loki ingest is push-based —
+Robust sends log lines directly.
+
+### Reset state
+
+```bash
+rm -rf .data/
+```
+
+Wipes postgres, prometheus, loki, and grafana storage. Run again with
+`nix run .#dev-services` and the stack reinitializes from scratch
+(postgres reruns `initialScript`, grafana re-provisions from the
+committed YAML, etc.).
+
+### Parity with production
+
+**Same:**
+- Prometheus scrape config (`ops/observability/prometheus.yml`) — the dev
+  overlay only rewrites `host.docker.internal` → `localhost` in-memory.
+  Scrape interval, job name, labels, `server: vacation-station` contract
+  all identical.
+- Loki config (`ops/observability/loki-config.yml`) — only `/loki` path
+  prefixes rewrite to `./.data/loki`. Retention, schema, compactor
+  settings unchanged.
+- Grafana datasources — same shape as `ops/observability/grafana/
+  provisioning/datasources/datasources.yml`, just with localhost URLs
+  and the dev password literal instead of `$POSTGRES_PASSWORD`.
+- Grafana dashboards — sourced directly from
+  `ops/observability/grafana/dashboards/` (same JSON files prod loads).
+- Postgres schema — SS14's EF Core migrations run identically; the
+  `vacation_station` database with owner `vs14` is the exact shape
+  vs-3ty provisions on the Ubuntu host.
+
+**Different (dev only):**
+- No systemd (process-compose supervises instead)
+- No auto-start across reboots (relaunch manually)
+- No backup / WAL archival
+- Insecure literal credentials
+- No TLS / Caddy reverse proxy in front of grafana
+- Data in project `./.data/` instead of `/var/lib/*`
+
+### Relationship to prod beads
+
+- [vs-3ty](../.beads/issues.jsonl) — production postgres bring-up
+  (apt install, systemd unit, `/etc/vacation-station/postgres.env`)
+- [vs-h3u](../.beads/issues.jsonl) — SS14.Watchdog systemd supervision
+- [vs-2p3](../.beads/issues.jsonl) — observability docker-compose stack
+  (prometheus + loki + grafana + promtail) with docker secrets
+
+This dev stack is a zero-sudo companion to those — it does not replace
+them and is not appropriate for a production host.
+
 ## Repository Layout
 
 ```

@@ -1,22 +1,197 @@
 {
-  description = "Development environment for Space Station 14";
+  description = "Development environment for Vacation Station 14";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    services-flake.url = "github:juspay/services-flake";
+  };
 
+  # Outputs:
+  #   - devShells.<system>.default    — same dev shell we always had (shell.nix)
+  #   - packages.<system>.dev-services — process-compose entrypoint for the
+  #     postgres + prometheus + loki + grafana dev stack. Run with
+  #     `nix run .#dev-services`. Data lands in ./.data/ (gitignored).
+  #
+  # The dev stack reads the SAME configs we committed in ops/observability/
+  # (prometheus.yml, loki-config.yml, grafana provisioning). Small in-memory
+  # overlays translate docker-specific bits (host.docker.internal, docker
+  # secret refs) to localhost/dev-literals without mutating the committed
+  # files on disk. See docs/DEVELOPMENT.md for the full story.
   outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-    }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        devShells.default = import ./shell.nix { inherit pkgs; };
-      }
-    );
+    inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      # Linux-only: shell.nix pulls Linux-native graphics/audio stack
+      # (libdrm, mesa, xorg, alsa). Darwin was never supported by the
+      # inherited Delta-V shell.nix; listing it here would break
+      # `nix flake check` on macOS for no benefit.
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+
+      imports = [
+        inputs.process-compose-flake.flakeModule
+      ];
+
+      perSystem =
+        { pkgs, lib, ... }:
+        let
+          # --- Dev-overlay: rewrite host.docker.internal -> localhost in the
+          # committed prod prometheus.yml. The string replace is scoped so
+          # the file on disk is never mutated — the result lives only in the
+          # nix store as prometheus-dev.yml.
+          prometheusConfigDev = pkgs.writeText "prometheus-dev.yml" (
+            builtins.replaceStrings
+              [ "host.docker.internal" ]
+              [ "localhost" ]
+              (builtins.readFile ./ops/observability/prometheus.yml)
+          );
+
+          # Loki prod config uses absolute /loki paths (container FS). In dev
+          # we rewrite those to the services-flake dataDir so state lands in
+          # ./.data/loki/. Same scoped-replace pattern.
+          lokiDataDir = "./.data/loki";
+          lokiConfigDev = pkgs.writeText "loki-dev.yml" (
+            builtins.replaceStrings
+              [ "/loki" ]
+              [ lokiDataDir ]
+              (builtins.readFile ./ops/observability/loki-config.yml)
+          );
+
+          # Grafana provisioning: services-flake's grafana module builds its
+          # own datasources.yaml from the `datasources` option rather than
+          # accepting an external file, so we inline dev equivalents of the
+          # entries in ops/observability/grafana/provisioning/datasources/
+          # datasources.yml. Docker hostnames become localhost, the docker
+          # secret ref ($POSTGRES_PASSWORD) becomes the dev literal.
+          #
+          # Dev-only credentials — do NOT reuse in prod. The prod path uses
+          # a 32-byte random postgres password + a separate grafana admin
+          # password via docker secrets (see ops/postgres/, ops/observability/).
+          devPostgresPassword = "dev-only-insecure";
+          devGrafanaAdminPassword = "admin";
+
+          grafanaDatasources = [
+            {
+              name = "Prometheus";
+              type = "prometheus";
+              access = "proxy";
+              url = "http://localhost:9090";
+              isDefault = true;
+              editable = false;
+              jsonData.timeInterval = "15s";
+            }
+            {
+              name = "Loki";
+              type = "loki";
+              access = "proxy";
+              url = "http://localhost:3100";
+              editable = false;
+              jsonData.maxLines = 5000;
+            }
+            {
+              name = "Postgres";
+              type = "postgres";
+              access = "proxy";
+              url = "localhost:5432";
+              user = "vs14";
+              editable = false;
+              jsonData = {
+                database = "vacation_station";
+                sslmode = "disable";
+                postgresVersion = 1600;
+                timescaledb = false;
+              };
+              secureJsonData.password = devPostgresPassword;
+            }
+          ];
+
+          grafanaProviders = [
+            {
+              name = "vacation-station";
+              orgId = 1;
+              folder = "Vacation Station";
+              type = "file";
+              disableDeletion = false;
+              updateIntervalSeconds = 30;
+              allowUiUpdates = false;
+              options = {
+                path = ./ops/observability/grafana/dashboards;
+                foldersFromFilesStructure = true;
+              };
+            }
+          ];
+        in
+        {
+          devShells.default = import ./shell.nix { inherit pkgs; };
+
+          process-compose."dev-services" = {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+            ];
+
+            services = {
+              postgres.pg1 = {
+                enable = true;
+                port = 5432;
+                listen_addresses = "127.0.0.1";
+                dataDir = "./.data/postgres";
+                initialDatabases = [ { name = "vacation_station"; } ];
+                # Dev-only credentials. Prod path uses a 32-byte random
+                # password loaded from /etc/vacation-station/postgres.env
+                # (see ops/postgres/ + vs-3ty).
+                initialScript.before = ''
+                  CREATE USER vs14 WITH PASSWORD '${devPostgresPassword}';
+                  ALTER DATABASE vacation_station OWNER TO vs14;
+                '';
+              };
+
+              prometheus.prom1 = {
+                enable = true;
+                port = 9090;
+                listenAddress = "127.0.0.1";
+                dataDir = "./.data/prometheus";
+                # Feed the dev-overlay config in via --config.file. The
+                # upstream module also builds its own config from
+                # `extraConfig`; passing an extra flag overrides that with
+                # our committed file (verbatim minus the hostname rewrite).
+                extraFlags = [
+                  "--config.file=${prometheusConfigDev}"
+                ];
+              };
+
+              loki.loki1 = {
+                enable = true;
+                httpAddress = "127.0.0.1";
+                httpPort = 3100;
+                dataDir = lokiDataDir;
+                extraFlags = [
+                  "-config.file=${lokiConfigDev}"
+                ];
+              };
+
+              grafana.graf1 = {
+                enable = true;
+                http_port = 3000;
+                domain = "localhost";
+                dataDir = "./.data/grafana";
+                datasources = grafanaDatasources;
+                providers = grafanaProviders;
+                # Dev-only admin creds. Prod path reads admin password from
+                # a docker secret (see ops/observability/docker-compose.yml).
+                extraConf = {
+                  security = {
+                    admin_user = "admin";
+                    admin_password = devGrafanaAdminPassword;
+                  };
+                  analytics.reporting_enabled = false;
+                  users.allow_sign_up = false;
+                };
+              };
+            };
+          };
+        };
+    };
 }
