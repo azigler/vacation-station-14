@@ -1,0 +1,27 @@
+[Unit]
+Description=Vacation Station 14 — nightly PostgreSQL backup
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+Requires=postgresql.service
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=postgres
+Group=postgres
+
+# Path is set at install time; default assumes the repo is deployed to
+# /opt/vacation-station. Override via drop-in if your layout differs.
+ExecStart=/opt/vacation-station/ops/postgres/backup.sh
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/backups/vacation-station
+
+# Environment overrides (optional)
+# Environment=PG_DB=vacation_station
+# Environment=BACKUP_DIR=/var/backups/vacation-station
+# Environment=DAILY_KEEP=7
+# Environment=WEEKLY_KEEP=4

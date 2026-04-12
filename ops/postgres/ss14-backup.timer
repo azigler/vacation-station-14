@@ -1,0 +1,14 @@
+[Unit]
+Description=Vacation Station 14 — nightly PostgreSQL backup timer
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+
+[Timer]
+# 03:15 UTC every day. Randomized delay avoids hammering shared disk
+# if multiple timers fire together.
+OnCalendar=*-*-* 03:15:00 UTC
+RandomizedDelaySec=15min
+Persistent=true
+Unit=ss14-backup.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,32 @@
+# Vacation Station 14 — server config template (instance: vacation-station)
+#
+# Copy to config.toml and fill in the password. Do NOT commit config.toml
+# — it holds secrets. Only this .example file is tracked.
+#
+# SS14 reads [database] at startup and runs migrations automatically.
+# The vs14 role must own the vacation_station database (setup.postgres.sh
+# handles this).
+
+[database]
+engine = "postgres"
+pg_host = "localhost"
+pg_port = 5432
+pg_database = "vacation_station"
+pg_username = "vs14"
+pg_password = "REPLACE WITH ACTUAL PASSWORD"  # from your password manager
+
+[game]
+hostname = "Vacation Station 14"
+
+[net]
+tickrate = 30
+
+[auth]
+# 0 = guests allowed, 1 = Wizards Den account required
+mode = 1
+
+[console]
+# For first-boot admin bootstrap on localhost only. Remove after
+# promoting a real admin account.
+# loginlocal = true
+# login_host_user = "your-account"
