@@ -39,9 +39,6 @@ tickrate = 30
 # proxy at it — but the hub needs the *advertised* URL to resolve.
 bind = "*:1212"
 
-# Tags surface on the hub; keep them short and accurate.
-tags = "lang:en,region:na"
-
 # Optional: URL the launcher opens for "Connect". Leave commented to use
 # the default ss14:// scheme derived from the bind address.
 # connectaddress = "ss14://play.example.com"
@@ -59,9 +56,23 @@ advertise = false
 # Default upstream hub. Override only if you run a private hub fork.
 # hub_urls = "https://hub.spacestation14.com/"
 
-# The URL clients use to connect back, as advertised to the hub. Leave
-# commented to let the hub infer from the source IP.
-# server_url = "ss14://play.example.com"
+# Tags surface on the hub; keep them short and accurate.
+tags = "lang:en,region:na"
+
+# The URL clients use to connect back, as advertised to the hub.
+server_url = "ss14://ss14.zig.computer"
+
+# -----------------------------------------------------------------------------
+# INFOLINKS — shown in the launcher's server browser as clickable links
+# alongside the hub listing. See SS14 upstream CCVars.Game for the full set.
+# Leave any item unset to omit it from the launcher UI.
+# -----------------------------------------------------------------------------
+
+[infolinks]
+website = "https://ss14.zig.computer/"
+github = "https://github.com/azigler/vacation-station-14"
+# wiki = "https://ss14.zig.computer/rules"   # point at rules until a wiki exists (vs-3e3, vs-352)
+# discord = "https://discord.gg/YOUR_INVITE" # set once Discord server exists (vs-2l2)
 
 # -----------------------------------------------------------------------------
 # AUTH — Wizards Den account requirement.
