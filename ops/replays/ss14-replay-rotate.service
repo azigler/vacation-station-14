@@ -1,0 +1,23 @@
+[Unit]
+Description=Vacation Station 14 — replay rotation + metadata extraction
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+After=ss14-watchdog.service
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+
+ExecStart=/opt/vacation-station/ops/replays/rotate.sh
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/opt/ss14-watchdog/instances/vacation-station/data/replays
+
+# Environment overrides (optional)
+# Environment=REPLAY_ROOT=/opt/ss14-watchdog/instances/vacation-station/data/replays
+# Environment=RAW_KEEP_DAYS=14
+# Environment=METADATA_KEEP_DAYS=180

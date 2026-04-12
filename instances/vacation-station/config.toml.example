@@ -122,3 +122,19 @@ name = "vacation-station"
 # promoting a real admin account.
 # loginlocal = true
 # login_host_user = "your-account"
+
+# -----------------------------------------------------------------------------
+# REPLAY — per-round recording, used as training-data source.
+# -----------------------------------------------------------------------------
+#
+# Every round is captured to a zip (state snapshots + metadata). Recording
+# machinery is loaded by engine default (server_recording_enabled = true);
+# this block enables per-round auto-start + sensible sharded layout.
+#
+# Retention is handled out-of-band by ops/replays/rotate.sh + systemd timer.
+
+[replay]
+auto_record = true
+auto_record_name = "{year}/{month}/round_{round}-{day}T{hour}{minute}Z.zip"
+# Keep admin channel out of training data
+record_admin_chat = false
