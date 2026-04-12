@@ -9,9 +9,16 @@ work, and routes to the appropriate skill.
 
 ## Step 1: Read Foundation
 
-1. `CLAUDE.md` -- project conventions
-2. `.claude/skills/*/SKILL.md` -- available workflows
+1. `CLAUDE.md` — project conventions
+2. **`.claude/skills/*/SKILL.md` — every skill file, read DIRECTLY.**
+   Do NOT dispatch the `Explore` subagent (or any subagent) to summarize
+   these. Internalize our conventions first-hand. Skills are short; read
+   them all. This is critical — agent behavior on this repo depends on
+   understanding every skill's exact rules, and summaries lose the
+   load-bearing details.
 3. Any active plan or spec files
+4. `docs/upstream-sync.md` if present — lists every upstream we track
+   and our mode (submodule / cherry-pick / deploy-as-is)
 
 ## Step 2: Discover Live State
 
