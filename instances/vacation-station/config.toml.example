@@ -15,15 +15,75 @@ pg_database = "vacation_station"
 pg_username = "vs14"
 pg_password = "REPLACE WITH ACTUAL PASSWORD"  # from your password manager
 
+# -----------------------------------------------------------------------------
+# GAME
+# -----------------------------------------------------------------------------
+
 [game]
 hostname = "Vacation Station 14"
 
 [net]
 tickrate = 30
 
+# -----------------------------------------------------------------------------
+# STATUS — HTTP status/info endpoint the launcher + hub scrape.
+# -----------------------------------------------------------------------------
+#
+# Must bind on the same port the watchdog has configured as ApiPort for
+# this instance (1212 by default — see ops/watchdog/appsettings.yml.example).
+# The UDP netcode socket listens on the same port number; that's expected.
+
+[status]
+# "*:1212" = all interfaces, port 1212. Required for public reachability.
+# If you reverse-proxy the status API, bind 127.0.0.1:1212 and point the
+# proxy at it — but the hub needs the *advertised* URL to resolve.
+bind = "*:1212"
+
+# Tags surface on the hub; keep them short and accurate.
+tags = "lang:en,region:na"
+
+# Optional: URL the launcher opens for "Connect". Leave commented to use
+# the default ss14:// scheme derived from the bind address.
+# connectaddress = "ss14://play.example.com"
+
+# -----------------------------------------------------------------------------
+# HUB — advertising on the public server browser.
+# -----------------------------------------------------------------------------
+
+[hub]
+# Flip to true once the server is ready for public traffic. While false,
+# the server is still reachable by direct ss14:// URL but won't show up
+# on the launcher.
+advertise = false
+
+# Default upstream hub. Override only if you run a private hub fork.
+# hub_urls = "https://hub.spacestation14.com/"
+
+# The URL clients use to connect back, as advertised to the hub. Leave
+# commented to let the hub infer from the source IP.
+# server_url = "ss14://play.example.com"
+
+# -----------------------------------------------------------------------------
+# AUTH — Wizards Den account requirement.
+# -----------------------------------------------------------------------------
+#
+#   0 = AllowGuest    — anyone, no account needed (dev / LAN)
+#   1 = Optional      — guests allowed, authenticated clients get verified
+#                       identity (good default for a new public server —
+#                       lets people try before signing up, gives us a real
+#                       username for admin actions)
+#   2 = Required      — must be signed in; recommended for anti-griefing
+#                       once community is established
+#
+# We start at 1 and can tighten to 2 after launch. Flipping this value
+# requires a server restart.
+
 [auth]
-# 0 = guests allowed, 1 = Wizards Den account required
 mode = 1
+
+# -----------------------------------------------------------------------------
+# CONSOLE — first-boot admin bootstrap.
+# -----------------------------------------------------------------------------
 
 [console]
 # For first-boot admin bootstrap on localhost only. Remove after

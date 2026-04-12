@@ -1,0 +1,102 @@
+# SS14.Watchdog ("Ian") configuration — Vacation Station 14
+#
+# Copy to /opt/ss14-watchdog/appsettings.yml and replace placeholder values.
+# setup.watchdog.sh installs this template on first run and generates a real
+# ApiToken via `openssl rand -hex 32`. Do NOT commit the populated file —
+# it contains secrets (API token, webhook URL).
+#
+# Docs: https://docs.spacestation14.com/en/server-hosting/setting-up-ss14-watchdog.html
+
+# BaseUrl is the externally-visible root the watchdog advertises to game
+# server children (they call back for update pings, etc.). Keep it on
+# localhost unless you're fronting with a reverse proxy.
+BaseUrl: http://localhost:5000/
+
+# Kestrel bind address. 127.0.0.1 = localhost only — the admin API is not
+# reachable from the public internet. Use `http://*:5000` plus a reverse
+# proxy (Caddy / nginx) with TLS + auth if you want remote control; see
+# docs/NETWORKING.md for the Caddy pattern.
+Urls: http://127.0.0.1:5000
+
+# --- Logging -----------------------------------------------------------------
+# Serilog emits structured logs to Console (journalctl) and a rolling file.
+# The Loki sink is pre-wired but commented — enable it once vs-2p3 lands
+# the Loki stack on the host.
+Serilog:
+  MinimumLevel:
+    Default: Information
+    Override:
+      Microsoft: Warning
+      Microsoft.Hosting.Lifetime: Information
+      System: Warning
+  WriteTo:
+    - Name: Console
+    - Name: File
+      Args:
+        path: /var/log/ss14-watchdog/watchdog-.log
+        rollingInterval: Day
+        retainedFileCountLimit: 14
+        shared: true
+    # TODO(vs-2p3): enable Loki sink once the log aggregator is deployed.
+    # - Name: GrafanaLoki
+    #   Args:
+    #     uri: http://localhost:3100
+    #     labels:
+    #       - key: app
+    #         value: ss14-watchdog
+    #       - key: instance
+    #         value: vacation-station
+  Enrich:
+    - FromLogContext
+
+# --- Process supervision -----------------------------------------------------
+Process:
+  # PersistServers=true keeps game-server children running across watchdog
+  # restarts. Requires KillMode=process in the systemd unit — otherwise
+  # systemd's cgroup kill takes the children down with us on stop/reload.
+  PersistServers: true
+
+# --- Notifications -----------------------------------------------------------
+Notification:
+  # Uncomment and set to a Discord webhook URL to get crash/restart alerts.
+  # Store the webhook in your password manager; treat as a secret.
+  # DiscordWebhook: https://discord.com/api/webhooks/REPLACE_ME
+
+# --- Managed servers ---------------------------------------------------------
+Servers:
+  Instances:
+    vacation-station:
+      # ApiToken gates the /instances/<name>/... admin endpoints.
+      # setup.watchdog.sh replaces this placeholder with a fresh
+      # `openssl rand -hex 32` on first install. Re-runs preserve the
+      # existing value. Rotate by editing this file + restarting the unit.
+      ApiToken: REPLACE_WITH_GENERATED_TOKEN
+
+      # Game-server HTTP status port. Must match [status] bind in the
+      # instance's config.toml (1212 by default). UDP 1212 is the
+      # netcode port and is configured on the game-server side.
+      ApiPort: 1212
+
+      # Update provider:
+      #   Local    — operator drops new builds into
+      #              instances/vacation-station/binaries/ manually.
+      #              Good for day 1 before we publish a CDN.
+      #   Manifest — fetch from a Robust.Cdn-served manifest URL. Switch
+      #              to this once we stand up a build/publish pipeline;
+      #              see docs/OPERATIONS.md for the migration path.
+      UpdateType: Local
+      # Uncomment when switching to Manifest:
+      # Updates:
+      #   ManifestUrl: https://cdn.example.com/vacation-station/manifest.json
+
+      # Seconds to wait for the game server to respond before the
+      # watchdog considers it hung and restarts it.
+      TimeoutSeconds: 60
+
+      # Environment variables injected into the Robust.Server child.
+      # TieredPGO + QuickJitForLoops are .NET perf wins validated by
+      # upstream SS14. AVX enables vectorised math in Robust.Numerics.
+      EnvironmentVariables:
+        DOTNET_TieredPGO: "1"
+        DOTNET_TC_QuickJitForLoops: "1"
+        ROBUST_NUMERICS_AVX: "true"
