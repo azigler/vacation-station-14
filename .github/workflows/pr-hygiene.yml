@@ -1,0 +1,155 @@
+name: "PR Hygiene (advisory)"
+
+# Advisory-only hygiene checks. Never blocks a PR; only leaves a comment
+# suggesting the contributor tidy something before a human reviews.
+#
+# Checks:
+#   1. Multi-theme PR: files touch more than one major top-level area
+#      (vs-<layer>, _DV, Content.*, ops/, docs/, .github/...). We suggest
+#      splitting; the /vibe-maintainer skill prefers split-merge over
+#      request-changes anyway, so this is a contributor hint.
+#   2. Missing `:cl:` block on PRs touching player-facing paths
+#      (Resources/Prototypes/_VS/, Resources/Locale/en-US/_VS/,
+#      Resources/Textures/_VS/, Resources/Audio/_VS/). We point at
+#      CONTRIBUTING.md rather than lecturing.
+#
+# Comments are marker-tagged so subsequent runs replace the previous
+# comment rather than stacking.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-hygiene-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      MARKER: "<!-- vs14-pr-hygiene -->"
+    steps:
+      - name: Gather PR data
+        id: gather
+        run: |
+          set -euo pipefail
+          pr_json=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" \
+            --json files,body,title,additions,deletions)
+          echo "$pr_json" > pr.json
+
+      - name: Compute hygiene notes
+        id: compute
+        run: |
+          set -euo pipefail
+
+          # --- Area classification (top-level theme buckets) ---------------
+          areas=$(jq -r '[.files[].path] |
+            map(
+              if   startswith("Content.Server/_VS/")    then "_VS/server"
+              elif startswith("Content.Client/_VS/")    then "_VS/client"
+              elif startswith("Content.Shared/_VS/")    then "_VS/shared"
+              elif startswith("Content.Server/_DV/")    then "_DV"
+              elif startswith("Content.Client/_DV/")    then "_DV"
+              elif startswith("Content.Shared/_DV/")    then "_DV"
+              elif startswith("Content.Server/")        then "Content.Server"
+              elif startswith("Content.Client/")        then "Content.Client"
+              elif startswith("Content.Shared/")        then "Content.Shared"
+              elif startswith("Resources/Prototypes/")  then "Resources/Prototypes"
+              elif startswith("Resources/Locale/")      then "Resources/Locale"
+              elif startswith("Resources/Textures/")    then "Resources/Textures"
+              elif startswith("Resources/Audio/")       then "Resources/Audio"
+              elif startswith("Resources/")             then "Resources/other"
+              elif startswith("ops/")                   then "ops"
+              elif startswith("docs/")                  then "docs"
+              elif startswith(".github/")               then ".github"
+              elif startswith(".claude/")               then ".claude"
+              elif startswith(".beads/")                then ".beads"
+              else "other"
+              end
+            ) | unique' pr.json)
+          area_count=$(jq 'length' <<<"$areas")
+          areas_csv=$(jq -r 'join(", ")' <<<"$areas")
+          echo "areas=$areas_csv" >> "$GITHUB_OUTPUT"
+          echo "area_count=$area_count" >> "$GITHUB_OUTPUT"
+
+          # --- Player-facing gate --------------------------------------------
+          player_facing=$(jq -r '[.files[].path] | any(
+            startswith("Resources/Prototypes/_VS/") or
+            startswith("Resources/Locale/en-US/_VS/") or
+            startswith("Resources/Textures/_VS/") or
+            startswith("Resources/Audio/_VS/")
+          )' pr.json)
+          echo "player_facing=$player_facing" >> "$GITHUB_OUTPUT"
+
+          # --- `:cl:` block detection ----------------------------------------
+          body=$(jq -r '.body // ""' pr.json)
+          has_cl="false"
+          if printf '%s' "$body" | grep -q ':cl:'; then
+            has_cl="true"
+          fi
+          echo "has_cl=$has_cl" >> "$GITHUB_OUTPUT"
+
+      - name: Build advisory comment
+        id: build
+        env:
+          AREAS: ${{ steps.compute.outputs.areas }}
+          AREA_COUNT: ${{ steps.compute.outputs.area_count }}
+          PLAYER_FACING: ${{ steps.compute.outputs.player_facing }}
+          HAS_CL: ${{ steps.compute.outputs.has_cl }}
+        run: |
+          set -euo pipefail
+          notes=()
+
+          if [ "${AREA_COUNT:-0}" -gt 1 ]; then
+            # Only warn on genuinely cross-theme PRs. Single-area PRs that
+            # happen to touch .beads or .claude alongside code are normal.
+            case "$AREAS" in
+              *"_VS/"*"_DV"*|*"_DV"*"_VS/"*)
+                notes+=("- This PR mixes \`_VS/\` and \`_DV/\` code. Per CONTRIBUTING.md, namespace isolation is a hygiene rule -- please split the fork-specific changes into a separate PR so the license/attribution chain stays clean.") ;;
+              *)
+                notes+=("- This PR touches **$AREA_COUNT top-level areas** (\`$AREAS\`). Consider splitting into one-concern-per-PR so review + revert stay surgical. See CONTRIBUTING.md -> 'One concern per PR'.") ;;
+            esac
+          fi
+
+          if [ "$PLAYER_FACING" = "true" ] && [ "$HAS_CL" = "false" ]; then
+            notes+=("- This PR touches player-facing content (prototypes / locale / textures / audio under \`_VS/\`) but the PR body has no \`:cl:\` changelog block. See CONTRIBUTING.md -> 'Changelog block' for the format. Not a blocker, just a reminder.")
+          fi
+
+          if [ "${#notes[@]}" -eq 0 ]; then
+            echo "No advisory notes; nothing to post."
+            echo "post=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          {
+            printf '%s\n' "<!-- vs14-pr-hygiene -->"
+            printf '### Hygiene notes (advisory)\n\n'
+            printf 'These do not block the PR. Addressing them speeds review.\n\n'
+            for n in "${notes[@]}"; do
+              printf '%s\n' "$n"
+            done
+            printf '\n_Posted by `.github/workflows/pr-hygiene.yml`._\n'
+          } > hygiene.md
+
+          echo "post=true" >> "$GITHUB_OUTPUT"
+
+      - name: Post / refresh advisory comment
+        if: steps.build.outputs.post == 'true'
+        run: |
+          set -euo pipefail
+          prior_ids=$(gh api "repos/$GH_REPO/issues/$PR_NUMBER/comments" \
+            --jq "[.[] | select(.body | contains(\"$MARKER\")) | .id] | .[]" || true)
+          for cid in $prior_ids; do
+            gh api -X DELETE "repos/$GH_REPO/issues/comments/$cid" >/dev/null 2>&1 || true
+          done
+          gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body-file hygiene.md

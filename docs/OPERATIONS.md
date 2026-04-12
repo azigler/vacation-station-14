@@ -658,3 +658,128 @@ shrunken dashboard on the next poll.
 - The `$Server` template variable is rewritten to
   `label_values(ss14_round_length{job="gameservers"}, server)`, defaulting
   to `vacation-station` to match the label set in `prometheus.yml`.
+
+## Automated PR handling
+
+VS14 is maintained by one human plus AI assistance (see
+[`.claude/skills/vibe-maintainer/SKILL.md`](../.claude/skills/vibe-maintainer/SKILL.md)),
+so the bookkeeping portion of maintainer work is automated. Three GitHub
+Actions workflows implement the policy documented in the
+`/vibe-maintainer` skill and [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
+The output is deliberately **machine-readable** (stable label names plus
+a marker-tagged comment on every open PR) so the maintainer's agent can
+pick up context in one fetch rather than N tool calls. Humans read the
+same output; it is not a proprietary encoding.
+
+### Workflow stack
+
+| Workflow | File | Trigger | Purpose |
+|---|---|---|---|
+| PR Triage | `.github/workflows/pr-triage.yml` | `pull_request_target` + `schedule` (every 4h) + `workflow_dispatch` | Auto-close drafts, auto-close banned-author PRs, apply `auto-merge` for trusted-bot XS/green PRs, post the `<!-- vs14-triage-summary -->` comment. |
+| PR Auto-merge | `.github/workflows/auto-merge.yml` | `pull_request_target` (label changes) + `workflow_run` (CI completes) + `schedule` (every 30min safety net) | Squash-merges PRs that carry `auto-merge`, pass all gates, and have soaked for `AUTO_MERGE_SOAK_HOURS`. Strips the label and comments if CI turns red mid-soak. |
+| PR Hygiene | `.github/workflows/pr-hygiene.yml` | `pull_request_target` (opened / synchronize / reopened / ready_for_review) | Advisory-only. Comments on multi-theme PRs and on player-facing PRs missing a `:cl:` block. Never blocks. |
+
+Shared helpers live under `.github/workflows/scripts/` (bash; use `gh`
+CLI plus `jq`/`yq`). They are shellcheck-clean (`shellcheck -S warning`)
+and intended to be reusable from a `workflow_dispatch` run if you need
+to re-triage by hand.
+
+### Trust configuration
+
+Author trust is data, not code:
+
+- `.github/trusted-authors.yml`
+  - `bots:` -- automatic `auto-merge` label on XS / green PRs. Seeded
+    with `dependabot[bot]` and `renovate[bot]`.
+  - `humans:` -- humans who have demonstrated a sustained record of
+    clean, well-scoped PRs. Start empty and grow **organically**. A
+    "human-trusted" author is not auto-merged; they get an `easy-win`
+    categorization hint in the triage summary.
+- `.github/banned-authors.yml`
+  - `users:` -- logins whose PRs are immediately closed with a polite
+    template. Use rarely; default posture is absorb-by-default.
+
+**To add a human to `trusted-authors.yml`:**
+
+1. Confirm at least ~5 merged PRs with no maintainer rework.
+2. Open a PR editing `.github/trusted-authors.yml` only -- add the
+   login under `humans:`. Keep the change small (size-XS) so it can
+   soak and auto-merge if you like your own dogfood.
+3. Note the promotion in the PR body; no ceremony required.
+
+**To ban an author:**
+
+Edit `banned-authors.yml` directly and land a commit. The next triage
+sweep (cron every 4h, or `workflow_dispatch`) closes their open PRs.
+
+### Tuning the soak timer
+
+Auto-merge will not merge before `AUTO_MERGE_SOAK_HOURS` (default `12`)
+has elapsed since the label was applied. The timer exists to give the
+human maintainer a window to intervene -- tighten it when you trust the
+pipeline; loosen it when you do not.
+
+To change it, edit the `env:` block in `.github/workflows/auto-merge.yml`:
+
+```yaml
+env:
+  AUTO_MERGE_SOAK_HOURS: "12"   # lower = faster auto-merge
+  AUTO_MERGE_LABEL: "auto-merge"
+  AUTO_MERGE_BLOCKLIST: "needsreview,S: Needs Review,do-not-merge,status/blocked"
+```
+
+Other tuning knobs live in the same block: the block-list lets you
+rename / extend the labels that veto auto-merge without rewriting the
+script.
+
+### Triage summary format
+
+The triage-summary comment is tagged with an HTML marker and a
+markdown table. Downstream parsers (see
+`.claude/skills/vibe-maintainer/SKILL.md`) key off the marker plus the
+`| key | value |` table schema; keep those stable when editing:
+
+```markdown
+<!-- vs14-triage-summary -->
+## Triage summary
+
+| key | value |
+|-----|-------|
+| author | `dependabot[bot]` |
+| trusted-bot | `true` |
+| size-bucket | `XS` |
+| ci-state | `green` |
+| category | `easy-win` |
+| auto-merge-eligible | `true` |
+...
+```
+
+The `category` field is always one of `easy-win`,
+`fix-merge-candidate`, or `needs-deeper-look` -- matching the tiers in
+the `/vibe-maintainer` skill.
+
+### Discord notifications (deferred)
+
+`.github/workflows/auto-merge.yml` contains a commented-out Discord
+notification step. It is gated on the `DISCORD_OPS_WEBHOOK` repo secret
+and pairs with bead **vs-2l2** (Discord ops integration). To enable:
+
+1. Provision the webhook in the ops Discord channel.
+2. Add the URL to the repo as secret `DISCORD_OPS_WEBHOOK`.
+3. Uncomment the `Notify Discord on merge` step in
+   `auto-merge.yml`.
+
+The auto-merge eval script writes merged PR numbers to
+`$GITHUB_WORKSPACE/.auto-merged` during the run; the notification step
+reads that file so a single run can announce a batch of merges.
+
+### Manual override
+
+- **Force re-triage:** `gh workflow run "PR Triage"` (the
+  `workflow_dispatch` trigger sweeps all open PRs).
+- **Force auto-merge evaluation:** `gh workflow run "PR Auto-merge"`.
+- **Skip auto-merge on a PR:** remove the `auto-merge` label, or add
+  any label in `AUTO_MERGE_BLOCKLIST` (e.g. `do-not-merge`).
+- **Bypass soak window:** either lower `AUTO_MERGE_SOAK_HOURS`
+  temporarily, or merge by hand via `gh pr merge --squash`.

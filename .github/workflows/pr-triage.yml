@@ -1,0 +1,110 @@
+name: "PR Triage"
+
+# Scheduled + event-driven PR triage.
+#
+# Responsibilities:
+#   1. Auto-close draft PRs (we do not keep drafts open -- open a PR when
+#      you want review).
+#   2. Auto-close PRs authored by anyone listed in .github/banned-authors.yml.
+#   3. Apply the `auto-merge` label when a trusted-bot PR is small + green.
+#   4. Post a machine-readable "triage-summary" comment on each newly
+#      opened PR so the /vibe-maintainer skill can pick up context in
+#      one fetch instead of N tool calls.
+#
+# The output comment is parsed by agents; keep the structure stable.
+# See docs/OPERATIONS.md -> "Automated PR handling" for tuning.
+
+on:
+  schedule:
+    # Every 4 hours. Tune in docs/OPERATIONS.md if PR volume grows.
+    - cron: "0 */4 * * *"
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: read
+
+concurrency:
+  group: pr-triage-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  # -------------------------------------------------------------------
+  # Event-driven path: runs when a single PR opens / syncs / reopens.
+  # -------------------------------------------------------------------
+  triage-single:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout (for config files)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/trusted-authors.yml
+            .github/banned-authors.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Install yq
+        run: |
+          sudo curl -sSL -o /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Triage PR
+        run: .github/workflows/scripts/triage-pr.sh "$PR_NUMBER"
+        env:
+          GH_REPO: ${{ github.repository }}
+          TRIAGE_POST_SUMMARY: "true"
+
+  # -------------------------------------------------------------------
+  # Scheduled path: sweeps every open PR on cron + workflow_dispatch.
+  # -------------------------------------------------------------------
+  triage-sweep:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout (for config files)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/trusted-authors.yml
+            .github/banned-authors.yml
+            .github/workflows/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Install yq
+        run: |
+          sudo curl -sSL -o /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Sweep open PRs
+        env:
+          GH_REPO: ${{ github.repository }}
+          # Scheduled sweeps only re-post a summary comment if one does
+          # not already exist (the script checks for the marker string).
+          TRIAGE_POST_SUMMARY: "if-missing"
+        run: |
+          set -euo pipefail
+          prs=$(gh pr list --repo "$GH_REPO" --state open --json number \
+                  --jq '.[].number')
+          if [ -z "$prs" ]; then
+            echo "No open PRs to triage."
+            exit 0
+          fi
+          while read -r pr; do
+            [ -z "$pr" ] && continue
+            echo "::group::Triage PR #$pr"
+            .github/workflows/scripts/triage-pr.sh "$pr" || \
+              echo "triage-pr.sh failed for #$pr (continuing)"
+            echo "::endgroup::"
+          done <<< "$prs"
