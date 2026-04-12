@@ -4,6 +4,15 @@
 # queries. The Postgres datasource targets the SS14.Admin / game-server
 # database on the host; its password is provided by the operator via the
 # $POSTGRES_PASSWORD env var (see ops/observability/.env.example).
+#
+# When editing datasources here, also update the dev flake's equivalent
+# block in `flake.nix` — `perSystem.process-compose."dev-services".
+# services.grafana.graf1.datasources` (`grafanaDatasources` let-binding).
+# Keep the `type` and `jsonData` fields in sync, otherwise dashboards will
+# silently render "no datasource" in one environment but not the other.
+# The dev stack currently omits Postgres (the `grafana-postgresql-datasource`
+# plugin isn't packaged in nixpkgs and services-flake's grafana module
+# exposes no runtime plugin-install hook — see vs-3oe for the decision).
 
 apiVersion: 1
 
@@ -26,7 +35,12 @@ datasources:
       maxLines: 5000
 
   - name: Postgres
-    type: postgres
+    # `grafana-postgresql-datasource` is the plugin successor to the built-in
+    # `postgres` type. Dashboards in ops/observability/grafana/dashboards/ were
+    # authored against the plugin, so provisioning has to match or panels
+    # won't resolve a datasource. The plugin is installed at container boot
+    # via GF_INSTALL_PLUGINS in docker-compose.yml.
+    type: grafana-postgresql-datasource
     access: proxy
     # Grafana resolves host.docker.internal via the container's extra_hosts
     # entry; Postgres on the host listens on 127.0.0.1:5432.

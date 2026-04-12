@@ -67,6 +67,25 @@
           # datasources.yml. Docker hostnames become localhost, the docker
           # secret ref ($POSTGRES_PASSWORD) becomes the dev literal.
           #
+          # When editing datasources here, also update the prod copy at
+          # ops/observability/grafana/provisioning/datasources/datasources.yml.
+          # Keep `type` + `jsonData` in sync or dashboards will render
+          # "no datasource" in one surface but not the other (vs-3oe).
+          #
+          # NOTE: the Postgres datasource from prod is intentionally OMITTED
+          # here. Dashboards reference `type: grafana-postgresql-datasource`
+          # (the plugin), which is not packaged in nixpkgs `grafanaPlugins`,
+          # and services-flake's grafana module exposes no runtime
+          # plugin-install hook (no `extraEnv`/`GF_INSTALL_PLUGINS` path;
+          # only a `declarativePlugins` list of nix-packaged plugins). The
+          # options were:
+          #   (a) install the plugin at runtime — blocked by the module,
+          #   (b) drop Postgres from dev — chosen.
+          # Postgres-backed dashboard panels will show "no datasource" in
+          # `nix run .#dev-services`; Prometheus + Loki panels work fine.
+          # See docs/DEVELOPMENT.md "Dev Services Stack" for the contributor
+          # workflow to get Postgres dashboard coverage.
+          #
           # Dev-only credentials — do NOT reuse in prod. The prod path uses
           # a 32-byte random postgres password + a separate grafana admin
           # password via docker secrets (see ops/postgres/, ops/observability/).
@@ -90,21 +109,6 @@
               url = "http://localhost:3100";
               editable = false;
               jsonData.maxLines = 5000;
-            }
-            {
-              name = "Postgres";
-              type = "postgres";
-              access = "proxy";
-              url = "localhost:5432";
-              user = "vs14";
-              editable = false;
-              jsonData = {
-                database = "vacation_station";
-                sslmode = "disable";
-                postgresVersion = 1600;
-                timescaledb = false;
-              };
-              secureJsonData.password = devPostgresPassword;
             }
           ];
 

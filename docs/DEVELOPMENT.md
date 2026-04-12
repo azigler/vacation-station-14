@@ -144,9 +144,8 @@ committed YAML, etc.).
 - Loki config (`ops/observability/loki-config.yml`) — only `/loki` path
   prefixes rewrite to `./.data/loki`. Retention, schema, compactor
   settings unchanged.
-- Grafana datasources — same shape as `ops/observability/grafana/
-  provisioning/datasources/datasources.yml`, just with localhost URLs
-  and the dev password literal instead of `$POSTGRES_PASSWORD`.
+- Grafana datasources — Prometheus + Loki match prod (just with localhost
+  URLs). See the note below on Postgres.
 - Grafana dashboards — sourced directly from
   `ops/observability/grafana/dashboards/` (same JSON files prod loads).
 - Postgres schema — SS14's EF Core migrations run identically; the
@@ -160,6 +159,16 @@ committed YAML, etc.).
 - Insecure literal credentials
 - No TLS / Caddy reverse proxy in front of grafana
 - Data in project `./.data/` instead of `/var/lib/*`
+- **No Postgres Grafana datasource.** Prod uses the
+  `grafana-postgresql-datasource` plugin (installed at container boot via
+  `GF_INSTALL_PLUGINS`). services-flake's grafana module has no runtime
+  plugin-install hook and the plugin isn't in nixpkgs `grafanaPlugins`, so
+  the dev stack omits the datasource entirely. Postgres-backed panels on
+  the Game Servers / Perf Metrics dashboards will render "no datasource"
+  locally. Prometheus + Loki panels are unaffected. If you need to
+  exercise Postgres panels against live data, spin up the full
+  `ops/observability/docker-compose.yml` stack (pointed at a local
+  `postgres` if desired) instead of the dev flake. Tracked under vs-3oe.
 
 ### Relationship to prod beads
 

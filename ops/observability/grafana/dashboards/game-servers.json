@@ -109,7 +109,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "postgres",
+            "type": "grafana-postgresql-datasource",
             "uid": "Postgres"
           },
           "editorMode": "code",
@@ -149,15 +149,9 @@
                   "properties": {
                     "field": "\"time\"",
                     "operator": "equal",
-                    "value": [
-                      null
-                    ],
-                    "valueSrc": [
-                      "value"
-                    ],
-                    "valueType": [
-                      "datetime"
-                    ]
+                    "value": [null],
+                    "valueSrc": ["value"],
+                    "valueType": ["datetime"]
                   },
                   "type": "rule"
                 }
@@ -437,21 +431,14 @@
         "conditions": [
           {
             "evaluator": {
-              "params": [
-                1,
-                28
-              ],
+              "params": [1, 28],
               "type": "within_range"
             },
             "operator": {
               "type": "and"
             },
             "query": {
-              "params": [
-                "A",
-                "1m",
-                "now"
-              ]
+              "params": ["A", "1m", "now"]
             },
             "reducer": {
               "params": [],
@@ -660,9 +647,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -752,9 +737,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -851,9 +834,7 @@
         "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -993,20 +974,14 @@
         "conditions": [
           {
             "evaluator": {
-              "params": [
-                520850446
-              ],
+              "params": [520850446],
               "type": "gt"
             },
             "operator": {
               "type": "and"
             },
             "query": {
-              "params": [
-                "A",
-                "1m",
-                "now"
-              ]
+              "params": ["A", "1m", "now"]
             },
             "reducer": {
               "params": [],
@@ -1260,10 +1235,7 @@
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": [
-    "game servers",
-    "vacation-station"
-  ],
+  "tags": ["game servers", "vacation-station"],
   "templating": {
     "list": []
   },
