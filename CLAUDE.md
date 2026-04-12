@@ -56,6 +56,27 @@ Alternative: a nix flake (`flake.nix`/`shell.nix`/`.envrc`) is inherited from
 Delta-V for reproducible dev environments. Optional — not required by hooks or
 skills. See `docs/DEVELOPMENT.md` for details.
 
+### Nix env in worktree subagents
+
+The `session-start.sh` hook runs `direnv allow .` in every worktree that has
+an `.envrc`, so the per-path approval is always in place. However, non-
+interactive shells spawned by the agent's Bash tool do not have a `direnv
+hook` wired in (we deliberately don't touch user-global dotfiles), so the
+flake env does not auto-activate on `cd`.
+
+In practice the orchestrator's env (nix paths already resolved from the main
+worktree's `.envrc`) is inherited by subagent shells, so `dotnet`, etc.
+usually Just Work. If a subagent needs to guarantee the flake toolchain is
+active — e.g. before invoking `dotnet`, `shellcheck`, or any tool it expects
+to come from the flake rather than the system — prepend this to the command:
+
+```bash
+eval "$(direnv export bash)" 2>/dev/null; dotnet build
+```
+
+This is belt-and-suspenders: safe no-op if already active, cheap on repeat
+invocations thanks to the local nix store cache.
+
 ## Upstream Sync
 
 Delta-V is the `upstream` remote. Periodic sync:
