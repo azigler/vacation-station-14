@@ -1,0 +1,14 @@
+Vacation Station 14 — Flavor A architectural reset
+Phase 1 clear commit: 86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d
+Date: 2026-04-12
+
+Base: space-wizards/space-station-14 @ upstream-sw/master
+RobustToolbox pin: 3136118b5338ef2d9580178caf5c723e65eb76e7 (Version: 275.2.0)
+
+Prior lineage (pre-Flavor-A, superseded):
+- Delta-V Station fork point
+  Commit: a3e9436cc00453e81ebd85859803d9dfc6d24893
+  Date: 2026-04-11
+  Source: https://github.com/DeltaV-Station/Delta-v
+
+Safety tag for pre-reset state: pre-flavor-a-clear
