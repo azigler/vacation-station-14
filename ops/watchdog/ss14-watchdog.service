@@ -1,0 +1,43 @@
+[Unit]
+# SS14.Watchdog ("Ian") supervises Robust.Server, handles auto-updates,
+# crash recovery, and exposes an admin HTTP API.
+#
+# Installed by setup.watchdog.sh. The game server instance data lives
+# under WorkingDirectory/instances/<name>/.
+Description=SS14 Watchdog (Vacation Station 14)
+Documentation=https://docs.spacestation14.com/en/server-hosting/setting-up-ss14-watchdog.html
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ss14
+Group=ss14
+WorkingDirectory=/opt/ss14-watchdog
+ExecStart=/opt/ss14-watchdog/SS14.Watchdog
+
+# KillMode=process — required when PersistServers is enabled. Default
+# (control-group) would kill the game-server children on watchdog
+# restart, defeating the persistence.
+KillMode=process
+
+# Don't let the kernel OOM-killer take the watchdog down just because
+# the game server child tripped the OOM threshold.
+OOMPolicy=continue
+
+# .NET wants a writable home for CLI telemetry / lockfiles. /tmp is
+# fine — nothing important lives there.
+Environment="DOTNET_CLI_HOME=/tmp"
+
+Restart=on-failure
+RestartSec=5
+
+# Reasonable hardening. Not paranoid — the watchdog needs to exec a
+# child dotnet process and read/write under WorkingDirectory.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
