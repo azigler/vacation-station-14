@@ -8,10 +8,13 @@ sync at. The per-cherry-pick workflow lives in
 ## License boundary
 
 AGPLv3 license boundary anchored at the Flavor A clear commit
-`86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12). Content
-contributed after that SHA is AGPLv3 unless explicitly annotated.
-Inherited content keeps its original license — see the mode column
-below.
+`86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12), tagged
+permanently as `flavor-a-baseline-2026-04-12`. Content contributed
+after that SHA is AGPLv3 unless explicitly annotated. Inherited
+content keeps its original license — see the mode column below.
+
+The pre-reset state is preserved at the `pre-flavor-a-clear` tag
+for historical / license-chain purposes.
 
 ## Tracked upstreams
 

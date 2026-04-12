@@ -27,9 +27,11 @@ remain at liberty to contribute their work anywhere else they please.
 
 Content contributed to this repository **after** commit
 `86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` — the "Flavor A" clear
-commit that rebased VS14 on a pure SS14 base — is licensed under
-the GNU Affero General Public License version 3.0
-([AGPLv3](LICENSE-AGPLv3.txt)) unless explicitly annotated otherwise.
+commit that rebased VS14 on a pure SS14 base, tagged permanently as
+[`flavor-a-baseline-2026-04-12`](https://github.com/azigler/vacation-station-14/releases/tag/flavor-a-baseline-2026-04-12)
+— is licensed under the GNU Affero General Public License version
+3.0 ([AGPLv3](LICENSE-AGPLv3.txt)) unless explicitly annotated
+otherwise.
 
 Content inherited from upstream forks retains its original license
 (see the attribution table below). Modifications to upstream-
