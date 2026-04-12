@@ -46,11 +46,27 @@ dotnet run --project Content.YAMLLinter
 Run all checks before merging:
 
 ```bash
-dotnet build --configuration DebugOpt \
+dotnet format --verify-no-changes \
+  && dotnet build --configuration DebugOpt \
   && dotnet test Content.Tests --no-build --configuration DebugOpt \
   && dotnet test Content.IntegrationTests --no-build --configuration DebugOpt \
   && dotnet run --project Content.YAMLLinter
 ```
+
+## Format Check
+
+`dotnet format` enforces `.editorconfig` style rules (4-space C# indent, Allman
+braces, file-scoped namespaces, etc.) and surfaces Roslyn analyzer findings.
+
+```bash
+dotnet format --verify-no-changes    # check only
+dotnet format                        # apply fixes
+dotnet format --include <path>       # specific file or directory
+```
+
+`hooks/lint-on-write.sh` runs `dotnet format whitespace` per-file automatically
+on Edit/Write. `hooks/pre-commit-checks.sh` runs `--verify-no-changes` on staged
+`_VS/*.cs` files before commits.
 
 ## Common Build Issues
 

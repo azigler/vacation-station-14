@@ -14,7 +14,6 @@ esac
 # If git add is chained before git commit, run it now so staged files are visible
 if echo "$COMMAND" | grep -qP 'git add .+&&'; then
   ADD_CMD=$(echo "$COMMAND" | grep -oP 'git add [^&;]+')
-  # Block overly-broad staging
   if echo "$ADD_CMD" | grep -qP 'git add\s+(-A|--all|\.\s*$)'; then
     echo "Blocked: use 'git add <specific-files>', never 'git add .', 'git add -A', or 'git add --all'." >&2
     exit 2
@@ -23,7 +22,6 @@ if echo "$COMMAND" | grep -qP 'git add .+&&'; then
 fi
 
 set +e
-FAILED=0
 
 # 1. Sync bead state (skip auto-stage in worktrees)
 if command -v br &>/dev/null; then
@@ -33,11 +31,12 @@ if command -v br &>/dev/null; then
   fi
 fi
 
+# 2. Warn on missing bead trailer
 if ! echo "$COMMAND" | grep -q 'Bead:'; then
   echo "Warning: commit message has no Bead: trailer." >&2
 fi
 
-# 2. Check for RobustToolbox submodule in staged changes (CI rejects this)
+# 3. Hard blocks for SS14 CI
 STAGED=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
 
 if echo "$STAGED" | grep -q '^RobustToolbox$'; then
@@ -46,10 +45,13 @@ if echo "$STAGED" | grep -q '^RobustToolbox$'; then
   exit 2
 fi
 
-# 3. Check for CRLF line endings in staged files (CI rejects them)
+# 4. CRLF check on staged files
 if [ -n "$STAGED" ]; then
   CRLF_FILES=""
   while IFS= read -r file; do
+    case "$file" in
+      */RobustToolbox/*) continue ;;  # engine submodule
+    esac
     if [ -f "$file" ] && file "$file" 2>/dev/null | grep -q 'CRLF'; then
       CRLF_FILES="${CRLF_FILES}${file}\n"
     fi
@@ -58,14 +60,34 @@ if [ -n "$STAGED" ]; then
   if [ -n "$CRLF_FILES" ]; then
     echo "BLOCKED: files with CRLF line endings (CI will reject):" >&2
     echo -e "$CRLF_FILES" >&2
-    echo "Fix: dos2unix <file> or re-save with LF endings" >&2
+    echo "Fix: dos2unix <file>" >&2
     exit 2
   fi
 fi
 
-if [ $FAILED -ne 0 ]; then
-  echo "Pre-commit checks failed. Fix errors before committing." >&2
-  exit 2
+# 5. dotnet format --verify-no-changes on staged C# files (only VS14 code)
+#    Skip in worktrees (slower, orchestrator runs quality gate)
+CS_STAGED=$(echo "$STAGED" | grep -E '^(Content\.(Server|Client|Shared))/_VS/.*\.cs$' || true)
+if [ -n "$CS_STAGED" ] \
+   && ! echo "$(git rev-parse --show-toplevel 2>/dev/null)" | grep -q '/.claude/worktrees/' \
+   && command -v dotnet &>/dev/null \
+   && [ -f "SpaceStation14.slnx" ]; then
+  # Build the --include list
+  INCLUDE_ARGS=""
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    INCLUDE_ARGS="$INCLUDE_ARGS --include $file"
+  done <<< "$CS_STAGED"
+
+  if [ -n "$INCLUDE_ARGS" ]; then
+    OUTPUT=$(dotnet format whitespace $INCLUDE_ARGS --verify-no-changes --no-restore 2>&1)
+    if [ $? -ne 0 ]; then
+      echo "BLOCKED: dotnet format whitespace check failed on _VS/ files." >&2
+      echo "$OUTPUT" >&2
+      echo "Fix: dotnet format whitespace $INCLUDE_ARGS --no-restore" >&2
+      exit 2
+    fi
+  fi
 fi
 
 exit 0
