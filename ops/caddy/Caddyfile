@@ -1,0 +1,52 @@
+# Vacation Station 14 — Caddy reverse proxy
+#
+# Fronts the SS14.Watchdog admin + download endpoints with HTTPS so we
+# can close ufw :5000 to the public. Two hostnames (Option A from vs-2y8):
+#
+#   download.<DOMAIN>  — public client-zip download only
+#   admin.<DOMAIN>     — watchdog admin API (basic-auth gated by
+#                        watchdog's own ApiToken already)
+#
+# Before activation:
+#   1. Decide on a domain (e.g. vacation-station-14.com) and point the
+#      two subdomains at 51.81.33.136 in DNS.
+#   2. Replace <DOMAIN> below with the chosen suffix.
+#   3. Install + enable caddy (see ops/caddy/install.sh).
+#   4. Update /opt/ss14-watchdog/appsettings.yml:
+#        BaseUrl: https://download.<DOMAIN>/
+#        Urls:    http://127.0.0.1:5000
+#   5. Restart watchdog.
+#   6. Close ufw: sudo ufw delete allow 5000/tcp
+#
+# Rollback: restart watchdog with old BaseUrl + re-open :5000.
+
+# ----- Download-only host -----
+# Path-rewrites /client.zip → watchdog's nested binaries path, so the
+# /info.download_url advertised to clients is clean.
+
+download.<DOMAIN> {
+    encode gzip
+
+    @clientzip path /client.zip
+    handle @clientzip {
+        rewrite * /instances/vacation-station/binaries/SS14.Client.zip
+        reverse_proxy 127.0.0.1:5000
+    }
+
+    # Block everything else on this host — this is a download edge only.
+    respond "Not found" 404
+}
+
+# ----- Admin host -----
+# Watchdog does its own HTTP Basic auth with the ApiToken, so we
+# don't add a Caddy-level layer. HTTPS alone gets us wire-protection.
+
+admin.<DOMAIN> {
+    encode gzip
+
+    reverse_proxy 127.0.0.1:5000 {
+        # Preserve client IP for watchdog's own access logging.
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
