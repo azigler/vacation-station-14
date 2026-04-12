@@ -102,9 +102,12 @@ services:
       # appears in env / docker inspect output. Operator populates
       # ./secrets/grafana_admin_password.txt (ignored by git).
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
-      # Auto-install the Postgres datasource plugin on first boot. The plugin
-      # is required for the SS14.Admin dashboards that ship in vs-13x.
-      GF_INSTALL_PLUGINS: grafana-postgresql-datasource
+      # `grafana-postgresql-datasource` is a CORE plugin as of Grafana 11.x —
+      # bundled with the image, not separately installable. Attempting to
+      # install it via GF_INSTALL_PLUGINS fails the startup hook with
+      # "forbiddenCorePluginInstall". Our provisioning + dashboards still
+      # reference `type: grafana-postgresql-datasource` (the core attr name),
+      # so the datasource resolves without any plugin install step.
       # POSTGRES_PASSWORD is expanded into the provisioned datasource below.
       # Operator supplies it via ops/observability/.env (gitignored).
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in ops/observability/.env}

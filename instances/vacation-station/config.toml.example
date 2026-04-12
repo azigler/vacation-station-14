@@ -87,13 +87,15 @@ mode = 1
 #
 # Exposes Robust.Server internals (player count, tick times, entity count,
 # GC stats, etc.) on TCP 44880 for the Prometheus container in the
-# ops/observability/ stack (vs-2p3). Bound to localhost — Prometheus reaches
-# it via Docker's host-gateway alias (host.docker.internal). Do NOT open
-# 44880 on the public firewall.
+# ops/observability/ stack (vs-2p3). Bound to the HttpListener wildcard "*"
+# (0.0.0.0 is rejected by SpaceWizards.HttpListener with "request not
+# supported"). Prometheus reaches it via Docker's host-gateway alias
+# (host.docker.internal). UFW scoped to the observability-stack docker
+# subnet (172.18.0.0/16) — do NOT open 44880 on the public firewall.
 
 [metrics]
 enabled = true
-host = "localhost"
+host = "*"
 port = 44880
 
 # -----------------------------------------------------------------------------
