@@ -1,0 +1,37 @@
+[Unit]
+Description=Vacation Station 14 — ss14-cookbook rebuild + deploy
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+# Needs network for `git fetch` of the VS14 source mirror and `npm ci`.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+
+# Path assumes the repo is deployed to /opt/vacation-station. Override
+# via drop-in (or the env vars documented in build.sh) if your layout
+# differs.
+ExecStart=/opt/vacation-station/ops/cookbook/build.sh
+
+# Build can be chunky (npm ci + rollup + thousands of YAML files).
+TimeoutStartSec=30min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+# read-only so symlinks like /opt/vacation-station → /home/<user>/...
+# still resolve (same pattern as ss14-backup.service).
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/www/vs14-recipes /var/lib/vs14-cookbook-source
+
+# Environment overrides (optional — defaults live in build.sh)
+# Environment=REPO_ROOT=/opt/vacation-station
+# Environment=COOKBOOK_SOURCE_DIR=/var/lib/vs14-cookbook-source
+# Environment=COOKBOOK_SOURCE_URL=https://github.com/azigler/vacation-station-14
+# Environment=COOKBOOK_SOURCE_BRANCH=main
+# Environment=WEB_ROOT=/var/www/vs14-recipes
+# Environment=COOKBOOK_BASE_PATH=/recipes
+# Environment=COOKBOOK_REPO_URL=https://github.com/azigler/vacation-station-14

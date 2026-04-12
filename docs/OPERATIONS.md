@@ -364,6 +364,93 @@ logs at `http://localhost:3100` — the Loki container deployed in
 `ops/observability/`. The game server does the same via its `[loki]` block
 in `config.toml`. See the "Observability" section below for bring-up.
 
+## Cookbook
+
+[arimah/ss14-cookbook](https://github.com/arimah/ss14-cookbook) is a static
+recipe + crafting reference site that parses SS14 prototypes directly from a
+repo clone. Vacation Station 14 vendors it as a submodule and serves the
+generated static files at
+[`https://ss14.zig.computer/recipes/`](https://ss14.zig.computer/recipes/).
+
+### What's on disk
+
+| Path | Role |
+|---|---|
+| `external/cookbook/` | Submodule pinning arimah/ss14-cookbook (pristine; never edited in place) |
+| `ops/cookbook/sources.yml` | VS14 fork config (points at the sibling clone) |
+| `ops/cookbook/privacy.html` | Privacy notice embedded into the built site |
+| `ops/cookbook/rewrites_vacation.yml` | VS14-specific recipe ID rewrites (empty by default) |
+| `ops/cookbook/build.sh` | Clone/pull sibling, `npm ci`, build, rsync to web root |
+| `ops/cookbook/vs14-cookbook-build.service` + `.timer` | Daily (05:00 UTC) rebuild |
+| `ops/cookbook/install.sh` | One-shot host installer (units + writable roots + timer enable) |
+| `/var/lib/vs14-cookbook-source/` | Sibling read-only VS14 clone `build.sh` maintains |
+| `/var/www/vs14-recipes/` | Static output; nginx `/recipes/` alias target |
+
+The cookbook needs raw YAML + PNG files (not compiled output), which is why
+`build.sh` maintains a dedicated sibling clone at
+`/var/lib/vs14-cookbook-source/` instead of pointing at the deploy checkout.
+
+### Install
+
+Assumes the repo is deployed at `/opt/vacation-station` and the `ss14` user
+exists (see "Watchdog" above), plus Node.js + npm on PATH.
+
+```bash
+sudo ./ops/cookbook/install.sh
+```
+
+The script is idempotent:
+
+- Installs `vs14-cookbook-build.{service,timer}` into `/etc/systemd/system/`
+- Creates `/var/www/vs14-recipes/` and `/var/lib/vs14-cookbook-source/` owned
+  by `ss14:ss14`
+- `systemctl daemon-reload` + `enable --now vs14-cookbook-build.timer`
+
+The timer fires daily at 05:00 UTC (offset from the 03:15 UTC backup timer so
+the two don't fight for disk).
+
+### Force a rebuild
+
+```bash
+sudo systemctl start vs14-cookbook-build.service
+journalctl -u vs14-cookbook-build.service -f
+```
+
+The service is `Type=oneshot`; the command returns when the build finishes.
+Typical runtime is a few minutes (mostly `npm ci` + thousands of YAML files).
+
+### AGPLv3 compliance — "View Source" link
+
+The cookbook template renders a footer link out of the `COOKBOOK_REPO_URL`
+env var. `build.sh` writes `external/cookbook/.env` on every run with
+`COOKBOOK_REPO_URL=https://github.com/azigler/vacation-station-14`, so the
+deployed footer points at our repo with no post-build patching. If the
+upstream template ever drops that env hook, we'd switch to a post-build
+patch step inside `build.sh` and promote the cookbook to a forked service
+(see the "promotion triggers" on bead vs-1vy).
+
+### Logs
+
+```bash
+journalctl -u vs14-cookbook-build.service --since '2 days ago'
+systemctl list-timers vs14-cookbook-build.timer
+```
+
+### Troubleshooting
+
+- **Build fails at `npm ci`** — check Node + npm are on PATH for the `ss14`
+  user; the service inherits the ambient system PATH. `sudo -u ss14 which node`
+  from the install host.
+- **Recipes missing after a merge** — the sibling clone auto-resets to
+  `origin/main` each run. If `main` hasn't been pushed yet, the cookbook is
+  parsing stale data. Push, then kick the service.
+- **A recipe doesn't render / sorts oddly** — add an entry to
+  `ops/cookbook/rewrites_vacation.yml` (format: `RecipeID: ReplacementEntityID`)
+  and commit. The next build picks it up.
+- **`alias` returns 404** — nginx wants `/var/www/vs14-recipes/index.html` to
+  exist. If the build has never run, `install.sh` created the empty dir but
+  nothing inside it. Kick the service once to populate.
+
 ## Observability
 
 Vacation Station 14 ships a self-hosted Prometheus + Loki + Grafana stack in
