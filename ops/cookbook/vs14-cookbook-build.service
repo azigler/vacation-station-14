@@ -26,6 +26,13 @@ ProtectSystem=strict
 ProtectHome=read-only
 PrivateTmp=true
 ReadWritePaths=/var/www/vs14-recipes /var/lib/vs14-cookbook-source
+# The build also writes into external/cookbook (submodule staging dir).
+# If your repo lives under /home/*, install.sh drops a per-host
+# override with the real path. See ops/cookbook/install.sh.
+# npm/node write ~/.npm and /tmp/* for package cache; PrivateTmp handles
+# the latter and we redirect npm cache to a known-writable dir below.
+Environment=npm_config_cache=/var/lib/vs14-cookbook-source/.npm-cache
+Environment=HOME=/var/lib/vs14-cookbook-source
 
 # Environment overrides (optional — defaults live in build.sh)
 # Environment=REPO_ROOT=/opt/vacation-station
