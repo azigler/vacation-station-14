@@ -94,6 +94,10 @@ MUST be preserved in any redistribution.
 ### Specifically
 
 - **`_VS/` code**: AGPLv3 (original VS14 contributions).
+- **`_CP/` code** (Crystall Punk 14; introduced in Phase 5): plain
+  MIT upstream, sublicensed as AGPLv3 when combined with our code.
+  Preserve the upstream MIT notice in the repo; no middle-period
+  carveout.
 - **`_DV/` code**: AGPLv3 (matches Delta-V's post-boundary license).
 - **Unprefixed Content.* code**: MIT (SS14 upstream), sublicensed
   as AGPLv3 when combined with our modifications. Do not remove
@@ -178,8 +182,9 @@ upstream or when an existing upstream's license changes.
 | VS14 (authored, this repo) | [`LICENSE-AGPLv3.txt`](LICENSE-AGPLv3.txt) | AGPLv3 (post-Flavor-A boundary commit `86a6f6a3`) | 2026-04-12 |
 
 Additional upstreams (`_NF/` Frontier, `_RMC/` RMC-14, `_HL/`
-HardLight, `_SL/` Starlight, `_EE/` Einstein Engines, `_CX/` Corvax)
-get new rows when their first cherry-pick lands in Phase 5.
+HardLight, `_SL/` Starlight, `_CP/` Crystall Punk 14, `_EE/`
+Einstein Engines, `_CX/` Corvax) get new rows when their first
+cherry-pick lands in Phase 5.
 
 ### RobustToolbox's tri-license
 

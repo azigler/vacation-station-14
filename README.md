@@ -72,6 +72,7 @@ are denoted by inline `// <FORK>` comments around changed lines.
 | `_RMC/` _(pending Phase 5)_ | RMC-14 | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | AGPL-3.0 + MIT | cherry-pick |
 | `_HL/` _(pending Phase 5)_ | HardLight Sector | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | AGPL-3.0 + MIT | cherry-pick |
 | `_SL/` _(pending Phase 5)_ | Starlight | [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | MIT (+ modified-MIT middle period, see LEGAL.md) | cherry-pick |
+| `_CP/` _(pending Phase 5)_ | Crystall Punk 14 | [crystallpunk-14/crystall-punk-14](https://github.com/crystallpunk-14/crystall-punk-14) | MIT | cherry-pick |
 
 Bundled services are tracked as submodules under `external/<name>/`
 with per-service config under `ops/<name>/`. See [`docs/upstream-sync.md`](docs/upstream-sync.md)

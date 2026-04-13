@@ -26,6 +26,7 @@ for historical / license-chain purposes.
 | `upstream-rmc` | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | cherry-pick | AGPL-3.0 + MIT | `_RMC/` (Phase 5+) | ad-hoc — Aliens-mode / combat / scenario content |
 | `upstream-hl` | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | cherry-pick (meta-aggregator) | AGPL-3.0 + MIT | `_HL/` (Phase 5+) | ad-hoc — dense source, already aggregates ~20 other forks |
 | `upstream-sl` | [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | cherry-pick | MIT (+ modified-MIT middle period, see LEGAL.md) | `_SL/` (Phase 5+) | ad-hoc — structured-RP tone reference; default branch `starlight-dev` |
+| `upstream-cp` | [crystallpunk-14/crystall-punk-14](https://github.com/crystallpunk-14/crystall-punk-14) | cherry-pick | MIT | `_CP/` (Phase 5+) | ad-hoc — fantasy/magic-RP co-op reframing of SS14; unique thematic niche |
 
 ## Tracked upstreams — deploy-as-is submodules (bundled services)
 

@@ -17,6 +17,7 @@ reset commit `86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12).
   - `_RMC/` — RMC-14 cherry-picks (Aliens-mode, combat, scenario content)
   - `_HL/` — HardLight Sector cherry-picks (meta-aggregator — itself pulls from ~20 forks)
   - `_SL/` — Starlight cherry-picks (modified-MIT middle period + MIT otherwise, sublicensed AGPLv3)
+  - `_CP/` — Crystall Punk 14 cherry-picks (MIT, sublicensed AGPLv3; fantasy/magic-RP reframing)
   - `_EE/`, `_CX/`, … — other upstreams per curation plan (Einstein Engines, Corvax, …)
   - Unprefixed `Content.*` = pure SS14 upstream, MIT
 - **Remotes**: `origin` (VS14), `upstream-sw` (space-wizards/space-station-14),
