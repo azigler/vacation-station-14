@@ -1,0 +1,26 @@
+[Unit]
+Description=Vacation Station 14 — map render pipeline (vs-2nk)
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+ExecStart=/opt/vacation-station/ops/map-render/build.sh
+
+# Renderer + build takes ~15-20 min for the full map list on this host.
+TimeoutStartSec=60min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/cache/vs14-map-render /var/www/vs14-maps
+
+# Optional env overrides
+# Environment=MAP_LIST=box.yml bagel.yml saltern.yml
+# Environment=OUTPUT_FORMAT=webp

@@ -1,0 +1,13 @@
+[Unit]
+Description=Vacation Station 14 — weekly map render timer
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+
+[Timer]
+# Sun 04:30 UTC weekly — offset from cookbook (05:00) + pg backup (03:15)
+OnCalendar=Sun *-*-* 04:30:00 UTC
+RandomizedDelaySec=30min
+Persistent=true
+Unit=vs14-map-render.service
+
+[Install]
+WantedBy=timers.target
