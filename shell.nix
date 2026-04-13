@@ -25,6 +25,10 @@ let
     grafana-loki # provides loki + logcli
     grafana # provides grafana-cli
     postgresql_17 # provides psql/pg_dump/pg_restore/createdb (matches services-flake server)
+    # VS - bundled-service build toolchain (vs-1vy cookbook, vs-236 mapviewer,
+    # vs-v69 document-simu — all node/vite-based static sites)
+    nodejs_20
+    rsync
   ];
 
   # Linux-only client runtime: graphics (X11/Wayland/mesa), audio (ALSA),

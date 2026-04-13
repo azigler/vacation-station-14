@@ -78,10 +78,17 @@ mkdir -p "${STAGE_DIR}" "${RENDER_OUT}" "${BUILD_OUT}" "${BUNDLE_OUT}"
 
 if [ -z "${MAP_LIST:-}" ]; then
     log "Auto-discovering maps from Resources/Prototypes/{Maps,_VS/Maps}"
+    # Build a list of paths that actually exist so find does not fail
+    # under `set -euo pipefail` when _VS/Maps is absent.
+    SCAN_PATHS=()
+    for p in "${VS14_ROOT}/Resources/Prototypes/Maps" \
+             "${VS14_ROOT}/Resources/Prototypes/_VS/Maps"; do
+        [ -d "$p" ] && SCAN_PATHS+=("$p")
+    done
+    [ "${#SCAN_PATHS[@]}" -gt 0 ] || die "No map directories exist to scan"
     MAP_LIST="$(
-        find "${VS14_ROOT}/Resources/Prototypes/Maps" \
-             "${VS14_ROOT}/Resources/Prototypes/_VS/Maps" \
-            -maxdepth 2 -type f -name '*.yml' -printf '%f\n' 2>/dev/null \
+        find "${SCAN_PATHS[@]}" \
+            -maxdepth 2 -type f -name '*.yml' -printf '%f\n' \
         | sed 's/\.yml$//' \
         | sort -u \
         | tr '\n' ' '
