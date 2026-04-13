@@ -23,3 +23,8 @@
 	url = https://github.com/space-wizards/SS14.MapServer
 	branch = master
 	ignore = dirty
+[submodule "external/robust-cdn"]
+	path = external/robust-cdn
+	url = https://github.com/space-wizards/Robust.Cdn
+	branch = master
+	ignore = dirty

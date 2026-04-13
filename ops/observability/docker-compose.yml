@@ -30,6 +30,9 @@ networks:
 volumes:
   mapserver-files:
   mapserver-build:
+  cdn-db:
+  cdn-manifest:
+  cdn-builds:
   prometheus-data:
   loki-data:
   grafana-data:
@@ -184,3 +187,34 @@ services:
       core:
         soft: 0
         hard: 0
+
+  # ---------------------------------------------------------------------------
+  # Robust.Cdn — versioned client build distributor (vs-3mv)
+  # ---------------------------------------------------------------------------
+  # Stores VS14's Robust.Server + Content.Client builds, serves manifest
+  # + delta downloads. Watchdog flips UpdateType to Manifest pointing at
+  # https://ss14.zig.computer/cdn/; launcher fetches delta updates
+  # instead of re-downloading 192 MB per version.
+  #
+  # Data (SQLite DB + manifest + blob store) persists via named volumes.
+  # Port 8080 maps to 127.0.0.1:8087 on host (nginx proxies /cdn/ there).
+  cdn:
+    image: ghcr.io/space-wizards/robust.cdn:latest
+    container_name: vs14-cdn
+    restart: unless-stopped
+    networks: [observability]
+    ports:
+      - "127.0.0.1:8087:8080"
+    volumes:
+      - ../cdn/appsettings.yaml:/app/appsettings.Production.yaml:ro
+      - cdn-db:/database
+      - cdn-manifest:/manifest
+      - cdn-builds:/builds
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: "http://+:8080"
+      # Per-fork upload token — populated from env so the secret
+      # never lands in the committed YAML. Rotate by changing the
+      # CDN_UPDATE_TOKEN in ops/observability/.env + `docker compose
+      # restart cdn`.
+      Manifest__Forks__vacation-station__UpdateToken: "${CDN_UPDATE_TOKEN}"

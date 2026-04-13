@@ -1,0 +1,41 @@
+# VS14 Robust.Cdn config
+#
+# See external/robust-cdn/Robust.Cdn/Config/{CdnOptions,ManifestOptions}.cs
+# for the full schema. Mounted into the container at
+# /app/appsettings.Production.yaml via docker-compose.
+#
+# Served behind nginx at https://ss14.zig.computer/cdn/ via PathBase.
+# Clients pull manifests; operators upload builds via the REST API
+# gated by per-fork UpdateTokens.
+
+AllowedHosts: "*"
+
+# NB: Robust.Cdn's Program.cs doesn't call app.UsePathBase(), so any
+# PathBase config here is a no-op. We prefix-strip in nginx instead:
+#
+#   location /cdn/ {
+#       proxy_pass http://127.0.0.1:8087/;  # trailing slash strips /cdn/
+#   }
+#
+# Legacy file-based storage. Kept minimal; the manifest system is the
+# canonical one.
+Cdn:
+    DatabaseFileName: "/database/content.db"
+    DefaultFork: "vacation-station"
+    BlobCompress: true
+    StreamCompress: false
+
+# Manifest system — this is where per-fork config lives (the error
+# "No forks defined in Manifest configuration!" points here, not Cdn.Forks).
+Manifest:
+    DatabaseFileName: "/database/manifest.db"
+    FileDiskPath: "/builds"
+    Forks:
+        vacation-station:
+            # Per-fork upload token is populated via env
+            # (Manifest__Forks__vacation-station__UpdateToken) so the
+            # secret never enters a committed file.
+            ClientZipName: "SS14.Client"
+            ServerZipName: "SS14.Server_"
+            DisplayName: "Vacation Station 14"
+            PruneBuildsDays: 90
