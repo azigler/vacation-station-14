@@ -80,6 +80,11 @@ page_count=$(find "${STAGE_DIR}" -maxdepth 1 -name '*.html' | wc -l)
 
 log "publishing ${page_count} page(s) to ${WEB_ROOT}"
 mkdir -p "${WEB_ROOT}"
-rsync -a --delete "${STAGE_DIR}/" "${WEB_ROOT}/"
+# --chmod forces world-readable modes regardless of staging dir perms.
+# `mktemp -d` creates 0700, and `rsync -a` preserves that, which would
+# 500 nginx on every sprite + page fetch.
+rsync -a --delete \
+    --chmod=D755,F644 \
+    "${STAGE_DIR}/" "${WEB_ROOT}/"
 
 log "done."
