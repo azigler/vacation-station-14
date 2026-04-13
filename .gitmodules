@@ -13,3 +13,8 @@
 	url = https://github.com/space-wizards/SS14.MapViewer
 	branch = main
 	ignore = dirty
+[submodule "external/document-simu"]
+	path = external/document-simu
+	url = https://github.com/yagwog/RMC14-document-simu
+	branch = main
+	ignore = dirty

@@ -41,6 +41,10 @@
 set -euo pipefail
 
 VS14_ROOT="${VS14_ROOT:-/opt/vacation-station}"
+# Resolve symlinks. If /opt/vacation-station → /home/.../vacation-station-14,
+# the dotnet build otherwise sees the repo via two paths and the NuGet
+# restore trips on duplicate-file errors. Always use the real path.
+VS14_ROOT="$(readlink -f "${VS14_ROOT}")"
 MAPVIEWER_SRC="${MAPVIEWER_SRC:-${VS14_ROOT}/external/mapviewer}"
 STAGE_DIR="${STAGE_DIR:-/var/cache/vs14-mapviewer}"
 SERVE_ROOT="${SERVE_ROOT:-/var/www/vs14-maps}"
@@ -99,9 +103,17 @@ fi
 log "Map IDs: ${MAP_LIST}"
 
 if [ "${SKIP_RENDER:-0}" != "1" ]; then
+    # Pre-build the solution serially to sidestep the CSC parallel-
+    # race (vs-2nk): `dotnet run` spawns a parallel restore+build that
+    # occasionally reads ref/<foo>.dll before the producing project
+    # finishes writing it. A `-m:1` serial build populates all
+    # reference assemblies up-front; the subsequent `dotnet run
+    # --no-build` skips the race entirely.
+    log "Pre-building solution serially (-m:1)"
+    dotnet build "${MAPRENDERER_PROJECT}" -c Release -m:1 -v:minimal
     log "Rendering maps via Content.MapRenderer (--viewer --format=${OUTPUT_FORMAT})"
     # shellcheck disable=SC2086   # intentional word-splitting of MAP_LIST
-    dotnet run --project "${MAPRENDERER_PROJECT}" -c Release -- \
+    dotnet run --no-build --project "${MAPRENDERER_PROJECT}" -c Release -- \
         --viewer \
         --format "${OUTPUT_FORMAT}" \
         --output "${RENDER_OUT}" \

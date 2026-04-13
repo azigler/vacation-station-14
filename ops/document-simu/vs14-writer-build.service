@@ -1,0 +1,22 @@
+[Unit]
+Description=Vacation Station 14 — RMC14-document-simu static deploy
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+ExecStart=/opt/vacation-station/ops/document-simu/build.sh
+TimeoutStartSec=5min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/www/vs14-writer
+# On hosts where /opt/vacation-station is a symlink into /home/*,
+# install.sh drops a per-host override expanding ReadWritePaths +
+# disabling ProtectHome. See ops/document-simu/install.sh.
