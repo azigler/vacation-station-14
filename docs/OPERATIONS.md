@@ -1052,3 +1052,156 @@ reads that file so a single run can announce a batch of merges.
   any label in `AUTO_MERGE_BLOCKLIST` (e.g. `do-not-merge`).
 - **Bypass soak window:** either lower `AUTO_MERGE_SOAK_HOURS`
   temporarily, or merge by hand via `gh pr merge --squash`.
+
+## SS14.Admin
+
+The [SS14.Admin](https://github.com/space-wizards/SS14.Admin) web admin panel
+is bundled as-is per the vs-19h decision matrix. The submodule lives at
+`external/ss14-admin/` and is deployed via docker-compose from
+`ops/ss14-admin/`. nginx fronts it at `https://ss14.zig.computer/admin/`.
+
+### Layout
+
+```
+ops/ss14-admin/
+├── docker-compose.yml                  # host-networked; loopback 127.0.0.1:5427
+├── appsettings.Production.yaml.example # committed template; real copy gitignored
+├── .env.example                        # POSTGRES_PASSWORD — copy to .env
+├── install.sh                          # idempotent bring-up
+└── ss14-admin.service                  # optional systemd wrapper
+```
+
+### Secrets
+
+Two env files feed the container. Neither is in the repo.
+
+- `/etc/vacation-station/admin-oauth.env` (root:ss14, mode 640). Holds
+  `OIDC_CLIENT_ID` and `OIDC_CLIENT_SECRET` registered via Wizden's
+  self-service portal. Rotate via the portal + `docker compose restart
+  ss14-admin`; the secret transited a Claude chat transcript during
+  initial deploy and should be rotated post-cutover as a matter of
+  hygiene.
+- `ops/ss14-admin/.env` (gitignored). Holds `POSTGRES_PASSWORD`, same
+  value as `ops/observability/.env` (both consume the `vs14` role).
+
+docker-compose maps `OIDC_CLIENT_ID` → `Auth__ClientId` and
+`OIDC_CLIENT_SECRET` → `Auth__ClientSecret` via the `environment:` block;
+the YAML appsettings file holds only placeholders and is safe to commit.
+
+### Bring-up
+
+```bash
+# One-time, on the host:
+sudo install -m 0640 -o root -g ss14 admin-oauth.env \
+    /etc/vacation-station/admin-oauth.env   # creds from Wizden
+cp ops/ss14-admin/.env.example ops/ss14-admin/.env
+$EDITOR ops/ss14-admin/.env                 # set POSTGRES_PASSWORD=
+chmod 600 ops/ss14-admin/.env
+
+# Bring the stack up (idempotent):
+./ops/ss14-admin/install.sh
+
+# Publish the nginx location block:
+sudo ./ops/nginx/install.sh
+```
+
+Smoke test:
+
+```bash
+curl -sSI https://ss14.zig.computer/admin/ | head -5
+# Expected: 302 to central.spacestation14.io/web/... (OIDC redirect)
+```
+
+### Database
+
+SS14.Admin extends the game server's `vacation_station` database in place;
+no separate DB is provisioned. Migrations run on first startup under the
+`vs14` role. If migrations fail with a permissions error, the role needs
+`CREATE` on the `public` schema:
+
+```sql
+GRANT CREATE ON SCHEMA public TO vs14;
+```
+
+Do NOT promote `vs14` to superuser to "unblock" migrations.
+
+### First-admin bootstrap
+
+We deliberately ship with no seeded admins. The first operator logs in via
+OIDC, which succeeds at the auth layer but fails the admin check in
+SS14.Admin. That failed login is enough to register their hub UUID in the
+`player` table, from which we seed a god-level admin row by hand.
+
+1. **Log in once** at `https://ss14.zig.computer/admin/` with the target
+   Wizden account. Expect an "access denied" style page — that is correct.
+2. **Harvest the UUID** from the container logs; the OIDC `sub` claim is
+   the hub UUID. The logs never print the client secret, only the
+   subject/username of the logger-in:
+
+   ```bash
+   docker compose -f ops/ss14-admin/docker-compose.yml logs ss14-admin \
+       | grep -E 'sub|ExternalLogin|signin-oidc' | tail -20
+   ```
+
+   Cross-reference with `psql`:
+
+   ```sql
+   SELECT user_id, last_seen_user_name FROM player
+     ORDER BY last_seen_time DESC LIMIT 5;
+   ```
+
+3. **Seed the admin row** with the full flag bitmask (value `0x7FFFFFFF`
+   grants every permission bit — same mask the upstream docs use for
+   "server host" level). Newer SS14.Admin schemas also require a rank
+   row; if present, create one first:
+
+   ```sql
+   -- Optional, depending on schema version:
+   INSERT INTO admin_rank (admin_rank_id, name) VALUES (1, 'Host')
+       ON CONFLICT DO NOTHING;
+
+   INSERT INTO admin (user_id, title, admin_rank_id)
+       VALUES ('<uuid>', 'Host', 1)
+       ON CONFLICT (user_id) DO NOTHING;
+
+   -- Grant every admin flag:
+   INSERT INTO admin_flag (admin_id, flag, negative)
+       SELECT a.admin_id, f, false
+       FROM admin a,
+            unnest(ARRAY['HOST','ADMIN','BAN','HELP','LOG','SERVER',
+                         'DEBUG','MAPPING','PERMISSIONS','MODERATOR',
+                         'QUERY','ROUND','VIEWVAR','ADMINHELP']) AS f
+       WHERE a.user_id = '<uuid>'
+       ON CONFLICT DO NOTHING;
+   ```
+
+   (Exact flag set depends on what enum values the current migration
+   defines — `SELECT DISTINCT flag FROM admin_flag;` on the game-server
+   DB shows what's in use. The `HOST` flag alone is sufficient for
+   everything.)
+
+4. **Re-log** at `/admin/`. The panel should now render.
+
+### Rotating the OIDC client secret
+
+1. Regenerate the secret via the Wizden self-service portal.
+2. Update `/etc/vacation-station/admin-oauth.env` on the host:
+
+   ```bash
+   sudo $EDITOR /etc/vacation-station/admin-oauth.env
+   ```
+
+3. `docker compose -f ops/ss14-admin/docker-compose.yml restart ss14-admin`
+
+No code or git changes are required — the secret is read from the env
+file at container start.
+
+### Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| OIDC redirects to `http://...` | `X-Forwarded-Proto` missing or `ForwardProxies` in appsettings doesn't include the source IP. nginx sets the header; appsettings trusts `127.0.0.1` + `172.16.0.0/12`. |
+| `/admin/` returns 404 | nginx `location /admin/` block missing. Re-run `sudo ops/nginx/install.sh`. |
+| Container restarts on startup | Almost always a missing env var. `docker compose logs ss14-admin` — if it complains about `Auth:ClientId` or `ConnectionStrings:DefaultConnection` being empty, re-check `/etc/vacation-station/admin-oauth.env` and `ops/ss14-admin/.env`. |
+| Migrations fail with permission error | `GRANT CREATE ON SCHEMA public TO vs14;` — do not make `vs14` a superuser. |
+| Login loops back to `/admin/signin-oidc` | User's UUID isn't in the `admin` table. Follow the bootstrap flow above. |

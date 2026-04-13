@@ -28,3 +28,8 @@
 	url = https://github.com/space-wizards/Robust.Cdn
 	branch = master
 	ignore = dirty
+[submodule "external/ss14-admin"]
+	path = external/ss14-admin
+	url = https://github.com/space-wizards/SS14.Admin
+	branch = master
+	ignore = dirty

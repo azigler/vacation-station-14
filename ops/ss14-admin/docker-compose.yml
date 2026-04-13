@@ -1,0 +1,70 @@
+# Vacation Station 14 — SS14.Admin web admin panel (vs-35d)
+#
+# Upstream: https://github.com/space-wizards/SS14.Admin
+# Deploy-as-is bundled service per vs-19h decision matrix. Source lives
+# at external/ss14-admin/ (git submodule); this compose file builds from
+# upstream's Dockerfile directly. Do not modify the submodule in place.
+#
+# Topology:
+#   - Host networking so the container reaches host postgres at
+#     127.0.0.1:5432 (same pattern as ops/observability's mapserver).
+#   - ASP.NET Core binds to 127.0.0.1:5427 on the host — loopback only.
+#     nginx fronts /admin/ at https://ss14.zig.computer/admin/.
+#   - PathBase=/admin so SS14.Admin generates correct links behind the
+#     path-based proxy. ForwardProxies includes the docker bridge + loopback
+#     so OIDC redirect URIs get HTTPS from X-Forwarded-Proto.
+#
+# Secrets (none in the repo):
+#   - /etc/vacation-station/admin-oauth.env (root:ss14, 640) supplies
+#     OIDC_CLIENT_ID + OIDC_CLIENT_SECRET, which we re-map into the
+#     ASP.NET Core config keys Auth:ClientId / Auth:ClientSecret via
+#     the `__` env-var separator convention.
+#   - ./.env supplies POSTGRES_PASSWORD (matches the vs14 role). Copy
+#     ops/ss14-admin/.env.example → ops/ss14-admin/.env and fill in.
+
+name: vs14-ss14-admin
+
+services:
+  ss14-admin:
+    build:
+      context: ../../external/ss14-admin
+      dockerfile: Dockerfile
+    image: vs14-ss14-admin:latest
+    container_name: vs14-ss14-admin
+    restart: unless-stopped
+    # Host networking so the container reaches 127.0.0.1:5432 postgres
+    # directly (avoids docker0-gateway + ufw quirks seen with mapserver).
+    # ASPNETCORE_URLS binds to 127.0.0.1:5427 on the host; no `ports:`
+    # mapping is needed or allowed under network_mode: host.
+    network_mode: host
+    env_file:
+      # OIDC client creds — managed outside the repo. Fails fast if
+      # the file is missing so we never silently boot without auth.
+      - /etc/vacation-station/admin-oauth.env
+      # Local .env (gitignored) — supplies POSTGRES_PASSWORD.
+      - .env
+    volumes:
+      - ./appsettings.Production.yaml:/app/appsettings.Production.yaml:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: "http://127.0.0.1:5427"
+      # ASP.NET Core config uses `__` as section separator. The
+      # admin-oauth.env file defines OIDC_CLIENT_ID/OIDC_CLIENT_SECRET;
+      # map them into the keys Startup.cs reads at runtime. Values
+      # never land in the image layers — they're injected per-run.
+      Auth__ClientId: "${OIDC_CLIENT_ID:?OIDC_CLIENT_ID must be set via /etc/vacation-station/admin-oauth.env}"
+      Auth__ClientSecret: "${OIDC_CLIENT_SECRET:?OIDC_CLIENT_SECRET must be set via /etc/vacation-station/admin-oauth.env}"
+      # Postgres password — same vs14 role that owns vacation_station.
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=5432;Database=vacation_station;User Id=vs14;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in ops/ss14-admin/.env}"
+      # dotnet first-run writes to $HOME/.dotnet which is not writable
+      # for the non-root container user; redirect to /tmp.
+      DOTNET_CLI_HOME: /tmp
+      HOME: /tmp
+    healthcheck:
+      # SS14.Admin's root under PathBase redirects to /admin/signin-oidc;
+      # a bare TCP-level probe on 5427 is enough to confirm the app is up.
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:5427/admin/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

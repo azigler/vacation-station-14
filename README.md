@@ -77,7 +77,7 @@ are denoted by inline `// <FORK>` comments around changed lines.
 Bundled services are tracked as submodules under `external/<name>/`
 with per-service config under `ops/<name>/`. See [`docs/upstream-sync.md`](docs/upstream-sync.md)
 for the full table (cookbook at `/recipes/`, MapViewer + MapServer at
-`/maps/`, document-simu at `/writer/`).
+`/maps/`, document-simu at `/writer/`, SS14.Admin at `/admin/`).
 
 Additional cherry-pick sources (Einstein Engines `_EE/`, Corvax `_CX/`)
 will be added as remotes when Phase 5 curation targets them.

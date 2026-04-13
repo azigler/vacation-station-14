@@ -1,0 +1,68 @@
+# Vacation Station 14 — SS14.Admin production config (vs-35d)
+#
+# Rendered into the container at /app/appsettings.Production.yaml via
+# a read-only bind mount in docker-compose.yml. ASP.NET Core layers
+# this on top of the upstream appsettings.yml.
+#
+# Secrets — OIDC ClientId/ClientSecret and the postgres password —
+# are NEVER written here. They arrive as environment variables set by
+# docker-compose (see that file's `environment:` block), which
+# ASP.NET Core merges in at a higher precedence than YAML.
+
+Serilog:
+  Using: ["Serilog.Sinks.Console"]
+  MinimumLevel:
+    Default: Information
+    Override:
+      SS14: Debug
+      Microsoft: "Warning"
+      Microsoft.Hosting.Lifetime: "Information"
+      Microsoft.AspNetCore: Warning
+      IdentityServer4: Warning
+  WriteTo:
+    - Name: Console
+      Args:
+        OutputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {SourceContext}] {Message:lj}{NewLine}{Exception}"
+  Enrich: ["FromLogContext"]
+
+# Only accept requests whose Host header matches our public vhost.
+# nginx sets this via `proxy_set_header Host $host`.
+AllowedHosts: "ss14.zig.computer"
+
+# Container listens on 127.0.0.1:5427 via ASPNETCORE_URLS (set in
+# docker-compose). This key is kept for documentation; ASPNETCORE_URLS
+# wins at runtime.
+urls: "http://127.0.0.1:5427/"
+
+# Path-based routing behind nginx — redirect URIs, generated links,
+# and the PathBase middleware all depend on this matching the nginx
+# location block exactly. Redirect URI registered with Wizden is
+# https://ss14.zig.computer/admin/signin-oidc.
+PathBase: "/admin"
+
+# Connection string is provided via the ConnectionStrings__DefaultConnection
+# environment variable set in docker-compose.yml (no secret in this file).
+# Kept here only as a documentation placeholder — ASP.NET's env-var
+# provider overrides any value in the file.
+ConnectionStrings:
+  DefaultConnection: "Server=127.0.0.1;Port=5432;Database=vacation_station;User Id=vs14;Password=__from_env__"
+
+# Trust X-Forwarded-* headers from nginx (loopback) and any container
+# on a docker bridge. Without this, ASP.NET Core thinks the request is
+# http://127.0.0.1 and builds the OIDC redirect URI on http, breaking
+# the hand-off to central.spacestation14.io.
+ForwardProxies:
+  - 127.0.0.1
+  - 172.16.0.0/12
+
+# Wizden OAuth — authority is the OIDC discovery endpoint; ClientId
+# and ClientSecret come from env (Auth__ClientId / Auth__ClientSecret),
+# populated from /etc/vacation-station/admin-oauth.env.
+Auth:
+  Authority: "https://central.spacestation14.io/web/"
+  ClientId: "__from_env__"
+  ClientSecret: "__from_env__"
+
+# Auth server the admin panel queries for user metadata (hub UUIDs,
+# ban-management interop).
+authServer: "https://central.spacestation14.io/auth"

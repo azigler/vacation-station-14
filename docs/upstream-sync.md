@@ -40,6 +40,7 @@ AGPL notice-retention requirements.
 | `external/mapviewer/` | [space-wizards/SS14.MapViewer](https://github.com/space-wizards/SS14.MapViewer) | MIT | `ops/mapviewer/` | vs-236 |
 | `external/mapserver/` | [space-wizards/SS14.MapServer](https://github.com/space-wizards/SS14.MapServer) | MIT | `ops/mapserver/` (container image reused by `ops/map-render/`) | vs-2nk |
 | `external/document-simu/` | [yagwog/RMC14-document-simu](https://github.com/yagwog/RMC14-document-simu) | MIT | `ops/document-simu/` | vs-v69 |
+| `external/ss14-admin/` | [space-wizards/SS14.Admin](https://github.com/space-wizards/SS14.Admin) | MIT | `ops/ss14-admin/` | vs-35d |
 
 ## Not yet added as remotes (candidates)
 

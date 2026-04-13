@@ -1,0 +1,37 @@
+[Unit]
+Description=Vacation Station 14 — SS14.Admin web admin panel (vs-35d)
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+Requires=docker.service
+After=docker.service network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# The docker compose stack runs under the ss14 user. OIDC creds live
+# in /etc/vacation-station/admin-oauth.env (root:ss14, mode 640), so
+# this user has read access without the file being world-readable.
+User=ss14
+Group=ss14
+WorkingDirectory=/opt/vacation-station/ops/ss14-admin
+
+# `up` brings containers online; foreground `logs -f` keeps the unit
+# attached so journald captures container output and systemd restarts
+# on failure. Matches the pattern used by vs14-mapserver etc.
+ExecStartPre=/usr/bin/docker compose up -d
+ExecStart=/usr/bin/docker compose logs -f
+ExecStop=/usr/bin/docker compose down
+
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=5min
+
+# Hardening — compose itself needs access to /var/run/docker.sock and
+# the ops dir; otherwise keep the sandbox tight.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/opt/vacation-station/ops/ss14-admin
+
+[Install]
+WantedBy=multi-user.target

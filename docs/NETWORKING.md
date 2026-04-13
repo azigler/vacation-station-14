@@ -148,6 +148,7 @@ vhosts live in each project's `ops/nginx/`; VS14's lives at
 - `/instances/<instance>/binaries/SS14.Client.zip` — launcher client download
 - `/client.zip` — short alias for manual testing
 - `/watchdog/` — Robust.Watchdog admin API (Basic auth with ApiToken, HTTPS wire-wrap). Named `/watchdog/` rather than `/admin/` so `/admin/` stays reserved for SS14.Admin (vs-35d).
+- `/admin/` — SS14.Admin web admin panel (vs-35d); OIDC login against Wizden. Backed by the container on `127.0.0.1:5427`.
 - `/` — placeholder, reserved for the VS14 website (vs-2dr)
 
 **What nginx does NOT proxy:**
