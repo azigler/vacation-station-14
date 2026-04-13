@@ -11,7 +11,10 @@
 #   - Repo at /opt/vacation-station (symlink OK)
 #   - nginx vhost ops/nginx/ss14.zig.computer.conf installed with
 #     /guidebook/ → /var/www/vs14-guidebook/ alias
-#   - python3 + pyyaml on PATH for the ss14 user
+#   - python3 + pyyaml + python3-pil on PATH for the ss14 user
+#     (Pillow is used by render.py to slice directional RSI spritesheets
+#     into single-frame PNGs — without it directional sprites fall back
+#     to text pills, per vs-mlg)
 
 set -euo pipefail
 [ "$(id -u)" = "0" ] || { echo "ERROR: run as root (sudo)" >&2; exit 1; }
