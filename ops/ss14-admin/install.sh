@@ -4,7 +4,7 @@
 # What this does:
 #   1. Validates that /etc/vacation-station/admin-oauth.env exists (OIDC creds).
 #   2. Validates that ops/ss14-admin/.env exists (POSTGRES_PASSWORD).
-#   3. Ensures a live appsettings.Production.yaml exists next to the
+#   3. Ensures a live appsettings.yml exists next to the
 #      committed .example (copies if missing; never overwrites).
 #   4. docker compose pull/build/up -d, then waits for healthy.
 #   5. Prints the container status. Does NOT echo secrets.
@@ -23,8 +23,8 @@ set -euo pipefail
 OPS_DIR="$(cd "$(dirname "$0")" && pwd)"
 OAUTH_ENV="/etc/vacation-station/admin-oauth.env"
 LOCAL_ENV="${OPS_DIR}/.env"
-LIVE_CFG="${OPS_DIR}/appsettings.Production.yaml"
-EXAMPLE_CFG="${OPS_DIR}/appsettings.Production.yaml.example"
+LIVE_CFG="${OPS_DIR}/appsettings.yml"
+EXAMPLE_CFG="${OPS_DIR}/appsettings.yml.example"
 
 echo ">>> checking OIDC creds env file"
 if [ ! -r "${OAUTH_ENV}" ]; then
@@ -52,11 +52,23 @@ if ! grep -Eq '^POSTGRES_PASSWORD=.+' "${LOCAL_ENV}"; then
     exit 1
 fi
 
-echo ">>> ensuring live appsettings.Production.yaml"
+echo ">>> ensuring live appsettings.yml"
 if [ ! -f "${LIVE_CFG}" ]; then
     install -m 0644 "${EXAMPLE_CFG}" "${LIVE_CFG}"
     echo "    (seeded from .example; edit ${LIVE_CFG} for local tweaks)"
 fi
+
+# docker-compose does variable interpolation (${OIDC_CLIENT_ID:?...}) at
+# parse time from the CALLER's environment. env_file: in the compose only
+# affects container runtime. Load the OAuth creds into this script's
+# process env so compose sees them; they never appear in journald because
+# we don't echo and the values don't go through argv.
+set -a
+# shellcheck source=/dev/null
+. "${OAUTH_ENV}"
+# shellcheck source=/dev/null
+. "${LOCAL_ENV}"
+set +a
 
 echo ">>> pulling + building image"
 docker compose -f "${OPS_DIR}/docker-compose.yml" pull --ignore-buildable

@@ -44,7 +44,7 @@ services:
       # Local .env (gitignored) — supplies POSTGRES_PASSWORD.
       - .env
     volumes:
-      - ./appsettings.Production.yaml:/app/appsettings.Production.yaml:ro
+      - ./appsettings.yml:/app/appsettings.yml:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: "http://127.0.0.1:5427"

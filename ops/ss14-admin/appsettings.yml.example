@@ -27,7 +27,7 @@ Serilog:
 
 # Only accept requests whose Host header matches our public vhost.
 # nginx sets this via `proxy_set_header Host $host`.
-AllowedHosts: "ss14.zig.computer"
+AllowedHosts: "ss14.zig.computer;localhost;127.0.0.1"
 
 # Container listens on 127.0.0.1:5427 via ASPNETCORE_URLS (set in
 # docker-compose). This key is kept for documentation; ASPNETCORE_URLS
