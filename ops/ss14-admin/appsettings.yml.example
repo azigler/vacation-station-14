@@ -40,12 +40,13 @@ urls: "http://127.0.0.1:5427/"
 # https://ss14.zig.computer/admin/signin-oidc.
 PathBase: "/admin"
 
-# Connection string is provided via the ConnectionStrings__DefaultConnection
-# environment variable set in docker-compose.yml (no secret in this file).
-# Kept here only as a documentation placeholder — ASP.NET's env-var
-# provider overrides any value in the file.
-ConnectionStrings:
-  DefaultConnection: "Server=127.0.0.1;Port=5432;Database=vacation_station;User Id=vs14;Password=__from_env__"
+# ConnectionStrings.DefaultConnection is supplied via the
+# ConnectionStrings__DefaultConnection env var (see docker-compose.yml).
+#
+# NOTE: SS14.Admin's Program.cs calls `AddYamlFile` AFTER CreateDefaultBuilder
+# registers the EnvironmentVariables provider, so YAML values WIN over env
+# vars. Defining placeholder strings here shadows the real env-injected
+# value. Keep this section absent — env vars fill in at runtime.
 
 # Trust X-Forwarded-* headers from nginx (loopback) and any container
 # on a docker bridge. Without this, ASP.NET Core thinks the request is
@@ -60,8 +61,6 @@ ForwardProxies:
 # populated from /etc/vacation-station/admin-oauth.env.
 Auth:
   Authority: "https://central.spacestation14.io/web/"
-  ClientId: "__from_env__"
-  ClientSecret: "__from_env__"
 
 # Auth server the admin panel queries for user metadata (hub UUIDs,
 # ban-management interop).
