@@ -18,3 +18,8 @@
 	url = https://github.com/yagwog/RMC14-document-simu
 	branch = main
 	ignore = dirty
+[submodule "external/mapserver"]
+	path = external/mapserver
+	url = https://github.com/space-wizards/SS14.MapServer
+	branch = master
+	ignore = dirty

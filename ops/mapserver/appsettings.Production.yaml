@@ -1,0 +1,51 @@
+# VS14 SS14.MapServer config
+#
+# Extends upstream defaults (see external/mapserver/SS14.MapServer/appsettings.yaml
+# for the full schema). This file is bind-mounted into /app/appsettings.Production.yaml
+# inside the container by ops/observability/docker-compose.yml.
+#
+# Secrets (API key, DB password) come from environment variables via
+# ASP.NET Core's env-var config provider. Keys are flattened with `__` as
+# the separator, e.g. `Auth__ApiKey` overrides `Auth.ApiKey`.
+#
+# Set in the .env:
+#   MAPSERVER_API_KEY=<hex>
+#   POSTGRES_PASSWORD=<vs14-password>   # reused from ops/observability/.env
+#
+# After editing this file: `docker compose -f ops/observability/docker-compose.yml up -d mapserver`
+
+# ConnectionStrings.default lives in docker-compose.yml's environment:
+# block (as `ConnectionStrings__default`) so the postgres password
+# never enters this committed file. MapServer's Program.cs calls
+# AddYamlFile AFTER the env-var provider, so anything we set here
+# would override env — leaving ConnectionStrings out entirely.
+
+# TargetDirectory is where rendered maps land inside the container;
+# volume-mounted out so nginx can serve them.
+Processing:
+    TargetDirectory: "/app/build"
+    DirectoryPoolMaxSize: 3
+
+Server:
+    CorsOrigins:
+        - "https://ss14.zig.computer"
+    Language: "en-US"
+
+# MapServer defaults to `Content.MapRenderer.exe` (Windows); on Linux
+# dotnet produces a naked Content.MapRenderer (no extension).
+Build:
+    MapRendererCommand: "Content.MapRenderer"
+
+# Repo VS14 renders from. MapServer pulls it down and runs Content.MapRenderer
+# against it.
+Git:
+    Branch: "main"
+    RepositoryUrl: "https://github.com/azigler/vacation-station-14.git"
+    # VS14 keeps map YAMLs at Resources/Prototypes/Maps, not SS14's default
+    # Resources/Maps. Override the pattern.
+    MapFilePatterns:
+        - "Resources/Prototypes/Maps/*.yml"
+    # Set to false since we don't have a GitHub app yet (manual-render mode)
+    RetrieveMapFilesFromDiff: false
+    RunOnPullRequests: false
+    DontRunWithCodeChanges: false

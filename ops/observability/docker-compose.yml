@@ -28,6 +28,8 @@ networks:
     driver: bridge
 
 volumes:
+  mapserver-files:
+  mapserver-build:
   prometheus-data:
   loki-data:
   grafana-data:
@@ -128,3 +130,57 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # SS14.MapServer — map renderer + manager (vs-2nk)
+  # ---------------------------------------------------------------------------
+  # Runs Content.MapRenderer inside a Docker container (sidesteps the SIGABRT
+  # we hit running it directly under systemd; upstream expects + disables core
+  # dumps to absorb renderer crashes). Co-hosted in the observability compose
+  # for ops simplicity — one `docker compose up -d` brings everything up.
+  #
+  # Reuses host postgres (DB `vacation_station_mapserver`, owner vs14). Bound
+  # to loopback only; nginx fronts the API at /maps/api/.
+  #
+  # Data volumes:
+  #   mapserver-files  — rendered map images + metadata (consumed by MapViewer)
+  #   mapserver-build  — working dir for git clone + dotnet build
+  mapserver:
+    # Custom image extends ghcr.io/space-wizards/ss14.mapserver:latest
+    # with dotnet 10 SDK so Content.MapRenderer (pinned to .NET 10 via
+    # our repo's global.json) can build inside the container.
+    build:
+      context: ../mapserver
+      dockerfile: Dockerfile
+    image: vs14-mapserver:latest
+    container_name: vs14-mapserver
+    restart: unless-stopped
+    # Host networking so the container reaches postgres on 127.0.0.1:5432
+    # (docker's bridge + ufw interact awkwardly for host-postgres access
+    # via the docker0 gateway). ASPNETCORE_URLS binds directly to
+    # loopback:5218 on the host — no ports: mapping needed.
+    network_mode: host
+    volumes:
+      - ../mapserver/appsettings.Production.yaml:/app/appsettings.Production.yaml:ro
+      - mapserver-files:/app/data
+      - mapserver-build:/app/build
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: "http://127.0.0.1:5218"
+      # dotnet first-run config writes to $HOME/.dotnet; default HOME for
+      # the non-root container user isn't writable. Point it at /app/data
+      # which is a mounted volume.
+      DOTNET_CLI_HOME: /tmp
+      HOME: /tmp
+      # ASP.NET Core env config: keys use `__` as section separator.
+      # These override the YAML file for secrets.
+      # Password is plain hex (no special chars). See setup.postgres.sh for
+      # the rotation procedure — regenerate as `openssl rand -hex 32` to
+      # avoid Npgsql connection-string parser confusion around `=`/`+`/`/`.
+      ConnectionStrings__default: "Server=127.0.0.1;Port=5432;Database=vacation_station_mapserver;User Id=vs14;Password=${POSTGRES_PASSWORD}"
+      Auth__ApiKey: ${MAPSERVER_API_KEY}
+    # Core dumps off — each renderer crash otherwise writes ~1GB to disk
+    ulimits:
+      core:
+        soft: 0
+        hard: 0
