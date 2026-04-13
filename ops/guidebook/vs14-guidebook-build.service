@@ -1,0 +1,26 @@
+[Unit]
+Description=Vacation Station 14 — guidebook static-site rebuild (vs-1e5)
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+
+ExecStart=/opt/vacation-station/ops/guidebook/build.sh
+
+# Renderer is pure-Python over ~200 XML files; a few seconds in practice.
+# Generous ceiling for the initial git clone on a fresh host.
+TimeoutStartSec=15min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+# read-only so /opt/vacation-station → /home/<user>/... symlinks resolve
+# (same pattern as vs14-cookbook-build.service)
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/www/vs14-guidebook /var/lib/vs14-guidebook-source
+Environment=HOME=/var/lib/vs14-guidebook-source

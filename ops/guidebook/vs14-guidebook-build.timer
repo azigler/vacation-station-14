@@ -1,0 +1,14 @@
+[Unit]
+Description=Vacation Station 14 — guidebook daily rebuild timer
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+
+[Timer]
+# 05:15 UTC daily — staggered 15m after the cookbook timer (05:00) so the
+# two static-site rebuilds don't fight for disk.
+OnCalendar=*-*-* 05:15:00 UTC
+RandomizedDelaySec=15min
+Persistent=true
+Unit=vs14-guidebook-build.service
+
+[Install]
+WantedBy=timers.target
