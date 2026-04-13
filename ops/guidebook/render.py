@@ -101,6 +101,242 @@ def load_labels(repo: Path) -> dict[str, str]:
     return labels
 
 
+def load_all_locale(repo: Path) -> dict[str, str]:
+    """Scan every `.ftl` file under en-US and return a flat `key → value` map.
+
+    Used to resolve reagent / law / tech display names. Fluent attribute
+    lines (`.title = Foo`) are ignored — we only need top-level messages.
+    Duplicate keys keep the first occurrence, matching Fluent's behavior
+    of failing loud in-game; here we just stabilize the web build.
+    """
+    out: dict[str, str] = {}
+    ftl_root = repo / "Resources" / "Locale" / "en-US"
+    if not ftl_root.is_dir():
+        return out
+    key_re = re.compile(r"^([a-zA-Z][a-zA-Z0-9_-]*)\s*=\s*(.*)$")
+    for ftl in ftl_root.rglob("*.ftl"):
+        try:
+            text = ftl.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        current: str | None = None
+        for raw in text.splitlines():
+            line = raw.rstrip()
+            if not line or line.lstrip().startswith("#"):
+                current = None
+                continue
+            m = key_re.match(line)
+            if m:
+                key = m.group(1)
+                val = m.group(2).strip()
+                current = key
+                out.setdefault(key, val)
+            elif current and line.startswith((" ", "\t")):
+                stripped = line.strip()
+                if stripped.startswith("."):
+                    # Fluent attribute line — ignore for now
+                    current = None
+                    continue
+                out[current] = (out.get(current, "") + " " + stripped).strip()
+            else:
+                current = None
+    return out
+
+
+def _strip_fluent_markup(s: str) -> str:
+    """Remove Fluent placeables and SS14 bracket markup for plain display.
+
+    Fluent strings can contain `{ $var }` placeables and `{ -term }` terms.
+    SS14 strings sometimes mix in `[bold]`, `[color=...]`, etc. For table
+    cells we want a readable plain-text fallback — drop the markup rather
+    than render half of it.
+    """
+    s = re.sub(r"\{\s*\$([a-zA-Z_][a-zA-Z0-9_-]*)\s*\}", r"\1", s)
+    s = re.sub(r"\{[^{}]*\}", "", s)
+    s = re.sub(r"\[/?[a-zA-Z][^\]]{0,40}\]", "", s)
+    return s.strip()
+
+
+# ---------------------------------------------------------------------------
+# Reagent / recipe / technology / lawset scans
+# ---------------------------------------------------------------------------
+
+
+def load_reagents(repo: Path) -> dict[str, dict]:
+    """Scan Resources/Prototypes/Reagents/**/*.yml for `type: reagent`.
+
+    Returns id → {name_key, desc_key, group, color, physical_desc_key}.
+    Name/desc are locale keys, resolved later via `load_all_locale`.
+    """
+    out: dict[str, dict] = {}
+    proto_dir = repo / "Resources" / "Prototypes" / "Reagents"
+    if not proto_dir.is_dir():
+        return out
+    for yml in proto_dir.rglob("*.yml"):
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "reagent":
+                continue
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+            out[rid] = {
+                "id": rid,
+                "name_key": raw.get("name") or f"reagent-name-{rid.lower()}",
+                "desc_key": raw.get("desc") or f"reagent-desc-{rid.lower()}",
+                "physical_desc_key": raw.get("physicalDesc"),
+                "group": raw.get("group") or "Unknown",
+                "color": raw.get("color"),
+            }
+    return out
+
+
+def load_microwave_recipes(repo: Path) -> dict[str, dict]:
+    """Scan cooking recipes for `type: microwaveMealRecipe`.
+
+    Returns id → {name, result, time, group, solids, reagents}.
+    `solids` and `reagents` are dicts of proto-id → integer count.
+    """
+    out: dict[str, dict] = {}
+    proto_dir = repo / "Resources" / "Prototypes" / "Recipes" / "Cooking"
+    if not proto_dir.is_dir():
+        return out
+    for yml in proto_dir.rglob("*.yml"):
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "microwaveMealRecipe":
+                continue
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+            solids = raw.get("solids") or {}
+            reagents = raw.get("reagents") or {}
+            if not isinstance(solids, dict):
+                solids = {}
+            if not isinstance(reagents, dict):
+                reagents = {}
+            out[rid] = {
+                "id": rid,
+                "name": raw.get("name") or rid,
+                "result": raw.get("result"),
+                "time": raw.get("time"),
+                "group": raw.get("group") or "Other",
+                "solids": dict(solids),
+                "reagents": dict(reagents),
+            }
+    return out
+
+
+def load_research(repo: Path) -> tuple[dict[str, dict], dict[str, dict]]:
+    """Scan Resources/Prototypes/Research for disciplines + technologies.
+
+    Returns (disciplines, technologies) where each value is a dict keyed
+    by id. Technologies record their discipline + tier + cost.
+    """
+    disciplines: dict[str, dict] = {}
+    technologies: dict[str, dict] = {}
+    proto_dir = repo / "Resources" / "Prototypes" / "Research"
+    if not proto_dir.is_dir():
+        return disciplines, technologies
+    for yml in proto_dir.rglob("*.yml"):
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            kind = raw.get("type")
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+            if kind == "techDiscipline":
+                disciplines[rid] = {
+                    "id": rid,
+                    "name_key": raw.get("name") or rid,
+                    "color": raw.get("color"),
+                }
+            elif kind == "technology":
+                technologies[rid] = {
+                    "id": rid,
+                    "name_key": raw.get("name") or rid,
+                    "discipline": raw.get("discipline"),
+                    "tier": raw.get("tier"),
+                    "cost": raw.get("cost"),
+                }
+    return disciplines, technologies
+
+
+def load_lawsets(repo: Path) -> tuple[dict[str, dict], dict[str, dict]]:
+    """Scan for `type: siliconLawset` and `type: siliconLaw` prototypes.
+
+    Returns (lawsets, laws). Lawsets record ordered law-id list + name.
+    Laws record order + lawString (a locale key).
+    """
+    lawsets: dict[str, dict] = {}
+    laws: dict[str, dict] = {}
+    proto_dir = repo / "Resources" / "Prototypes"
+    if not proto_dir.is_dir():
+        return lawsets, laws
+    for yml in proto_dir.rglob("*.yml"):
+        # Fast-path filter: most yml files won't have lawsets.
+        try:
+            head = yml.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        if "type: siliconLaw" not in head and "type: siliconLawset" not in head:
+            continue
+        try:
+            docs = yaml.load(head, Loader=_EntityYamlLoader)
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            kind = raw.get("type")
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+            if kind == "siliconLaw":
+                laws[rid] = {
+                    "id": rid,
+                    "order": raw.get("order", 0),
+                    "law_string_key": raw.get("lawString"),
+                }
+            elif kind == "siliconLawset":
+                lawsets[rid] = {
+                    "id": rid,
+                    "name_key": raw.get("name") or rid,
+                    "laws": list(raw.get("laws") or []),
+                    "obeys_to_key": raw.get("obeysTo"),
+                }
+    return lawsets, laws
+
+
 # ---------------------------------------------------------------------------
 # Entity sprite resolution (vs-mlg)
 # ---------------------------------------------------------------------------
@@ -542,18 +778,36 @@ _EMBED_STATS = {"entity_total": 0, "entity_img": 0}
 # is served out of <WEB_ROOT>/sprites/<id>.png with no extra config.
 _SPRITE_URL_DIR = "sprites"
 
+# Prototype data indexes populated by render_site, consumed by _render_embed
+# for table expansion (vs-3o7). Kept module-global for the same reason the
+# sprite cache is: avoids threading 5 extra args through every render fn.
+_REAGENTS: dict[str, dict] = {}
+_MICROWAVE_RECIPES: dict[str, dict] = {}
+_DISCIPLINES: dict[str, dict] = {}
+_TECHNOLOGIES: dict[str, dict] = {}
+_LAWSETS: dict[str, dict] = {}
+_LAWS: dict[str, dict] = {}
+_LOCALE: dict[str, str] = {}
 
-def _render_embed(elem: ET.Element) -> str:
-    """Render an entity/reagent/etc embed.
 
-    For `<GuideEntityEmbed>` we try to resolve the entity's Sprite via
-    the module-level SpriteCache and emit an `<img>`. All other embed
-    tags (reagent, group, discipline, lawset, etc.) still render as the
-    v1 text pill — sprite resolution for those is out of scope for
-    vs-mlg.
+def _loc(key: str | None, fallback: str | None = None) -> str:
+    """Resolve a Fluent locale key to display text, stripping markup.
 
-    Falls back to the text pill on any resolution failure so the build
-    never crashes on a missing or malformed RSI.
+    Returns `fallback` (or the key itself) when the key is missing so
+    tables never render empty cells. Used for reagent/law/tech names.
+    """
+    if not key:
+        return fallback or ""
+    val = _LOCALE.get(key)
+    if val is None:
+        return fallback or key
+    return _strip_fluent_markup(val) or (fallback or key)
+
+
+def _fallback_pill(elem: ET.Element) -> str:
+    """Render the original v1 text pill for an embed. Used as a fallback
+    when the group/id lookup turns up nothing, so the page never silently
+    shows an empty table.
     """
     tag = elem.tag
     attrs = elem.attrib
@@ -567,6 +821,285 @@ def _render_embed(elem: ET.Element) -> str:
         or tag
     )
     caption = attrs.get("Caption")
+    parts = [html.escape(label_src)]
+    if caption and caption != label_src:
+        parts.append(
+            f'<span class="embed-caption">{html.escape(caption)}</span>'
+        )
+    kind = tag.replace("Guide", "").replace("Embed", "").lower() or "embed"
+    return f'<span class="embed embed-{kind}">{" · ".join(parts)}</span>'
+
+
+def _reagent_row(rid: str) -> str | None:
+    """Single table row for a reagent id, or None if unknown."""
+    r = _REAGENTS.get(rid)
+    if r is None:
+        return None
+    name = _loc(r["name_key"], rid)
+    desc = _loc(r["desc_key"], "")
+    color = r.get("color")
+    swatch = ""
+    if isinstance(color, str) and _COLOR_OK.match(color.strip()):
+        swatch = (
+            f'<span class="reagent-swatch" '
+            f'style="background:{html.escape(color.strip())}"></span>'
+        )
+    return (
+        f"<tr>"
+        f'<td class="reagent-name">{swatch}{html.escape(name)}</td>'
+        f'<td class="reagent-desc">{html.escape(desc)}</td>'
+        f"</tr>"
+    )
+
+
+def _render_reagent_embed(elem: ET.Element) -> str:
+    rid = elem.attrib.get("Reagent") or ""
+    row = _reagent_row(rid)
+    if row is None:
+        return _fallback_pill(elem)
+    return (
+        '<table class="embed-table reagent-table reagent-single">'
+        "<tbody>" + row + "</tbody></table>"
+    )
+
+
+def _render_reagent_group_embed(elem: ET.Element) -> str:
+    group = elem.attrib.get("Group") or ""
+    matches = [r for r in _REAGENTS.values() if (r.get("group") or "") == group]
+    if not matches:
+        return _fallback_pill(elem)
+    matches.sort(key=lambda r: _loc(r["name_key"], r["id"]).lower())
+    rows: list[str] = []
+    for r in matches:
+        row = _reagent_row(r["id"])
+        if row:
+            rows.append(row)
+    if not rows:
+        return _fallback_pill(elem)
+    return (
+        '<table class="embed-table reagent-table">'
+        "<thead><tr>"
+        "<th>Reagent</th><th>Description</th>"
+        "</tr></thead>"
+        "<tbody>" + "".join(rows) + "</tbody></table>"
+    )
+
+
+def _render_entity_cell(entity_id: str, label: str | None = None) -> str:
+    """Inline span with sprite (if resolvable) + label, for recipe cells."""
+    cache = _ACTIVE_SPRITE_CACHE
+    sprite_name: str | None = None
+    if cache is not None:
+        try:
+            sprite_name = cache.get(entity_id)
+        except Exception:
+            sprite_name = None
+    display = html.escape(label or entity_id)
+    if sprite_name:
+        src = f"{_SPRITE_URL_DIR}/{html.escape(sprite_name)}"
+        return (
+            f'<span class="entity-cell">'
+            f'<img src="{src}" alt="{html.escape(entity_id)}" '
+            f'loading="lazy" width="32" height="32" '
+            f'class="entity-cell-img">'
+            f'<span class="entity-cell-label">{display}</span>'
+            f"</span>"
+        )
+    return f'<span class="entity-cell">{display}</span>'
+
+
+def _render_microwave_group_embed(elem: ET.Element) -> str:
+    group = elem.attrib.get("Group") or ""
+    matches = [
+        r
+        for r in _MICROWAVE_RECIPES.values()
+        if (r.get("group") or "") == group
+    ]
+    if not matches:
+        return _fallback_pill(elem)
+    matches.sort(key=lambda r: str(r.get("name") or r["id"]).lower())
+    rows: list[str] = []
+    for recipe in matches:
+        result = recipe.get("result") or ""
+        # Recipe name is a plain string in YAML ("bun recipe"); capitalize.
+        name_raw = str(recipe.get("name") or recipe["id"])
+        name = name_raw[:1].upper() + name_raw[1:]
+        result_cell = (
+            _render_entity_cell(result, None)
+            if result
+            else "<em>(no result)</em>"
+        )
+        input_parts: list[str] = []
+        for solid_id, count in (recipe.get("solids") or {}).items():
+            input_parts.append(
+                f"{_render_entity_cell(str(solid_id), None)} "
+                f'<span class="ingredient-count">&times;{html.escape(str(count))}</span>'
+            )
+        for reagent_id, units in (recipe.get("reagents") or {}).items():
+            rname = _loc(
+                f"reagent-name-{str(reagent_id).lower()}", str(reagent_id)
+            )
+            input_parts.append(
+                f'<span class="reagent-cell">{html.escape(rname)}</span> '
+                f'<span class="ingredient-count">{html.escape(str(units))}u</span>'
+            )
+        inputs_html = (
+            "<br>".join(input_parts) if input_parts else "<em>(no inputs)</em>"
+        )
+        time_raw = recipe.get("time")
+        time_html = (
+            f"{html.escape(str(time_raw))}s" if time_raw is not None else ""
+        )
+        rows.append(
+            f"<tr>"
+            f'<td class="recipe-result">{result_cell}</td>'
+            f'<td class="recipe-name">{html.escape(name)}</td>'
+            f'<td class="recipe-inputs">{inputs_html}</td>'
+            f'<td class="recipe-time">{time_html}</td>'
+            f"</tr>"
+        )
+    return (
+        '<table class="embed-table recipe-table">'
+        "<thead><tr>"
+        "<th>Result</th><th>Recipe</th><th>Inputs</th><th>Time</th>"
+        "</tr></thead>"
+        "<tbody>" + "".join(rows) + "</tbody></table>"
+    )
+
+
+def _render_tech_discipline_embed(elem: ET.Element) -> str:
+    disc_id = elem.attrib.get("Discipline") or ""
+    disc = _DISCIPLINES.get(disc_id)
+    matches = [
+        t
+        for t in _TECHNOLOGIES.values()
+        if (t.get("discipline") or "") == disc_id
+    ]
+    if not matches:
+        return _fallback_pill(elem)
+    matches.sort(
+        key=lambda t: (
+            int(t.get("tier") or 0),
+            _loc(t["name_key"], t["id"]).lower(),
+        )
+    )
+    rows: list[str] = []
+    for tech in matches:
+        name = _loc(tech["name_key"], tech["id"])
+        tier = tech.get("tier")
+        cost = tech.get("cost")
+        rows.append(
+            f"<tr>"
+            f'<td class="tech-tier">T{html.escape(str(tier or "?"))}</td>'
+            f'<td class="tech-name">{html.escape(name)}</td>'
+            f'<td class="tech-cost">{html.escape(str(cost or ""))}</td>'
+            f"</tr>"
+        )
+    disc_name = _loc(disc["name_key"], disc_id) if disc is not None else disc_id
+    color = disc.get("color") if disc else None
+    header_style = ""
+    if isinstance(color, str) and _COLOR_OK.match(color.strip()):
+        header_style = f' style="color:{html.escape(color.strip())}"'
+    return (
+        f'<div class="embed-group tech-group">'
+        f'<div class="embed-group-title"{header_style}>'
+        f"{html.escape(disc_name)}</div>"
+        f'<table class="embed-table tech-table">'
+        f"<thead><tr>"
+        f"<th>Tier</th><th>Technology</th><th>Cost</th>"
+        f"</tr></thead>"
+        f"<tbody>" + "".join(rows) + "</tbody></table></div>"
+    )
+
+
+def _render_one_lawset(lawset: dict) -> str:
+    name = _loc(lawset["name_key"], lawset["id"])
+    law_ids = lawset.get("laws") or []
+    law_objs = [_LAWS.get(lid) for lid in law_ids if lid in _LAWS]
+    law_objs.sort(key=lambda law: int(law.get("order") or 0))  # type: ignore[arg-type]
+    items: list[str] = []
+    for law in law_objs:
+        if law is None:
+            continue
+        text = _loc(law.get("law_string_key"), "")
+        if not text:
+            continue
+        items.append(f"<li>{html.escape(text)}</li>")
+    if not items:
+        return ""
+    body = '<ol class="lawset-laws">' + "".join(items) + "</ol>"
+    return (
+        f'<div class="embed-group lawset-group">'
+        f'<div class="embed-group-title">{html.escape(name)}</div>'
+        f"{body}</div>"
+    )
+
+
+def _render_lawset_list_embed(elem: ET.Element) -> str:
+    # In-game the tag currently takes no attributes and lists all lawsets.
+    target = elem.attrib.get("Lawset")
+    if target:
+        lawset = _LAWSETS.get(target)
+        if lawset is None:
+            return _fallback_pill(elem)
+        rendered = _render_one_lawset(lawset)
+        return rendered or _fallback_pill(elem)
+    if not _LAWSETS:
+        return _fallback_pill(elem)
+    rendered_all = [
+        _render_one_lawset(ls)
+        for ls in sorted(
+            _LAWSETS.values(),
+            key=lambda ls: _loc(ls["name_key"], ls["id"]).lower(),
+        )
+    ]
+    rendered_all = [r for r in rendered_all if r]
+    if not rendered_all:
+        return _fallback_pill(elem)
+    return '<div class="lawset-list">' + "".join(rendered_all) + "</div>"
+
+
+def _render_embed(elem: ET.Element) -> str:
+    """Render an entity/reagent/etc embed.
+
+    Dispatches per tag:
+
+      - `GuideEntityEmbed` → sprite `<img>` (vs-mlg) or text pill fallback
+      - `GuideReagentEmbed` → single-row reagent table (vs-3o7)
+      - `GuideReagentGroupEmbed` → reagent list table (vs-3o7)
+      - `GuideMicrowaveGroupEmbed` → recipe table (vs-3o7)
+      - `GuideTechDisciplineEmbed` → technology list table (vs-3o7)
+      - `GuideLawsetListEmbed` → ordered lawset + laws (vs-3o7)
+      - anything else → text pill (unchanged v1 behavior)
+
+    Every expanded renderer falls back to `_fallback_pill` if its data
+    isn't in the index, so unknown reagents / empty groups still render
+    visibly rather than silently disappearing.
+    """
+    tag = elem.tag
+    attrs = elem.attrib
+    caption = attrs.get("Caption")
+
+    if tag == "GuideReagentEmbed":
+        return _render_reagent_embed(elem)
+    if tag == "GuideReagentGroupEmbed":
+        return _render_reagent_group_embed(elem)
+    if tag == "GuideMicrowaveGroupEmbed":
+        return _render_microwave_group_embed(elem)
+    if tag == "GuideTechDisciplineEmbed":
+        return _render_tech_discipline_embed(elem)
+    if tag == "GuideLawsetListEmbed":
+        return _render_lawset_list_embed(elem)
+
+    label_src = (
+        attrs.get("Entity")
+        or attrs.get("Reagent")
+        or attrs.get("Group")
+        or attrs.get("Discipline")
+        or attrs.get("Lawset")
+        or attrs.get("Caption")
+        or tag
+    )
 
     # Sprite path — only for entity embeds with an entity attr.
     if tag == "GuideEntityEmbed" and attrs.get("Entity"):
@@ -774,10 +1307,10 @@ INDEX_BODY = """<p>The in-game Guidebook, rendered as a static site for reading 
 Pick a topic on the left to get started, or jump to
 <a href="NewPlayer.html">New Player</a> if you've never played before.</p>
 
-<p class="note">Rendering is a minimal subset: text, cross-links, and
-entity sprites. Reagent groupings, reaction graphs, and recipe tables are
-not yet implemented — they render inline in the live game, which is still
-the authoritative source.</p>
+<p class="note">Rendering is a minimal subset: text, cross-links, entity
+sprites, and tables for reagents / recipes / technologies / lawsets.
+Reaction formulas and a handful of niche embeds still fall back to a
+label pill — for those, the live game remains the authoritative source.</p>
 
 <h2>Top-level topics</h2>
 <ul class="top-level">
@@ -924,6 +1457,116 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
   .layout { grid-template-columns: 1fr; }
   .sidebar { position: static; max-height: none; }
 }
+
+/* vs-3o7: expanded embed tables (reagents / recipes / tech / lawsets) */
+.embed-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+.embed-table thead th {
+  background: var(--panel-soft);
+  color: var(--dim);
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+.embed-table tbody td {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+.embed-table tbody tr:first-child td { border-top: none; }
+.embed-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.015); }
+.reagent-table .reagent-name {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--fg);
+}
+.reagent-table .reagent-desc { color: var(--dim); }
+.reagent-swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  margin-right: 0.4em;
+  vertical-align: middle;
+}
+.recipe-table .recipe-result,
+.recipe-table .recipe-name {
+  white-space: nowrap;
+}
+.recipe-table .recipe-time {
+  color: var(--dim);
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.85em;
+}
+.entity-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.entity-cell-img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.entity-cell-label { font-size: 0.9em; }
+.ingredient-count {
+  color: var(--dim);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.85em;
+}
+.reagent-cell { color: var(--fg); }
+.tech-table .tech-tier {
+  width: 3rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--accent);
+  font-weight: 600;
+}
+.tech-table .tech-cost {
+  color: var(--dim);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  text-align: right;
+  width: 6rem;
+}
+.embed-group {
+  margin: 1rem 0 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.embed-group > .embed-table {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+.embed-group-title {
+  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  background: var(--panel-soft);
+  border-bottom: 1px solid var(--border);
+}
+.lawset-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.lawset-group .lawset-laws {
+  margin: 0;
+  padding: 0.75rem 1rem 0.75rem 2.25rem;
+  color: var(--fg);
+}
+.lawset-group .lawset-laws li { margin: 0.25rem 0; }
 """
 
 
@@ -1001,12 +1644,58 @@ def _resolve_xml_path(repo: Path, text_path: str) -> Path | None:
 
 def render_site(repo: Path, out: Path) -> int:
     global _ACTIVE_SPRITE_CACHE
+    global _REAGENTS, _MICROWAVE_RECIPES, _DISCIPLINES, _TECHNOLOGIES
+    global _LAWSETS, _LAWS, _LOCALE
     entries = load_entries(repo)
     labels = load_labels(repo)
     entry_ids = set(entries)
 
     out.mkdir(parents=True, exist_ok=True)
     (out / "style.css").write_text(STYLE_CSS, encoding="utf-8")
+
+    # vs-3o7: prototype + locale indexes for embed table expansion. Each
+    # scan is soft-failed — a broken reagent yml should not tank the
+    # whole guidebook build; the embed just falls back to a pill.
+    try:
+        _LOCALE = load_all_locale(repo)
+        print(f"  indexed {len(_LOCALE)} locale message(s)", file=sys.stderr)
+    except Exception as exc:
+        print(f"  WARN: locale scan failed ({exc})", file=sys.stderr)
+        _LOCALE = {}
+    try:
+        _REAGENTS = load_reagents(repo)
+        print(f"  indexed {len(_REAGENTS)} reagent(s)", file=sys.stderr)
+    except Exception as exc:
+        print(f"  WARN: reagent scan failed ({exc})", file=sys.stderr)
+        _REAGENTS = {}
+    try:
+        _MICROWAVE_RECIPES = load_microwave_recipes(repo)
+        print(
+            f"  indexed {len(_MICROWAVE_RECIPES)} microwave recipe(s)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"  WARN: recipe scan failed ({exc})", file=sys.stderr)
+        _MICROWAVE_RECIPES = {}
+    try:
+        _DISCIPLINES, _TECHNOLOGIES = load_research(repo)
+        print(
+            f"  indexed {len(_DISCIPLINES)} discipline(s), "
+            f"{len(_TECHNOLOGIES)} technology(ies)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"  WARN: research scan failed ({exc})", file=sys.stderr)
+        _DISCIPLINES, _TECHNOLOGIES = {}, {}
+    try:
+        _LAWSETS, _LAWS = load_lawsets(repo)
+        print(
+            f"  indexed {len(_LAWSETS)} lawset(s), {len(_LAWS)} law(s)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"  WARN: lawset scan failed ({exc})", file=sys.stderr)
+        _LAWSETS, _LAWS = {}, {}
 
     # Build the entity→sprite index. Soft-fail (log + disable sprites)
     # if the prototype scan blows up — the guidebook should still ship
