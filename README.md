@@ -7,7 +7,7 @@ Vacation Station 14 (VS14) is a curated
 derivative, built with AI-assisted development. The codebase starts from a
 pure SS14 base; features from sibling forks (Delta-V, Frontier, Einstein
 Engines, etc.) are cherry-picked selectively into directory-prefixed
-subsystems (`_VS/`, `_DV/`, `_NF/`, `_EE/`, …) for clear attribution.
+subsystems (`_VS/`, `_DV/`, `_NF/`, `_SL/`, `_EE/`, …) for clear attribution.
 
 See [contributing guidelines](CONTRIBUTING.md) and [LEGAL.md](LEGAL.md) for
 details.
@@ -71,13 +71,14 @@ are denoted by inline `// <FORK>` comments around changed lines.
 | `_NF/` _(pending Phase 5)_ | Frontier Station | [new-frontiers-14/frontier-station-14](https://github.com/new-frontiers-14/frontier-station-14) | AGPL-3.0 + MIT | cherry-pick |
 | `_RMC/` _(pending Phase 5)_ | RMC-14 | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | AGPL-3.0 + MIT | cherry-pick |
 | `_HL/` _(pending Phase 5)_ | HardLight Sector | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | AGPL-3.0 + MIT | cherry-pick |
+| `_SL/` _(pending Phase 5)_ | Starlight | [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | MIT (+ modified-MIT middle period, see LEGAL.md) | cherry-pick |
 
 Bundled services are tracked as submodules under `external/<name>/`
 with per-service config under `ops/<name>/`. See [`docs/upstream-sync.md`](docs/upstream-sync.md)
 for the full table (cookbook at `/recipes/`, MapViewer + MapServer at
 `/maps/`, document-simu at `/writer/`).
 
-Additional cherry-pick sources (Einstein Engines, Starlight, Corvax)
+Additional cherry-pick sources (Einstein Engines `_EE/`, Corvax `_CX/`)
 will be added as remotes when Phase 5 curation targets them.
 
 ### Modification convention

@@ -25,6 +25,7 @@ for historical / license-chain purposes.
 | `upstream-nf` | [new-frontiers-14/frontier-station-14](https://github.com/new-frontiers-14/frontier-station-14) | cherry-pick | AGPL-3.0 + MIT (post-boundary split) | `_NF/` (Phase 5+) | ad-hoc per feature |
 | `upstream-rmc` | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | cherry-pick | AGPL-3.0 + MIT | `_RMC/` (Phase 5+) | ad-hoc — Aliens-mode / combat / scenario content |
 | `upstream-hl` | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | cherry-pick (meta-aggregator) | AGPL-3.0 + MIT | `_HL/` (Phase 5+) | ad-hoc — dense source, already aggregates ~20 other forks |
+| `upstream-sl` | [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | cherry-pick | MIT (+ modified-MIT middle period, see LEGAL.md) | `_SL/` (Phase 5+) | ad-hoc — structured-RP tone reference; default branch `starlight-dev` |
 
 ## Tracked upstreams — deploy-as-is submodules (bundled services)
 
@@ -46,9 +47,14 @@ work from that fork. Current candidates:
 
 | Upstream | Why worth tracking eventually |
 |---|---|
-| [Simple-Station/Einstein-Engines](https://github.com/Simple-Station/Einstein-Engines) | modular upstream for Nyanotrasen-lineage servers; democratic governance |
-| [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | custom MIT-like license; structured RP tone |
-| [space-syndicate/space-station-14](https://github.com/space-syndicate/space-station-14) | Corvax — primary RU-speaking fork |
+| [Simple-Station/Einstein-Engines](https://github.com/Simple-Station/Einstein-Engines) | future `_EE/` — modular upstream for Nyanotrasen-lineage servers; democratic governance |
+| [space-syndicate/space-station-14](https://github.com/space-syndicate/space-station-14) | future `_CX/` — Corvax, primary RU-speaking fork |
+
+Nyanotrasen is **not** tracked — the project is dormant and its
+feature set has been absorbed into active forks (psionics → Einstein
+Engines, mail job → Delta-V, Felinids/Moths/Arachne →
+Parkstation/Simple-Station). Pull those features from their active
+carriers rather than from the original Nyanotrasen repo.
 
 ## Integration modes
 

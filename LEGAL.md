@@ -98,9 +98,19 @@ MUST be preserved in any redistribution.
 - **Unprefixed Content.* code**: MIT (SS14 upstream), sublicensed
   as AGPLv3 when combined with our modifications. Do not remove
   the MIT notice.
-- **`_Starlight/` code** (if introduced): custom MIT-like license
-  ([LICENSE-Starlight.txt](LICENSE-Starlight.txt)), sublicensed
-  as AGPLv3.
+- **`_SL/` code** (Starlight; introduced in Phase 5): dual-period
+  license. Starlight contributions made between 2024-11-04 (commit
+  `84205e38`) and 2026-02-28 (commit `01eff0f7`) fall under the
+  "Starlight Fork License" (modified MIT — adds attribution-to-
+  Starlight-repo requirement). Contributions outside that range
+  are plain MIT. Both sublicense cleanly to AGPLv3 when combined
+  with our code; the middle-period attribution requirement is
+  preserved by keeping `LICENSE-Starlight.TXT` in the repo once
+  we take any middle-period code, and by the cherry-pick-level
+  authorship trailers. Starlight is itself in the process of
+  relicensing middle-period contributions back to MIT on a
+  per-author basis — track
+  [issue #3499](https://github.com/ss14Starlight/space-station-14/issues/3499).
 - **`RobustToolbox/`**: MIT (Space Wizards Federation engine).
 
 ## Asset license
@@ -167,9 +177,9 @@ upstream or when an existing upstream's license changes.
 | Delta-V Station (`upstream-dv`, future `_DV/` cherry-picks) | Upstream `LEGAL.md` + `LICENSE-MIT.txt` + `LICENSE-AGPLv3.txt` | AGPLv3 (post-boundary content) + MIT (pre-boundary upstream) | 2026-04-12 |
 | VS14 (authored, this repo) | [`LICENSE-AGPLv3.txt`](LICENSE-AGPLv3.txt) | AGPLv3 (post-Flavor-A boundary commit `86a6f6a3`) | 2026-04-12 |
 
-Additional upstreams (`_NF/` Frontier, `_EE/` Einstein Engines,
-`_Starlight/`, `_HardLight/`) get new rows when their first
-cherry-pick lands in Phase 5.
+Additional upstreams (`_NF/` Frontier, `_RMC/` RMC-14, `_HL/`
+HardLight, `_SL/` Starlight, `_EE/` Einstein Engines, `_CX/` Corvax)
+get new rows when their first cherry-pick lands in Phase 5.
 
 ### RobustToolbox's tri-license
 
