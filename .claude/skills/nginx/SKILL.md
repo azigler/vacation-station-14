@@ -47,15 +47,27 @@ off. `-t` catches both cases cheaply.
 ## Adding a new project vhost
 
 1. Write the vhost in the project repo (e.g. `myproj/ops/nginx/myproj.example.com.conf`).
-2. Install into nginx:
+2. Install into nginx — **always via the repo's `ops/nginx/install.sh`
+   helper**, never a bare `install -m 0644`. The helper re-shapes the
+   vhost through certbot after copy, which preserves the `:443` block.
+   A bare copy silently overwrites certbot's edits and takes HTTPS
+   offline (vs-15s incident — root cause of the first guidebook
+   deploy outage). The wrapper pattern:
 
 ```bash
-sudo install -m 0644 ./ops/nginx/myproj.example.com.conf \
-    /etc/nginx/sites-available/myproj.example.com.conf
-sudo ln -sf /etc/nginx/sites-available/myproj.example.com.conf \
-    /etc/nginx/sites-enabled/myproj.example.com.conf
-sudo nginx -t && sudo systemctl reload nginx
+# In ops/nginx/install.sh (excerpt):
+install -m 0644 ./ops/nginx/${HOST}.conf /etc/nginx/sites-available/
+ln -sf /etc/nginx/sites-available/${HOST}.conf \
+    /etc/nginx/sites-enabled/${HOST}.conf
+certbot --nginx -d ${HOST} --non-interactive --expand --redirect \
+    --agree-tos --register-unsafely-without-email
+nginx -t && systemctl reload nginx
 ```
+
+   When an `ops/<service>/install.sh` edits location blocks in the
+   shared vhost template, the operator must re-run
+   `sudo ./ops/nginx/install.sh` (or the service's install.sh must
+   call it) after the template change lands.
 
 3. If it's a new public hostname, either:
    - DNS the host at this server's IP first, THEN

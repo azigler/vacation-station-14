@@ -10,7 +10,10 @@
 #   - `ss14` system user + group
 #   - Repo at /opt/vacation-station (symlink OK)
 #   - nginx vhost ops/nginx/ss14.zig.computer.conf installed with
-#     /guidebook/ → /var/www/vs14-guidebook/ alias
+#     /guidebook/ → /var/www/vs14-guidebook/ alias (install via
+#     `sudo ./ops/nginx/install.sh` — NEVER a bare `install` over
+#     /etc/nginx/sites-available/, which clobbers certbot's :443
+#     block; see vs-15s)
 #   - python3 + pyyaml on PATH for the ss14 user
 
 set -euo pipefail
