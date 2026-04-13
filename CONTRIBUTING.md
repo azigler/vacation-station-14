@@ -184,6 +184,81 @@ The rules below exist so a small PR stays small to review.
 8. **Declare AI assistance** in the PR body if you used it. This is
    for transparency, not gatekeeping.
 
+## Bundled Services
+
+Services VS14 deploys alongside the game (cookbook at `/recipes/`,
+mapviewer at `/maps/`, document-simu at `/writer/`, SS14.Admin at
+`/admin/`, etc.) follow one of two layouts depending on whether we
+modify them.
+
+### Vanilla upstream — `external/<name>/` (git submodule)
+
+When we run a service **unmodified** from upstream, it lives as a
+git submodule. Upstream bumps are `git submodule update`; config
+lives separately in `ops/<name>/`.
+
+Current vanilla submodules:
+
+| Path | Upstream | License |
+|---|---|---|
+| `external/cookbook/` | [arimah/ss14-cookbook](https://github.com/arimah/ss14-cookbook) | AGPL-3.0 |
+| `external/mapviewer/` | [space-wizards/SS14.MapViewer](https://github.com/space-wizards/SS14.MapViewer) | MIT |
+| `external/document-simu/` | [yagwog/RMC14-document-simu](https://github.com/yagwog/RMC14-document-simu) | MIT |
+
+### Forked or authored — `services/<name>/` (inline in VS14)
+
+When we **modify** a service, or **author** a brand-new utility,
+the code lives inline in this repo under `services/<name>/`. No
+separate git repo, no submodule — the monorepo holds it.
+
+Rationale: single git history for cross-cutting changes, unified
+`git log`/`git blame`, one CI run covers everything, contributors
+don't juggle submodule auth. The tradeoff is that upstream sync
+becomes a cherry-pick + conflict-resolution flow instead of a
+submodule bump, which is fine for slow-moving services.
+
+### Migrating `external/` → `services/` (when we decide to fork)
+
+```bash
+# Capture the upstream SHA for attribution
+UPSTREAM_SHA=$(git -C external/<name> rev-parse HEAD)
+
+# Remove submodule, copy contents inline
+git rm external/<name>
+cp -a .git/modules/<name>/worktree services/<name>
+rm -rf services/<name>/.git services/<name>/.github  # drop upstream CI
+
+git add services/<name>
+git commit -m ":truck: services: inline <name> from upstream@<short-sha>
+
+Migrates the <name> submodule into services/<name>/ so VS14 can
+maintain modifications as regular commits. Upstream origin:
+<upstream repo URL> @ <SHA>.
+
+Bead: <bead-id>"
+```
+
+After migration:
+- `ops/<name>/build.sh` + vhost paths update from `external/<name>/`
+  to `services/<name>/`.
+- Subsequent upstream syncs become `git fetch <remote>` + targeted
+  cherry-pick into `services/<name>/`.
+- Inline `// <FORK>` modification annotations (see §Modification
+  Annotations) apply the same way to forked-service files.
+
+### Starting a net-new utility
+
+New utilities we author with no upstream lineage: `services/<name>/`
+from day one. No submodule, no external repo. Authored VS14 code,
+AGPLv3 per the §License Boundary commit in LEGAL.md.
+
+### `ops/<name>/` always points at the current location
+
+Configs in `ops/<name>/build.sh`, systemd units, nginx location
+blocks, etc. reference whichever path the service currently lives
+at (`external/` or `services/`). The path is a one-line update
+when migrating.
+
 ## Cherry-Pick Discipline
 
 When importing code from a sibling fork, attribution is not optional.
