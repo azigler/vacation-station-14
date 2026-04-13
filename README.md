@@ -68,10 +68,17 @@ are denoted by inline `// <FORK>` comments around changed lines.
 | `Content.*` (unprefixed) | Space Station 14 | [space-wizards/space-station-14](https://github.com/space-wizards/space-station-14) | MIT | checkout-as-of Phase 1 |
 | `RobustToolbox/` (submodule) | RobustToolbox engine | [space-wizards/RobustToolbox](https://github.com/space-wizards/RobustToolbox) | MIT | submodule pin |
 | `_DV/` _(pending Phase 5)_ | Delta-V Station | [DeltaV-Station/Delta-v](https://github.com/DeltaV-Station/Delta-v) | AGPL-3.0 + MIT | cherry-pick |
+| `_NF/` _(pending Phase 5)_ | Frontier Station | [new-frontiers-14/frontier-station-14](https://github.com/new-frontiers-14/frontier-station-14) | AGPL-3.0 + MIT | cherry-pick |
+| `_RMC/` _(pending Phase 5)_ | RMC-14 | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | AGPL-3.0 + MIT | cherry-pick |
+| `_HL/` _(pending Phase 5)_ | HardLight Sector | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | AGPL-3.0 + MIT | cherry-pick |
 
-Additional upstreams (`_NF/` Frontier, `_EE/` Einstein Engines, etc.) will
-land during the Phase 5 cherry-pick campaign; rows will be added to this
-table as each upstream is introduced.
+Bundled services are tracked as submodules under `external/<name>/`
+with per-service config under `ops/<name>/`. See [`docs/upstream-sync.md`](docs/upstream-sync.md)
+for the full table (cookbook at `/recipes/`, MapViewer + MapServer at
+`/maps/`, document-simu at `/writer/`).
+
+Additional cherry-pick sources (Einstein Engines, Starlight, Corvax)
+will be added as remotes when Phase 5 curation targets them.
 
 ### Modification convention
 

@@ -16,27 +16,39 @@ content keeps its original license — see the mode column below.
 The pre-reset state is preserved at the `pre-flavor-a-clear` tag
 for historical / license-chain purposes.
 
-## Tracked upstreams
+## Tracked upstreams — git remotes
 
 | Remote | Upstream | Mode | License | Subdirectory | Cadence |
 |---|---|---|---|---|---|
 | `upstream-sw` | [space-wizards/space-station-14](https://github.com/space-wizards/space-station-14) | engine + base content | MIT | `Content.*` unprefixed, `RobustToolbox/` (submodule) | monthly re-checkout of selected files; engine submodule bumped with care |
 | `upstream-dv` | [DeltaV-Station/Delta-v](https://github.com/DeltaV-Station/Delta-v) | cherry-pick | AGPL-3.0 + MIT (post-boundary split) | `_DV/` (Phase 5+) | ad-hoc per feature |
-| _(submodule)_ | [arimah/ss14-cookbook](https://github.com/arimah/ss14-cookbook) | deploy-as-is | AGPL-3.0 | `external/cookbook/` (config in `ops/cookbook/`) | submodule bump on demand |
+| `upstream-nf` | [new-frontiers-14/frontier-station-14](https://github.com/new-frontiers-14/frontier-station-14) | cherry-pick | AGPL-3.0 + MIT (post-boundary split) | `_NF/` (Phase 5+) | ad-hoc per feature |
+| `upstream-rmc` | [RMC-14/RMC-14](https://github.com/RMC-14/RMC-14) | cherry-pick | AGPL-3.0 + MIT | `_RMC/` (Phase 5+) | ad-hoc — Aliens-mode / combat / scenario content |
+| `upstream-hl` | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | cherry-pick (meta-aggregator) | AGPL-3.0 + MIT | `_HL/` (Phase 5+) | ad-hoc — dense source, already aggregates ~20 other forks |
 
-### Planned (Phase 5)
+## Tracked upstreams — deploy-as-is submodules (bundled services)
 
-These rows are reserved for upstreams we expect to cherry-pick from.
-Actual adoption is gated on Phase 4 curation output; rows move from
-"planned" → "tracked" once the first cherry-pick from that upstream
-lands.
+Per the decision matrix in **vs-19h**. LICENSE files retained inside
+each submodule directory, automatically satisfying MIT attribution +
+AGPL notice-retention requirements.
 
-| Remote | Upstream | Mode | License | Subdirectory |
+| Path | Upstream | License | Config dir | Landed via |
 |---|---|---|---|---|
-| `upstream-nf` _(planned)_ | [new-frontiers-14/frontier-station-14](https://github.com/new-frontiers-14/frontier-station-14) | cherry-pick | AGPL-3.0 + MIT | `_NF/` |
-| `upstream-ee` _(planned)_ | [Simple-Station/Einstein-Engines](https://github.com/Simple-Station/Einstein-Engines) | cherry-pick | AGPL-3.0 + MIT | `_EE/` |
-| `upstream-starlight` _(planned)_ | [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | cherry-pick | custom MIT-like | `_Starlight/` |
-| `upstream-hardlight` _(planned)_ | [HardLightSector/HardLight](https://github.com/HardLightSector/HardLight) | cherry-pick | AGPL-3.0 + MIT | `_HardLight/` |
+| `external/cookbook/` | [arimah/ss14-cookbook](https://github.com/arimah/ss14-cookbook) | AGPL-3.0 | `ops/cookbook/` | vs-1vy |
+| `external/mapviewer/` | [space-wizards/SS14.MapViewer](https://github.com/space-wizards/SS14.MapViewer) | MIT | `ops/mapviewer/` | vs-236 |
+| `external/mapserver/` | [space-wizards/SS14.MapServer](https://github.com/space-wizards/SS14.MapServer) | MIT | `ops/mapserver/` (container image reused by `ops/map-render/`) | vs-2nk |
+| `external/document-simu/` | [yagwog/RMC14-document-simu](https://github.com/yagwog/RMC14-document-simu) | MIT | `ops/document-simu/` | vs-v69 |
+
+## Not yet added as remotes (candidates)
+
+Adding a remote is free; we add one when we expect imminent curation
+work from that fork. Current candidates:
+
+| Upstream | Why worth tracking eventually |
+|---|---|
+| [Simple-Station/Einstein-Engines](https://github.com/Simple-Station/Einstein-Engines) | modular upstream for Nyanotrasen-lineage servers; democratic governance |
+| [ss14Starlight/space-station-14](https://github.com/ss14Starlight/space-station-14) | custom MIT-like license; structured RP tone |
+| [space-syndicate/space-station-14](https://github.com/space-syndicate/space-station-14) | Corvax — primary RU-speaking fork |
 
 ## Integration modes
 
@@ -57,18 +69,11 @@ and respects the upstream author's intent.
 **deploy-as-is** — third-party services bundled alongside the game
 (SS14.Admin, SS14.MapServer, SS14.MapViewer, ss14-cookbook,
 Robust.Cdn, etc.) are tracked in `external/` as git submodules,
-configured via `ops/`, and not modified in place. See
-[HOSTING.md](HOSTING.md) + [OPERATIONS.md](OPERATIONS.md).
-
-### Deployed-as-is submodules
-
-Per the decision matrix in **vs-19h**. LICENSE files are retained
-inside each submodule directory, automatically satisfying MIT
-attribution + AGPL notice-retention requirements.
-
-| Service | Upstream | Path | Config | License | Landed via |
-|---|---|---|---|---|---|
-| MapViewer | [space-wizards/SS14.MapViewer](https://github.com/space-wizards/SS14.MapViewer) | `external/mapviewer/` | `ops/mapviewer/` | MIT | vs-236 |
+configured via `ops/`, and not modified in place. See the full
+table above, plus [HOSTING.md](HOSTING.md) + [OPERATIONS.md](OPERATIONS.md).
+Once we fork a service (modify it), the directory migrates from
+`external/<name>/` → `services/<name>/` per the policy in
+[`CONTRIBUTING.md`](../CONTRIBUTING.md#bundled-services).
 
 ## Adding a new upstream
 

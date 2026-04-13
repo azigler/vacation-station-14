@@ -14,12 +14,14 @@ reset commit `86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12).
   - `_VS/` — original Vacation Station 14 content (AGPL-3.0)
   - `_DV/` — Delta-V Station cherry-picks (introduced during Phase 5)
   - `_NF/` — Frontier Station cherry-picks (introduced during Phase 5)
+  - `_RMC/` — RMC-14 cherry-picks (Aliens-mode, combat, scenario content)
+  - `_HL/` — HardLight Sector cherry-picks (meta-aggregator — itself pulls from ~20 forks)
   - `_EE/`, `_Starlight/`, `_Corvax/`, … — other upstreams per curation plan
   - Unprefixed `Content.*` = pure SS14 upstream, MIT
 - **Remotes**: `origin` (VS14), `upstream-sw` (space-wizards/space-station-14),
-  `upstream-dv` (DeltaV-Station/Delta-v), plus `upstream-nf` / `upstream-ee`
-  etc. added per Phase 5 cherry-pick campaign. No single remote is "the"
-  upstream.
+  `upstream-dv`, `upstream-nf`, `upstream-rmc`, `upstream-hl`. More added per
+  Phase 5 curation output. No single remote is "the" upstream. See
+  `docs/upstream-sync.md` for the full table.
 
 ## Code Conventions
 
