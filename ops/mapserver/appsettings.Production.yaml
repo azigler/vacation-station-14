@@ -33,8 +33,12 @@ Server:
 
 # MapServer defaults to `Content.MapRenderer.exe` (Windows); on Linux
 # dotnet produces a naked Content.MapRenderer (no extension).
+# ProcessTimeoutMinutes default is 10, too short for 33+ map batch
+# renders (each map loads the full server; ~30-60s per map on this
+# host). Set to 90 to comfortably cover full rebuilds.
 Build:
     MapRendererCommand: "Content.MapRenderer"
+    ProcessTimeoutMinutes: 90
 
 # Repo VS14 renders from. MapServer pulls it down and runs Content.MapRenderer
 # against it.
