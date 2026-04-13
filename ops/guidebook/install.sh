@@ -14,7 +14,10 @@
 #     `sudo ./ops/nginx/install.sh` — NEVER a bare `install` over
 #     /etc/nginx/sites-available/, which clobbers certbot's :443
 #     block; see vs-15s)
-#   - python3 + pyyaml on PATH for the ss14 user
+#   - python3 + pyyaml + python3-pil on PATH for the ss14 user
+#     (Pillow is used by render.py to slice directional RSI spritesheets
+#     into single-frame PNGs — without it directional sprites fall back
+#     to text pills, per vs-mlg)
 
 set -euo pipefail
 [ "$(id -u)" = "0" ] || { echo "ERROR: run as root (sudo)" >&2; exit 1; }

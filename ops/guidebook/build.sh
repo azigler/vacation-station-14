@@ -39,6 +39,15 @@ die() { log "ERROR: $*" >&2; exit 1; }
 [ -x "${RENDER_SCRIPT}" ] || [ -f "${RENDER_SCRIPT}" ] \
     || die "render.py missing at ${RENDER_SCRIPT}"
 
+# Pillow is optional but required for directional sprite slicing (vs-mlg).
+# If absent, render.py still builds — directional entity embeds fall back
+# to text pills and a warning is logged. Non-directional sprites still
+# render fine via plain file copy.
+if ! python3 -c 'from PIL import Image' 2>/dev/null; then
+    log "WARN: Pillow (python3-pil) not installed — directional entity sprites"
+    log "      will fall back to text pills. Install via: apt install python3-pil"
+fi
+
 # --- 1. Sibling source clone ---
 # The renderer only reads Resources/; a dedicated clone keeps the live
 # dev/deploy tree untouched and is cheap to `git reset --hard`.

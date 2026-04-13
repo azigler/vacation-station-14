@@ -34,12 +34,22 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import re
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import yaml
+
+try:
+    from PIL import Image  # type: ignore[import-not-found]
+
+    _PIL_AVAILABLE = True
+except ImportError:  # pragma: no cover - environment-dependent
+    Image = None  # type: ignore[assignment]
+    _PIL_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # Data loading
@@ -89,6 +99,305 @@ def load_labels(repo: Path) -> dict[str, str]:
         elif current_key and line.startswith(" "):
             labels[current_key] += " " + line.strip()
     return labels
+
+
+# ---------------------------------------------------------------------------
+# Entity sprite resolution (vs-mlg)
+# ---------------------------------------------------------------------------
+#
+# Entity prototype YAMLs use SS14-specific `!type:Foo` YAML tags on mappings
+# and sequences. yaml.SafeLoader rejects unknown tags, so we register a
+# multi-constructor that strips the tag and loads the child value normally.
+# We don't care about the tag's semantic meaning — only the raw fields we
+# inspect (id, parent, components[].type == Sprite, sprite, state, layers).
+
+
+class _EntityYamlLoader(yaml.SafeLoader):
+    """SafeLoader that tolerates SS14 `!type:Foo` tags by ignoring them."""
+
+
+def _ignore_tag(
+    loader: yaml.Loader, tag_suffix: str, node: yaml.Node
+) -> object:
+    if isinstance(node, yaml.ScalarNode):
+        return loader.construct_scalar(node)
+    if isinstance(node, yaml.SequenceNode):
+        return loader.construct_sequence(node, deep=True)
+    if isinstance(node, yaml.MappingNode):
+        return loader.construct_mapping(node, deep=True)
+    return None
+
+
+_EntityYamlLoader.add_multi_constructor("!", _ignore_tag)
+_EntityYamlLoader.add_multi_constructor("tag:yaml.org,2002:", _ignore_tag)
+
+
+def load_entity_sprites(repo: Path) -> dict[str, dict]:
+    """Scan entity prototypes; return id → {parent, sprite_rsi, state}.
+
+    Walks Resources/Prototypes/**/*.yml, picking up documents whose
+    `type: entity` (prototype-like shape). For each, records:
+      - parent: str | list[str] | None
+      - sprite_rsi: RSI path (relative to Resources/Textures), or None
+      - state: state name within the RSI, or None
+      - abstract: whether the entity is abstract
+
+    The renderer later walks the parent chain to inherit missing
+    sprite/state fields.
+    """
+    proto_dir = repo / "Resources" / "Prototypes"
+    out: dict[str, dict] = {}
+    if not proto_dir.is_dir():
+        return out
+
+    for yml in proto_dir.rglob("*.yml"):
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "entity":
+                continue
+            eid = raw.get("id")
+            if not isinstance(eid, str) or not eid:
+                continue
+            sprite_rsi: str | None = None
+            state: str | None = None
+            components = raw.get("components") or []
+            if isinstance(components, list):
+                for comp in components:
+                    if not isinstance(comp, dict):
+                        continue
+                    if comp.get("type") != "Sprite":
+                        continue
+                    spr = comp.get("sprite")
+                    if isinstance(spr, str):
+                        sprite_rsi = spr
+                    st = comp.get("state")
+                    if isinstance(st, str):
+                        state = st
+                    # Fallback: first layer's state if top-level state
+                    # is missing. v2 ignores layer compositing per scope.
+                    if state is None:
+                        layers = comp.get("layers")
+                        if isinstance(layers, list):
+                            for layer in layers:
+                                if isinstance(layer, dict) and isinstance(
+                                    layer.get("state"), str
+                                ):
+                                    state = layer["state"]
+                                    if not sprite_rsi and isinstance(
+                                        layer.get("sprite"), str
+                                    ):
+                                        sprite_rsi = layer["sprite"]
+                                    break
+                    break  # only first Sprite component
+            out[eid] = {
+                "parent": raw.get("parent"),
+                "sprite_rsi": sprite_rsi,
+                "state": state,
+                "abstract": bool(raw.get("abstract", False)),
+            }
+    return out
+
+
+def _walk_parents(entity_id: str, entities: dict[str, dict]) -> list[str]:
+    """Return the parent chain for entity_id, nearest ancestor first.
+
+    SS14 supports single-parent (`parent: Foo`) and multi-parent
+    (`parent: [Foo, Bar]`) declarations. For multi-parent we walk each
+    branch in order; most multi-parents are mix-ins that don't affect
+    Sprite, so the Sprite-bearing ancestor is usually on branch 0.
+    """
+    chain: list[str] = []
+    seen: set[str] = {entity_id}
+    stack: list[str] = [entity_id]
+    while stack:
+        cur = stack.pop(0)
+        ent = entities.get(cur)
+        if ent is None:
+            continue
+        parent = ent.get("parent")
+        parents: list[str] = []
+        if isinstance(parent, str):
+            parents = [parent]
+        elif isinstance(parent, list):
+            parents = [p for p in parent if isinstance(p, str)]
+        for p in parents:
+            if p in seen:
+                continue
+            seen.add(p)
+            chain.append(p)
+            stack.append(p)
+    return chain
+
+
+def resolve_sprite(
+    entity_id: str, entities: dict[str, dict]
+) -> tuple[str, str] | None:
+    """Return (rsi_path, state) for entity_id, walking parents.
+
+    RSI path is relative to Resources/Textures. Returns None if the
+    entity has no resolvable sprite (e.g. no Sprite component anywhere
+    in the inheritance chain).
+    """
+    ent = entities.get(entity_id)
+    if ent is None:
+        return None
+    rsi = ent.get("sprite_rsi")
+    state = ent.get("state")
+    if rsi and state:
+        return (rsi, state)
+    # Walk parents until we have both fields
+    for ancestor_id in _walk_parents(entity_id, entities):
+        anc = entities[ancestor_id]
+        if not rsi and anc.get("sprite_rsi"):
+            rsi = anc["sprite_rsi"]
+        if not state and anc.get("state"):
+            state = anc["state"]
+        if rsi and state:
+            break
+    if not rsi:
+        return None
+    # Some entities declare `sprite:` without a `state:` — SS14 defaults
+    # to the first state in the RSI. We'll resolve that at PNG time.
+    return (rsi, state or "")
+
+
+def _extract_sprite_png(
+    repo: Path,
+    rsi_rel: str,
+    state: str,
+    dest: Path,
+) -> bool:
+    """Extract a single-frame PNG for rsi/state into dest. Returns True on success.
+
+    - Reads Resources/Textures/<rsi_rel>/meta.json to find the state's
+      `directions` and the RSI's canonical `size` (per-frame dimensions).
+    - If the state is non-directional (directions omitted or 1) the PNG
+      on disk is already a single frame; just copy it.
+    - If directional, the PNG is a grid of directional frames laid out
+      left-to-right, top-to-bottom. We slice the first frame (index 0,
+      which corresponds to `South` in SS14 convention) using Pillow.
+      If Pillow isn't available, we fall back to copying the whole
+      spritesheet — readable-ish for 4-dir icons, visibly multi-frame
+      for 8-dir ones. The caller logs a warning in that case.
+    """
+    rsi_dir = repo / "Resources" / "Textures" / rsi_rel
+    meta_path = rsi_dir / "meta.json"
+    if not meta_path.is_file():
+        return False
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+
+    states = meta.get("states") or []
+    if not state:
+        # Use the first state if unspecified
+        if not states or not isinstance(states[0], dict):
+            return False
+        state = states[0].get("name") or ""
+        if not state:
+            return False
+
+    state_meta: dict | None = None
+    for s in states:
+        if isinstance(s, dict) and s.get("name") == state:
+            state_meta = s
+            break
+    if state_meta is None:
+        return False
+
+    png_path = rsi_dir / f"{state}.png"
+    if not png_path.is_file():
+        return False
+
+    directions = int(state_meta.get("directions", 1) or 1)
+    if directions <= 1 or not _PIL_AVAILABLE:
+        # Copy as-is. For directional states without Pillow we accept a
+        # slightly degraded render rather than crashing the build.
+        try:
+            shutil.copyfile(png_path, dest)
+        except OSError:
+            return False
+        return True
+
+    size = meta.get("size") or {}
+    try:
+        w = int(size["x"])
+        h = int(size["y"])
+    except (KeyError, TypeError, ValueError):
+        return False
+
+    try:
+        with Image.open(png_path) as img:  # type: ignore[union-attr]
+            img.load()
+            # First frame is top-left (South direction).
+            crop = img.crop((0, 0, w, h))
+            crop.save(dest, format="PNG", optimize=True)
+    except (OSError, ValueError):
+        return False
+    return True
+
+
+class SpriteCache:
+    """Memoize entity-id → output sprite path (or None on failure).
+
+    The cache guarantees each entity's PNG is extracted at most once
+    per build — critical for the 575-embed guidebook where popular
+    entities appear on many pages.
+    """
+
+    def __init__(
+        self,
+        repo: Path,
+        out_dir: Path,
+        entities: dict[str, dict],
+    ) -> None:
+        self.repo = repo
+        self.out_dir = out_dir  # e.g. <out>/sprites
+        self.entities = entities
+        self._resolved: dict[str, str | None] = {}
+        self._warned_no_pil = False
+        self.out_dir.mkdir(parents=True, exist_ok=True)
+
+    def get(self, entity_id: str) -> str | None:
+        """Return the basename (e.g. `Foo.png`) of the sprite, or None."""
+        if entity_id in self._resolved:
+            return self._resolved[entity_id]
+        result = self._resolve(entity_id)
+        self._resolved[entity_id] = result
+        return result
+
+    def _resolve(self, entity_id: str) -> str | None:
+        spec = resolve_sprite(entity_id, self.entities)
+        if spec is None:
+            return None
+        rsi, state = spec
+        # Sanitize entity_id for filesystem: SS14 ids are PascalCase
+        # ASCII in practice, but be defensive.
+        safe_id = re.sub(r"[^A-Za-z0-9_.-]", "_", entity_id)
+        dest = self.out_dir / f"{safe_id}.png"
+        if dest.exists():
+            return dest.name
+        ok = _extract_sprite_png(self.repo, rsi, state, dest)
+        if not ok:
+            return None
+        if not _PIL_AVAILABLE and not self._warned_no_pil:
+            print(
+                "  WARN: Pillow not installed — directional sprites will "
+                "render as full spritesheets. `apt install python3-pil`.",
+                file=sys.stderr,
+            )
+            self._warned_no_pil = True
+        return dest.name
 
 
 # ---------------------------------------------------------------------------
@@ -218,8 +527,34 @@ def _normalize_xml(raw: str) -> str:
     return raw
 
 
+# Module-level sprite cache, set by render_site at build start. Kept
+# module-global rather than threaded through every _render_* function to
+# avoid touching a dozen signatures for what is effectively a build-wide
+# singleton.
+_ACTIVE_SPRITE_CACHE: SpriteCache | None = None
+
+# Embed-stats counter (vs-mlg acceptance: ≥80% GuideEntityEmbed → <img>).
+# Populated by render_site around each page; reset per build.
+_EMBED_STATS = {"entity_total": 0, "entity_img": 0}
+
+# URL prefix for extracted sprite PNGs, relative to the guidebook output
+# root. Must match the nginx alias layout — /guidebook/sprites/<id>.png
+# is served out of <WEB_ROOT>/sprites/<id>.png with no extra config.
+_SPRITE_URL_DIR = "sprites"
+
+
 def _render_embed(elem: ET.Element) -> str:
-    """Render an entity/reagent/etc embed as a plain-text pill."""
+    """Render an entity/reagent/etc embed.
+
+    For `<GuideEntityEmbed>` we try to resolve the entity's Sprite via
+    the module-level SpriteCache and emit an `<img>`. All other embed
+    tags (reagent, group, discipline, lawset, etc.) still render as the
+    v1 text pill — sprite resolution for those is out of scope for
+    vs-mlg.
+
+    Falls back to the text pill on any resolution failure so the build
+    never crashes on a missing or malformed RSI.
+    """
     tag = elem.tag
     attrs = elem.attrib
     label_src = (
@@ -232,6 +567,41 @@ def _render_embed(elem: ET.Element) -> str:
         or tag
     )
     caption = attrs.get("Caption")
+
+    # Sprite path — only for entity embeds with an entity attr.
+    if tag == "GuideEntityEmbed" and attrs.get("Entity"):
+        _EMBED_STATS["entity_total"] += 1
+        entity_id = attrs["Entity"]
+        cache = _ACTIVE_SPRITE_CACHE
+        sprite_name: str | None = None
+        if cache is not None:
+            try:
+                sprite_name = cache.get(entity_id)
+            except Exception as exc:
+                print(
+                    f"  WARN: sprite resolve failed for {entity_id}: {exc}",
+                    file=sys.stderr,
+                )
+                sprite_name = None
+        if sprite_name:
+            _EMBED_STATS["entity_img"] += 1
+            alt = html.escape(caption or entity_id)
+            src = f"{_SPRITE_URL_DIR}/{html.escape(sprite_name)}"
+            img = (
+                f'<img src="{src}" alt="{alt}" loading="lazy" '
+                f'width="64" height="64" class="embed-sprite-img">'
+            )
+            if caption and caption != entity_id:
+                cap_html = (
+                    f'<span class="embed-caption">{html.escape(caption)}</span>'
+                )
+                return (
+                    f'<span class="embed embed-entity has-sprite">'
+                    f"{img}{cap_html}</span>"
+                )
+            return f'<span class="embed embed-entity has-sprite">{img}</span>'
+        # Resolution failed → fall through to pill below.
+
     parts = [html.escape(label_src)]
     if caption and caption != label_src:
         parts.append(
@@ -404,10 +774,10 @@ INDEX_BODY = """<p>The in-game Guidebook, rendered as a static site for reading 
 Pick a topic on the left to get started, or jump to
 <a href="NewPlayer.html">New Player</a> if you've never played before.</p>
 
-<p class="note">Rendering is a minimal v1 subset: text + cross-links + entity
-name pills. Sprite previews, reaction graphs, and recipe tables are not yet
-implemented — they render inline in the live game, which is still the
-authoritative source.</p>
+<p class="note">Rendering is a minimal subset: text, cross-links, and
+entity sprites. Reagent groupings, reaction graphs, and recipe tables are
+not yet implemented — they render inline in the live game, which is still
+the authoritative source.</p>
 
 <h2>Top-level topics</h2>
 <ul class="top-level">
@@ -524,6 +894,20 @@ code { font-family: ui-monospace, SFMono-Regular, monospace; }
   color: var(--dim);
 }
 .embed-caption { color: var(--fg); margin-left: 0.25rem; }
+.embed.has-sprite {
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  vertical-align: middle;
+}
+.embed-sprite-img {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  vertical-align: middle;
+  display: inline-block;
+}
 .tag-unknown {
   color: #d07a7a;
   font-family: ui-monospace, SFMono-Regular, monospace;
@@ -616,12 +1000,40 @@ def _resolve_xml_path(repo: Path, text_path: str) -> Path | None:
 
 
 def render_site(repo: Path, out: Path) -> int:
+    global _ACTIVE_SPRITE_CACHE
     entries = load_entries(repo)
     labels = load_labels(repo)
     entry_ids = set(entries)
 
     out.mkdir(parents=True, exist_ok=True)
     (out / "style.css").write_text(STYLE_CSS, encoding="utf-8")
+
+    # Build the entity→sprite index. Soft-fail (log + disable sprites)
+    # if the prototype scan blows up — the guidebook should still ship
+    # with text-pill embeds in that case.
+    sprite_cache: SpriteCache | None = None
+    try:
+        print("scanning entity prototypes for sprite data...", file=sys.stderr)
+        entity_sprites = load_entity_sprites(repo)
+        print(
+            f"  indexed {len(entity_sprites)} entity prototype(s)",
+            file=sys.stderr,
+        )
+        sprite_cache = SpriteCache(
+            repo=repo,
+            out_dir=out / _SPRITE_URL_DIR,
+            entities=entity_sprites,
+        )
+    except Exception as exc:
+        print(
+            f"  WARN: entity sprite index failed ({exc}); "
+            f"falling back to text pills",
+            file=sys.stderr,
+        )
+        sprite_cache = None
+    _ACTIVE_SPRITE_CACHE = sprite_cache
+    _EMBED_STATS["entity_total"] = 0
+    _EMBED_STATS["entity_img"] = 0
 
     rendered = 0
     skipped = 0
@@ -676,6 +1088,15 @@ def render_site(repo: Path, out: Path) -> int:
     print(
         f"rendered {rendered} page(s), {skipped} with fallback, wrote index.html"
     )
+    total = _EMBED_STATS["entity_total"]
+    imgs = _EMBED_STATS["entity_img"]
+    if total:
+        pct = 100.0 * imgs / total
+        print(
+            f"GuideEntityEmbed: {imgs}/{total} rendered as <img> ({pct:.1f}%), "
+            f"{total - imgs} fell back to text pill"
+        )
+    _ACTIVE_SPRITE_CACHE = None
     return 0
 
 
