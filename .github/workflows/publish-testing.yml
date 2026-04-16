@@ -6,8 +6,9 @@ concurrency:
 
 on:
   workflow_dispatch:
-  schedule:
-  - cron: '0 10 * * *'
+  # VS - disabled scheduled runs; we publish via our own watchdog, not Robust.Cdn
+  # schedule:
+  # - cron: '0 10 * * *'
 
 jobs:
   build:
