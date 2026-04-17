@@ -58,6 +58,12 @@ that edit an unprefixed file, NF for Frontier, etc.):
 PascalCase, category prefix. Append `VS` suffix when disambiguation needed:
 `ClothingHeadHatChefVS`, `FoodRecipePastaVS`
 
+### External Repos and Ops Directories
+`external/<name>/` + `ops/<name>/` MUST use the same `<name>`, which is the
+lowercase kebab of the upstream repo name (`Robust.Cdn` → `robust-cdn`,
+`SS14.MapServer` → `mapserver`). Prefix-stripping is allowed when redundant
+as long as both roots agree.
+
 ## Dev Environment
 
 **Nix is the primary dev path.** The flake pins the entire build + ops

@@ -206,7 +206,7 @@ services:
     ports:
       - "127.0.0.1:8087:8080"
     volumes:
-      - ../cdn/appsettings.Production.json:/app/appsettings.Production.json:ro
+      - ../robust-cdn/appsettings.Production.json:/app/appsettings.Production.json:ro
       - cdn-db:/database
       - cdn-manifest:/manifest
       - cdn-builds:/builds
