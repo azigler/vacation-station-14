@@ -50,12 +50,20 @@ nix run .#dev-services    # process-compose TUI; F10 to exit
 
 | Service    | Endpoint                | Dev creds                       |
 |------------|-------------------------|---------------------------------|
-| Postgres   | `localhost:5432`        | `vs14 / dev-only-insecure`      |
-| Prometheus | `http://localhost:9090` | —                               |
-| Loki       | `http://localhost:3100` | —                               |
-| Grafana    | `http://localhost:3200` | `admin / admin`                 |
+| Postgres   | `localhost:5433`        | `vs14 / dev-only-insecure`      |
+| Prometheus | `http://localhost:9091` | —                               |
+| Loki       | `http://localhost:3101` | —                               |
+| Grafana    | `http://localhost:3201` | `admin / admin`                 |
 
-State lives in `.data/` (gitignored). Reset with `rm -rf .data/`.
+Dev ports are `prod + 1` via `devPortOffset = 1` in `flake.nix` — the dev
+stack is designed to coexist with a live prod stack on the same host
+(vs-2f8.7). See `docs/DEVELOPMENT.md` "Running dev on the same box as
+prod" for the full two-stacks workflow.
+
+State lives in `.data/` (gitignored); `.data/vacation-station/config.toml`
+is regenerated from the committed `instances/vacation-station/config.toml.example`
+on every stack boot (dev ports + dev-literal credentials). Reset with
+`rm -rf .data/`.
 
 Dev credentials are literal strings and MUST NOT be reused in prod. The
 production stack (vs-3ty postgres, vs-2p3 observability) uses random
@@ -134,8 +142,14 @@ imported as a process-compose module.
 
 ## Don't
 
-- Don't try to run the dev services stack AND the docker-compose stack on
-  the same ports simultaneously. Pick one.
+- Don't assume dev and prod are mutually exclusive — post-vs-2f8.7 they
+  coexist on `prod-port + 1` (5433/9091/3101/3201/1213/44881 for dev vs
+  5432/9090/3100/3200/1212/44880 for prod). If you're hardcoding a dev
+  port anywhere, use `devPortOffset = 1` from `flake.nix` instead.
+- Don't bind dev services to a public interface. Everything except the
+  SS14 game port stays on loopback; 1213 is open at the host firewall
+  for launcher direct-connect, but dev Grafana/Prometheus/Loki should
+  only be reached via SSH tunnel or local access.
 - Don't commit anything from `.data/`.
 - Don't propose migrating the production host to NixOS in a passing bead —
   that's a separate architectural decision with hosting/migration cost.

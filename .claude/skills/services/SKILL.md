@@ -44,27 +44,40 @@ current state.
 
 ## Service inventory
 
-| Service     | Dev manager                             | Prod manager                                    | Port(s)             | Repo config                                        |
-|-------------|-----------------------------------------|-------------------------------------------------|---------------------|----------------------------------------------------|
-| Postgres    | services-flake `postgres.pg1`, `.data/postgres/` | apt `postgresql-16`, systemd `postgresql.service`, `/var/lib/postgresql/16/main/` | `5432`              | `setup.postgres.sh`                                |
-| Prometheus  | services-flake `prometheus.prom1`       | docker compose `prom/prometheus`                | `9090` (loopback)   | `ops/observability/prometheus.yml`                 |
-| Loki        | services-flake `loki.loki1`             | docker compose `grafana/loki`                   | `3100` (loopback)   | `ops/observability/loki-config.yml`                |
-| Grafana     | services-flake `grafana.graf1`          | docker compose `grafana/grafana`                | `3200` (loopback)   | `ops/observability/grafana/`                       |
-| Watchdog    | — (don't run in dev)                    | systemd `ss14-watchdog.service`                 | `5000` (loopback)   | `ops/watchdog/ss14-watchdog.service`, `appsettings.yml.example` |
-| SS14 server | `dotnet run --project Content.Server`   | child of watchdog                               | `1212/tcp+udp`, `44880` metrics (loopback) | `instances/vacation-station/config.toml.example` |
-| DB backup   | —                                       | systemd `ss14-backup.timer` → `ss14-backup.service` | —               | `ops/postgres/backup.sh`, `ss14-backup.{service,timer}` |
-| nginx       | —                                       | systemd `nginx.service`                         | `80`, `443`         | `ops/nginx/<host>.conf` → `/etc/nginx/sites-available/` (see `.claude/skills/nginx/SKILL.md`) |
+Dev + prod coexist on the same host (vs-2f8.7): every dev service binds
+at `prod + devPortOffset` (= +1, see `flake.nix`). The Port(s) column
+below lists `prod / dev` pairs.
 
-Dev + prod Grafana both bind `:3200`, so they cannot co-exist on the same
-host. This is a feature — pick one.
+| Service     | Dev manager                             | Prod manager                                    | Port(s) prod / dev           | Repo config                                        |
+|-------------|-----------------------------------------|-------------------------------------------------|------------------------------|----------------------------------------------------|
+| Postgres    | services-flake `postgres.pg1`, `.data/postgres/` | apt `postgresql-16`, systemd `postgresql.service`, `/var/lib/postgresql/16/main/` | `5432` / `5433`              | `setup.postgres.sh`                                |
+| Prometheus  | services-flake `prometheus.prom1`       | docker compose `prom/prometheus`                | `9090` / `9091` (loopback)   | `ops/observability/prometheus.yml`                 |
+| Loki        | services-flake `loki.loki1`             | docker compose `grafana/loki`                   | `3100` / `3101` (loopback)   | `ops/observability/loki-config.yml`                |
+| Grafana     | services-flake `grafana.graf1`          | docker compose `grafana/grafana`                | `3200` / `3201` (loopback)   | `ops/observability/grafana/`                       |
+| Watchdog    | — (don't run in dev)                    | systemd `ss14-watchdog.service`                 | `5000` (loopback, prod only) | `ops/watchdog/ss14-watchdog.service`, `appsettings.yml.example` |
+| SS14 server | `dotnet run --project Content.Server`   | child of watchdog                               | `1212` / `1213` tcp+udp, `44880` / `44881` metrics | `instances/vacation-station/config.toml.example` (dev overlay materialized to `.data/vacation-station/config.toml` on `nix run .#dev-services`) |
+| DB backup   | —                                       | systemd `ss14-backup.timer` → `ss14-backup.service` | — (prod only)            | `ops/postgres/backup.sh`, `ss14-backup.{service,timer}` |
+| nginx       | —                                       | systemd `nginx.service`                         | `80`, `443` (prod only)      | `ops/nginx/<host>.conf` → `/etc/nginx/sites-available/` (see `.claude/skills/nginx/SKILL.md`) |
+
+Prod game-server port `1212/tcp+udp` is open on the public firewall; dev
+`1213/tcp+udp` is also open so launchers can direct-connect to a dev
+server running on the same host (`ss14://ss14.zig.computer:1213`). Prod
+observability ports are loopback-only (reached via nginx); dev
+observability stays loopback, reachable via SSH tunnel if needed.
 
 ## Deciding which stack to use
+
+Since dev + prod now coexist on the same box (vs-2f8.7), "which stack" is
+mostly about which Grafana/ports/creds you point your tooling at — not
+about pausing prod. `docker compose ps` and `nix run .#dev-services` can
+be running simultaneously.
 
 | Goal                                      | Stack  | Why                                          |
 |-------------------------------------------|--------|----------------------------------------------|
 | Validate a `prometheus.yml` change        | dev    | ephemeral, fast reset, can't break prod      |
 | Test a DB migration                       | dev    | same schema, disposable creds                |
 | Iterate on a Grafana dashboard            | dev    | scratchpad, then export JSON into the repo   |
+| Playtest a content change against a peer  | dev    | ship them `ss14://ss14.zig.computer:1213` while prod stays on `:1212` |
 | Investigate a live bug                    | prod   | dev repro rarely matches real traffic        |
 | Test a Discord webhook                    | prod   | scratch channel; real webhook mechanics      |
 | Rotate a credential                       | prod   | dev creds are literal                        |
@@ -178,8 +191,11 @@ literal in `flake.nix` and do not rotate.
   `docs/OPERATIONS.md` "Watchdog / Systemd unit semantics"
 - **Backup timer silent** — `journalctl -u ss14-backup.service --since
   '1 day ago'`, `systemctl list-timers ss14-backup.timer`
-- **Dev stack won't bind a port** — prod docker stack or a stray
-  process-compose is still up. `ss -tlnp | grep <port>` to identify.
+- **Dev stack won't bind a port** — prod docker stack collides only if
+  something is already on the +1 port (5433/9091/3101/3201). Usually
+  that's a stray `process-compose` from a previous `nix run
+  .#dev-services` that didn't clean up. `ss -tlnp | grep <port>` to
+  identify; `pkill -INT -f 'process-compose --no-server'` to clear.
 
 ### Config file discipline
 
@@ -234,12 +250,23 @@ investigation).
 
 ## Don't
 
-- Don't run `nix run .#dev-services` and the docker compose stack on the
-  same host at the same time — they collide on 5432 / 9090 / 3100 / 3200.
+- Don't hardcode dev port numbers. `flake.nix` uses `devPortOffset = 1`
+  as the single source of truth; every dev service is `prod + 1`. If you
+  change that constant, everything shifts — don't spray `5433` /
+  `9091` / etc. into configs or docs.
+- Don't bind dev Prometheus / Loki / Grafana to a public interface. The
+  dev SS14 game port `1213/tcp+udp` is intentionally open at the host
+  firewall so peers can `ss14://ss14.zig.computer:1213` into a local
+  playtest; dev observability stays loopback (reach it via SSH tunnel or
+  local browser only).
 - Don't commit anything from `.data/`, `ops/observability/.env`, or
   `ops/observability/secrets/*` (other than `.gitkeep` / `.example`).
-- Don't edit `.example` files expecting a running service to pick up
-  changes. Edit the populated copy.
+- Don't edit `.data/vacation-station/config.toml` and expect edits to
+  persist between `nix run .#dev-services` runs — the flake materializes
+  it from the committed `.example` on every boot. If you want a change
+  to stick, edit `instances/vacation-station/config.toml.example`.
+- Don't edit other `.example` files expecting a running service to pick
+  up changes. Edit the populated copy.
 - Don't bind prod Prometheus / Loki / Grafana / watchdog admin API to a
   public interface. Grafana goes out through nginx (vs-2y8, live on
   `ss14.zig.computer`); everything else stays loopback.

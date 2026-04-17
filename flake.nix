@@ -19,6 +19,12 @@
   # overlays translate docker-specific bits (host.docker.internal, docker
   # secret refs) to localhost/dev-literals without mutating the committed
   # files on disk. See docs/DEVELOPMENT.md for the full story.
+  #
+  # Port isolation (vs-2f8.7): dev services bind at prod-port + 1 so the
+  # two stacks coexist on the same host. Single source of truth below —
+  # `devPortOffset = 1` — do NOT hardcode 5433/9091/etc. elsewhere. The
+  # SS14 dev game server runs on 1213 (prod 1212) + metrics 44881 (prod
+  # 44880). See docs/DEVELOPMENT.md "Running dev on the same box as prod".
   outputs =
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -48,14 +54,50 @@
       perSystem =
         { pkgs, lib, ... }:
         let
+          # --- Port isolation (vs-2f8.7) ---------------------------------
+          # Single source of truth for the prod↔dev port offset. Every dev
+          # service binds at `prod + devPortOffset` so a dev stack can run
+          # alongside the production docker-compose + systemd stack on the
+          # same box (e.g. ss14.zig.computer). If you change this constant,
+          # every dev port shifts in lockstep — don't spray new ports into
+          # the flake by hand.
+          devPortOffset = 1;
+
+          # Prod ports (authoritative: ops/observability/docker-compose.yml,
+          # instances/vacation-station/config.toml.example, watchdog).
+          prodPostgresPort = 5432;
+          prodPrometheusPort = 9090;
+          prodLokiPort = 3100;
+          prodGrafanaPort = 3200;
+          prodGamePort = 1212;
+          prodMetricsPort = 44880;
+
+          # Dev ports derived from the offset.
+          devPostgresPort = prodPostgresPort + devPortOffset; # 5433
+          devPrometheusPort = prodPrometheusPort + devPortOffset; # 9091
+          devLokiPort = prodLokiPort + devPortOffset; # 3101
+          devGrafanaPort = prodGrafanaPort + devPortOffset; # 3201
+          devGamePort = prodGamePort + devPortOffset; # 1213
+          devMetricsPort = prodMetricsPort + devPortOffset; # 44881
+
           # --- Dev-overlay: rewrite host.docker.internal -> localhost in the
           # committed prod prometheus.yml. The string replace is scoped so
           # the file on disk is never mutated — the result lives only in the
           # nix store as prometheus-dev.yml.
+          #
+          # Additionally rewrite the scrape target's metrics port from the
+          # prod value (44880) to the dev value (44881) so the in-box dev
+          # Prometheus hits the dev SS14 server and not the prod one.
           prometheusConfigDev = pkgs.writeText "prometheus-dev.yml" (
             builtins.replaceStrings
-              [ "host.docker.internal" ]
-              [ "localhost" ]
+              [
+                "host.docker.internal"
+                "host.docker.internal:${toString prodMetricsPort}"
+              ]
+              [
+                "localhost"
+                "localhost:${toString devMetricsPort}"
+              ]
               (builtins.readFile ./ops/observability/prometheus.yml)
           );
 
@@ -93,12 +135,31 @@
 
           # Loki prod config uses absolute /loki paths (container FS). In dev
           # we rewrite those to the services-flake dataDir so state lands in
-          # ./.data/loki/. Same scoped-replace pattern.
+          # ./.data/loki/. We also rewrite the prod http_listen_port (3100,
+          # in the config file) to the dev port — services-flake's loki
+          # module accepts `httpPort` as a hint but the on-disk config file
+          # is what loki actually binds. Without this override loki would
+          # bind :3100, collide with the prod docker container, and crash.
+          # Same scoped-replace pattern.
+          #
+          # grpc_listen_port (9096) is rewritten for consistency even though
+          # prod's is published only inside the docker bridge — keeps every
+          # dev bind at prod+devPortOffset.
+          prodLokiGrpcPort = 9096;
+          devLokiGrpcPort = prodLokiGrpcPort + devPortOffset; # 9097
           lokiDataDir = "./.data/loki";
           lokiConfigDev = pkgs.writeText "loki-dev.yml" (
             builtins.replaceStrings
-              [ "/loki" ]
-              [ lokiDataDir ]
+              [
+                "/loki"
+                "http_listen_port: ${toString prodLokiPort}"
+                "grpc_listen_port: ${toString prodLokiGrpcPort}"
+              ]
+              [
+                lokiDataDir
+                "http_listen_port: ${toString devLokiPort}"
+                "grpc_listen_port: ${toString devLokiGrpcPort}"
+              ]
               (builtins.readFile ./ops/observability/loki-config.yml)
           );
 
@@ -139,7 +200,7 @@
               name = "Prometheus";
               type = "prometheus";
               access = "proxy";
-              url = "http://localhost:9090";
+              url = "http://localhost:${toString devPrometheusPort}";
               isDefault = true;
               editable = false;
               jsonData.timeInterval = "15s";
@@ -148,7 +209,7 @@
               name = "Loki";
               type = "loki";
               access = "proxy";
-              url = "http://localhost:3100";
+              url = "http://localhost:${toString devLokiPort}";
               editable = false;
               jsonData.maxLines = 5000;
             }
@@ -169,6 +230,62 @@
               };
             }
           ];
+
+          # --- Dev SS14 game-server config overlay (vs-2f8.7) --------------
+          # Build a dev `config.toml` using the committed prod template as
+          # the starting shape, then rewrite:
+          #   - [status] bind:    *:1212   -> *:1213
+          #   - [metrics] port:   44880    -> 44881
+          #   - [database] pg_port: 5432   -> 5433
+          #   - [database] pg_password placeholder -> dev literal
+          #   - [loki] address: localhost:3100 -> localhost:3101
+          #   - [hub] advertise = false stays false (we don't want dev ads
+          #     on the public hub even though it could reach the internet)
+          # Any fields not matched by the replace table stay identical to
+          # prod, which keeps dev parity with the live shape while isolating
+          # state and traffic. The overlay lives in the nix store; a runtime
+          # wrapper materializes a writable copy under .data/ before the
+          # game server reads it.
+          ss14ConfigTemplate = builtins.readFile ./instances/vacation-station/config.toml.example;
+
+          ss14ConfigDev = pkgs.writeText "ss14-server-config-dev.toml" (
+            builtins.replaceStrings
+              [
+                "pg_port = ${toString prodPostgresPort}"
+                "REPLACE WITH ACTUAL PASSWORD"
+                "bind = \"*:${toString prodGamePort}\""
+                "port = ${toString prodMetricsPort}"
+                "http://localhost:${toString prodLokiPort}"
+              ]
+              [
+                "pg_port = ${toString devPostgresPort}"
+                devPostgresPassword
+                "bind = \"*:${toString devGamePort}\""
+                "port = ${toString devMetricsPort}"
+                "http://localhost:${toString devLokiPort}"
+              ]
+              ss14ConfigTemplate
+          );
+
+          # Materialize-overlay runner. process-compose runs this as a
+          # one-shot "process" on dev-stack startup; it copies the nix-store
+          # overlay into a writable .data/vacation-station/config.toml so
+          # the game server can read (and if desired, hot-edit) the dev
+          # config without touching /nix/store. The copy is idempotent —
+          # running it twice just overwrites the previous dev config, which
+          # is the right semantics because flake.nix is the source of truth
+          # and any manual in-place edits to .data/.../config.toml between
+          # stack starts are by design discarded.
+          ss14DevConfigMaterialize = pkgs.writeShellScriptBin "vs14-dev-config-materialize" ''
+            set -euo pipefail
+            target_dir="./.data/vacation-station"
+            target="$target_dir/config.toml"
+            mkdir -p "$target_dir"
+            install -m 0644 ${ss14ConfigDev} "$target"
+            echo "[vs14-dev-config] wrote $target (dev ports: game=${toString devGamePort}, metrics=${toString devMetricsPort}, pg=${toString devPostgresPort}, loki=${toString devLokiPort})"
+            echo "[vs14-dev-config] run the dev game server with:"
+            echo "[vs14-dev-config]   dotnet run --project Content.Server -- --config-file $target --data-dir .data/vacation-station"
+          '';
         in
         {
           devShells.default = import ./shell.nix { inherit pkgs; };
@@ -186,7 +303,7 @@
             services = {
               postgres.pg1 = {
                 enable = true;
-                port = 5432;
+                port = devPostgresPort;
                 listen_addresses = "127.0.0.1";
                 dataDir = "./.data/postgres";
                 initialDatabases = [ { name = "vacation_station"; } ];
@@ -209,7 +326,7 @@
 
               prometheus.prom1 = {
                 enable = true;
-                port = 9090;
+                port = devPrometheusPort;
                 listenAddress = "127.0.0.1";
                 dataDir = "./.data/prometheus";
                 # services-flake's prometheus module auto-generates a
@@ -230,7 +347,7 @@
               loki.loki1 = {
                 enable = true;
                 httpAddress = "127.0.0.1";
-                httpPort = 3100;
+                httpPort = devLokiPort;
                 dataDir = lokiDataDir;
                 extraFlags = [
                   "-config.file=${lokiConfigDev}"
@@ -239,9 +356,9 @@
 
               grafana.graf1 = {
                 enable = true;
-                # 3200 matches prod docker-compose; 3000 collides with Node
-                # dev servers. Prometheus 9090, Loki 3100, Grafana 3200.
-                http_port = 3200;
+                # Dev Grafana uses prod-port + devPortOffset (3201) so it
+                # coexists with the prod docker Grafana on 3200 (vs-2f8.7).
+                http_port = devGrafanaPort;
                 domain = "localhost";
                 dataDir = "./.data/grafana";
                 datasources = grafanaDatasources;
@@ -273,6 +390,21 @@
                   plugins.preinstall_disabled = true;
                 };
               };
+            };
+
+            # One-shot: materialize the dev game-server config.toml into
+            # .data/vacation-station/ every time the stack boots. The game
+            # server itself is NOT launched here (building dotnet + wiring
+            # the watchdog-less dev launch is tracked under vs-2f8.7.1);
+            # contributors run `dotnet run --project Content.Server -- ...`
+            # manually against the materialized config. See
+            # docs/DEVELOPMENT.md "Running dev on the same box as prod".
+            settings.processes.ss14-dev-config = {
+              command = "${ss14DevConfigMaterialize}/bin/vs14-dev-config-materialize";
+              availability.restart = "no";
+              # Not a long-running service — process-compose marks this
+              # Completed after the script exits 0. Keep it first so the
+              # config file exists before anyone pokes at the stack.
             };
           };
         };

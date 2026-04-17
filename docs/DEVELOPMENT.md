@@ -152,12 +152,17 @@ logs.
 
 ### Endpoints
 
-| Service     | URL / port             | Notes |
-|-------------|------------------------|-------|
-| Postgres    | `localhost:5432`       | db `vacation_station`, user `vs14` |
-| Prometheus  | `http://localhost:9090` | scrapes `localhost:44880` (SS14 server) |
-| Loki        | `http://localhost:3100` | push + query API |
-| Grafana     | `http://localhost:3200` | provisioned datasources + dashboards |
+Dev services bind at **prod + 1** (single source of truth is
+`devPortOffset = 1` in `flake.nix`). This lets the dev stack coexist with
+a live prod stack on the same host — see [Running dev on the same box as
+prod](#running-dev-on-the-same-box-as-prod) below.
+
+| Service     | URL / port              | Notes |
+|-------------|-------------------------|-------|
+| Postgres    | `localhost:5433`        | db `vacation_station`, user `vs14` |
+| Prometheus  | `http://localhost:9091` | scrapes `localhost:44881` (dev SS14 server) |
+| Loki        | `http://localhost:3101` | push + query API |
+| Grafana     | `http://localhost:3201` | provisioned datasources + dashboards |
 
 ### Dev-only credentials (do NOT reuse in prod)
 
@@ -174,31 +179,105 @@ are ever committed.
 
 ### Wiring a dev SS14 server
 
-Point `server_config.toml` (or equivalent cvars):
+Every time `nix run .#dev-services` boots, it writes a dev config.toml to
+`./.data/vacation-station/config.toml` — already on the +1 ports, with
+dev-literal credentials filled in. Point the SS14 server at it:
+
+```bash
+dotnet run --project Content.Server -- \
+  --config-file .data/vacation-station/config.toml \
+  --data-dir    .data/vacation-station
+```
+
+The generated config has the relevant sections already offset to +1:
 
 ```toml
 [database]
 engine = "postgres"
 pg_host = "localhost"
-pg_port = 5432
+pg_port = 5433                     # +1 from prod 5432
 pg_database = "vacation_station"
 pg_username = "vs14"
 pg_password = "dev-only-insecure"
 
+[status]
+bind = "*:1213"                    # +1 from prod 1212
+
 [metrics]
 enabled = true
-host = "localhost"
-port = 44880
+host = "*"
+port = 44881                       # +1 from prod 44880
 
 [loki]
 enabled = true
-name = "vacation-station"   # must match the Prometheus `server` label
-address = "http://localhost:3100"
+name = "vacation-station"          # must match the Prometheus `server` label
+address = "http://localhost:3101"  # +1 from prod 3100
 ```
 
-Prometheus will start scraping `localhost:44880` once the SS14 server is
-up and the `[metrics]` endpoint is live. Loki ingest is push-based —
-Robust sends log lines directly.
+Dev Prometheus will start scraping `localhost:44881` once the SS14
+server is up and the `[metrics]` endpoint is live. Loki ingest is
+push-based — Robust sends log lines directly.
+
+If you edit `.data/vacation-station/config.toml` between stack starts,
+those manual edits are discarded — the nix overlay rewrites the file on
+every boot of `nix run .#dev-services`. The source of truth is
+`flake.nix` (which reads from the committed `config.toml.example` and
+applies the offset rewrites); add anything you want persistent to the
+committed template.
+
+> **Auto-launch deferred.** process-compose currently does NOT launch
+> the SS14 dev game server itself; you run `dotnet run --project
+> Content.Server ...` manually in a second terminal after the
+> observability stack is up. Wiring the server under process-compose is
+> tracked in vs-1ya.
+
+### Running dev on the same box as prod
+
+The dev stack's ports (5433 / 9091 / 3101 / 3201 / 1213 / 44881) are all
+prod-port + 1, so you can run the full `nix run .#dev-services`
+observability stack AND a `dotnet run` dev game server alongside a live
+prod stack without port collisions. Concrete example (what ships on
+`ss14.zig.computer` today):
+
+| Thing                 | Prod (docker / systemd)         | Dev (services-flake)               |
+|-----------------------|---------------------------------|------------------------------------|
+| Postgres              | apt + systemd, `:5432`          | services-flake, `:5433` in `.data/postgres/` |
+| Prometheus            | docker `:9090`                  | services-flake, `:9091`            |
+| Loki                  | docker `:3100`                  | services-flake, `:3101`            |
+| Grafana               | docker `:3200`                  | services-flake, `:3201`            |
+| SS14 game server      | watchdog + systemd, `:1212`     | `dotnet run`, `:1213`              |
+| SS14 metrics endpoint | `:44880`                        | `:44881`                           |
+
+The dev SS14 server is reachable from any SS14 launcher by direct-connect
+at `ss14://ss14.zig.computer:1213` (firewall already opens this port).
+Prod keeps advertising on the public hub at `:1212`; dev is private
+direct-connect only (its `[hub] advertise = false`).
+
+Workflow when iterating on the same box as prod:
+
+1. `nix run .#dev-services` — starts postgres/prom/loki/grafana on +1
+   ports and materializes `.data/vacation-station/config.toml`.
+2. In another shell (same dev shell): `dotnet run --project Content.Server
+   -- --config-file .data/vacation-station/config.toml --data-dir
+   .data/vacation-station`.
+3. In a launcher on any machine: Direct Connect →
+   `ss14://ss14.zig.computer:1213`.
+4. Browse dev Grafana at `http://localhost:3201` (or through an SSH
+   tunnel if you're offbox; don't publish dev Grafana publicly — prod
+   Grafana is the only Grafana behind nginx/OIDC).
+5. `F10` / Ctrl+C in process-compose to tear down dev services. `Ctrl+C`
+   in the `dotnet run` terminal to stop the dev game server. Prod is
+   untouched.
+
+If you want to reset dev state entirely without touching prod:
+```bash
+rm -rf .data/
+```
+
+`flake.nix` defines `devPortOffset = 1` as the single source of truth —
+if you ever need a different offset (e.g. running TWO dev stacks for A/B
+testing), bump the constant and every service + the generated game-server
+config shifts in lockstep.
 
 ### Reset state
 
@@ -215,12 +294,13 @@ committed YAML, etc.).
 
 **Same:**
 - Prometheus scrape config (`ops/observability/prometheus.yml`) — the dev
-  overlay only rewrites `host.docker.internal` → `localhost` in-memory.
-  Scrape interval, job name, labels, `server: vacation-station` contract
-  all identical.
-- Loki config (`ops/observability/loki-config.yml`) — only `/loki` path
-  prefixes rewrite to `./.data/loki`. Retention, schema, compactor
-  settings unchanged.
+  overlay only rewrites `host.docker.internal` → `localhost` and the
+  scrape port from prod `44880` → dev `44881` in-memory. Scrape interval,
+  job name, labels, `server: vacation-station` contract all identical.
+- Loki config (`ops/observability/loki-config.yml`) — only the `/loki`
+  path prefix and the http/grpc listen ports are rewritten (to the dev
+  dataDir and `3101`/`9097`). Retention, schema, compactor settings
+  unchanged.
 - Grafana datasources — Prometheus + Loki match prod (just with localhost
   URLs). See the note below on Postgres.
 - Grafana dashboards — sourced directly from
