@@ -320,6 +320,9 @@ package-lock.json
 .data/
 .claude/scheduled_tasks.lock
 
+# beads tool internal snapshot history — not for version control
+.beads/.br_history/
+
 # ops/ss14-admin/ local state — populated on-host from .example files.
 # Keeps secrets (POSTGRES_PASSWORD, OIDC creds) out of the repo.
 ops/ss14-admin/.env
