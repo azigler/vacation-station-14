@@ -190,6 +190,48 @@ gitignored. Editing a `.example` file does NOT change a running service;
 the populated copy is what's read at runtime. Re-running the `setup.*.sh`
 scripts is idempotent and will NOT clobber an existing populated config.
 
+## Deploying changes
+
+Prod is a second clone of this repo at `/opt/vacation-station/`, kept
+in sync via `git pull`. The canonical deploy flow is one-way:
+
+```
+1. Edit configs in the DEV clone: /home/ubuntu/vacation-station-14/
+2. Commit + push to origin
+3. On the PROD clone:
+     cd /opt/vacation-station && git pull --rebase
+     (add `git submodule update --init --recursive` if submodules changed)
+4. Apply to the live system (pick one per service type):
+     docker compose:  cd /opt/vacation-station/ops/<name> && sudo docker compose up -d
+     systemd unit:    sudo systemctl restart <unit>.service
+5. Verify: docker ps / systemctl status / targeted HTTP probe
+```
+
+**NEVER direct-edit files under `/opt/vacation-station/`.** The clone
+there is a read-only mirror maintained by `git pull`. If you find
+yourself wanting to touch `/opt/` directly, you almost certainly want
+to edit `/home/`, commit, push, and pull instead.
+
+### Subagents doing ops work
+
+Subagents dispatched for ops tasks must edit only:
+- their own **worktree** (for the commit that lands in the repo), and
+- the **live deploy location** under `/opt/` (for the running service
+  to pick up the change immediately).
+
+Do **NOT** sync edits to the main `/home/ubuntu/vacation-station-14/`
+clone directly — the orchestrator's merge handles that after the
+worktree is merged. Direct main-clone edits cause merge conflicts
+because the uncommitted changes collide with what the merge brings in
+(observed during vs-2f8.4; see its post-mortem in the bead history).
+
+When dispatching an ops subagent that needs to edit tracked files,
+include `mode: "acceptEdits"` on the `Agent` call — background
+subagents can't surface permission prompts interactively, and the
+default mode auto-denies Edit/Write on tracked files (observed
+blocker on vs-2f8.5's first dispatch attempt; see vs-2f8.6 for the
+investigation).
+
 ## Don't
 
 - Don't run `nix run .#dev-services` and the docker compose stack on the

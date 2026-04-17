@@ -22,7 +22,9 @@ set -euo pipefail
 
 OPS_DIR="$(cd "$(dirname "$0")" && pwd)"
 OAUTH_ENV="/etc/vacation-station/admin-oauth.env"
-LOCAL_ENV="${OPS_DIR}/.env"
+# POSTGRES_PASSWORD lives in /etc/vacation-station/ alongside admin-oauth.env
+# so the compose file works identically from /home/ and /opt/ clones (vs-2f8.5).
+LOCAL_ENV="/etc/vacation-station/admin-db.env"
 LIVE_CFG="${OPS_DIR}/appsettings.yml"
 EXAMPLE_CFG="${OPS_DIR}/appsettings.yml.example"
 
@@ -41,10 +43,11 @@ if ! grep -q '^OIDC_CLIENT_ID=' "${OAUTH_ENV}" \
     exit 1
 fi
 
-echo ">>> checking ops/ss14-admin/.env"
-if [ ! -f "${LOCAL_ENV}" ]; then
-    echo "ERROR: ${LOCAL_ENV} missing. Copy from .env.example and fill in" >&2
-    echo "       POSTGRES_PASSWORD." >&2
+echo ">>> checking ${LOCAL_ENV}"
+if [ ! -r "${LOCAL_ENV}" ]; then
+    echo "ERROR: ${LOCAL_ENV} not readable by $(id -un)." >&2
+    echo "       Expected mode 640 owned by root:ss14 with POSTGRES_PASSWORD" >&2
+    echo "       populated. See docs/OPERATIONS.md SS14.Admin section." >&2
     exit 1
 fi
 if ! grep -Eq '^POSTGRES_PASSWORD=.+' "${LOCAL_ENV}"; then

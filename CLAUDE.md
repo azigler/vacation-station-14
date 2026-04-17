@@ -87,6 +87,20 @@ remains supported and is the only path for production hosts. See
 `.claude/skills/nix/SKILL.md` and `docs/DEVELOPMENT.md` for detail,
 including the WSL2 subsection and platform-support matrix.
 
+## Production Deploy Discipline
+
+Prod runs from a second repo clone at `/opt/vacation-station/`, kept in
+sync with origin via `git pull` — **never direct-edit files there**. All
+dev + commit work happens in `/home/ubuntu/vacation-station-14/`. Live
+services (systemd units, docker compose projects) read configs from
+`/opt/`; propagate changes via: edit in `/home/` → commit + push → `cd
+/opt/vacation-station && git pull --rebase` → targeted `docker compose
+up -d <svc>` or `sudo systemctl restart <unit>`. Subagents doing ops
+work edit only their worktree + the LIVE deploy location under `/opt/`;
+the orchestrator's merge handles the `/home/` clone. See
+[`.claude/skills/services/SKILL.md`](.claude/skills/services/SKILL.md)
+"Deploying changes" for the full flow.
+
 ## Build & Test
 
 ```bash

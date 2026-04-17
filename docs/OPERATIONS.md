@@ -1081,8 +1081,11 @@ Two env files feed the container. Neither is in the repo.
   ss14-admin`; the secret transited a Claude chat transcript during
   initial deploy and should be rotated post-cutover as a matter of
   hygiene.
-- `ops/ss14-admin/.env` (gitignored). Holds `POSTGRES_PASSWORD`, same
-  value as `ops/observability/.env` (both consume the `vs14` role).
+- `/etc/vacation-station/admin-db.env` (mode 640 root:ss14). Holds
+  `POSTGRES_PASSWORD`, same value as `ops/observability/.env` (both
+  consume the `vs14` role). Kept alongside `admin-oauth.env` in
+  `/etc/vacation-station/` so the compose file is clone-agnostic —
+  works identically from `/home/` and `/opt/` clones (vs-2f8.5).
 
 docker-compose maps `OIDC_CLIENT_ID` → `Auth__ClientId` and
 `OIDC_CLIENT_SECRET` → `Auth__ClientSecret` via the `environment:` block;
@@ -1093,13 +1096,13 @@ the YAML appsettings file holds only placeholders and is safe to commit.
 ```bash
 # One-time, on the host:
 sudo install -m 0640 -o root -g ss14 admin-oauth.env \
-    /etc/vacation-station/admin-oauth.env   # creds from Wizden
-cp ops/ss14-admin/.env.example ops/ss14-admin/.env
-$EDITOR ops/ss14-admin/.env                 # set POSTGRES_PASSWORD=
-chmod 600 ops/ss14-admin/.env
+    /etc/vacation-station/admin-oauth.env        # creds from Wizden
+sudo install -m 0640 -o root -g ss14 /dev/null \
+    /etc/vacation-station/admin-db.env           # create empty, perms 640
+sudoedit /etc/vacation-station/admin-db.env      # add POSTGRES_PASSWORD=
 
-# Bring the stack up (idempotent):
-./ops/ss14-admin/install.sh
+# Bring the stack up (idempotent). Run from the prod clone:
+cd /opt/vacation-station && sudo ./ops/ss14-admin/install.sh
 
 # Publish the nginx location block:
 sudo ./ops/nginx/install.sh
@@ -1202,6 +1205,6 @@ file at container start.
 |---|---|
 | OIDC redirects to `http://...` | `X-Forwarded-Proto` missing or `ForwardProxies` in appsettings doesn't include the source IP. nginx sets the header; appsettings trusts `127.0.0.1` + `172.16.0.0/12`. |
 | `/admin/` returns 404 | nginx `location /admin/` block missing. Re-run `sudo ops/nginx/install.sh`. |
-| Container restarts on startup | Almost always a missing env var. `docker compose logs ss14-admin` — if it complains about `Auth:ClientId` or `ConnectionStrings:DefaultConnection` being empty, re-check `/etc/vacation-station/admin-oauth.env` and `ops/ss14-admin/.env`. |
+| Container restarts on startup | Almost always a missing env var. `docker compose logs ss14-admin` — if it complains about `Auth:ClientId` or `ConnectionStrings:DefaultConnection` being empty, re-check `/etc/vacation-station/admin-oauth.env` and `/etc/vacation-station/admin-db.env`. |
 | Migrations fail with permission error | `GRANT CREATE ON SCHEMA public TO vs14;` — do not make `vs14` a superuser. |
 | Login loops back to `/admin/signin-oidc` | User's UUID isn't in the `admin` table. Follow the bootstrap flow above. |
