@@ -24,6 +24,33 @@ br epic status                           # Epic-level progress summary
 br sync --flush-only                     # Export to JSONL
 ```
 
+## Repo hygiene: ignore `.beads/.br_history/`
+
+`br` writes timestamped snapshot backups of `issues.jsonl` to
+`.beads/.br_history/` on every significant operation. Each snapshot
+is a full ~300–500 KB copy of the current bead state, purely for
+local-filesystem recovery if `issues.jsonl` gets corrupted.
+
+**These are not for version control.** The live `issues.jsonl` is
+tracked, and every meaningful state is already committed via
+`:card_file_box: beads: ...` trailers — git history IS the
+authoritative snapshot history.
+
+The beads-rust `.beads/.gitignore` ships with patterns for the
+sqlite DB + lock files but **does NOT include `.br_history/`** as
+of this writing (upstream oversight). Result: every session shows
+`?? .beads/.br_history/` in `git status`, creating persistent
+noise and the risk of accidentally `git add -A`-staging it.
+
+Fix in any beads-using repo — add to either the project `.gitignore`
+or `.beads/.gitignore`:
+```gitignore
+.beads/.br_history/
+```
+
+If a beads repo has lingering dirty `git status` with no apparent
+cause, this is almost certainly why.
+
 ## Creating epics + children
 
 `br` supports hierarchical decomposition. Large tasks decompose into an
