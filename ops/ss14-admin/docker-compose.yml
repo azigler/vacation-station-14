@@ -61,10 +61,5 @@ services:
       DOTNET_CLI_HOME: /tmp
       HOME: /tmp
     healthcheck:
-      # SS14.Admin's root under PathBase redirects to /admin/signin-oidc;
-      # a bare TCP-level probe on 5427 is enough to confirm the app is up.
-      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:5427/admin/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+      # VS - image lacks curl + wget; healthcheck disabled until image gains a HTTP client
+      test: ["NONE"]

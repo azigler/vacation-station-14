@@ -44,6 +44,7 @@ secrets:
 services:
   prometheus:
     image: prom/prometheus:v2.54.1
+    container_name: vs14-prometheus
     restart: unless-stopped
     networks: [observability]
     # Expose only to the loopback on the host. Operators on the box can curl
@@ -72,6 +73,7 @@ services:
 
   loki:
     image: grafana/loki:3.2.1
+    container_name: vs14-loki
     restart: unless-stopped
     networks: [observability]
     ports:
@@ -89,6 +91,7 @@ services:
 
   grafana:
     image: grafana/grafana:11.3.0
+    container_name: vs14-grafana
     restart: unless-stopped
     networks: [observability]
     depends_on:
