@@ -5,7 +5,17 @@
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
-# Only intercept git commit commands
+# Block overly-broad git add at ANY time, not just when chained with commit.
+# Matches `git add -A`, `git add --all`, and `git add .` (bare dot, optionally
+# followed by whitespace/end/chain operator). Anchored so `git add -Ax` or
+# `git add Ax` don't false-positive.
+if echo "$COMMAND" | grep -qE '(^|[[:space:];&|])git add[[:space:]]+(-A([[:space:]]|$)|--all([[:space:]]|$)|\.([[:space:]]|$|[;&|]))'; then
+  echo "Blocked: use 'git add <specific-files>', never 'git add .', 'git add -A', or 'git add --all'." >&2
+  echo "Reason: selective staging prevents accidentally committing secrets, WIP, or gitignored state." >&2
+  exit 2
+fi
+
+# Only intercept git commit commands for the rest of the checks below
 case "$COMMAND" in
   git\ commit*|*"&& git commit"*|*"; git commit"*) ;;
   *) exit 0 ;;
