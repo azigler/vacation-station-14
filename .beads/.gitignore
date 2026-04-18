@@ -9,3 +9,6 @@
 # Temporary
 last-touched
 *.tmp
+
+# beads tool internal snapshot history — not for version control
+.br_history/

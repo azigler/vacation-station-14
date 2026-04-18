@@ -42,10 +42,10 @@ of this writing (upstream oversight). Result: every session shows
 `?? .beads/.br_history/` in `git status`, creating persistent
 noise and the risk of accidentally `git add -A`-staging it.
 
-Fix in any beads-using repo — add to either the project `.gitignore`
-or `.beads/.gitignore`:
+Fix in any beads-using repo — add to `.beads/.gitignore` (scoped
+cleanly to the beads directory, not the project root):
 ```gitignore
-.beads/.br_history/
+.br_history/
 ```
 
 If a beads repo has lingering dirty `git status` with no apparent
