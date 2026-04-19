@@ -32,7 +32,7 @@ reagent-name-iron = iron
 reagent-desc-iron = A silvery-grey metal which forms iron oxides (rust) with contact with air. Commonly alloyed with other elements to create alloys such as steel. Replenishes blood in most species, but is mildly toxic to arachnids.
 
 reagent-name-lithium = lithium
-reagent-desc-lithium = A soft, silvery-white alkali metal. It's highly reactive, and ignites if it makes contact with water.
+reagent-desc-lithium = A soft, silvery-white alkali metal. It's highly reactive, and ignites if it makes contact with water. Mildly toxic when ingested, and prone to trigger sudden fits of laughter or screaming.
 
 reagent-name-mercury = mercury
 reagent-desc-mercury = A silver metal which is liquid at room temperature. It's highly toxic and scrambles the speech of anyone unfortunate enough to have it in their bloodstream.
