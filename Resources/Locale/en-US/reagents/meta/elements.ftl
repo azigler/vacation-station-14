@@ -41,7 +41,7 @@ reagent-name-potassium = potassium
 reagent-desc-potassium = A soft, shiny grey metal. Even more reactive than lithium.
 
 reagent-name-phosphorus = phosphorus
-reagent-desc-phosphorus = A reactive metal used in pyrotechnics and weapons.
+reagent-desc-phosphorus = A reactive metal used in pyrotechnics and weapons. Also acts as a mild plant fertiliser and weedkiller when applied to hydroponics trays.
 
 reagent-name-radium = radium
 reagent-desc-radium = A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity and is highly toxic.
