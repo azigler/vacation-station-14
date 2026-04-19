@@ -2173,15 +2173,61 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · VS14 Guidebook</title>
 <link rel="stylesheet" href="style.css">
+<script>
+/* vs-dnz: pre-paint bootstrap. Reads localStorage collapse state and
+   applies `open` attrs to <details data-section-id> BEFORE the sidebar
+   renders, avoiding a flash where everything looks collapsed then snaps
+   back. Also force-opens the active entry's ancestors so users always
+   see where they are in the tree. Keep this tiny + dependency-free. */
+(function () {{
+  var KEY = "vs14-guidebook-nav-state";
+  var state = {{}};
+  try {{
+    var raw = localStorage.getItem(KEY);
+    if (raw) state = JSON.parse(raw) || {{}};
+  }} catch (e) {{ state = {{}}; }}
+  // Walk the ancestor chain for the active entry (server-rendered as
+  // ``window.__VS14_ACTIVE_ANCESTORS``) and force those open regardless
+  // of stored preference. The array is injected per-page below.
+  window.__vs14ApplyNavState = function () {{
+    var detailsList = document.querySelectorAll("details[data-section-id]");
+    for (var i = 0; i < detailsList.length; i++) {{
+      var d = detailsList[i];
+      var sid = d.getAttribute("data-section-id");
+      if (state[sid] === "open") d.setAttribute("open", "");
+    }}
+    var anc = window.__VS14_ACTIVE_ANCESTORS || [];
+    for (var j = 0; j < anc.length; j++) {{
+      var a = document.querySelector(
+        'details[data-section-id="' + anc[j] + '"]'
+      );
+      if (a) a.setAttribute("open", "");
+    }}
+  }};
+  // Defer actual DOM application until the parser has emitted the
+  // sidebar — DOMContentLoaded is still pre-paint.
+  if (document.readyState === "loading") {{
+    document.addEventListener(
+      "DOMContentLoaded", window.__vs14ApplyNavState
+    );
+  }} else {{
+    window.__vs14ApplyNavState();
+  }}
+}})();
+</script>
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar">
     <a class="home" href="/">← Vacation Station 14</a>
-    <h1><a href="index.html">Guidebook</a></h1>
+    <h1><a href="index.html" data-nav-link>Guidebook</a></h1>
+    <div class="toc-controls">
+      <button type="button" class="toc-ctrl" data-toc-action="expand-all">Expand all</button>
+      <button type="button" class="toc-ctrl" data-toc-action="collapse-all">Collapse all</button>
+    </div>
     <nav class="toc">{toc}</nav>
   </aside>
-  <main class="content">
+  <main id="content" class="content">
     <header class="page-header">
       <nav class="crumbs">{crumbs}</nav>
       <h1>{title}</h1>
@@ -2194,6 +2240,8 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     </footer>
   </main>
 </div>
+<script>window.__VS14_ACTIVE_ANCESTORS = {ancestors_json};</script>
+<script src="guidebook-nav.js" defer></script>
 </body>
 </html>
 """
@@ -2274,6 +2322,78 @@ code { font-family: ui-monospace, SFMono-Regular, monospace; }
 }
 .toc a:hover { background: var(--panel-soft); text-decoration: none; }
 .toc a.current { background: var(--panel-soft); color: var(--accent); }
+
+/* vs-dnz: collapsible sidebar sections (<details> per parent) + nav controls */
+.toc details { margin: 0; }
+.toc details > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  cursor: default;
+}
+.toc details > summary::-webkit-details-marker { display: none; }
+.toc details > summary::marker { content: ""; }
+.toc .toc-toggle {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  color: var(--dim);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  border-radius: 3px;
+  transition: transform 150ms ease, color 120ms ease;
+}
+.toc .toc-toggle::before { content: "\\25B8"; /* ▸ */ }
+.toc details[open] > summary > .toc-toggle { transform: rotate(90deg); }
+.toc details[open] > summary > .toc-toggle::before { color: var(--accent); }
+.toc .toc-toggle:hover { color: var(--accent); background: var(--panel-soft); }
+.toc details > summary > a { flex: 1 1 auto; min-width: 0; }
+.toc details > ul {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 150ms ease, opacity 150ms ease;
+}
+.toc details[open] > ul {
+  max-height: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toc details > ul { transition: none; }
+  .toc .toc-toggle { transition: none; }
+}
+.toc-controls {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+}
+.toc-controls .toc-ctrl {
+  flex: 1;
+  background: var(--panel-soft);
+  color: var(--dim);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.toc-controls .toc-ctrl:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* Content swap: a subtle opacity pulse signals the partial nav exchange
+   without a full flicker. Driven by the `.is-loading` class set by
+   guidebook-nav.js around the fetch. */
+.content { transition: opacity 120ms ease; }
+.content.is-loading { opacity: 0.4; }
 .content { padding: 2rem clamp(1rem, 3vw, 2.5rem); max-width: 64rem; }
 .page-header h1 {
   font-size: clamp(1.75rem, 3vw, 2.25rem);
@@ -2618,6 +2738,213 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
 """
 
 
+# vs-dnz: client-side sidebar state + partial-content navigation.
+# Plain ES5-ish JS so it runs without a build step and on every modern
+# browser the guidebook targets. Progressive enhancement only: if this
+# file fails to load or the browser has JS disabled, the sidebar still
+# works (every entry has a real ``href``) and the content pane still
+# renders fine (the sidebar simply shows everything expanded by default
+# via a :has fallback? No — we default to closed via <details> without
+# `open`, matching the JS-on default. Walking ancestors of the current
+# page is the bootstrap's job; see PAGE_TEMPLATE inline script).
+GUIDEBOOK_NAV_JS = """/* vs-dnz: guidebook sidebar + partial-nav enhancement */
+(function () {
+  "use strict";
+
+  var STATE_KEY = "vs14-guidebook-nav-state";
+  var NAV_ROOT = document.querySelector(".sidebar .toc");
+  var CONTENT = document.getElementById("content");
+
+  function readState() {
+    try {
+      var raw = localStorage.getItem(STATE_KEY);
+      return raw ? JSON.parse(raw) || {} : {};
+    } catch (_) { return {}; }
+  }
+
+  function writeState(state) {
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+    catch (_) { /* quota / privacy mode — silently ignore */ }
+  }
+
+  /* ---- Part 1: collapse/expand state persistence ------------------ */
+
+  function wireDetailsToggle() {
+    var nodes = document.querySelectorAll("details[data-section-id]");
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addEventListener("toggle", onToggle);
+    }
+  }
+
+  function onToggle(ev) {
+    var d = ev.currentTarget;
+    var sid = d.getAttribute("data-section-id");
+    if (!sid) return;
+    var state = readState();
+    if (d.open) state[sid] = "open"; else delete state[sid];
+    writeState(state);
+  }
+
+  function wireTocToggleButtons() {
+    /* Chevron button: toggle the parent <details> open state. We
+       listen on the root (event delegation) so re-running this after
+       a content swap is cheap. */
+    if (!NAV_ROOT) return;
+    NAV_ROOT.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest
+        ? ev.target.closest(".toc-toggle") : null;
+      if (!btn) return;
+      var d = btn.closest("details[data-section-id]");
+      if (!d) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      d.open = !d.open;
+    });
+  }
+
+  function wireCollapseAll() {
+    var buttons = document.querySelectorAll(".toc-controls [data-toc-action]");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener("click", onCollapseAllClick);
+    }
+  }
+
+  function onCollapseAllClick(ev) {
+    var action = ev.currentTarget.getAttribute("data-toc-action");
+    var nodes = document.querySelectorAll("details[data-section-id]");
+    var state = readState();
+    for (var i = 0; i < nodes.length; i++) {
+      var d = nodes[i];
+      var sid = d.getAttribute("data-section-id");
+      if (action === "expand-all") {
+        d.open = true;
+        if (sid) state[sid] = "open";
+      } else if (action === "collapse-all") {
+        d.open = false;
+        if (sid) delete state[sid];
+      }
+    }
+    writeState(state);
+  }
+
+  /* ---- Part 2: partial-content navigation ------------------------- */
+
+  function isSameOrigin(href) {
+    try {
+      var u = new URL(href, window.location.href);
+      return u.origin === window.location.origin;
+    } catch (_) { return false; }
+  }
+
+  function hardNav(href) { window.location.href = href; }
+
+  function parseFragment(htmlText) {
+    var doc;
+    try {
+      doc = new DOMParser().parseFromString(htmlText, "text/html");
+    } catch (_) { return null; }
+    var newContent = doc.getElementById("content");
+    var newTitle = doc.querySelector("title");
+    return {
+      content: newContent,
+      title: newTitle ? newTitle.textContent : null,
+    };
+  }
+
+  function fetchAndSwap(href, pushHistory) {
+    if (!CONTENT) { hardNav(href); return; }
+    CONTENT.classList.add("is-loading");
+    fetch(href, { credentials: "same-origin" })
+      .then(function (resp) {
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        return resp.text();
+      })
+      .then(function (text) {
+        var parsed = parseFragment(text);
+        if (!parsed || !parsed.content) {
+          hardNav(href);
+          return;
+        }
+        CONTENT.innerHTML = parsed.content.innerHTML;
+        if (parsed.title) document.title = parsed.title;
+        if (pushHistory) history.pushState({}, "", href);
+        updateActiveLink(href);
+        CONTENT.classList.remove("is-loading");
+        if (CONTENT.scrollTo) CONTENT.scrollTo(0, 0);
+        window.scrollTo(0, 0);
+        window.dispatchEvent(new CustomEvent("nav:loaded", {
+          detail: { href: href }
+        }));
+      })
+      .catch(function () {
+        CONTENT.classList.remove("is-loading");
+        hardNav(href);
+      });
+  }
+
+  function updateActiveLink(href) {
+    var path = href.split("#")[0].split("?")[0];
+    var filename = path.split("/").pop();
+    var links = document.querySelectorAll("a[data-nav-link]");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var linkHref = a.getAttribute("href");
+      var isMatch = linkHref === filename;
+      if (isMatch) {
+        a.classList.add("current");
+        a.setAttribute("aria-current", "page");
+      } else {
+        a.classList.remove("current");
+        a.removeAttribute("aria-current");
+      }
+    }
+  }
+
+  function onNavClick(ev) {
+    if (ev.defaultPrevented) return;
+    if (ev.button && ev.button !== 0) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    var a = ev.target && ev.target.closest
+      ? ev.target.closest("a[data-nav-link]") : null;
+    if (!a) return;
+    var href = a.getAttribute("href");
+    if (!href || href.charAt(0) === "#") return;
+    if (!isSameOrigin(href)) return;
+    if (a.target && a.target !== "" && a.target !== "_self") return;
+    ev.preventDefault();
+    fetchAndSwap(href, true);
+  }
+
+  function onPopState() {
+    fetchAndSwap(window.location.href, false);
+  }
+
+  function wireNav() {
+    document.addEventListener("click", onNavClick);
+    window.addEventListener("popstate", onPopState);
+  }
+
+  /* ---- Boot ------------------------------------------------------- */
+
+  function boot() {
+    /* The inline <head> bootstrap already restored localStorage state +
+       force-opened active-ancestor sections before paint; here we only
+       wire event listeners. */
+    wireDetailsToggle();
+    wireTocToggleButtons();
+    wireCollapseAll();
+    wireNav();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+"""
+
+
 def resolve_label(entry: dict, labels: dict[str, str]) -> str:
     key = entry.get("name_key") or ""
     if key in labels:
@@ -2632,10 +2959,37 @@ def build_roots(entries: dict[str, dict]) -> list[str]:
     return roots
 
 
+def _entry_ancestors(eid: str | None, entries: dict[str, dict]) -> list[str]:
+    """vs-dnz: walk parents of ``eid`` so the inline bootstrap can force
+    the active entry's ``<details>`` ancestors open pre-paint. Excludes
+    ``eid`` itself (its own `<details>` wrapper, if any, is not forced
+    open — only the chain above it)."""
+    if not eid or eid not in entries:
+        return []
+    chain: list[str] = []
+    cur = entries[eid].get("parent")
+    guard = 0
+    while cur and cur in entries and guard < 64:
+        chain.append(cur)
+        cur = entries[cur].get("parent")
+        guard += 1
+    return chain
+
+
 def build_toc(
     entries: dict[str, dict], labels: dict[str, str], current: str | None
 ) -> str:
-    """Render the sidebar TOC tree."""
+    """Render the sidebar TOC tree.
+
+    vs-dnz: Entries that have children are wrapped in a ``<details>``
+    element with a stable ``data-section-id`` so client-side JS can
+    persist their open/closed state in ``localStorage``. Every link
+    also gets ``data-nav-link`` so the partial-navigation JS can
+    intercept clicks (``<a>`` still carries a real ``href`` for the
+    no-JS fallback). The currently-active entry is marked with
+    ``aria-current="page"``; an inline ``<head>`` bootstrap script
+    reopens its ``<details>`` ancestors before first paint.
+    """
     roots = build_roots(entries)
     visited: set[str] = set()
 
@@ -2645,14 +2999,42 @@ def build_toc(
         visited.add(eid)
         e = entries[eid]
         label = html.escape(resolve_label(e, labels))
-        cls = ' class="current"' if eid == current else ""
-        children_html = ""
-        if e["children"]:
-            parts = [render_node(c) for c in e["children"] if c in entries]
-            parts = [p for p in parts if p]
-            if parts:
-                children_html = "<ul>" + "".join(parts) + "</ul>"
-        return f'<li><a href="{eid}.html"{cls}>{label}</a>{children_html}</li>'
+        sid = html.escape(eid)
+        link_attrs = [
+            f'href="{sid}.html"',
+            "data-nav-link",
+            f'data-entry-id="{sid}"',
+        ]
+        if eid == current:
+            link_attrs.append('class="current"')
+            link_attrs.append('aria-current="page"')
+        link = f"<a {' '.join(link_attrs)}>{label}</a>"
+
+        child_eids = [c for c in e["children"] if c in entries]
+        if not child_eids:
+            return f"<li>{link}</li>"
+
+        parts = [render_node(c) for c in child_eids]
+        parts = [p for p in parts if p]
+        if not parts:
+            return f"<li>{link}</li>"
+
+        children_html = "<ul>" + "".join(parts) + "</ul>"
+        # Parent: wrap the link + children UL in a <details> so the
+        # whole subtree collapses. The <summary> holds the link so
+        # clicking the text navigates; a separate chevron button
+        # controls open/close without triggering navigation.
+        return (
+            f'<li class="toc-parent">'
+            f'<details data-section-id="{sid}">'
+            f"<summary>"
+            f'<button class="toc-toggle" type="button" aria-label="Toggle section" tabindex="-1"></button>'
+            f"{link}"
+            f"</summary>"
+            f"{children_html}"
+            f"</details>"
+            f"</li>"
+        )
 
     items = "".join(render_node(r) for r in roots)
     return f"<ul>{items}</ul>"
@@ -2701,6 +3083,9 @@ def render_site(repo: Path, out: Path) -> int:
 
     out.mkdir(parents=True, exist_ok=True)
     (out / "style.css").write_text(STYLE_CSS, encoding="utf-8")
+    # vs-dnz: sidebar state persistence + partial-nav enhancement.
+    # Referenced from PAGE_TEMPLATE as `<script src="guidebook-nav.js" defer>`.
+    (out / "guidebook-nav.js").write_text(GUIDEBOOK_NAV_JS, encoding="utf-8")
 
     # vs-3o7: prototype + locale indexes for embed table expansion. Each
     # scan is soft-failed — a broken reagent yml should not tank the
@@ -2808,12 +3193,14 @@ def render_site(repo: Path, out: Path) -> int:
         toc = build_toc(entries, labels, eid)
         crumbs = build_crumbs(entry, entries, labels)
         source = html.escape(entry.get("text") or "(no source)")
+        ancestors = _entry_ancestors(eid, entries)
         page = PAGE_TEMPLATE.format(
             title=html.escape(title),
             toc=toc,
             crumbs=crumbs,
             body=body,
             source=source,
+            ancestors_json=json.dumps(ancestors),
         )
         (out / f"{eid}.html").write_text(page, encoding="utf-8")
         rendered += 1
@@ -2831,6 +3218,7 @@ def render_site(repo: Path, out: Path) -> int:
         crumbs='<a href="index.html">Guidebook</a>',
         body=index_body,
         source="(index)",
+        ancestors_json=json.dumps([]),
     )
     (out / "index.html").write_text(index_page, encoding="utf-8")
 

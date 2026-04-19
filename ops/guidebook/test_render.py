@@ -347,6 +347,184 @@ def test_fmt_num_trims_zeros() -> None:
 
 
 # ---------------------------------------------------------------------------
+# vs-dnz — collapsible sidebar sections + partial-content nav
+# ---------------------------------------------------------------------------
+
+
+def _toy_entries() -> dict[str, dict]:
+    """A tiny three-level entry tree for TOC / ancestor tests.
+
+    SS14 -> Jobs -> Engineering -> Airlocks
+                 -> Medical (leaf with no children)
+    NewPlayer (root, leaf)
+    """
+    return {
+        "SS14": {
+            "id": "SS14",
+            "name_key": "guide-entry-ss14",
+            "text": "",
+            "children": ["Jobs"],
+            "priority": 1,
+            "parent": None,
+        },
+        "Jobs": {
+            "id": "Jobs",
+            "name_key": "guide-entry-jobs",
+            "text": "",
+            "children": ["Engineering", "Medical"],
+            "priority": 1,
+            "parent": "SS14",
+        },
+        "Engineering": {
+            "id": "Engineering",
+            "name_key": "guide-entry-engineering",
+            "text": "",
+            "children": ["Airlocks"],
+            "priority": 1,
+            "parent": "Jobs",
+        },
+        "Airlocks": {
+            "id": "Airlocks",
+            "name_key": "guide-entry-airlocks",
+            "text": "",
+            "children": [],
+            "priority": 1,
+            "parent": "Engineering",
+        },
+        "Medical": {
+            "id": "Medical",
+            "name_key": "guide-entry-medical",
+            "text": "",
+            "children": [],
+            "priority": 2,
+            "parent": "Jobs",
+        },
+        "NewPlayer": {
+            "id": "NewPlayer",
+            "name_key": "guide-entry-newplayer",
+            "text": "",
+            "children": [],
+            "priority": 0,
+            "parent": None,
+        },
+    }
+
+
+def _toy_labels() -> dict[str, str]:
+    return {
+        "guide-entry-ss14": "Space Station 14",
+        "guide-entry-jobs": "Jobs",
+        "guide-entry-engineering": "Engineering",
+        "guide-entry-airlocks": "Airlocks",
+        "guide-entry-medical": "Medical",
+        "guide-entry-newplayer": "New Player",
+    }
+
+
+def test_build_toc_wraps_parents_in_details_with_section_id() -> None:
+    """Parent entries (those with children) must render as
+    <details data-section-id="..."> so JS can persist collapse state."""
+    entries = _toy_entries()
+    labels = _toy_labels()
+    toc = render.build_toc(entries, labels, current="Airlocks")
+
+    # SS14 is a parent (has Jobs) — must be wrapped in <details>
+    assert '<details data-section-id="SS14">' in toc
+    # Jobs is a parent — wrapped
+    assert '<details data-section-id="Jobs">' in toc
+    # Engineering is a parent — wrapped
+    assert '<details data-section-id="Engineering">' in toc
+    # Airlocks is a leaf — NOT wrapped in its own <details>
+    assert '<details data-section-id="Airlocks">' not in toc
+    # Every nav link gets data-nav-link for JS interception
+    assert "data-nav-link" in toc
+    # Active entry is marked with aria-current="page"
+    assert 'aria-current="page"' in toc
+    # Chevron button for parent-section toggling
+    assert 'class="toc-toggle"' in toc
+
+
+def test_build_toc_leaf_has_no_details_wrapper() -> None:
+    """Root leafs (no children) render as plain <li><a>...</a></li>."""
+    entries = _toy_entries()
+    labels = _toy_labels()
+    toc = render.build_toc(entries, labels, current=None)
+    # NewPlayer is a root leaf — no <details>/<summary> overhead
+    assert '<li><a href="NewPlayer.html" data-nav-link' in toc
+    # No details wrapper for NewPlayer or Airlocks (leaves)
+    assert 'data-section-id="NewPlayer"' not in toc
+    assert 'data-section-id="Airlocks"' not in toc
+
+
+def test_entry_ancestors_excludes_self() -> None:
+    """The ancestor chain force-opens <details> above the active entry;
+    the active entry itself must NOT appear in the chain (it's a leaf)."""
+    entries = _toy_entries()
+    assert render._entry_ancestors("Airlocks", entries) == [
+        "Engineering",
+        "Jobs",
+        "SS14",
+    ]
+    assert render._entry_ancestors("NewPlayer", entries) == []
+    assert render._entry_ancestors("SS14", entries) == []
+    assert render._entry_ancestors(None, entries) == []
+    assert render._entry_ancestors("UnknownEid", entries) == []
+
+
+def test_page_template_has_inline_bootstrap_and_content_wrapper() -> None:
+    """Every rendered page MUST carry:
+    - an inline <head> bootstrap script that touches localStorage pre-paint
+    - a <main id="content"> wrapper around the per-page body (partial-swap target)
+    - a reference to guidebook-nav.js
+    - collapse-all / expand-all sidebar buttons
+    """
+    html_out = render.PAGE_TEMPLATE.format(
+        title="Demo",
+        toc="<ul></ul>",
+        crumbs='<a href="index.html">Guidebook</a>',
+        body="<p>hello</p>",
+        source="(demo)",
+        ancestors_json="[]",
+    )
+    # Inline bootstrap: reads localStorage before paint
+    assert "vs14-guidebook-nav-state" in html_out
+    assert "localStorage.getItem" in html_out
+    # Content wrapper that the partial-swap JS targets
+    assert '<main id="content"' in html_out
+    # Partial-nav JS reference
+    assert 'src="guidebook-nav.js"' in html_out
+    # Sidebar controls
+    assert 'data-toc-action="expand-all"' in html_out
+    assert 'data-toc-action="collapse-all"' in html_out
+    # Active-ancestors array injection
+    assert "window.__VS14_ACTIVE_ANCESTORS" in html_out
+
+
+def test_guidebook_nav_js_constant_has_required_behavior() -> None:
+    """The emitted JS must implement the spec'd pipeline: fetch + swap
+    #content, pushState, popstate handling, same-origin check, localStorage
+    persistence on toggle, and collapse/expand-all actions."""
+    js = render.GUIDEBOOK_NAV_JS
+    # localStorage key matches the bootstrap's key
+    assert "vs14-guidebook-nav-state" in js
+    # Fetch-and-swap pipeline
+    assert "fetch(" in js
+    assert "pushState" in js
+    assert "popstate" in js
+    # Content target
+    assert 'getElementById("content")' in js
+    # nav:loaded custom event for external re-init
+    assert "nav:loaded" in js
+    # Collapse/expand-all wiring
+    assert "expand-all" in js
+    assert "collapse-all" in js
+    # Same-origin enforcement
+    assert "origin" in js
+    # Error fallback to full-page reload
+    assert "window.location.href" in js
+
+
+# ---------------------------------------------------------------------------
 # Harmless-unreachable helper: allow `python3 test_render.py` as a runner
 # ---------------------------------------------------------------------------
 

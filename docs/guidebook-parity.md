@@ -51,6 +51,30 @@ Pipeline: `ops/guidebook/render.py` reads
   - Unit tests in `ops/guidebook/test_render.py` — 8 green.
   - Module docstring cites the SS14 wiki pages that anchor our
     interpretive voice.
+- **vs-dnz** (JS-enhanced nav — matches in-game UX where sidebar
+  stays stable while content swaps):
+  - Sidebar parent entries render as `<details data-section-id="...">`
+    so collapse state survives across pages.
+  - Inline `<head>` bootstrap script reads
+    `localStorage["vs14-guidebook-nav-state"]`
+    (`{ "section-id": "open", ... }`) pre-paint, plus force-opens the
+    active entry's ancestor chain so the current page is always visible.
+  - `guidebook-nav.js` (shipped alongside HTML) intercepts
+    `<a data-nav-link>` clicks: fetches the target page, extracts
+    `#content`, swaps innerHTML, `history.pushState`s, updates
+    `<title>` + `aria-current`, scrolls content to top, fires a
+    `nav:loaded` event. `popstate` runs the same swap pipeline.
+    Fetch / parse failures fall back to `location.href = href` (full
+    reload), and the raw `href` attribute is always the real URL, so
+    no-JS browsers keep the original full-page nav behavior.
+  - `<main id="content">` now wraps the per-page body as the stable
+    swap target.
+  - "Expand all" / "Collapse all" buttons at the top of the sidebar.
+  - Chevron indicator (▸ closed, rotates 90° when open), 150ms CSS
+    transitions (respects `prefers-reduced-motion`).
+  - 5 new unit tests in `ops/guidebook/test_render.py` (total: 13
+    green). JS behavior is manual-verify only (no jsdom in the
+    guidebook's Python stack).
 
 ## Scope deferred to follow-up beads
 
