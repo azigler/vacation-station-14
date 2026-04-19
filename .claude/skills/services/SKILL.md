@@ -30,17 +30,18 @@ under `ops/observability/`. Real credentials live in env files and bootstrap
 secret files, never committed. Reset is destructive surgery — see
 `docs/OPERATIONS.md`.
 
-Flavor A (post-2026-04-12) status: prod is pure-SS14 game server + watchdog
-+ observability; no external services yet. Coming:
+Flavor A (post-2026-04-12) status: prod runs game server + watchdog +
+observability + a growing set of static-site + admin services behind
+the nginx edge. See `docs/upstream-sync.md` for the full submodule
+list + landed-via beads. Current inventory of fronted services:
 
-- **vs-2y8** — nginx in front of the watchdog admin API (DONE 2026-04-12;
-  system-wide nginx edge live on `ss14.zig.computer`)
-- **vs-1vy** — cookbook service
-- **vs-236** — mapserver
-- **vs-35d** — SS14.Admin
-
-Those will extend the prod topology when they land; this skill covers
-current state.
+- **vs-2y8** — nginx edge on `ss14.zig.computer` (DONE 2026-04-12)
+- **vs-1vy** — `/recipes/` ss14-cookbook daily static build
+- **vs-1e5** — `/guidebook/` in-game Guidebook daily static render
+- **vs-v69** — `/writer/` RMC14-document-simu
+- **vs-236** — `/maps/` MapServer + MapViewer
+- **vs-35d** — `/admin/` SS14.Admin
+- **vs-ygn** — `/nurseshark/` Nurseshark chemistry/medical/cryo app
 
 ## Service inventory
 
@@ -64,6 +65,29 @@ Prod game-server port `1212/tcp+udp` is open on the public firewall; dev
 server running on the same host (`ss14://ss14.zig.computer:1213`). Prod
 observability ports are loopback-only (reached via nginx); dev
 observability stays loopback, reachable via SSH tunnel if needed.
+
+### Static-site builders (daily rebuild timers)
+
+Nightly oneshot + timer pairs that regenerate static web content
+from the live VS14 checkout. All run as `ss14:ss14`, all follow the
+same `ops/<name>/build.sh` + `vs14-<name>-build.{service,timer}`
+pattern. All served through the same nginx vhost
+(`ops/nginx/ss14.zig.computer.conf`).
+
+| Path prefix         | Tool                  | Unit                              | Timer slot    | Serve root                                    | Landed via |
+|---------------------|-----------------------|-----------------------------------|---------------|-----------------------------------------------|------------|
+| `/recipes/`         | ss14-cookbook         | `vs14-cookbook-build`             | 05:00 UTC     | `/var/www/vs14-recipes/` (rsync)              | vs-1vy     |
+| `/guidebook/`       | render.py             | `vs14-guidebook-build`            | 05:15 UTC     | `/var/www/vs14-guidebook/` (rsync)            | vs-1e5     |
+| `/nurseshark/`      | Nurseshark (Vite/SPA) | `vs14-nurseshark-build`           | 05:30 UTC     | `/opt/vacation-station/external/nurseshark/dist/` (in-place) | vs-ygn     |
+| `/writer/`          | RMC14-document-simu   | `vs14-writer-build`               | ad-hoc        | `/var/www/vs14-writer/` (rsync)               | vs-v69     |
+| `/maps/` (tiles)    | SS14.MapServer render | `vs14-map-render`                 | ad-hoc        | MapServer-internal                            | vs-236     |
+
+Nurseshark is the odd one out: it's a BrowserRouter SPA, so nginx needs
+`try_files $uri $uri/ /nurseshark/index.html` to route deep-links
+client-side (vs-ygn.2), and the Vite build MUST be run with
+`VITE_BASE_PATH=/nurseshark/` to bake the prefix into asset URLs
+(vs-ygn.1 — `build.sh` grep-gates this). The other static-site
+builders produce root-relative HTML that nginx serves directly.
 
 ## Deciding which stack to use
 

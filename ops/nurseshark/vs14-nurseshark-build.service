@@ -1,0 +1,46 @@
+[Unit]
+Description=Vacation Station 14 — nurseshark static-site rebuild (vs-ygn)
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+# Needs network for `git pull` of VS14 + `npm install`.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ss14
+Group=ss14
+
+# Path assumes the repo is deployed to /opt/vacation-station. Override
+# via drop-in (or the env vars documented in build.sh) if your layout
+# differs.
+ExecStart=/opt/vacation-station/ops/nurseshark/build.sh
+
+# Build can take a few minutes (npm install + tsc + vite build + data
+# pipeline iterating ~12k YAML files). Generous ceiling.
+TimeoutStartSec=30min
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+# read-only so /opt/vacation-station → /home/<user>/... symlinks resolve
+# (same pattern as vs14-cookbook-build + vs14-guidebook-build). The
+# per-host drop-in in install.sh flips this to ProtectHome=false when
+# the repo actually lives under /home/.
+ProtectHome=read-only
+PrivateTmp=true
+
+# Writes land inside the submodule (dist/, node_modules/, public/data/,
+# sources.yml) plus the parent repo's .git during `git pull`. The
+# install.sh drop-in adds the real-path expansion when /opt/ is
+# symlinked; the path below is the canonical /opt/ one.
+ReadWritePaths=/opt/vacation-station /opt/vacation-station/external/nurseshark /var/lib/vs14-nurseshark-cache
+
+# npm needs HOME + a writable cache dir. PrivateTmp handles /tmp;
+# point npm's cache at a known-writable ss14-owned dir so re-runs hit
+# cache instead of a cold download.
+Environment=npm_config_cache=/var/lib/vs14-nurseshark-cache
+Environment=HOME=/var/lib/vs14-nurseshark-cache
+
+# Environment overrides (optional — defaults live in build.sh):
+# Environment=REPO_ROOT=/opt/vacation-station
+# Environment=NURSESHARK_BASE_PATH=/nurseshark/
