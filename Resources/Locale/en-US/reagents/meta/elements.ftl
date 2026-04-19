@@ -47,7 +47,7 @@ reagent-name-radium = radium
 reagent-desc-radium = A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity and is highly toxic.
 
 reagent-name-silicon = silicon
-reagent-desc-silicon = A hard and brittle crystalline solid with a blue-grey color.
+reagent-desc-silicon = A hard and brittle crystalline solid with a blue-grey color. Moderately toxic if ingested.
 
 reagent-name-silver = silver
 reagent-desc-silver = A soft, white, lustrous transition metal, it has the highest electrical conductivity of any element and the highest thermal conductivity of any metal.
