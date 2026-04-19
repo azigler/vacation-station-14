@@ -31,15 +31,16 @@ reagents in `Resources/Prototypes/Reagents/elements.yml` and
   Phosphorus, Radium, Silicon, Silver, Sulfur, Sodium, Uranium, Zinc,
   Oxygen, Plasma, Nitrogen). Tritium, Frezon, NitrousOxide, CarbonDioxide
   already carry accurate descriptions and were not re-inspected.
-- **9 drifts fixed**: Fluorine, Mercury, Silicon, Lithium, Phosphorus, Uranium,
+- **12 drifts fixed**: Fluorine, Mercury, Silicon, Lithium, Phosphorus, Uranium,
   Nitrogen, Oxygen, Plasma — all surfaced a bloodstream effect, a plant
   effect, or a species interaction that was absent from the reagent desc.
-- **13 clean** — either no metabolism at all (Aluminium, Carbon, Gold,
-  Hydrogen, Iodine, Potassium, Silver, Sodium, Zinc), or the existing
-  description already covered the YAML behaviour within tolerance
-  (Chlorine "toxic to humans", Sulfur's Caustic 0.1 is negligible, Radium
-  inherits Uranium's radiation but is already described as "highly toxic"
-  and "glowing", Copper + Iron fixed in the prior round).
+  Chlorine, Sulfur, and Radium were added as follow-ups per review — their
+  original "clean" classification was defensible case-by-case, but the user
+  opted for completeness (every element with a non-trivial metabolism or
+  parent-inherited effect gets explicit prose).
+- **10 clean** — no metabolism at all (Aluminium, Carbon, Gold, Hydrogen,
+  Iodine, Potassium, Silver, Sodium, Zinc, plus Copper + Iron from the
+  prior round which had been fixed already).
 
 ## Findings table
 
@@ -87,9 +88,9 @@ reagents in `Resources/Prototypes/Reagents/elements.yml` and
 | Nitrogen (gases.yml) | Bloodstream `HealthChange Cold: 0.5` (YAML comment: "liquid nitrogen is cold") | "A colorless, odorless unreactive gas. Highly stable." — no mention of the cryogenic damage | **Fixed** — appended "Inflicts cold damage if metabolized in liquid form." |
 | Oxygen (gases.yml) | Bloodstream Oxygenate for Human/Animal/Rat/Plant, `Poison: 1.5` for Vox (respiration path poisons Vox at 0.7) — same species-inverted pattern as Iron/Copper | "An oxidizing, colorless gas." — no species-split hint | **Fixed** — appended "Sustains breathing for most species, but is toxic to Vox." |
 | Plasma (gases.yml) | Bloodstream `Poison: 1.5` + `AdjustReagent Inaprovaline: -2.0` (actively destroys the anti-crit medicine) | "Funky, space-magic pixie dust. You probably shouldn't eat this, but we both know you will anyways." — jokey, hides the anti-medic interaction | **Fixed** — kept the gag line, appended "Strongly toxic, and actively destroys inaprovaline in the bloodstream — doubly lethal for anyone already in critical condition." |
-| Chlorine | Bloodstream `Poison: 2` per tick (highest among basic-element poisons); plant kills | "A yellow-green gas which is toxic to humans." | Clean — "toxic" covers the gameplay effect, and Chlorine is a weapon-coded reagent that players already treat with respect |
-| Sulfur | Bloodstream `Caustic: 0.1` | "A yellow, crystalline solid." | Clean — 0.1 per tick is negligible in practice; would add noise to mention |
-| Radium | inherits Uranium's `Radiation: 2` via `parent: Uranium` | "A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity and is highly toxic." | Clean — existing desc already accurate; Uranium fix covers the parent-chain drift |
+| Chlorine | Bloodstream `Poison: 2` per tick (highest among basic-element poisons); plant `Toxins: 15 / Health: -1 / Water: -0.5 / Weeds: -3` (rapidly kills plants) | "A yellow-green gas which is toxic to humans." | **Fixed** — now "A yellow-green gas. Causes poison damage on bloodstream contact and rapidly kills plants, dehydrating and poisoning them." Species-narrow "to humans" replaced with the actual game mechanic. |
+| Sulfur | Bloodstream `Caustic: 0.1` | "A yellow, crystalline solid." | **Fixed** — appended "Causes minor caustic damage if metabolized." Rate is low but non-zero; the prior silence implied inertness. |
+| Radium | inherits Uranium's `Radiation: 2` via `parent: Uranium`; also inherits the plant-mutation / toxicity / health-drain effects | "A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity and is highly toxic." | **Fixed** — now "irradiates anyone it contacts, and mutates or kills plants outright." Parallels Uranium's updated phrasing; parent-chain inheritance is invisible at runtime, so the prose has to spell it out. |
 | Aluminium, Carbon, Gold, Hydrogen, Iodine, Potassium, Silver, Sodium, Zinc | no `metabolisms` or `plantMetabolism` block at all | n/a | Clean — pure chemistry precursors |
 
 ## Out-of-scope observations
