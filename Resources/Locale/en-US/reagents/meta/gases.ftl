@@ -2,7 +2,7 @@ reagent-name-oxygen = oxygen
 reagent-desc-oxygen = An oxidizing, colorless gas. Sustains breathing for most species, but is toxic to Vox.
 
 reagent-name-plasma = plasma
-reagent-desc-plasma = Funky, space-magic pixie dust. You probably shouldn't eat this, but we both know you will anyways.
+reagent-desc-plasma = Funky, space-magic pixie dust. You probably shouldn't eat this, but we both know you will anyways. Strongly toxic, and actively destroys inaprovaline in the bloodstream — doubly lethal for anyone already in critical condition.
 
 reagent-name-tritium = tritium
 reagent-desc-tritium = Radioactive space-magic pixie dust.
