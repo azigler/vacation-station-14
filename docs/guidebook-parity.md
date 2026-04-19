@@ -21,7 +21,7 @@ Pipeline: `ops/guidebook/render.py` reads
 
 | Embed tag | Source schema | Status | Rendered today | Gaps / follow-ups |
 |---|---|---|---|---|
-| `GuideEntityEmbed` | `type: entity` + `Sprite` component | Partial | 64px sprite `<img>` + caption; pill fallback when RSI missing (91.2% hit rate at last build) | No stat block — `MaxHealth`, armor, container capacity, species info, power-cell capacity. **Phase 4 follow-up bead.** |
+| `GuideEntityEmbed` | `type: entity` + `Sprite` + stat components | Full | 64px sprite `<img>` + caption + collapsible `<details>` stat block (max health, crit threshold, damage container, `SolutionContainerManager` capacities, `Storage` slots + max item size, `Battery` charge, `Armor` coefficients + flat reductions, `ClothingSpeedModifier` walk/sprint, `MovementSpeedModifier` base speeds). Parent-chain inherits via `_walk_parents` so species children pick up `MobHuman` thresholds. Pure-decorative entities (no stat components) stay sprite-only. Pill fallback remains when RSI missing. | Does not surface `BodyPrototype` organ list or species-specific damage modifiers. `HealthExaminable` damage-type list is not (yet) rendered; consider folding into the stat block once reactions embed lands. |
 | `GuideReagentEmbed` (single) | `type: reagent` | Full | Vertical detail card: name + swatch + group pill, description, physical desc, flavor, metabolism rate, bloodstream effects (wiki-voice), plant metabolism (when applicable), threshold ladder, Nurseshark footer link | Cross-link to reactions that **produce** this reagent is not yet rendered — needs Phase 5 reactions embed first. |
 | `GuideReagentGroupEmbed` | all `type: reagent` w/ matching `group` | Full | 5-column table: Name+swatch, Group, Description, Effects (bulleted, wiki-voice with species notes), Thresholds (max safe dose / Safe / Toxic). Responsive collapse <720px hides Description + Effects columns; the row's thresholds + group remain scannable | Same reactions cross-link gap as single embed. |
 | `GuideMicrowaveGroupEmbed` | `type: microwaveMealRecipe` | Full | 5-column table: Result, Recipe name, **Appliance** (hardcoded "Microwave" — column is future-proof for grill / oven / deep fryer), Inputs (sprite + solid × count, reagent Nu), Time in seconds. Responsive collapse <720px hides Appliance | No integration with reactions — e.g. dough is a chemistry reaction prerequisite for many recipes; that cross-link is deferred (part of Phase 5 reactions embed). |
@@ -51,6 +51,29 @@ Pipeline: `ops/guidebook/render.py` reads
   - Unit tests in `ops/guidebook/test_render.py` — 8 green.
   - Module docstring cites the SS14 wiki pages that anchor our
     interpretive voice.
+- **vs-05o.1** (Phase 4 — entity stat blocks):
+  - `load_entity_sprites` now also captures `MobThresholds`,
+    `Damageable`, `SolutionContainerManager`, `Storage`, `Battery`,
+    `PowerCell`, `Armor`, `ClothingSpeedModifier`, and
+    `MovementSpeedModifier` into each entity's `stat_components` map.
+  - `_resolve_entity_components` walks the parent chain the same way
+    `resolve_sprite` does — child declarations beat ancestors, so
+    e.g. syndicate-agent variants inherit MobHuman's health thresholds.
+  - `_render_entity_stats_block` emits a collapsible `<details>` below
+    the sprite with a two-column `label → value` table: max health,
+    crit threshold, damage container, per-solution reagent caps,
+    storage slots + max item size, max/starting charge, per-damage-type
+    armor (`0.8` → `20% reduction`, `0` → `immune`, `1.2` → `+20%
+    vulnerability`), walk/sprint modifiers, and base movement speeds.
+  - Pure-decorative entities (no matching components anywhere in the
+    chain) render the same inline sprite layout as before.
+  - 9 new pytest cases cover MaxHealth inheritance from `MobHuman`,
+    reagent capacity, storage grid area, PowerCell charge, armor
+    coefficient formatting, clothing slowdown, the
+    no-stat-components degrade-to-sprite case, the `<details>` +
+    `<table>` wrapper shape, and the decorative-entity filter that
+    suppresses lone `damage container` rows for posters and static
+    structures. Total: 22 green.
 - **vs-dnz** (JS-enhanced nav — matches in-game UX where sidebar
   stays stable while content swaps):
   - Sidebar parent entries render as `<details data-section-id="...">`
@@ -78,13 +101,6 @@ Pipeline: `ops/guidebook/render.py` reads
 
 ## Scope deferred to follow-up beads
 
-- **Phase 4** — entity stat blocks on `GuideEntityEmbed`. Scope:
-  collapsible `<details>` under each sprite showing `MaxHealth` (from
-  `MobState` or direct `DamageContainer.healthCap`),
-  `SolutionContainerManager` capacity, `Storage` capacity, and any
-  `BodyPrototype`/species fields. Complication: stat inheritance walks
-  the same parent chain as sprites (`_walk_parents` already exists and
-  can be reused). No new embed type, just a renderer extension.
 - **Phase 5** — `GuideReactionEmbed` + `GuideReactionGroupEmbed`.
   Scope: new loader for `type: reaction`, new XML tag support, and a
   cross-link from each reagent's detail card listing the reactions
