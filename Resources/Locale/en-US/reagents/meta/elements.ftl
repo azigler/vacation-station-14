@@ -14,7 +14,7 @@ reagent-name-chlorine = chlorine
 reagent-desc-chlorine = A yellow-green gas which is toxic to humans.
 
 reagent-name-copper = copper
-reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity.
+reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity. Replenishes blood in arachnids, but is mildly toxic to most other species.
 
 reagent-name-fluorine = fluorine
 reagent-desc-fluorine = A highly toxic pale yellow gas. Extremely reactive.
@@ -29,7 +29,7 @@ reagent-name-iodine = iodine
 reagent-desc-iodine = Commonly added to table salt as a nutrient. On its own it tastes far less pleasing.
 
 reagent-name-iron = iron
-reagent-desc-iron = A silvery-grey metal which forms iron oxides (rust) with contact with air. Commonly alloyed with other elements to create alloys such as steel.
+reagent-desc-iron = A silvery-grey metal which forms iron oxides (rust) with contact with air. Commonly alloyed with other elements to create alloys such as steel. Replenishes blood in most species, but is mildly toxic to arachnids.
 
 reagent-name-lithium = lithium
 reagent-desc-lithium = A soft, silvery-white alkali metal. It's highly reactive, and ignites if it makes contact with water.

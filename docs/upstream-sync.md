@@ -95,6 +95,19 @@ Once we fork a service (modify it), the directory migrates from
 4. Follow the cherry-pick workflow in
    [`.claude/skills/upstream-sync/SKILL.md`](../.claude/skills/upstream-sync/SKILL.md).
 
+## Candidate-for-upstream branches
+
+Occasionally we land a PR-scoped branch whose diff is
+upstream-portable — pure content or text corrections that apply equally
+to `space-wizards/space-station-14` and which we'd offer back if and
+when an upstream PR window opens. These branches are kept around after
+merge into `main` so their commits can be cherry-picked onto a fork of
+the relevant upstream.
+
+| Branch | Scope | Target upstream | Notes |
+|---|---|---|---|
+| `fix/medical-text-code-drift` | Fluent reagent descriptions + Medical guidebook XML — Tricordrazine, Cryoxadone temperature, Iron + Copper blood interactions, Dexalin spelling | `upstream-sw` | See [`medical-text-drift-audit.md`](medical-text-drift-audit.md). Per-reagent commits are upstream-style with no VS14-specific trailers; drop the final `:card_file_box:` summary commit before submitting. Landed via vs-mby. |
+
 ## Removing an upstream
 
 If an upstream is abandoned, archived, or otherwise unsuitable for
