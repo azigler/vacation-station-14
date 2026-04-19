@@ -44,7 +44,7 @@ reagent-name-phosphorus = phosphorus
 reagent-desc-phosphorus = A reactive metal used in pyrotechnics and weapons. Also acts as a mild plant fertiliser and weedkiller when applied to hydroponics trays.
 
 reagent-name-radium = radium
-reagent-desc-radium = A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity and is highly toxic.
+reagent-desc-radium = A radioactive metal, silvery-white in its pure form. It glows due to its radioactivity, irradiates anyone it contacts, and mutates or kills plants outright.
 
 reagent-name-silicon = silicon
 reagent-desc-silicon = A hard and brittle crystalline solid with a blue-grey color. Moderately toxic if ingested.
