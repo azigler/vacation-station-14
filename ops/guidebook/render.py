@@ -521,8 +521,27 @@ _EntityYamlLoader.add_multi_constructor("!", _ignore_tag)
 _EntityYamlLoader.add_multi_constructor("tag:yaml.org,2002:", _ignore_tag)
 
 
+# vs-05o.1: components we capture for stat-block rendering. Each is stored
+# raw (the YAML-decoded dict) under entities[eid]["stat_components"][<type>]
+# so `_resolve_entity_components` can walk the parent chain and surface
+# the nearest-ancestor definition. See `_render_entity_stats_block`.
+_STAT_COMPONENT_TYPES = frozenset(
+    {
+        "MobThresholds",
+        "Damageable",
+        "SolutionContainerManager",
+        "Storage",
+        "Battery",
+        "PowerCell",
+        "Armor",
+        "ClothingSpeedModifier",
+        "MovementSpeedModifier",
+    }
+)
+
+
 def load_entity_sprites(repo: Path) -> dict[str, dict]:
-    """Scan entity prototypes; return id → {parent, sprite_rsi, state}.
+    """Scan entity prototypes; return id → {parent, sprite_rsi, state, ...}.
 
     Walks Resources/Prototypes/**/*.yml, picking up documents whose
     `type: entity` (prototype-like shape). For each, records:
@@ -530,9 +549,12 @@ def load_entity_sprites(repo: Path) -> dict[str, dict]:
       - sprite_rsi: RSI path (relative to Resources/Textures), or None
       - state: state name within the RSI, or None
       - abstract: whether the entity is abstract
+      - stat_components: dict[str, dict] of stat-bearing components
+        (see `_STAT_COMPONENT_TYPES`) keyed by their `type` string
 
     The renderer later walks the parent chain to inherit missing
-    sprite/state fields.
+    sprite/state fields (`resolve_sprite`) and stat components
+    (`_resolve_entity_components`, vs-05o.1).
     """
     proto_dir = repo / "Resources" / "Prototypes"
     out: dict[str, dict] = {}
@@ -558,12 +580,27 @@ def load_entity_sprites(repo: Path) -> dict[str, dict]:
                 continue
             sprite_rsi: str | None = None
             state: str | None = None
+            stat_components: dict[str, dict] = {}
             components = raw.get("components") or []
             if isinstance(components, list):
                 for comp in components:
                     if not isinstance(comp, dict):
                         continue
-                    if comp.get("type") != "Sprite":
+                    ctype = comp.get("type")
+                    # vs-05o.1: capture stat-bearing components verbatim
+                    # for later parent-chain resolution. Keep the FIRST
+                    # declaration per type (SS14 doesn't allow duplicates,
+                    # but be defensive).
+                    if (
+                        isinstance(ctype, str)
+                        and ctype in _STAT_COMPONENT_TYPES
+                        and ctype not in stat_components
+                    ):
+                        stat_components[ctype] = comp
+                    if ctype != "Sprite":
+                        continue
+                    # Only honor the first Sprite component (vs-mlg parity).
+                    if sprite_rsi is not None or state is not None:
                         continue
                     spr = comp.get("sprite")
                     if isinstance(spr, str):
@@ -586,12 +623,12 @@ def load_entity_sprites(repo: Path) -> dict[str, dict]:
                                     ):
                                         sprite_rsi = layer["sprite"]
                                     break
-                    break  # only first Sprite component
             out[eid] = {
                 "parent": raw.get("parent"),
                 "sprite_rsi": sprite_rsi,
                 "state": state,
                 "abstract": bool(raw.get("abstract", False)),
+                "stat_components": stat_components,
             }
     return out
 
@@ -657,6 +694,433 @@ def resolve_sprite(
     # Some entities declare `sprite:` without a `state:` — SS14 defaults
     # to the first state in the RSI. We'll resolve that at PNG time.
     return (rsi, state or "")
+
+
+# ---------------------------------------------------------------------------
+# Entity stat block resolution (vs-05o.1)
+# ---------------------------------------------------------------------------
+#
+# `GuideEntityEmbed` renders a 64px sprite (vs-mlg) and, when the entity
+# carries stat-bearing components, a collapsible <details> block under the
+# sprite with Max Health, reagent capacity, storage capacity, power-cell
+# charge, armor coefficients, and slowdown.
+#
+# Components inherit across the parent chain identically to Sprite. We
+# reuse `_walk_parents` to find the nearest ancestor that defines each
+# component; child declarations win over ancestors.
+
+
+def _resolve_entity_components(
+    entity_id: str, entities: dict[str, dict]
+) -> dict[str, dict]:
+    """Return {component_type: component_dict} for entity_id, walking parents.
+
+    Nearest ancestor wins — if MobHuman defines `MobThresholds` and a
+    species child doesn't override it, the child inherits the parent's
+    thresholds. Multiple-parent declarations walk branch order; the first
+    ancestor with the component supplies it.
+    """
+    ent = entities.get(entity_id)
+    if ent is None:
+        return {}
+    merged: dict[str, dict] = dict(ent.get("stat_components") or {})
+    for ancestor_id in _walk_parents(entity_id, entities):
+        anc = entities.get(ancestor_id)
+        if anc is None:
+            continue
+        ancestor_stats = anc.get("stat_components") or {}
+        for ctype, cdict in ancestor_stats.items():
+            # Child takes precedence.
+            merged.setdefault(ctype, cdict)
+    return merged
+
+
+def _component_float(comp: dict, key: str) -> float | None:
+    """Safely pull a number off a component dict (ints become floats)."""
+    raw = comp.get(key)
+    if raw is None:
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _mob_max_health(comps: dict[str, dict]) -> float | None:
+    """MobThresholds is a map `{hp: state}`; max HP is the highest key.
+
+    The `Dead` threshold is conventionally the upper bound because a mob
+    taking that much damage enters the Dead state. Critical thresholds
+    exist in-between. We return the top numeric key.
+    """
+    mt = comps.get("MobThresholds")
+    if not isinstance(mt, dict):
+        return None
+    thresholds = mt.get("thresholds")
+    if not isinstance(thresholds, dict):
+        return None
+    best: float | None = None
+    for k in thresholds:
+        try:
+            n = float(k)
+        except (TypeError, ValueError):
+            continue
+        if best is None or n > best:
+            best = n
+    return best
+
+
+def _mob_crit_threshold(comps: dict[str, dict]) -> float | None:
+    """The `Critical` threshold in MobThresholds, if one exists."""
+    mt = comps.get("MobThresholds")
+    if not isinstance(mt, dict):
+        return None
+    thresholds = mt.get("thresholds")
+    if not isinstance(thresholds, dict):
+        return None
+    for k, v in thresholds.items():
+        if str(v) != "Critical":
+            continue
+        try:
+            return float(k)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _solution_capacity_rows(
+    comps: dict[str, dict],
+) -> list[tuple[str, str]]:
+    """Return per-solution rows like [("beaker capacity", "50u"), ...].
+
+    Some entities declare multiple solutions (e.g. an argocyte carries a
+    `spray` solution alongside `absorbed`); we surface each. Entities
+    with `solutions: {}` or no maxVol render nothing. A solution with
+    reagents but no `maxVol` falls back to computing total reagent
+    quantity as the implied cap (SS14's behavior at load time).
+    """
+    scm = comps.get("SolutionContainerManager")
+    if not isinstance(scm, dict):
+        return []
+    solutions = scm.get("solutions")
+    if not isinstance(solutions, dict):
+        return []
+    out: list[tuple[str, str]] = []
+    for sname, sdata in solutions.items():
+        if not isinstance(sdata, dict):
+            continue
+        max_vol = sdata.get("maxVol")
+        try:
+            cap = float(max_vol) if max_vol is not None else None
+        except (TypeError, ValueError):
+            cap = None
+        if cap is None:
+            # Fall back to summed reagent quantities when maxVol is absent.
+            reagents = sdata.get("reagents")
+            if isinstance(reagents, list):
+                total = 0.0
+                for r in reagents:
+                    if not isinstance(r, dict):
+                        continue
+                    q = r.get("Quantity") or r.get("quantity")
+                    try:
+                        total += float(q) if q is not None else 0.0
+                    except (TypeError, ValueError):
+                        continue
+                if total > 0:
+                    cap = total
+        if cap is None or cap <= 0:
+            continue
+        label = f"{sname} capacity"
+        out.append((label, f"{_fmt_num(cap)}u"))
+    return out
+
+
+def _storage_capacity_row(comps: dict[str, dict]) -> tuple[str, str] | None:
+    """Return (label, value) for the Storage component, or None.
+
+    SS14 storage is sized by a `grid` list of `x1,y1,x2,y2` rectangles
+    (area in 1x1 tiles) OR a `maxTotalWeight` integer. Modern content
+    uses `grid`; `maxTotalWeight` is legacy but still appears. We prefer
+    `maxTotalWeight` when present (it's a single readable number);
+    otherwise compute total grid area.
+
+    `maxItemSize` (Tiny / Small / Normal / Large / Huge / Ginormous)
+    surfaces as a secondary row elsewhere — here we return just the
+    capacity.
+    """
+    storage = comps.get("Storage")
+    if not isinstance(storage, dict):
+        return None
+    mtw = storage.get("maxTotalWeight")
+    if mtw is not None:
+        try:
+            return ("storage capacity", f"{_fmt_num(float(mtw))} weight")
+        except (TypeError, ValueError):
+            pass
+    grid = storage.get("grid")
+    if isinstance(grid, list) and grid:
+        total_slots = 0
+        for rect in grid:
+            if not isinstance(rect, str):
+                continue
+            parts = [p.strip() for p in rect.split(",")]
+            if len(parts) != 4:
+                continue
+            try:
+                x1, y1, x2, y2 = (int(p) for p in parts)
+            except ValueError:
+                continue
+            w = max(0, x2 - x1 + 1)
+            h = max(0, y2 - y1 + 1)
+            total_slots += w * h
+        if total_slots > 0:
+            return ("storage capacity", f"{total_slots} slot(s)")
+    return None
+
+
+def _storage_max_item_size(comps: dict[str, dict]) -> str | None:
+    storage = comps.get("Storage")
+    if not isinstance(storage, dict):
+        return None
+    mis = storage.get("maxItemSize")
+    if isinstance(mis, str) and mis:
+        return mis
+    return None
+
+
+def _power_cell_rows(comps: dict[str, dict]) -> list[tuple[str, str]]:
+    """Return Battery rows (max charge + starting charge if different).
+
+    A `PowerCell` component pairs with `Battery` — Battery carries the
+    `maxCharge` / `startingCharge` numbers, PowerCell is the marker that
+    makes the entity insertable in a cell slot. We surface both values
+    on cell entities. On a non-cell Battery (e.g. internal batteries)
+    the same rows still read sensibly.
+    """
+    batt = comps.get("Battery")
+    if not isinstance(batt, dict):
+        return []
+    rows: list[tuple[str, str]] = []
+    mx = _component_float(batt, "maxCharge")
+    if mx is not None:
+        rows.append(("max charge", f"{_fmt_num(mx)} J"))
+    start = _component_float(batt, "startingCharge")
+    if start is not None and (mx is None or abs(start - mx) > 0.001):
+        rows.append(("starting charge", f"{_fmt_num(start)} J"))
+    return rows
+
+
+def _armor_rows(comps: dict[str, dict]) -> list[tuple[str, str]]:
+    """Return per-damage-type armor coefficients as rows.
+
+    `coefficients` values less than 1.0 reduce incoming damage (0.5 =
+    halves damage of that type); values greater than 1.0 amplify it.
+    We render `0.8` as `20% reduction`, `1.2` as `+20% vulnerability`,
+    `0` as `immune`, `1.0` as `neutral`.
+
+    `flatReductions` (subtracted before coefficient) also surface, as
+    `"-N flat"` rows. Rare in stock content.
+    """
+    armor = comps.get("Armor")
+    if not isinstance(armor, dict):
+        return []
+    modifiers = armor.get("modifiers")
+    if not isinstance(modifiers, dict):
+        return []
+    rows: list[tuple[str, str]] = []
+    coeffs = modifiers.get("coefficients")
+    if isinstance(coeffs, dict):
+        for dtype, coef in coeffs.items():
+            try:
+                c = float(coef)
+            except (TypeError, ValueError):
+                continue
+            label = _damage_label(str(dtype))
+            rows.append((f"{label} armor", _format_armor_coeff(c)))
+    flats = modifiers.get("flatReductions")
+    if isinstance(flats, dict):
+        for dtype, flat in flats.items():
+            try:
+                f = float(flat)
+            except (TypeError, ValueError):
+                continue
+            label = _damage_label(str(dtype))
+            rows.append((f"{label} flat", f"-{_fmt_num(f)} damage"))
+    return rows
+
+
+def _format_armor_coeff(c: float) -> str:
+    if c == 0:
+        return "immune"
+    if abs(c - 1.0) < 0.0001:
+        return "neutral"
+    if c < 1.0:
+        pct = (1.0 - c) * 100.0
+        return f"{_fmt_num(pct)}% reduction"
+    pct = (c - 1.0) * 100.0
+    return f"+{_fmt_num(pct)}% vulnerability"
+
+
+def _clothing_speed_rows(comps: dict[str, dict]) -> list[tuple[str, str]]:
+    """Return walk/sprint modifier rows from `ClothingSpeedModifier`.
+
+    Values less than 1.0 slow the wearer (0.9 = 10% slower); greater
+    than 1.0 speed them up. Only surface non-neutral values.
+    """
+    csm = comps.get("ClothingSpeedModifier")
+    if not isinstance(csm, dict):
+        return []
+    rows: list[tuple[str, str]] = []
+    walk = _component_float(csm, "walkModifier")
+    sprint = _component_float(csm, "sprintModifier")
+    if walk is not None and abs(walk - 1.0) > 0.0001:
+        rows.append(("walk speed", _format_speed_mod(walk)))
+    if sprint is not None and abs(sprint - 1.0) > 0.0001:
+        rows.append(("sprint speed", _format_speed_mod(sprint)))
+    return rows
+
+
+def _format_speed_mod(v: float) -> str:
+    if v == 0:
+        return "immobile"
+    if v < 1.0:
+        pct = (1.0 - v) * 100.0
+        return f"{_fmt_num(pct)}% slower (x{_fmt_num(v)})"
+    pct = (v - 1.0) * 100.0
+    return f"{_fmt_num(pct)}% faster (x{_fmt_num(v)})"
+
+
+def _movement_speed_rows(comps: dict[str, dict]) -> list[tuple[str, str]]:
+    """Return base movement-speed rows from `MovementSpeedModifier`.
+
+    Surfaces `baseWalkSpeed` / `baseSprintSpeed` when defined. Unlike
+    `ClothingSpeedModifier` these are raw tiles-per-second numbers, not
+    multipliers; render them as `N tiles/s`.
+    """
+    msm = comps.get("MovementSpeedModifier")
+    if not isinstance(msm, dict):
+        return []
+    rows: list[tuple[str, str]] = []
+    walk = _component_float(msm, "baseWalkSpeed")
+    sprint = _component_float(msm, "baseSprintSpeed")
+    if walk is not None:
+        rows.append(("walk speed", f"{_fmt_num(walk)} tiles/s"))
+    if sprint is not None:
+        rows.append(("sprint speed", f"{_fmt_num(sprint)} tiles/s"))
+    return rows
+
+
+def _damage_container_row(comps: dict[str, dict]) -> tuple[str, str] | None:
+    """Surface the Damageable damage container name, if defined.
+
+    The container determines which damage types the entity can take —
+    `Biological` for mobs, `Inorganic` for glass, etc. A useful one-
+    liner for understanding why a weapon doesn't affect an entity.
+    """
+    dmg = comps.get("Damageable")
+    if not isinstance(dmg, dict):
+        return None
+    dc = dmg.get("damageContainer")
+    if isinstance(dc, str) and dc:
+        return ("damage container", dc)
+    return None
+
+
+def _entity_stat_rows(
+    entity_id: str, entities: dict[str, dict]
+) -> list[tuple[str, str]]:
+    """Return the ordered list of stat rows for entity_id.
+
+    Empty list = no stat-bearing components inherited anywhere in the
+    chain → the caller skips the collapsible block entirely so purely
+    decorative entities stay sprite-only.
+
+    Row order is fixed (health → capacity → storage → power → armor →
+    speed) so stat blocks are scannable across entities.
+
+    Special case: a `Damageable` component alone (no health thresholds,
+    no armor, no storage, no battery, no movement) is treated as
+    decorative — posters and static structures inherit one for takedown
+    logic but a "damage container: StructuralInorganic" row on its own
+    is low-value noise.
+    """
+    comps = _resolve_entity_components(entity_id, entities)
+    if not comps:
+        return []
+    rows: list[tuple[str, str]] = []
+
+    # Health & damage container
+    max_hp = _mob_max_health(comps)
+    if max_hp is not None:
+        rows.append(("max health", f"{_fmt_num(max_hp)}"))
+    crit = _mob_crit_threshold(comps)
+    if crit is not None:
+        rows.append(("crit threshold", f"{_fmt_num(crit)}"))
+    dc = _damage_container_row(comps)
+    if dc is not None:
+        rows.append(dc)
+
+    # Reagent capacity (one row per named solution)
+    rows.extend(_solution_capacity_rows(comps))
+
+    # Item storage
+    storage_row = _storage_capacity_row(comps)
+    if storage_row is not None:
+        rows.append(storage_row)
+    mis = _storage_max_item_size(comps)
+    if mis is not None:
+        rows.append(("max item size", mis))
+
+    # Power cell
+    rows.extend(_power_cell_rows(comps))
+
+    # Armor + flat reductions
+    rows.extend(_armor_rows(comps))
+
+    # Clothing slowdown (before movement speed so worn-while-slowed mobs
+    # stay adjacent in the listing)
+    rows.extend(_clothing_speed_rows(comps))
+
+    # Base movement speed (mostly interesting on mobs)
+    rows.extend(_movement_speed_rows(comps))
+
+    # Decorative-entity filter: if the only thing we found was a
+    # damage-container row (no health, capacity, storage, charge, armor,
+    # or speed), treat the entity as decorative and suppress the block.
+    if len(rows) == 1 and rows[0][0] == "damage container":
+        return []
+
+    return rows
+
+
+def _render_entity_stats_block(
+    entity_id: str, entities: dict[str, dict] | None
+) -> str:
+    """Collapsible `<details>` with a stat table. Empty string = no block.
+
+    The `<details>` wrapper renders closed by default (same pattern as
+    the sidebar's collapsible sections) so the stat block doesn't
+    dominate the sprite-first layout; readers who care click to expand.
+    """
+    if entities is None:
+        return ""
+    rows = _entity_stat_rows(entity_id, entities)
+    if not rows:
+        return ""
+    row_html = "".join(
+        f"<tr><th>{html.escape(label)}</th><td>{html.escape(value)}</td></tr>"
+        for label, value in rows
+    )
+    return (
+        '<details class="entity-stats">'
+        '<summary class="entity-stats-summary">'
+        f"Stats &middot; {len(rows)} row(s)"
+        "</summary>"
+        '<table class="entity-stats-table">'
+        f"<tbody>{row_html}</tbody>"
+        "</table></details>"
+    )
 
 
 def _extract_sprite_png(
@@ -2012,6 +2476,20 @@ def _render_embed(elem: ET.Element) -> str:
                     file=sys.stderr,
                 )
                 sprite_name = None
+        # vs-05o.1: build the stat block from the same entity prototype
+        # index the sprite cache was seeded with. Empty string when the
+        # entity has no stat-bearing components — the decorative case.
+        entities = cache.entities if cache is not None else None
+        stats_html = ""
+        if entities is not None:
+            try:
+                stats_html = _render_entity_stats_block(entity_id, entities)
+            except Exception as exc:
+                print(
+                    f"  WARN: stat block failed for {entity_id}: {exc}",
+                    file=sys.stderr,
+                )
+                stats_html = ""
         if sprite_name:
             _EMBED_STATS["entity_img"] += 1
             alt = html.escape(caption or entity_id)
@@ -2020,15 +2498,25 @@ def _render_embed(elem: ET.Element) -> str:
                 f'<img src="{src}" alt="{alt}" loading="lazy" '
                 f'width="64" height="64" class="embed-sprite-img">'
             )
+            caption_html = ""
             if caption and caption != entity_id:
-                cap_html = (
+                caption_html = (
                     f'<span class="embed-caption">{html.escape(caption)}</span>'
                 )
+            # Stats live inside a block wrapper so the <details> renders
+            # below the sprite; empty string degrades to the inline pill
+            # layout and keeps pure-decorative entities unchanged.
+            if stats_html:
                 return (
-                    f'<span class="embed embed-entity has-sprite">'
-                    f"{img}{cap_html}</span>"
+                    '<span class="embed embed-entity has-sprite has-stats">'
+                    f"{img}{caption_html}{stats_html}"
+                    "</span>"
                 )
-            return f'<span class="embed embed-entity has-sprite">{img}</span>'
+            return (
+                '<span class="embed embed-entity has-sprite">'
+                f"{img}{caption_html}"
+                "</span>"
+            )
         # Resolution failed → fall through to pill below.
 
     parts = [html.escape(label_src)]
@@ -2734,6 +3222,77 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
   .recipe-table tbody td:nth-child(3) {
     display: none;
   }
+}
+
+/* vs-05o.1: entity stat blocks under GuideEntityEmbed sprites */
+.embed.has-stats {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  vertical-align: top;
+}
+.entity-stats {
+  display: block;
+  width: 100%;
+  min-width: 12rem;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.entity-stats-summary {
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  color: var(--dim);
+  list-style: none;
+  user-select: none;
+}
+.entity-stats-summary::-webkit-details-marker { display: none; }
+.entity-stats-summary::marker { content: ""; }
+.entity-stats-summary::before {
+  content: "\\25B8"; /* ▸ */
+  display: inline-block;
+  margin-right: 0.3rem;
+  transition: transform 120ms ease;
+}
+.entity-stats[open] .entity-stats-summary::before {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+.entity-stats-summary:hover { color: var(--accent); }
+.entity-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--border);
+  font-family: inherit;
+}
+.entity-stats-table th,
+.entity-stats-table td {
+  padding: 0.2rem 0.5rem;
+  border-top: 1px solid var(--border);
+  font-weight: normal;
+  text-align: left;
+  vertical-align: top;
+}
+.entity-stats-table tr:first-child th,
+.entity-stats-table tr:first-child td {
+  border-top: none;
+}
+.entity-stats-table th {
+  color: var(--dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  width: 8rem;
+}
+.entity-stats-table td {
+  color: var(--fg);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+@media (prefers-reduced-motion: reduce) {
+  .entity-stats-summary::before { transition: none; }
 }
 """
 

@@ -525,6 +525,260 @@ def test_guidebook_nav_js_constant_has_required_behavior() -> None:
 
 
 # ---------------------------------------------------------------------------
+# vs-05o.1 — entity stat blocks under GuideEntityEmbed
+# ---------------------------------------------------------------------------
+
+
+def _entity(
+    eid: str,
+    *,
+    parent: str | list[str] | None = None,
+    components: list[dict] | None = None,
+    sprite_rsi: str | None = None,
+    state: str | None = None,
+) -> dict:
+    """Construct the per-entity dict that `load_entity_sprites` produces.
+
+    Mirrors the shape the production loader emits so `_walk_parents` and
+    `_resolve_entity_components` can walk the synthetic fixture.
+    """
+    stat_components: dict[str, dict] = {}
+    for comp in components or []:
+        ctype = comp.get("type")
+        if isinstance(ctype, str) and ctype in render._STAT_COMPONENT_TYPES:
+            stat_components.setdefault(ctype, comp)
+    return {
+        "parent": parent,
+        "sprite_rsi": sprite_rsi,
+        "state": state,
+        "abstract": False,
+        "stat_components": stat_components,
+    }
+
+
+def test_mob_max_health_inherits_from_parent_chain() -> None:
+    """MobHuman defines thresholds; a syndicate-agent child inherits them."""
+    entities = {
+        "MobHuman": _entity(
+            "MobHuman",
+            components=[
+                {
+                    "type": "MobThresholds",
+                    "thresholds": {0: "Alive", 100: "Critical", 200: "Dead"},
+                },
+                {"type": "Damageable", "damageContainer": "Biological"},
+            ],
+        ),
+        "MobHumanSyndicateAgent": _entity(
+            "MobHumanSyndicateAgent",
+            parent="MobHuman",
+            components=[],
+        ),
+    }
+    rows = render._entity_stat_rows("MobHumanSyndicateAgent", entities)
+    row_map = dict(rows)
+    assert row_map["max health"] == "200"
+    assert row_map["crit threshold"] == "100"
+    assert row_map["damage container"] == "Biological"
+
+
+def test_solution_container_capacity_renders_per_solution() -> None:
+    """A beaker with a single `beaker: { maxVol: 50 }` renders one row."""
+    entities = {
+        "Beaker": _entity(
+            "Beaker",
+            components=[
+                {
+                    "type": "SolutionContainerManager",
+                    "solutions": {"beaker": {"maxVol": 50}},
+                },
+            ],
+        ),
+    }
+    rows = render._entity_stat_rows("Beaker", entities)
+    row_map = dict(rows)
+    assert row_map["beaker capacity"] == "50u"
+
+
+def test_storage_grid_area_becomes_slot_count() -> None:
+    """A `grid: ["0,0,9,3"]` is a 10x4 rectangle = 40 slots."""
+    entities = {
+        "BigBag": _entity(
+            "BigBag",
+            components=[
+                {
+                    "type": "Storage",
+                    "grid": ["0,0,9,3"],
+                    "maxItemSize": "Huge",
+                },
+            ],
+        ),
+    }
+    rows = render._entity_stat_rows("BigBag", entities)
+    row_map = dict(rows)
+    assert row_map["storage capacity"] == "40 slot(s)"
+    assert row_map["max item size"] == "Huge"
+
+
+def test_power_cell_battery_charge_rows() -> None:
+    """Battery rows: max charge + starting charge when different from max."""
+    entities = {
+        "PowerCellSmall": _entity(
+            "PowerCellSmall",
+            components=[
+                {"type": "PowerCell"},
+                {"type": "Battery", "maxCharge": 360, "startingCharge": 360},
+            ],
+        ),
+        "PowerCellSmallPrinted": _entity(
+            "PowerCellSmallPrinted",
+            parent="PowerCellSmall",
+            components=[
+                {"type": "Battery", "maxCharge": 360, "startingCharge": 0},
+            ],
+        ),
+    }
+    # Full cell: only max charge (starting == max)
+    rows = dict(render._entity_stat_rows("PowerCellSmall", entities))
+    assert rows["max charge"] == "360 J"
+    assert "starting charge" not in rows
+    # Printed empty: both rows
+    rows = dict(render._entity_stat_rows("PowerCellSmallPrinted", entities))
+    assert rows["max charge"] == "360 J"
+    assert rows["starting charge"] == "0 J"
+
+
+def test_armor_coefficients_render_interpretively() -> None:
+    """Armor coefficients: 0.8 = 20% reduction; 0 = immune; 1.2 = +20%."""
+    _reset_state()
+    entities = {
+        "ClothingHeadHelmet": _entity(
+            "ClothingHeadHelmet",
+            components=[
+                {
+                    "type": "Armor",
+                    "modifiers": {
+                        "coefficients": {
+                            "Blunt": 0.8,
+                            "Radiation": 0,
+                            "Heat": 1.2,
+                        },
+                    },
+                },
+            ],
+        ),
+    }
+    rows = dict(render._entity_stat_rows("ClothingHeadHelmet", entities))
+    # Blunt: 1.0 - 0.8 = 20% reduction
+    assert "20% reduction" in rows["Blunt armor"]
+    # Radiation: coefficient 0 = immune
+    assert rows["Radiation armor"] == "immune"
+    # Heat: 1.2 > 1.0 = +20% vulnerability
+    assert "+20%" in rows["Heat armor"]
+
+
+def test_clothing_speed_modifier_surfaces_slowdown() -> None:
+    """ClothingSpeedModifier with sprintModifier 0.9 → 10% slower row."""
+    entities = {
+        "ClothingBackDuffel": _entity(
+            "ClothingBackDuffel",
+            components=[
+                {
+                    "type": "ClothingSpeedModifier",
+                    "walkModifier": 1,
+                    "sprintModifier": 0.9,
+                },
+            ],
+        ),
+    }
+    rows = dict(render._entity_stat_rows("ClothingBackDuffel", entities))
+    # walkModifier == 1 is neutral, not surfaced
+    assert "walk speed" not in rows
+    # sprintModifier 0.9 = 10% slower
+    assert "10% slower" in rows["sprint speed"]
+
+
+def test_decorative_entity_has_no_stats_block() -> None:
+    """A poster entity with no stat components yields an empty row list."""
+    entities = {
+        "PosterBase": _entity(
+            "PosterBase",
+            components=[],
+        ),
+        "PosterContrabandSyndicateRecruitment": _entity(
+            "PosterContrabandSyndicateRecruitment",
+            parent="PosterBase",
+            components=[],
+        ),
+    }
+    rows = render._entity_stat_rows(
+        "PosterContrabandSyndicateRecruitment", entities
+    )
+    assert rows == []
+    # And the rendered block is an empty string → handler stays sprite-only.
+    block = render._render_entity_stats_block(
+        "PosterContrabandSyndicateRecruitment", entities
+    )
+    assert block == ""
+
+
+def test_damage_container_only_is_treated_as_decorative() -> None:
+    """An entity whose only stat component is `Damageable` (posters,
+    static structures) should suppress the block — a lone "damage
+    container: StructuralInorganic" row is low-value noise."""
+    entities = {
+        "PosterBase": _entity(
+            "PosterBase",
+            components=[
+                {
+                    "type": "Damageable",
+                    "damageContainer": "StructuralInorganic",
+                },
+            ],
+        ),
+    }
+    rows = render._entity_stat_rows("PosterBase", entities)
+    assert rows == []
+    # Containers with both Damageable AND other stats still render.
+    entities_beaker = {
+        "Beaker": _entity(
+            "Beaker",
+            components=[
+                {"type": "Damageable", "damageContainer": "Inorganic"},
+                {
+                    "type": "SolutionContainerManager",
+                    "solutions": {"beaker": {"maxVol": 50}},
+                },
+            ],
+        ),
+    }
+    rows = dict(render._entity_stat_rows("Beaker", entities_beaker))
+    assert rows["damage container"] == "Inorganic"
+    assert rows["beaker capacity"] == "50u"
+
+
+def test_stats_block_wraps_in_collapsible_details() -> None:
+    """Stat block must render as <details class=entity-stats> with a table."""
+    entities = {
+        "MobDog": _entity(
+            "MobDog",
+            components=[
+                {
+                    "type": "MobThresholds",
+                    "thresholds": {0: "Alive", 50: "Dead"},
+                },
+            ],
+        ),
+    }
+    block = render._render_entity_stats_block("MobDog", entities)
+    assert '<details class="entity-stats">' in block
+    assert "<summary" in block
+    assert "<table" in block
+    assert "<th>max health</th>" in block
+    assert "<td>50</td>" in block
+
+
+# ---------------------------------------------------------------------------
 # Harmless-unreachable helper: allow `python3 test_render.py` as a runner
 # ---------------------------------------------------------------------------
 
