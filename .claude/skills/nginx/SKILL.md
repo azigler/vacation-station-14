@@ -44,6 +44,57 @@ sudo nginx -T 2>/dev/null | less # dump resolved config (useful for debugging)
 a reload will return an error; a restart with bad config leaves nginx
 off. `-t` catches both cases cheaply.
 
+## Trailing-slash discipline
+
+A `location /foo/ { ... }` block only matches `/foo/` and below. Nginx
+does NOT automatically redirect `/foo` (no trailing slash) to `/foo/` —
+it falls through to the catch-all 404. Users hitting the bare URL (typed,
+pasted, shared without the slash) see a broken site.
+
+**Every browsable `location /<name>/` MUST have a companion exact-match
+redirect:**
+
+```nginx
+# Group these at the top of the server {} block so they're easy to
+# audit as a single list. Every new path-served app adds one line.
+location = /recipes    { return 301 /recipes/; }
+location = /guidebook  { return 301 /guidebook/; }
+location = /nurseshark { return 301 /nurseshark/; }
+# ... etc
+
+# Then each full block:
+location /recipes/ {
+    alias /var/www/vs14-recipes/;
+    try_files $uri $uri/ /recipes/index.html;
+}
+```
+
+Exceptions: narrow `location = /some-callback { ... }` endpoints and
+API-only paths (`/api/`) don't need redirects — API clients pass full
+paths and browsers don't hit them directly.
+
+How this fails silently if you forget: `nginx -t` passes, HTTPS serves,
+the with-slash URL works fine. Only the bare URL 404s, which nobody
+tests because install-script curl probes default to the with-slash
+target. Smoke-test with-AND-without slash every time:
+
+```bash
+for p in /recipes /guidebook /writer /nurseshark /maps; do
+    printf "%-14s no-slash: " "$p"
+    curl -sS -o /dev/null -w "%{http_code}  " "https://${HOST}${p}"
+    printf "with-slash: "
+    curl -sS -o /dev/null -w "%{http_code}\n" "https://${HOST}${p}/"
+done
+# Expect: no-slash 301, with-slash 200.
+```
+
+Incident origin: nurseshark's deploy day (vs-ygn) found that every
+path-served app on `ss14.zig.computer/*` 404'd without the trailing
+slash. Fix went in at the vhost level (`ops/nginx/ss14.zig.computer.conf`
+with 8 `location = /<name>` redirects grouped at the top). Discipline
+rule added here so new path-based apps ship with the redirect from
+day one.
+
 ## Adding a new project vhost
 
 1. Write the vhost in the project repo (e.g. `myproj/ops/nginx/myproj.example.com.conf`).
