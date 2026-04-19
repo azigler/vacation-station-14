@@ -11,7 +11,7 @@ reagent-name-charcoal = charcoal
 reagent-desc-charcoal = A black, porous solid
 
 reagent-name-chlorine = chlorine
-reagent-desc-chlorine = A yellow-green gas which is toxic to humans.
+reagent-desc-chlorine = A yellow-green gas. Causes poison damage on bloodstream contact and rapidly kills plants, dehydrating and poisoning them.
 
 reagent-name-copper = copper
 reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity. Replenishes blood in arachnids, but is mildly toxic to most other species.
