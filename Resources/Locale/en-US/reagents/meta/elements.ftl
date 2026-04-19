@@ -17,7 +17,7 @@ reagent-name-copper = copper
 reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity. Replenishes blood in arachnids, but is mildly toxic to most other species.
 
 reagent-name-fluorine = fluorine
-reagent-desc-fluorine = A highly toxic pale yellow gas. Extremely reactive.
+reagent-desc-fluorine = A highly toxic pale yellow gas. Extremely reactive. Inflicts both caustic and poison damage on contact with the bloodstream, and quickly poisons plants.
 
 reagent-name-gold = gold
 reagent-desc-gold = Gold is a dense, soft, shiny metal and the most malleable and ductile metal known.
