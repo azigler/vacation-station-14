@@ -59,7 +59,7 @@ reagent-name-sodium = sodium
 reagent-desc-sodium = A silvery-white alkali metal. Highly reactive in its pure form.
 
 reagent-name-uranium = uranium
-reagent-desc-uranium = A grey metallic chemical element in the actinide series, weakly radioactive.
+reagent-desc-uranium = A grey metallic chemical element in the actinide series. Strongly radioactive in reagent form — irradiates anyone it contacts, and mutates or kills plants outright.
 
 reagent-name-zinc = zinc
 reagent-desc-zinc = A silvery, brittle metal, often used in batteries to carry charge.
