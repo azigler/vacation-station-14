@@ -14,7 +14,7 @@ reagent-name-chlorine = chlorine
 reagent-desc-chlorine = A yellow-green gas which is toxic to humans.
 
 reagent-name-copper = copper
-reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity.
+reagent-desc-copper = A soft, malleable, and ductile metal with very high thermal and electrical conductivity. Replenishes blood in arachnids, but is mildly toxic to most other species.
 
 reagent-name-fluorine = fluorine
 reagent-desc-fluorine = A highly toxic pale yellow gas. Extremely reactive.
