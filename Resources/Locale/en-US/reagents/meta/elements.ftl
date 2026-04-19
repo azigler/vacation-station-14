@@ -35,7 +35,7 @@ reagent-name-lithium = lithium
 reagent-desc-lithium = A soft, silvery-white alkali metal. It's highly reactive, and ignites if it makes contact with water.
 
 reagent-name-mercury = mercury
-reagent-desc-mercury = A silver metal which is liquid at room temperature. It's highly toxic to humans.
+reagent-desc-mercury = A silver metal which is liquid at room temperature. It's highly toxic and scrambles the speech of anyone unfortunate enough to have it in their bloodstream.
 
 reagent-name-potassium = potassium
 reagent-desc-potassium = A soft, shiny grey metal. Even more reactive than lithium.
