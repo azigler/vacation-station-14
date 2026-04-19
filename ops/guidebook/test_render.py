@@ -67,6 +67,8 @@ def _install_reagent(raw: dict) -> str:
 def _reset_state() -> None:
     render._REAGENTS.clear()
     render._MICROWAVE_RECIPES.clear()
+    render._REACTIONS.clear()
+    render._REAGENT_TO_REACTIONS.clear()
     render._LOCALE.clear()
     # Populate the damage-type labels the renderer consults.
     render._LOCALE.update(
@@ -85,6 +87,29 @@ def _reset_state() -> None:
             "reagent-desc-pestkiller": "Deters plant pests.",
             "reagent-name-mystery": "Mystery",
             "reagent-desc-mystery": "Unknown substance.",
+            # vs-05o.2: reagents that show up on reaction inputs/outputs.
+            "reagent-name-carbon": "Carbon",
+            "reagent-name-inaprovaline": "Inaprovaline",
+            "reagent-desc-inaprovaline": "Basic medical stabilizer.",
+            "reagent-name-copper": "Copper",
+            "reagent-name-fersilicite": "Fersilicite",
+            "reagent-name-plasma": "Plasma",
+            "reagent-name-dermaline": "Dermaline",
+            "reagent-name-leporazine": "Leporazine",
+            "reagent-desc-leporazine": "Temperature stabilizer.",
+            "reagent-name-pyrazine": "Pyrazine",
+            "reagent-desc-pyrazine": "Advanced thermoregulator.",
+            "reagent-name-dylovene": "Dylovene",
+            "reagent-desc-dylovene": "Anti-toxin.",
+            "reagent-name-silicon": "Silicon",
+            "reagent-name-nitrogen": "Nitrogen",
+            "reagent-name-potassium": "Potassium",
+            "reagent-name-sugar": "Sugar",
+            "reagent-name-tricordrazine": "Tricordrazine",
+            "reagent-desc-tricordrazine": "General healer.",
+            "reagent-name-space-lube": "Space Lube",
+            "reagent-name-slime": "Slime",
+            "reagent-name-space-glue": "Space Glue",
         }
     )
 
@@ -776,6 +801,417 @@ def test_stats_block_wraps_in_collapsible_details() -> None:
     assert "<table" in block
     assert "<th>max health</th>" in block
     assert "<td>50</td>" in block
+
+
+# ---------------------------------------------------------------------------
+# vs-05o.2 — reaction embeds + reagent "Produced by" cross-link
+# ---------------------------------------------------------------------------
+
+
+def _install_reagent_min(
+    rid: str, *, group: str = "Medicine", color: str = "#ffaa00"
+) -> None:
+    """Stub a minimal reagent entry so reaction cells can look up a name
+    + swatch. Tests that don't exercise reagent effects can skip the
+    full `_install_reagent` dance.
+    """
+    render._REAGENTS[rid] = {
+        "id": rid,
+        "name_key": f"reagent-name-{rid.lower()}",
+        "desc_key": f"reagent-desc-{rid.lower()}",
+        "physical_desc_key": None,
+        "flavor": None,
+        "group": group,
+        "color": color,
+        "bloodstream_effects": [],
+        "plant_effects": [],
+        "metabolism_rate": None,
+    }
+
+
+def _load_reactions_yaml(
+    text: str,
+) -> tuple[dict[str, dict], dict[str, list[str]]]:
+    """Parse a YAML fixture into (reactions, reverse_index) via a tmp tree.
+
+    Mirrors `load_reactions` but against an in-memory path so tests don't
+    depend on the live repo layout. Uses `_TagRecordingLoader` so `!type:`
+    tags on side-effects are preserved.
+    """
+    import tempfile
+
+    reactions: dict[str, dict] = {}
+    reverse: dict[str, list[str]] = {}
+    with tempfile.TemporaryDirectory() as td:
+        from pathlib import Path as _P
+
+        root = _P(td)
+        reactions_dir = (
+            root / "Resources" / "Prototypes" / "Recipes" / "Reactions"
+        )
+        reactions_dir.mkdir(parents=True)
+        (reactions_dir / "medicine.yml").write_text(text, encoding="utf-8")
+        reactions, reverse = render.load_reactions(root)
+    return reactions, reverse
+
+
+BICARIDINE_REACTION_YAML = """
+- type: reaction
+  id: Bicaridine
+  reactants:
+    Inaprovaline:
+      amount: 1
+    Carbon:
+      amount: 1
+  products:
+    Bicaridine: 2
+"""
+
+
+def test_bicaridine_single_reaction_card_renders() -> None:
+    """GuideReactionEmbed Reaction=Bicaridine produces a reaction card
+    showing the synthesis path: Inaprovaline + Carbon → Bicaridine (2u)."""
+    _reset_state()
+    reactions, reverse = _load_reactions_yaml(BICARIDINE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    render._REAGENT_TO_REACTIONS.update(reverse)
+    _install_reagent_min("Bicaridine", group="Medicine", color="#ffaa00")
+    _install_reagent_min("Inaprovaline", group="Medicine", color="#ddddff")
+    _install_reagent_min("Carbon", group="Narcotic", color="#222222")
+
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "Bicaridine"})
+    card = render._render_reaction_embed(elem)
+    assert "reaction-card" in card
+    # Header shows reaction id + derived (medicine) group
+    assert ">Bicaridine<" in card
+    assert "medicine" in card.lower()  # group slug
+    # Reactants section lists both inputs with 1u each
+    assert "Reactants" in card
+    assert "Inaprovaline" in card
+    assert "Carbon" in card
+    assert ">1u<" in card  # amount render
+    # Products section lists Bicaridine 2u
+    assert "Products" in card
+    assert ">2u<" in card
+    # No catalysts, no mixer, no temp gate — those sections stay absent
+    assert "Catalysts" not in card
+    assert "min " not in card  # temp badge absent
+    assert "Side effects" not in card
+
+
+LEPORAZINE_REACTION_YAML = """
+- type: reaction
+  id: Leporazine
+  reactants:
+    Copper:
+      amount: 1
+    Fersilicite:
+      amount: 1
+    Plasma:
+      amount: 1
+      catalyst: true
+  products:
+    Leporazine: 2
+"""
+
+
+def test_leporazine_catalyst_renders_distinct_from_reactants() -> None:
+    """Plasma is a catalyst — it must render in a separate 'Catalysts'
+    section, NOT counted among the consumed reactants."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(LEPORAZINE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    _install_reagent_min("Leporazine", group="Medicine", color="#c8a0ff")
+    _install_reagent_min("Copper", group="Narcotic", color="#b87333")
+    _install_reagent_min("Fersilicite", group="Narcotic", color="#888888")
+    _install_reagent_min("Plasma", group="Narcotic", color="#ff55ff")
+
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "Leporazine"})
+    card = render._render_reaction_embed(elem)
+    # Catalysts section present with annotation
+    assert "Catalysts" in card
+    assert "not consumed" in card
+    # Plasma appears inside reaction-catalysts, not reaction-reactants
+    cat_start = card.index("reaction-catalysts")
+    prod_start = card.index("reaction-products")
+    catalyst_slice = card[cat_start:prod_start]
+    assert "Plasma" in catalyst_slice
+    # The Reactants section lists Copper + Fersilicite but NOT Plasma
+    react_start = card.index("reaction-reactants")
+    react_slice = card[react_start:cat_start]
+    assert "Copper" in react_slice
+    assert "Fersilicite" in react_slice
+    assert "Plasma" not in react_slice
+
+
+PYRAZINE_REACTION_YAML = """
+- type: reaction
+  id: Pyrazine
+  impact: Medium
+  minTemp: 540
+  reactants:
+    Leporazine:
+      amount: 1
+    Dermaline:
+      amount: 1
+    Carbon:
+      amount: 1
+  products:
+    Pyrazine: 3
+"""
+
+
+def test_pyrazine_temperature_gate_shows_badge() -> None:
+    """A minTemp 540 reaction renders a temp badge in the header."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(PYRAZINE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    _install_reagent_min("Pyrazine", group="Medicine", color="#8899ff")
+    _install_reagent_min("Leporazine", group="Medicine", color="#c8a0ff")
+    _install_reagent_min("Dermaline", group="Medicine", color="#ffcccc")
+    _install_reagent_min("Carbon", group="Narcotic", color="#222222")
+
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "Pyrazine"})
+    card = render._render_reaction_embed(elem)
+    # Temp badge present with Kelvin suffix
+    assert "reaction-badge-temp" in card
+    assert "min 540K" in card
+    # Impact badge present for Medium impact
+    assert "reaction-badge-impact-medium" in card
+    assert ">Medium<" in card
+
+
+SPACEGLUE_REACTION_YAML = """
+- type: reaction
+  id: SpaceGlue
+  requiredMixerCategories:
+  - Stir
+  minTemp: 370
+  reactants:
+    SpaceLube:
+      amount: 1
+    Slime:
+      amount: 1
+  products:
+    SpaceGlue: 2
+"""
+
+
+def test_reaction_mixer_requirement_renders_as_tool_hint() -> None:
+    """requiredMixerCategories: [Stir] renders a mixer badge in the card."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(SPACEGLUE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    _install_reagent_min("SpaceGlue", group="Special", color="#ffffff")
+    _install_reagent_min("SpaceLube", group="Special", color="#aaffff")
+    _install_reagent_min("Slime", group="Special", color="#bbffbb")
+
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "SpaceGlue"})
+    card = render._render_reaction_embed(elem)
+    assert "reaction-badge-mixer" in card
+    assert "Requires: Stir" in card
+
+
+REACTION_GROUP_YAML = """
+- type: reaction
+  id: Dylovene
+  reactants:
+    Silicon:
+      amount: 1
+    Nitrogen:
+      amount: 1
+    Potassium:
+      amount: 1
+  products:
+    Dylovene: 3
+
+- type: reaction
+  id: Bicaridine
+  reactants:
+    Inaprovaline:
+      amount: 1
+    Carbon:
+      amount: 1
+  products:
+    Bicaridine: 2
+
+- type: reaction
+  id: Tricordrazine
+  reactants:
+    Inaprovaline:
+      amount: 1
+    Dylovene:
+      amount: 1
+  products:
+    Tricordrazine: 2
+"""
+
+
+def test_reaction_group_embed_renders_multiple_rows() -> None:
+    """GuideReactionGroupEmbed Group=medicine renders one row per reaction
+    in the group, sorted by id, with reactants / products columns."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(REACTION_GROUP_YAML)
+    render._REACTIONS.update(reactions)
+    for rid in [
+        "Dylovene",
+        "Bicaridine",
+        "Tricordrazine",
+        "Silicon",
+        "Nitrogen",
+        "Potassium",
+        "Inaprovaline",
+        "Carbon",
+    ]:
+        _install_reagent_min(rid, group="Medicine")
+
+    elem = ET.Element("GuideReactionGroupEmbed", {"Group": "medicine"})
+    html_out = render._render_reaction_group_embed(elem)
+    # Header with all four columns
+    assert "<th>Reaction</th>" in html_out
+    assert "<th>Reactants</th>" in html_out
+    assert "<th>Catalysts</th>" in html_out
+    assert "<th>Products</th>" in html_out
+    assert "<th>Temp / Mixer</th>" in html_out
+    # All three reactions present
+    assert ">Bicaridine<" in html_out
+    assert ">Dylovene<" in html_out
+    assert ">Tricordrazine<" in html_out
+    # Sorted by id alphabetically (Bicaridine before Dylovene before Tricordrazine)
+    bica = html_out.index("Bicaridine</td>")
+    dylo = html_out.index("Dylovene</td>")
+    trico = html_out.index("Tricordrazine</td>")
+    assert bica < dylo < trico
+
+
+def test_reaction_group_embed_case_insensitive_group_match() -> None:
+    """Authors may write `Group="Medicine"` (capitalized); the renderer
+    resolves against the lowercase filename-stem groups we extract."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(BICARIDINE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    for rid in ["Bicaridine", "Inaprovaline", "Carbon"]:
+        _install_reagent_min(rid, group="Medicine")
+
+    # Capital-M Medicine — must still match "medicine" group
+    elem = ET.Element("GuideReactionGroupEmbed", {"Group": "Medicine"})
+    html_out = render._render_reaction_group_embed(elem)
+    assert ">Bicaridine<" in html_out
+    # Non-existent group falls back to pill
+    elem_bad = ET.Element("GuideReactionGroupEmbed", {"Group": "notagroup"})
+    out_bad = render._render_reaction_group_embed(elem_bad)
+    assert "notagroup" in out_bad
+    assert 'class="embed' in out_bad  # pill fallback class
+
+
+def test_reagent_detail_view_gains_produced_by_section() -> None:
+    """A reagent produced by a tracked reaction gets a 'Produced by'
+    cross-link section in its single-embed detail card."""
+    _reset_state()
+    # Bicaridine itself as a reagent (minimal)
+    raw = _load_reagent(BICARIDINE_YAML)
+    _install_reagent(raw)
+    _install_reagent_min("Inaprovaline", group="Medicine", color="#ddddff")
+    _install_reagent_min("Carbon", group="Narcotic", color="#222222")
+    # Install the reaction + reverse index
+    reactions, reverse = _load_reactions_yaml(BICARIDINE_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    render._REAGENT_TO_REACTIONS.update(reverse)
+
+    elem = ET.Element("GuideReagentEmbed", {"Reagent": "Bicaridine"})
+    card = render._render_reagent_embed(elem)
+    assert "reagent-produced-by" in card
+    assert "Produced by" in card
+    # Summary line points at the reaction id + the synthesis path
+    assert "<strong>Bicaridine</strong>" in card
+    assert "Inaprovaline" in card
+    assert "Carbon" in card
+    assert "&rarr;" in card
+
+
+def test_reagent_detail_no_produced_by_when_orphan() -> None:
+    """A reagent that no reaction produces (e.g. Water here) gets no
+    'Produced by' section — cleanly absent, not empty-listed."""
+    _reset_state()
+    raw = _load_reagent(WATER_YAML)
+    _install_reagent(raw)
+    # Reactions index does NOT cover Water
+    assert render._REAGENT_TO_REACTIONS.get("Water") is None
+
+    elem = ET.Element("GuideReagentEmbed", {"Reagent": "Water"})
+    card = render._render_reagent_embed(elem)
+    assert "reagent-produced-by" not in card
+    assert "Produced by" not in card
+
+
+EXPLOSION_REACTION_YAML = """
+- type: reaction
+  id: ChlorineTrifluoride
+  minTemp: 370
+  priority: 20
+  reactants:
+    Chlorine:
+      amount: 1
+    Fluorine:
+      amount: 3
+  effects:
+  - !type:Explosion
+    explosionType: Default
+    maxIntensity: 200
+  - !type:PopupMessage
+    messages: [ "clf3-explosion" ]
+  products:
+    ChlorineTrifluoride: 4
+"""
+
+
+def test_reaction_side_effects_reuse_render_effect() -> None:
+    """Reaction `effects:` entries (Explosion, PopupMessage) render via
+    the shared `_render_effect` pipeline, showing up in a Side effects
+    section below Products."""
+    _reset_state()
+    reactions, _ = _load_reactions_yaml(EXPLOSION_REACTION_YAML)
+    render._REACTIONS.update(reactions)
+    _install_reagent_min(
+        "ChlorineTrifluoride", group="Special", color="#ffaaaa"
+    )
+    _install_reagent_min("Chlorine", group="Special", color="#88ff88")
+    _install_reagent_min("Fluorine", group="Special", color="#88ff88")
+
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "ChlorineTrifluoride"})
+    card = render._render_reaction_embed(elem)
+    # Side effects section present
+    assert "Side effects" in card
+    assert "reaction-effects" in card
+    # Explosion renders interpretively (max intensity)
+    assert "Explosion" in card
+    assert "200" in card  # maxIntensity
+    # Minor effect uses shared pipeline (PopupMessage → "shows a popup message")
+    assert "popup" in card.lower()
+
+
+def test_reaction_embed_unknown_reaction_falls_back_to_pill() -> None:
+    """GuideReactionEmbed Reaction=NoSuchReaction degrades to a pill
+    rather than rendering an empty card."""
+    _reset_state()
+    elem = ET.Element("GuideReactionEmbed", {"Reaction": "NoSuchReaction"})
+    out = render._render_reaction_embed(elem)
+    assert "reaction-card" not in out
+    assert "NoSuchReaction" in out
+
+
+def test_load_reactions_builds_reverse_index() -> None:
+    """The loader must populate reverse-index entries keyed on the
+    reaction's products, not its reactants or catalysts."""
+    reactions, reverse = _load_reactions_yaml(LEPORAZINE_REACTION_YAML)
+    assert "Leporazine" in reactions
+    # Leporazine is a product, so it's in the reverse index
+    assert reverse.get("Leporazine") == ["Leporazine"]
+    # Plasma is a catalyst — NOT produced, so must not appear
+    assert "Plasma" not in reverse
+    # Copper + Fersilicite are consumed reactants — also not produced
+    assert "Copper" not in reverse
+    assert "Fersilicite" not in reverse
 
 
 # ---------------------------------------------------------------------------

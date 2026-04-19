@@ -22,12 +22,13 @@ Pipeline: `ops/guidebook/render.py` reads
 | Embed tag | Source schema | Status | Rendered today | Gaps / follow-ups |
 |---|---|---|---|---|
 | `GuideEntityEmbed` | `type: entity` + `Sprite` + stat components | Full | 64px sprite `<img>` + caption + collapsible `<details>` stat block (max health, crit threshold, damage container, `SolutionContainerManager` capacities, `Storage` slots + max item size, `Battery` charge, `Armor` coefficients + flat reductions, `ClothingSpeedModifier` walk/sprint, `MovementSpeedModifier` base speeds). Parent-chain inherits via `_walk_parents` so species children pick up `MobHuman` thresholds. Pure-decorative entities (no stat components) stay sprite-only. Pill fallback remains when RSI missing. | Does not surface `BodyPrototype` organ list or species-specific damage modifiers. `HealthExaminable` damage-type list is not (yet) rendered; consider folding into the stat block once reactions embed lands. |
-| `GuideReagentEmbed` (single) | `type: reagent` | Full | Vertical detail card: name + swatch + group pill, description, physical desc, flavor, metabolism rate, bloodstream effects (wiki-voice), plant metabolism (when applicable), threshold ladder, Nurseshark footer link | Cross-link to reactions that **produce** this reagent is not yet rendered — needs Phase 5 reactions embed first. |
-| `GuideReagentGroupEmbed` | all `type: reagent` w/ matching `group` | Full | 5-column table: Name+swatch, Group, Description, Effects (bulleted, wiki-voice with species notes), Thresholds (max safe dose / Safe / Toxic). Responsive collapse <720px hides Description + Effects columns; the row's thresholds + group remain scannable | Same reactions cross-link gap as single embed. |
-| `GuideMicrowaveGroupEmbed` | `type: microwaveMealRecipe` | Full | 5-column table: Result, Recipe name, **Appliance** (hardcoded "Microwave" — column is future-proof for grill / oven / deep fryer), Inputs (sprite + solid × count, reagent Nu), Time in seconds. Responsive collapse <720px hides Appliance | No integration with reactions — e.g. dough is a chemistry reaction prerequisite for many recipes; that cross-link is deferred (part of Phase 5 reactions embed). |
+| `GuideReagentEmbed` (single) | `type: reagent` | Full | Vertical detail card: name + swatch + group pill, description, physical desc, flavor, metabolism rate, bloodstream effects (wiki-voice), plant metabolism (when applicable), threshold ladder, **"Produced by" cross-link section** listing the reactions that yield this reagent (vs-05o.2), Nurseshark footer link | None known — reaction cross-link closes the long-standing gap. |
+| `GuideReagentGroupEmbed` | all `type: reagent` w/ matching `group` | Full | 5-column table: Name+swatch, Group, Description, Effects (bulleted, wiki-voice with species notes), Thresholds (max safe dose / Safe / Toxic). Responsive collapse <720px hides Description + Effects columns; the row's thresholds + group remain scannable | Group cells don't link back to the group-embed reactions listing; low value today since the single-reagent card carries its own "Produced by" section. |
+| `GuideMicrowaveGroupEmbed` | `type: microwaveMealRecipe` | Full | 5-column table: Result, Recipe name, **Appliance** (hardcoded "Microwave" — column is future-proof for grill / oven / deep fryer), Inputs (sprite + solid × count, reagent Nu), Time in seconds. Responsive collapse <720px hides Appliance | No cross-link from a microwave-recipe's reagent input back to the reaction producing it (e.g. dough → `FlourMixing`); the reverse direction (reagent card → reaction) is now rendered, so the microwave column is only one click away via the reagent chip. |
 | `GuideTechDisciplineEmbed` | `type: techDiscipline` + `type: technology` | Partial | 3-column table: Tier, Technology name, Cost | No unlock-chain rendering (prerequisites, dependency tree), no "what this tech grants" (recipe unlocks / new research items). Filed as a Phase 4-sibling follow-up if we want the research UX to parallel the in-game tree. |
 | `GuideLawsetListEmbed` | `type: siliconLaw` + `type: siliconLawset` | Full | Per-lawset heading + ordered `<ol>` of laws, resolved through Fluent | None known. |
-| _`GuideReactionEmbed` (not yet implemented)_ | `type: reaction` under `Resources/Prototypes/Recipes/Reactions/**/*.yml` | None | — | Brand-new embed type proposed in Phase 5 — reactants + catalysts + products + minTemp + impact. |
+| `GuideReactionEmbed` (single) | `type: reaction` under `Resources/Prototypes/Recipes/Reactions/**/*.yml` | Full | Vertical reaction card: header (reaction id + source-file-derived group pill), badges (min/max temp in Kelvin, impact Low/Medium/High, mixer-category tool hints like "Requires: Electrolysis", `source: true`, `quantized: true`), Reactants section, distinct Catalysts section ("not consumed"), Products section, Side effects (`SpawnEntity`, `CreateGas`, `Explosion`, `PopupMessage` + anything `_render_effect` handles). Reagent chips carry the reagent's swatch color. Pill fallback when the reaction id isn't indexed. | Reaction `priority:` field (tie-breaker when multiple reactions share reactants) is captured by the loader but not shown today — low signal for the reader. `conserveEnergy:` is captured but not surfaced. |
+| `GuideReactionGroupEmbed` | all `type: reaction` under one `Reactions/<stem>.yml` file | Full | 5-column table: Reaction id, Reactants (stacked chips), Catalysts, Products, Temp/Mixer badges. Sorted alphabetically by reaction id. Case-insensitive group lookup (`Group="Medicine"` and `Group="medicine"` both match `medicine.yml`). Responsive collapse <720px hides Catalysts (stays readable in the single-card view). | Groups are derived from filename stem (`medicine`, `botany`, `drinks`, `chemicals`, etc.) — no YAML-authored `group:` field exists on reactions in tree. If SS14 adds one, the renderer switches over transparently via the `group` dict key. |
 
 ## Phase history
 
@@ -74,6 +75,43 @@ Pipeline: `ops/guidebook/render.py` reads
     `<table>` wrapper shape, and the decorative-entity filter that
     suppresses lone `damage container` rows for posters and static
     structures. Total: 22 green.
+- **vs-05o.2** (Phase 5 — reaction embeds + reagent cross-links):
+  - `load_reactions(repo)` indexes `type: reaction` under
+    `Resources/Prototypes/Recipes/Reactions/**/*.yml` — 313 reactions
+    in tree today (37 temperature-gated, 12 catalyzed, 75 mixer-required,
+    39 with side-effects, 70 impact-tagged). Groups are derived from
+    filename stem since no YAML `group:` field exists on reactions.
+  - Reverse index `_REAGENT_TO_REACTIONS` maps reagent id → list of
+    reactions that produce it (265 reagents covered). Catalysts are
+    intentionally excluded — only `products:` entries count as
+    "produces."
+  - `GuideReactionEmbed` renders a vertical card with header (id + group
+    pill), badge row (temp in Kelvin, impact, mixer categories, source,
+    quantized), then Reactants / Catalysts / Products / Side effects
+    sections. Catalyst rows are distinct from reactants and carry a
+    "not consumed" annotation.
+  - `GuideReactionGroupEmbed Group="medicine"` renders a 5-column table
+    sorted by reaction id, with stacked reagent chips per column.
+    Group lookup is case-insensitive so authors can write `"Medicine"`.
+  - Side effects reuse Phase 1's `_render_effect` pipeline; plus new
+    reaction-specific interpretations for `SpawnEntity`, `CreateGas`,
+    `Explosion`, `EmpPulse`, `AreaReactionEffect`.
+  - Single-reagent detail cards (`GuideReagentEmbed`) gain a "Produced
+    by" section listing each producing reaction as a compact one-liner
+    (`Inaprovaline 1u + Carbon 1u → Bicaridine 2u`) with temp/mixer
+    badges inline. Orphan reagents (e.g. Water, base elements) simply
+    skip the section rather than rendering an empty stub.
+  - 11 new pytest cases cover: single reaction card shape, catalyst
+    distinction (Leporazine + Plasma), temperature gate badge
+    (Pyrazine minTemp 540), mixer tool hint (SpaceGlue + Stir), group
+    rendering with multiple reactions, case-insensitive group lookup,
+    "Produced by" cross-link, absence on orphans, side-effect reuse
+    (ChlorineTrifluoride Explosion), unknown-reaction pill fallback,
+    and reverse-index construction. Total: 33 green.
+  - New CSS: `.reaction-card`, `.reaction-badge-*` (temp / mixer /
+    impact tiers / source / quantized), `.reaction-reagent-chip` with
+    swatch, `.reagent-produced-by .produced-by-list`, responsive
+    collapse hides the Catalysts column <720px.
 - **vs-dnz** (JS-enhanced nav — matches in-game UX where sidebar
   stays stable while content swaps):
   - Sidebar parent entries render as `<details data-section-id="...">`
@@ -101,17 +139,19 @@ Pipeline: `ops/guidebook/render.py` reads
 
 ## Scope deferred to follow-up beads
 
-- **Phase 5** — `GuideReactionEmbed` + `GuideReactionGroupEmbed`.
-  Scope: new loader for `type: reaction`, new XML tag support, and a
-  cross-link from each reagent's detail card listing the reactions
-  that produce it. Fold into Phase 1 effect rendering for
-  reactant/product reagent name resolution. Initial scan:
-  `~300 reactions` under `Resources/Prototypes/Recipes/Reactions/**`.
+- **Phase 5 landed** (vs-05o.2): all in-game `Guide*Embed` tags now
+  render at Full parity. Remaining guidebook work is editorial /
+  curation rather than loader gaps.
 - **Other loaders currently idle**:
   - `metamorphRecipe` (5 indexed, no embed).
   - `foodSequenceElement` (burger layers — no embed today).
   - `SliceableFoodComponent` (cutting recipes — requires entity
     component scan, not a loader).
+- **XML authoring cross-link hygiene**: no in-tree guidebook XML uses
+  `<GuideReactionEmbed/>` or `<GuideReactionGroupEmbed/>` yet. Phase 5
+  ships the rendering; wiring the chemistry / medicine pages to embed
+  the reaction table is a content-authoring follow-up (small YAML/XML
+  PR against `Resources/ServerInfo/Guidebook/Chemistry.xml` et al).
 
 ## Gap call-outs for future work
 
