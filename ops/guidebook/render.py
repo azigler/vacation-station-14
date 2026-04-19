@@ -28,6 +28,15 @@ Unknown tags are kept verbatim (wrapped in a visible debug pill) so
 missing support is obvious but doesn't break the page.
 
 v1 scope: ugly-but-correct. Sprite rendering is intentionally deferred.
+
+Interpretive language for reagent effects (vs-05o) mirrors the SS14
+community wiki's voice — "heals 2 brute damage per unit", "max safe
+dose 10u" — rather than dumping literal engine primitives. Inspiration:
+
+  - https://wiki.spacestation14.com/wiki/Medical
+  - https://wiki.spacestation14.com/wiki/Guide_to_Medical
+  - https://wiki.spacestation14.com/wiki/Reagents
+  - https://wiki.spacestation14.com/wiki/Medicine
 """
 
 from __future__ import annotations
@@ -162,11 +171,105 @@ def _strip_fluent_markup(s: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _extract_bloodstream_effects(raw: dict) -> tuple[list[dict], float | None]:
+    """Pull Bloodstream metabolism effects + metabolismRate off a reagent doc.
+
+    The YAML mapping looks like::
+
+        metabolisms:
+          Bloodstream:
+            metabolismRate: 0.5
+            effects:
+              - !type:HealthChange { ... }
+              - !type:Jitter { ... }
+
+    `!type:Foo` tags are stripped by `_EntityYamlLoader` so effects arrive as
+    plain dicts with the `!type:` suffix preserved in an injected `__type__`
+    key — except `_EntityYamlLoader` doesn't do that injection. Instead, we
+    re-parse the raw YAML text with a tag-recording loader in a later pass
+    for a richer structure… or we use a simpler trick: scan the pre-load
+    text for `!type:X` lines.
+
+    For now, effects are dicts without their `!type:` tag (the loader
+    discarded it). To recover the type we re-scan the YAML text source
+    externally — see `_tag_for_effect`. That's messy; cleaner is to extend
+    `_EntityYamlLoader` to record the tag under a private key. We do that
+    via `_TagRecordingLoader` which this function uses when called from
+    `load_reagents`.
+    """
+    metabolisms = raw.get("metabolisms") or {}
+    if not isinstance(metabolisms, dict):
+        return [], None
+    blood = metabolisms.get("Bloodstream") or {}
+    if not isinstance(blood, dict):
+        return [], None
+    rate = blood.get("metabolismRate")
+    rate_val: float | None = None
+    try:
+        if rate is not None:
+            rate_val = float(rate)
+    except (TypeError, ValueError):
+        rate_val = None
+    effects = blood.get("effects") or []
+    if not isinstance(effects, list):
+        effects = []
+    return [e for e in effects if isinstance(e, dict)], rate_val
+
+
+def _extract_plant_effects(raw: dict) -> list[dict]:
+    """Pull the `plantMetabolism` array off a reagent doc (or `[]`)."""
+    pm = raw.get("plantMetabolism") or []
+    if not isinstance(pm, list):
+        return []
+    return [e for e in pm if isinstance(e, dict)]
+
+
+class _TagRecordingLoader(yaml.SafeLoader):
+    """SafeLoader that stores SS14 `!type:Foo` tags under `__type__`.
+
+    `_EntityYamlLoader` silently strips the tag; for reagent effect parsing
+    we need to know whether an entry is `HealthChange`, `Jitter`, etc. This
+    loader keeps `tag_suffix` around on mapping-valued nodes, and leaves
+    scalar `!type:Foo` entries as empty dicts with the type recorded.
+    """
+
+
+def _record_type_tag(
+    loader: yaml.Loader, tag_suffix: str, node: yaml.Node
+) -> object:
+    # Only `!type:Foo` tags are interesting; anything else (e.g. Fluent
+    # sentinel tags) we treat like `_EntityYamlLoader` and drop quietly.
+    is_type = tag_suffix.startswith("type:")
+    type_name = tag_suffix[len("type:") :] if is_type else None
+    if isinstance(node, yaml.ScalarNode):
+        # Scalar-shaped `!type:Foo` → a zero-arg effect (e.g. `- !type:Drunk`).
+        if is_type:
+            return {"__type__": type_name}
+        return loader.construct_scalar(node)
+    if isinstance(node, yaml.SequenceNode):
+        return loader.construct_sequence(node, deep=True)
+    if isinstance(node, yaml.MappingNode):
+        mapping = loader.construct_mapping(node, deep=True)
+        if is_type and isinstance(mapping, dict):
+            mapping["__type__"] = type_name
+        return mapping
+    return None
+
+
+_TagRecordingLoader.add_multi_constructor("!", _record_type_tag)
+_TagRecordingLoader.add_multi_constructor(
+    "tag:yaml.org,2002:", _record_type_tag
+)
+
+
 def load_reagents(repo: Path) -> dict[str, dict]:
     """Scan Resources/Prototypes/Reagents/**/*.yml for `type: reagent`.
 
-    Returns id → {name_key, desc_key, group, color, physical_desc_key}.
-    Name/desc are locale keys, resolved later via `load_all_locale`.
+    Returns id → {name_key, desc_key, group, color, physical_desc_key,
+    flavor, bloodstream_effects, plant_effects, metabolism_rate}. Name /
+    desc are locale keys, resolved later via `load_all_locale`. Effects
+    are dicts carrying their `!type:` tag under the `__type__` key, for
+    downstream rendering.
     """
     out: dict[str, dict] = {}
     proto_dir = repo / "Resources" / "Prototypes" / "Reagents"
@@ -175,7 +278,7 @@ def load_reagents(repo: Path) -> dict[str, dict]:
     for yml in proto_dir.rglob("*.yml"):
         try:
             docs = yaml.load(
-                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+                yml.read_text(encoding="utf-8"), Loader=_TagRecordingLoader
             )
         except yaml.YAMLError:
             continue
@@ -189,13 +292,18 @@ def load_reagents(repo: Path) -> dict[str, dict]:
             rid = raw.get("id")
             if not isinstance(rid, str) or not rid:
                 continue
+            effects, rate = _extract_bloodstream_effects(raw)
             out[rid] = {
                 "id": rid,
                 "name_key": raw.get("name") or f"reagent-name-{rid.lower()}",
                 "desc_key": raw.get("desc") or f"reagent-desc-{rid.lower()}",
                 "physical_desc_key": raw.get("physicalDesc"),
+                "flavor": raw.get("flavor"),
                 "group": raw.get("group") or "Unknown",
                 "color": raw.get("color"),
+                "bloodstream_effects": effects,
+                "plant_effects": _extract_plant_effects(raw),
+                "metabolism_rate": rate,
             }
     return out
 
@@ -203,8 +311,11 @@ def load_reagents(repo: Path) -> dict[str, dict]:
 def load_microwave_recipes(repo: Path) -> dict[str, dict]:
     """Scan cooking recipes for `type: microwaveMealRecipe`.
 
-    Returns id → {name, result, time, group, solids, reagents}.
-    `solids` and `reagents` are dicts of proto-id → integer count.
+    Returns id → {name, result, time, group, solids, reagents, appliance}.
+    `solids` and `reagents` are dicts of proto-id → integer count. The
+    `appliance` field is hardcoded to "Microwave" today — the embed column
+    exists so future loaders (grill, oven, deep fryer, if SS14 adds them)
+    can populate it without a schema change.
     """
     out: dict[str, dict] = {}
     proto_dir = repo / "Resources" / "Prototypes" / "Recipes" / "Cooking"
@@ -241,6 +352,48 @@ def load_microwave_recipes(repo: Path) -> dict[str, dict]:
                 "group": raw.get("group") or "Other",
                 "solids": dict(solids),
                 "reagents": dict(reagents),
+                "appliance": "Microwave",
+            }
+    return out
+
+
+def load_metamorph_recipes(repo: Path) -> dict[str, dict]:
+    """Scan for `type: metamorphRecipe` — food sequence completion recipes.
+
+    Metamorph recipes are how SS14 turns a multi-layer food sequence (e.g.
+    burger stack with N ingredient tags) into a finished dish. They have
+    no guidebook embed today (the in-game guide doesn't surface them)
+    but we index them so a future `GuideMetamorphGroupEmbed` can ship
+    without a loader change. See docs/guidebook-parity.md.
+
+    Returns id → {key, result, rules}.
+    """
+    out: dict[str, dict] = {}
+    proto_dir = repo / "Resources" / "Prototypes" / "Recipes" / "Cooking"
+    if not proto_dir.is_dir():
+        return out
+    for yml in proto_dir.rglob("*.yml"):
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_EntityYamlLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "metamorphRecipe":
+                continue
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+            out[rid] = {
+                "id": rid,
+                "key": raw.get("key"),
+                "result": raw.get("result"),
+                "rules": list(raw.get("rules") or []),
             }
     return out
 
@@ -783,6 +936,7 @@ _SPRITE_URL_DIR = "sprites"
 # sprite cache is: avoids threading 5 extra args through every render fn.
 _REAGENTS: dict[str, dict] = {}
 _MICROWAVE_RECIPES: dict[str, dict] = {}
+_METAMORPH_RECIPES: dict[str, dict] = {}
 _DISCIPLINES: dict[str, dict] = {}
 _TECHNOLOGIES: dict[str, dict] = {}
 _LAWSETS: dict[str, dict] = {}
@@ -830,8 +984,607 @@ def _fallback_pill(elem: ET.Element) -> str:
     return f'<span class="embed embed-{kind}">{" · ".join(parts)}</span>'
 
 
+# ---------------------------------------------------------------------------
+# Reagent effect rendering (vs-05o)
+# ---------------------------------------------------------------------------
+#
+# Effects come from `metabolisms.Bloodstream.effects` and `plantMetabolism`
+# on each reagent prototype. In YAML they look like:
+#
+#     - !type:HealthChange
+#       conditions:
+#       - !type:ReagentCondition { reagent: Bicaridine, min: 15 }
+#       damage:
+#         types:
+#           Asphyxiation: 0.5
+#           Poison: 1.5
+#
+# `_TagRecordingLoader` preserves the `!type:` under `__type__`. We render
+# each effect to a short plain-English sentence, mirroring wiki voice:
+# "heals 2 brute damage per unit" not "deals -2 brute per tick".
+#
+# Unknown types fall back to a literal dump so newly-added effects never
+# vanish silently — the guidebook author will see the raw data and file
+# a bead to add interpretive rendering.
+#
+# Nurseshark cross-link: single-reagent detail views get a "Related tools"
+# footer linking to https://ss14.zig.computer/nurseshark/reagents/<id>.
+
+_NURSESHARK_REAGENT_URL = "https://ss14.zig.computer/nurseshark/reagents"
+
+
+def _damage_label(key: str) -> str:
+    """Resolve a DamageType / DamageGroup key to its display name.
+
+    Input is the raw SS14 key (`Brute`, `Poison`, `Asphyxiation`, `Heat`).
+    We try `damage-type-<lower>` and `damage-group-<lower>` via `_loc`,
+    falling back to the key itself (already human-readable).
+    """
+    if not key:
+        return ""
+    lower = key.lower()
+    type_key = f"damage-type-{lower}"
+    if type_key in _LOCALE:
+        return _loc(type_key, key)
+    group_key = f"damage-group-{lower}"
+    if group_key in _LOCALE:
+        return _loc(group_key, key)
+    return key
+
+
+def _fmt_num(value: float | int) -> str:
+    """Trim trailing zeros: 1.5 → '1.5', 2.0 → '2', -0.5 → '-0.5'."""
+    try:
+        f = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    if f == int(f):
+        return str(int(f))
+    # Two decimals is plenty — SS14 authors rarely use more precision.
+    return f"{f:.2f}".rstrip("0").rstrip(".")
+
+
+def _effect_conditions(effect: dict) -> list[dict]:
+    conds = effect.get("conditions") or []
+    if not isinstance(conds, list):
+        return []
+    return [c for c in conds if isinstance(c, dict)]
+
+
+def _effect_threshold(effect: dict) -> float | None:
+    """Return the `ReagentCondition.min` threshold on this effect, or None.
+
+    A `min` of 10 means "applies only when the reagent amount in the body
+    is at least 10u." This is how SS14 models overdose: the harm-causing
+    effect is gated behind a `ReagentCondition` with a min value.
+    """
+    for cond in _effect_conditions(effect):
+        ctype = cond.get("__type__")
+        if ctype != "ReagentCondition":
+            continue
+        mn = cond.get("min")
+        try:
+            return float(mn) if mn is not None else None
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _effect_is_harmful(effect: dict) -> bool:
+    """Return True if this effect causes damage or a negative status.
+
+    Used to decide whether a threshold should surface as an OD warning.
+    A `HealthChange` with any positive damage value is harmful; `Jitter`,
+    `Vomit`, `Drowsiness`, `Stun` etc. are treated as harmful statuses.
+    """
+    etype = effect.get("__type__") or ""
+    if etype in {"HealthChange", "EvenHealthChange"}:
+        damage = effect.get("damage") or {}
+        if not isinstance(damage, dict):
+            return False
+        # Any POSITIVE value = damage. Negative = healing, which is OK.
+        for nested in ("types", "groups"):
+            block = damage.get(nested)
+            if isinstance(block, dict):
+                for v in block.values():
+                    try:
+                        if float(v) > 0:
+                            return True
+                    except (TypeError, ValueError):
+                        continue
+        # Old-style flat damage dict (no types/groups nesting).
+        for k, v in damage.items():
+            if k in {"types", "groups"}:
+                continue
+            try:
+                if float(v) > 0:
+                    return True
+            except (TypeError, ValueError):
+                continue
+        return False
+    harmful = {
+        "Vomit",
+        "Jitter",
+        "Drowsiness",
+        "Stun",
+        "SlurSpeech",
+        "Electrocute",
+        "Ignite",
+        "Flammable",
+        "Polymorph",
+        "CauseZombieInfection",
+        "ModifyBleed",
+    }
+    return etype in harmful
+
+
+def _render_healthchange(effect: dict) -> str:
+    """Render HealthChange / EvenHealthChange effects in wiki voice.
+
+    Positive damage = harmful ("deals 1.5 poison per unit"); negative =
+    healing ("heals 1.5 brute per unit"). Aggregate across
+    damage.types + damage.groups + flat keys.
+    """
+    damage = effect.get("damage") or {}
+    if not isinstance(damage, dict):
+        return ""
+    entries: list[tuple[str, float]] = []
+    for nested in ("types", "groups"):
+        block = damage.get(nested)
+        if isinstance(block, dict):
+            for k, v in block.items():
+                try:
+                    entries.append((str(k), float(v)))
+                except (TypeError, ValueError):
+                    continue
+    for k, v in damage.items():
+        if k in {"types", "groups"}:
+            continue
+        try:
+            entries.append((str(k), float(v)))
+        except (TypeError, ValueError):
+            continue
+    if not entries:
+        return "adjusts health"
+    heal_parts: list[str] = []
+    harm_parts: list[str] = []
+    for key, val in entries:
+        label = _damage_label(key)
+        if val < 0:
+            heal_parts.append(f"{_fmt_num(-val)} {label}")
+        elif val > 0:
+            harm_parts.append(f"{_fmt_num(val)} {label}")
+    segments: list[str] = []
+    if heal_parts:
+        segments.append(f"heals {', '.join(heal_parts)} per unit")
+    if harm_parts:
+        segments.append(f"deals {', '.join(harm_parts)} damage per unit")
+    return "; ".join(segments) if segments else "adjusts health"
+
+
+def _render_plant_adjust(effect: dict, field_label: str) -> str:
+    amt = effect.get("amount")
+    try:
+        val = float(amt) if amt is not None else 0.0
+    except (TypeError, ValueError):
+        val = 0.0
+    if val > 0:
+        return f"raises plant {field_label} by {_fmt_num(val)}"
+    if val < 0:
+        return f"lowers plant {field_label} by {_fmt_num(-val)}"
+    return f"adjusts plant {field_label}"
+
+
+def _render_effect(effect: dict) -> str:
+    """Render a single effect dict as a plain-English sentence.
+
+    Unknown effects fall back to `Type: k=v, k=v` — they're rendered, just
+    not interpretively. See the module-level comment for the voice guide.
+    """
+    etype = effect.get("__type__") or ""
+
+    if etype in {"HealthChange", "EvenHealthChange"}:
+        return _render_healthchange(effect)
+    if etype == "ModifyBloodLevel":
+        amt = effect.get("amount")
+        try:
+            val = float(amt) if amt is not None else 0.0
+        except (TypeError, ValueError):
+            val = 0.0
+        if val > 0:
+            return f"restores blood volume (+{_fmt_num(val)} per tick)"
+        if val < 0:
+            return f"drains blood volume ({_fmt_num(val)} per tick)"
+        return "modifies blood volume"
+    if etype == "ModifyBleed":
+        amt = effect.get("amount")
+        try:
+            val = float(amt) if amt is not None else 0.0
+        except (TypeError, ValueError):
+            val = 0.0
+        if val < 0:
+            return f"reduces bleeding ({_fmt_num(-val)} per tick)"
+        if val > 0:
+            return f"worsens bleeding (+{_fmt_num(val)} per tick)"
+        return "modifies bleeding"
+    if etype == "GenericStatusEffect":
+        key = effect.get("key") or effect.get("component") or "status effect"
+        time = effect.get("time")
+        suffix = f" for {_fmt_num(time)}s" if time is not None else ""
+        action = effect.get("type") or "Add"
+        if str(action).lower() == "remove":
+            return f"removes {key}"
+        return f"grants {key}{suffix}"
+    if etype == "ModifyStatusEffect":
+        proto = effect.get("effectProto") or "status effect"
+        time = effect.get("time")
+        suffix = f" for {_fmt_num(time)}s" if time is not None else ""
+        return f"applies {proto}{suffix}"
+    if etype == "Jitter":
+        return "causes jittering"
+    if etype == "Drowsiness":
+        return "causes drowsiness"
+    if etype == "Drunk":
+        return "causes intoxication"
+    if etype == "Stun":
+        time = effect.get("time")
+        return f"stuns for {_fmt_num(time)}s" if time is not None else "stuns"
+    if etype == "ModifyKnockdown":
+        return "modifies knockdown"
+    if etype == "SlurSpeech":
+        return "slurs speech"
+    if etype == "Vomit":
+        prob = effect.get("probability")
+        if prob is not None:
+            try:
+                pct = float(prob) * 100.0
+                return f"induces vomiting ({_fmt_num(pct)}% chance per tick)"
+            except (TypeError, ValueError):
+                pass
+        return "induces vomiting"
+    if etype == "Emote":
+        emote = effect.get("emote") or "an emote"
+        prob = effect.get("probability")
+        if prob is not None:
+            try:
+                pct = float(prob) * 100.0
+                return f"triggers emote {emote} ({_fmt_num(pct)}% per tick)"
+            except (TypeError, ValueError):
+                pass
+        return f"triggers emote: {emote}"
+    if etype == "PopupMessage":
+        return "shows a popup message"
+    if etype == "CleanBloodstream":
+        excluded = effect.get("excluded")
+        rate = effect.get("cleanseRate")
+        parts = ["clears other chemicals from the bloodstream"]
+        if rate is not None:
+            parts.append(f"(rate {_fmt_num(rate)})")
+        if excluded:
+            parts.append(f"(except {excluded})")
+        return " ".join(parts)
+    if etype == "AdjustReagent":
+        reagent = effect.get("reagent") or "a reagent"
+        amt = effect.get("amount")
+        if amt is not None:
+            try:
+                val = float(amt)
+                verb = "adds" if val >= 0 else "removes"
+                return f"{verb} {_fmt_num(abs(val))}u of {reagent}"
+            except (TypeError, ValueError):
+                pass
+        return f"adjusts {reagent} amount"
+    if etype == "AdjustTemperature":
+        amt = effect.get("amount")
+        if amt is not None:
+            try:
+                val = float(amt)
+                verb = "warms" if val >= 0 else "cools"
+                return f"{verb} body ({_fmt_num(val)}°/tick)"
+            except (TypeError, ValueError):
+                pass
+        return "adjusts body temperature"
+    if etype == "MovementSpeedModifier":
+        walk = effect.get("walkSpeedModifier")
+        sprint = effect.get("sprintSpeedModifier")
+        parts = []
+        if walk is not None:
+            parts.append(f"walk x{_fmt_num(walk)}")
+        if sprint is not None:
+            parts.append(f"sprint x{_fmt_num(sprint)}")
+        if parts:
+            return "modifies movement (" + ", ".join(parts) + ")"
+        return "modifies movement speed"
+    if etype == "Oxygenate":
+        factor = effect.get("factor")
+        if factor is not None:
+            try:
+                return f"oxygenates blood (factor {_fmt_num(factor)})"
+            except (TypeError, ValueError):
+                pass
+        return "oxygenates blood"
+    if etype == "ModifyLungGas":
+        return "modifies lung gas composition"
+    if etype == "Ignite":
+        return "ignites the victim"
+    if etype == "Flammable":
+        return "makes the victim flammable"
+    if etype == "Extinguish":
+        return "extinguishes fire"
+    if etype == "Electrocute":
+        return "electrocutes the victim"
+    if etype == "EyeDamage":
+        return "damages the eyes"
+    if etype == "SatiateHunger":
+        factor = effect.get("factor")
+        if factor is not None:
+            return f"satiates hunger (factor {_fmt_num(factor)})"
+        return "satiates hunger"
+    if etype == "SatiateThirst":
+        factor = effect.get("factor")
+        if factor is not None:
+            return f"satiates thirst (factor {_fmt_num(factor)})"
+        return "satiates thirst"
+    if etype == "ReduceRotting":
+        return "reduces rotting"
+    if etype == "ResetNarcolepsy":
+        return "suppresses narcolepsy"
+    if etype == "AdjustAlert":
+        return "adjusts alert state"
+    if etype == "Polymorph":
+        proto = effect.get("prototype") or "another entity"
+        return f"polymorphs into {proto}"
+    if etype == "MakeSentient":
+        return "grants sentience"
+    if etype == "CauseZombieInfection":
+        return "spreads zombie infection"
+    if etype == "CureZombieInfection":
+        return "cures zombie infection"
+    if etype == "ArtifactDurabilityRestore":
+        return "restores artifact durability"
+    if etype == "ArtifactUnlock":
+        return "unlocks an artifact node"
+
+    # Plant-side effects
+    if etype == "PlantAdjustHealth":
+        return _render_plant_adjust(effect, "health")
+    if etype == "PlantAdjustNutrition":
+        return _render_plant_adjust(effect, "nutrition")
+    if etype == "PlantAdjustWater":
+        return _render_plant_adjust(effect, "water")
+    if etype == "PlantAdjustToxins":
+        return _render_plant_adjust(effect, "toxin level")
+    if etype == "PlantAdjustPests":
+        amt = effect.get("amount")
+        try:
+            v = float(amt) if amt is not None else 0.0
+        except (TypeError, ValueError):
+            v = 0.0
+        if v < 0:
+            return f"kills pests (strength {_fmt_num(-v)})"
+        if v > 0:
+            return f"attracts pests ({_fmt_num(v)})"
+        return "adjusts plant pests"
+    if etype == "PlantAdjustWeeds":
+        amt = effect.get("amount")
+        try:
+            v = float(amt) if amt is not None else 0.0
+        except (TypeError, ValueError):
+            v = 0.0
+        if v < 0:
+            return f"kills weeds (strength {_fmt_num(-v)})"
+        if v > 0:
+            return f"promotes weeds ({_fmt_num(v)})"
+        return "adjusts plant weeds"
+    if etype == "PlantAdjustPotency":
+        return _render_plant_adjust(effect, "potency")
+    if etype == "PlantAdjustMutationLevel":
+        return _render_plant_adjust(effect, "mutation level")
+    if etype == "PlantAdjustMutationMod":
+        return _render_plant_adjust(effect, "mutation chance")
+    if etype == "PlantAffectGrowth":
+        return _render_plant_adjust(effect, "growth")
+    if etype == "PlantCryoxadone":
+        return "triggers cryoxadone age reversal"
+    if etype == "PlantDiethylamine":
+        return "applies diethylamine boost"
+    if etype == "PlantPhalanximine":
+        return "triggers phalanximine mutation"
+    if etype == "PlantMutateChemicals":
+        return "mutates plant chemical makeup"
+    if etype == "PlantRemoveKudzu":
+        return "removes kudzu"
+    if etype == "PlantRestoreSeeds":
+        return "restores lost seeds"
+    if etype == "RobustHarvest":
+        return "applies Robust Harvest yield boost"
+
+    # Unknown — literal fallback so we never silently drop content.
+    if etype:
+        extras: list[str] = []
+        for k, v in effect.items():
+            if k in {"__type__", "conditions"}:
+                continue
+            extras.append(f"{k}={v}")
+        inner = ", ".join(extras) if extras else ""
+        return f"{etype}" + (f" ({inner})" if inner else "")
+    return "unknown effect"
+
+
+def _effect_species_notes(effect: dict) -> list[str]:
+    """Return any species-specific hints on this effect's conditions.
+
+    E.g. "Only for Vox", "Only in critical state", "Below 50u".
+    """
+    out: list[str] = []
+    for cond in _effect_conditions(effect):
+        ctype = cond.get("__type__")
+        if ctype == "MetabolizerTypeCondition":
+            tset = cond.get("type")
+            if isinstance(tset, list):
+                labels = ", ".join(str(t) for t in tset)
+                out.append(f"only for {labels}")
+            elif isinstance(tset, str):
+                out.append(f"only for {tset}")
+        elif ctype == "MobStateCondition":
+            state = cond.get("mobstate")
+            if state:
+                out.append(f"only when {state}")
+        elif ctype == "TemperatureCondition":
+            mx = cond.get("max")
+            mn = cond.get("min")
+            if mx is not None:
+                out.append(f"only below {_fmt_num(mx)}K")
+            if mn is not None:
+                out.append(f"only above {_fmt_num(mn)}K")
+        elif ctype == "ReagentCondition":
+            mn = cond.get("min")
+            mx = cond.get("max")
+            if mn is not None:
+                out.append(f"above {_fmt_num(mn)}u")
+            if mx is not None:
+                out.append(f"below {_fmt_num(mx)}u")
+        elif ctype == "HungerCondition":
+            out.append("only when hungry")
+        elif ctype == "BreathingCondition":
+            out.append("only while breathing")
+        elif ctype == "InternalsCondition":
+            out.append("only while on internals")
+        elif ctype == "TagCondition":
+            tag = cond.get("tag") or cond.get("tags")
+            if tag:
+                out.append(f"only with tag {tag}")
+    return out
+
+
+def _summarize_effects(effects: list[dict]) -> str:
+    """Condensed bullet list of effects for the compact table cell.
+
+    Returns an HTML <ul>. For effects with a `ReagentCondition.min`, the
+    threshold is appended inline ("above 15u") so the cell reads as a
+    quick glance; the detail view shows the full ladder.
+    """
+    if not effects:
+        return '<span class="effects-none">—</span>'
+    items: list[str] = []
+    for effect in effects:
+        text = _render_effect(effect)
+        if not text:
+            continue
+        notes = _effect_species_notes(effect)
+        if notes:
+            text = f"{text} ({'; '.join(notes)})"
+        items.append(f"<li>{html.escape(text)}</li>")
+    if not items:
+        return '<span class="effects-none">—</span>'
+    return '<ul class="effect-list">' + "".join(items) + "</ul>"
+
+
+def _max_safe_dose(effects: list[dict]) -> float | None:
+    """Return the lowest `ReagentCondition.min` that gates a harmful effect.
+
+    This is the "max safe dose" threshold — the amount of the reagent in
+    the body at which damage/status effects kick in. If no harmful effect
+    has a threshold, returns None (treated as "Safe" in the column).
+    """
+    best: float | None = None
+    for effect in effects:
+        if not _effect_is_harmful(effect):
+            continue
+        thr = _effect_threshold(effect)
+        if thr is None:
+            continue
+        if best is None or thr < best:
+            best = thr
+    return best
+
+
+def _summarize_thresholds(effects: list[dict]) -> str:
+    """Compact-column Thresholds cell.
+
+    - "Safe" if no harmful effect has a reagent threshold AND no harmful
+      effect is ungated (because an always-on harmful effect is worse
+      than any OD).
+    - "Toxic" if there's an always-on harmful effect (no threshold).
+    - "max safe dose Xu" when a ReagentCondition.min gates harm.
+    """
+    harmful = [e for e in effects if _effect_is_harmful(e)]
+    if not harmful:
+        return '<span class="threshold-safe">Safe</span>'
+    dose = _max_safe_dose(effects)
+    if dose is None:
+        # Harm exists but isn't gated — the reagent is toxic from 1u.
+        return '<span class="threshold-toxic">Toxic</span>'
+    return f'<span class="threshold-od">max safe dose {_fmt_num(dose)}u</span>'
+
+
+def _threshold_ladder(effects: list[dict]) -> str:
+    """Progressive ladder of thresholds for the detail view.
+
+    Groups effects by their ReagentCondition.min and emits a sorted list::
+
+        above 15u: deals 0.5 Asphyxiation per unit, deals 1.5 Poison per unit
+        above 30u: induces vomiting (2% per tick)
+
+    Effects with no threshold are listed first under "always active."
+    """
+    always: list[str] = []
+    gated: dict[float, list[str]] = {}
+    for effect in effects:
+        text = _render_effect(effect)
+        if not text:
+            continue
+        notes = _effect_species_notes(effect)
+        # Strip the reagent-min note from species-notes; we surface that
+        # as the ladder key to avoid duplicate "above 15u" noise.
+        notes = [
+            n
+            for n in notes
+            if not n.startswith("above ") and not n.startswith("below ")
+        ]
+        if notes:
+            text = f"{text} ({'; '.join(notes)})"
+        thr = _effect_threshold(effect)
+        if thr is None:
+            always.append(text)
+        else:
+            gated.setdefault(thr, []).append(text)
+    rows: list[str] = []
+    if always:
+        rows.append(
+            "<li><strong>always active:</strong> "
+            + "; ".join(html.escape(t) for t in always)
+            + "</li>"
+        )
+    for thr in sorted(gated.keys()):
+        rows.append(
+            f"<li><strong>above {_fmt_num(thr)}u:</strong> "
+            + "; ".join(html.escape(t) for t in gated[thr])
+            + "</li>"
+        )
+    if not rows:
+        return ""
+    return '<ul class="threshold-ladder">' + "".join(rows) + "</ul>"
+
+
+def _group_pill(group: str) -> str:
+    """Small colored pill rendering the reagent group (Medicine/Toxin/…)."""
+    if not group or group == "Unknown":
+        return ""
+    slug = re.sub(r"[^a-z0-9]+", "-", group.lower()).strip("-") or "unknown"
+    return (
+        f'<span class="reagent-group reagent-group-{html.escape(slug)}">'
+        f"{html.escape(group)}</span>"
+    )
+
+
 def _reagent_row(rid: str) -> str | None:
-    """Single table row for a reagent id, or None if unknown."""
+    """Compact table row for a reagent id, or None if unknown.
+
+    Columns: Name+swatch, Group pill, Description, Effects bullet list,
+    Thresholds cell (max safe dose). Matches the <thead> in
+    `_render_reagent_group_embed`.
+    """
     r = _REAGENTS.get(rid)
     if r is None:
         return None
@@ -844,23 +1597,153 @@ def _reagent_row(rid: str) -> str | None:
             f'<span class="reagent-swatch" '
             f'style="background:{html.escape(color.strip())}"></span>'
         )
+    group = r.get("group") or ""
+    effects = r.get("bloodstream_effects") or []
+    plant_effects = r.get("plant_effects") or []
+    effects_html = _summarize_effects(effects)
+    if plant_effects:
+        # Distinct plant section — leaf glyph (literal Unicode, not emoji
+        # styling) so narrow terminals still render it.
+        effects_html += (
+            '<div class="plant-effects"><span class="plant-tag">leaf</span> '
+            + _summarize_effects(plant_effects)
+            + "</div>"
+        )
+    thresholds_html = _summarize_thresholds(effects)
+    group_html = _group_pill(group)
     return (
         f"<tr>"
         f'<td class="reagent-name">{swatch}{html.escape(name)}</td>'
+        f'<td class="reagent-group-cell">{group_html}</td>'
         f'<td class="reagent-desc">{html.escape(desc)}</td>'
+        f'<td class="reagent-effects">{effects_html}</td>'
+        f'<td class="reagent-thresholds">{thresholds_html}</td>'
         f"</tr>"
     )
 
 
+def _reagent_detail_view(rid: str) -> str | None:
+    """Rich single-reagent layout for `GuideReagentEmbed`.
+
+    Vertical card with:
+      - Name + swatch + group pill
+      - Description (+ physical desc, flavor if present)
+      - Bloodstream effects list
+      - Plant metabolism effects list (if any)
+      - Threshold ladder
+      - Related tools footer (Nurseshark deep-link)
+    """
+    r = _REAGENTS.get(rid)
+    if r is None:
+        return None
+    name = _loc(r["name_key"], rid)
+    desc = _loc(r["desc_key"], "")
+    phys = (
+        _loc(r.get("physical_desc_key"), "")
+        if r.get("physical_desc_key")
+        else ""
+    )
+    flavor = r.get("flavor") or ""
+    color = r.get("color")
+    swatch = ""
+    if isinstance(color, str) and _COLOR_OK.match(color.strip()):
+        swatch = (
+            f'<span class="reagent-swatch reagent-swatch-big" '
+            f'style="background:{html.escape(color.strip())}"></span>'
+        )
+    group = r.get("group") or ""
+    group_html = _group_pill(group)
+
+    effects = r.get("bloodstream_effects") or []
+    plant = r.get("plant_effects") or []
+    rate = r.get("metabolism_rate")
+
+    sections: list[str] = []
+
+    # Header
+    sections.append(
+        f'<div class="reagent-card-header">'
+        f"{swatch}"
+        f'<div class="reagent-card-heading">'
+        f'<h3 class="reagent-card-name">{html.escape(name)}</h3>'
+        f"{group_html}"
+        f"</div></div>"
+    )
+
+    # Description + physical desc + flavor
+    meta_bits: list[str] = []
+    if desc:
+        meta_bits.append(f"<p>{html.escape(desc)}</p>")
+    subtle: list[str] = []
+    if phys:
+        subtle.append(f"<em>Appearance:</em> {html.escape(phys)}")
+    if flavor:
+        subtle.append(f"<em>Flavor:</em> {html.escape(flavor)}")
+    if rate is not None:
+        subtle.append(f"<em>Metabolism rate:</em> {_fmt_num(rate)} u/s")
+    if subtle:
+        meta_bits.append(
+            '<p class="reagent-subtle">' + " &middot; ".join(subtle) + "</p>"
+        )
+    if meta_bits:
+        sections.append(
+            '<div class="reagent-meta">' + "".join(meta_bits) + "</div>"
+        )
+
+    # Bloodstream effects
+    if effects:
+        sections.append(
+            '<div class="reagent-section">'
+            "<h4>Bloodstream effects</h4>"
+            + _summarize_effects(effects)
+            + "</div>"
+        )
+
+    # Plant effects
+    if plant:
+        sections.append(
+            '<div class="reagent-section plant-effects">'
+            '<h4><span class="plant-tag">leaf</span> Plant metabolism</h4>'
+            + _summarize_effects(plant)
+            + "</div>"
+        )
+
+    # Threshold ladder (only useful if there are any thresholds)
+    ladder = _threshold_ladder(effects)
+    if ladder:
+        safe_dose = _max_safe_dose(effects)
+        dose_line = ""
+        if safe_dose is not None:
+            dose_line = (
+                f'<p class="reagent-dose">Max safe dose: '
+                f"<strong>{_fmt_num(safe_dose)}u</strong></p>"
+            )
+        sections.append(
+            '<div class="reagent-section">'
+            "<h4>Thresholds</h4>"
+            f"{dose_line}"
+            f"{ladder}"
+            "</div>"
+        )
+
+    # Related tools footer
+    sections.append(
+        '<div class="reagent-related">'
+        '<span class="related-label">Related tools:</span> '
+        f'<a href="{_NURSESHARK_REAGENT_URL}/{html.escape(rid)}" '
+        'rel="noopener">Nurseshark chem lookup &rarr;</a>'
+        "</div>"
+    )
+
+    return '<div class="reagent-card">' + "".join(sections) + "</div>"
+
+
 def _render_reagent_embed(elem: ET.Element) -> str:
     rid = elem.attrib.get("Reagent") or ""
-    row = _reagent_row(rid)
-    if row is None:
+    card = _reagent_detail_view(rid)
+    if card is None:
         return _fallback_pill(elem)
-    return (
-        '<table class="embed-table reagent-table reagent-single">'
-        "<tbody>" + row + "</tbody></table>"
-    )
+    return card
 
 
 def _render_reagent_group_embed(elem: ET.Element) -> str:
@@ -876,12 +1759,19 @@ def _render_reagent_group_embed(elem: ET.Element) -> str:
             rows.append(row)
     if not rows:
         return _fallback_pill(elem)
+    # Responsive wrapper: on narrow widths the CSS collapses the extra
+    # columns into a <details>-style expansion per row.
     return (
-        '<table class="embed-table reagent-table">'
+        '<div class="reagent-group-wrap">'
+        '<table class="embed-table reagent-table reagent-group-table">'
         "<thead><tr>"
-        "<th>Reagent</th><th>Description</th>"
+        "<th>Reagent</th>"
+        "<th>Group</th>"
+        "<th>Description</th>"
+        "<th>Effects</th>"
+        "<th>Thresholds</th>"
         "</tr></thead>"
-        "<tbody>" + "".join(rows) + "</tbody></table>"
+        "<tbody>" + "".join(rows) + "</tbody></table></div>"
     )
 
 
@@ -950,10 +1840,15 @@ def _render_microwave_group_embed(elem: ET.Element) -> str:
         time_html = (
             f"{html.escape(str(time_raw))}s" if time_raw is not None else ""
         )
+        # vs-05o: Appliance column. Today every microwaveMealRecipe is
+        # made in a microwave, but the column exists for forward-compat
+        # with grill / oven / deep fryer recipe types if SS14 adds them.
+        appliance = str(recipe.get("appliance") or "Microwave")
         rows.append(
             f"<tr>"
             f'<td class="recipe-result">{result_cell}</td>'
             f'<td class="recipe-name">{html.escape(name)}</td>'
+            f'<td class="recipe-appliance">{html.escape(appliance)}</td>'
             f'<td class="recipe-inputs">{inputs_html}</td>'
             f'<td class="recipe-time">{time_html}</td>'
             f"</tr>"
@@ -961,7 +1856,8 @@ def _render_microwave_group_embed(elem: ET.Element) -> str:
     return (
         '<table class="embed-table recipe-table">'
         "<thead><tr>"
-        "<th>Result</th><th>Recipe</th><th>Inputs</th><th>Time</th>"
+        "<th>Result</th><th>Recipe</th><th>Appliance</th>"
+        "<th>Inputs</th><th>Time</th>"
         "</tr></thead>"
         "<tbody>" + "".join(rows) + "</tbody></table>"
     )
@@ -1567,6 +2463,158 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
   color: var(--fg);
 }
 .lawset-group .lawset-laws li { margin: 0.25rem 0; }
+
+/* vs-05o: richer reagent tables (effects + thresholds + group pills) */
+.reagent-group { /* small group pill inside reagent-group-cell */
+  display: inline-block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  white-space: nowrap;
+}
+.reagent-group-medicine { color: #6ab0ff; border-color: #2a4466; }
+.reagent-group-toxin { color: #e08b6a; border-color: #663a2a; }
+.reagent-group-narcotic { color: #c98bf0; border-color: #4d2a66; }
+.reagent-group-biological { color: #8be38b; border-color: #2a663a; }
+.reagent-group-drink { color: #ffd27a; border-color: #66552a; }
+.reagent-group-food { color: #f0c97a; border-color: #665a2a; }
+.reagent-group-botanical { color: #8be38b; border-color: #2a663a; }
+.reagent-group-pyrotechnic { color: #ff7a7a; border-color: #662a2a; }
+.reagent-group-admin { color: #d07a7a; border-color: #663a3a; }
+.reagent-effects .effect-list {
+  margin: 0;
+  padding-left: 1.05rem;
+  color: var(--fg);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+.reagent-effects .effect-list li { margin: 0.1rem 0; }
+.reagent-effects .effects-none { color: var(--dim); font-style: italic; }
+.reagent-thresholds {
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+.threshold-safe { color: #8be38b; }
+.threshold-od { color: #ffd27a; }
+.threshold-toxic { color: #ff7a7a; font-weight: 600; }
+.plant-effects {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--border);
+}
+.plant-effects .plant-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.05rem 0.35rem;
+  margin-right: 0.3rem;
+  background: rgba(139, 227, 139, 0.12);
+  color: #8be38b;
+  border: 1px solid #2a663a;
+  border-radius: 4px;
+  vertical-align: baseline;
+}
+
+/* Rich single-reagent detail card (GuideReagentEmbed) */
+.reagent-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  margin: 0.75rem 0 1.25rem;
+}
+.reagent-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.reagent-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.reagent-card-name {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--fg);
+}
+.reagent-swatch-big {
+  width: 1.35em;
+  height: 1.35em;
+  border-radius: 4px;
+  margin-right: 0;
+}
+.reagent-meta p { margin: 0.3rem 0; }
+.reagent-subtle { color: var(--dim); font-size: 0.88rem; }
+.reagent-section { margin-top: 0.85rem; }
+.reagent-section h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+}
+.reagent-section .effect-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--fg);
+  font-size: 0.93rem;
+  line-height: 1.4;
+}
+.reagent-section.plant-effects {
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--border);
+  margin-top: 0.85rem;
+}
+.reagent-dose { margin: 0.2rem 0 0.4rem; color: var(--fg); }
+.threshold-ladder {
+  margin: 0.3rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.92rem;
+  color: var(--fg);
+}
+.threshold-ladder li { margin: 0.2rem 0; }
+.reagent-related {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+.reagent-related .related-label { margin-right: 0.35rem; }
+
+/* Recipe table appliance column */
+.recipe-table .recipe-appliance {
+  color: var(--dim);
+  font-size: 0.85em;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Responsive: collapse reagent-group-table extra columns on narrow widths */
+@media (max-width: 720px) {
+  .reagent-group-table thead th:nth-child(3),
+  .reagent-group-table thead th:nth-child(4),
+  .reagent-group-table tbody td:nth-child(3),
+  .reagent-group-table tbody td:nth-child(4) {
+    display: none;
+  }
+  .reagent-group-table .reagent-thresholds {
+    font-size: 0.78rem;
+  }
+  .recipe-table thead th:nth-child(3),
+  .recipe-table tbody td:nth-child(3) {
+    display: none;
+  }
+}
 """
 
 
@@ -1644,7 +2692,8 @@ def _resolve_xml_path(repo: Path, text_path: str) -> Path | None:
 
 def render_site(repo: Path, out: Path) -> int:
     global _ACTIVE_SPRITE_CACHE
-    global _REAGENTS, _MICROWAVE_RECIPES, _DISCIPLINES, _TECHNOLOGIES
+    global _REAGENTS, _MICROWAVE_RECIPES, _METAMORPH_RECIPES
+    global _DISCIPLINES, _TECHNOLOGIES
     global _LAWSETS, _LAWS, _LOCALE
     entries = load_entries(repo)
     labels = load_labels(repo)
@@ -1677,6 +2726,17 @@ def render_site(repo: Path, out: Path) -> int:
     except Exception as exc:
         print(f"  WARN: recipe scan failed ({exc})", file=sys.stderr)
         _MICROWAVE_RECIPES = {}
+    try:
+        # vs-05o: metamorph recipes are indexed but not yet rendered
+        # (no in-game embed surfaces them; see docs/guidebook-parity.md).
+        _METAMORPH_RECIPES = load_metamorph_recipes(repo)
+        print(
+            f"  indexed {len(_METAMORPH_RECIPES)} metamorph recipe(s)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"  WARN: metamorph scan failed ({exc})", file=sys.stderr)
+        _METAMORPH_RECIPES = {}
     try:
         _DISCIPLINES, _TECHNOLOGIES = load_research(repo)
         print(
