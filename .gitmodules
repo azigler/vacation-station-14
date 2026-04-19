@@ -33,3 +33,8 @@
 	url = https://github.com/space-wizards/SS14.Admin
 	branch = master
 	ignore = dirty
+[submodule "external/nurseshark"]
+	path = external/nurseshark
+	url = https://github.com/azigler/nurseshark
+	branch = main
+	ignore = dirty
