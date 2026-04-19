@@ -53,7 +53,7 @@ reagent-name-silver = silver
 reagent-desc-silver = A soft, white, lustrous transition metal, it has the highest electrical conductivity of any element and the highest thermal conductivity of any metal.
 
 reagent-name-sulfur = sulfur
-reagent-desc-sulfur = A yellow, crystalline solid.
+reagent-desc-sulfur = A yellow, crystalline solid. Causes minor caustic damage if metabolized.
 
 reagent-name-sodium = sodium
 reagent-desc-sodium = A silvery-white alkali metal. Highly reactive in its pure form.
