@@ -398,6 +398,164 @@ def load_metamorph_recipes(repo: Path) -> dict[str, dict]:
     return out
 
 
+def load_reactions(
+    repo: Path,
+) -> tuple[dict[str, dict], dict[str, list[str]]]:
+    """Scan Resources/Prototypes/Recipes/Reactions for `type: reaction`.
+
+    Returns `(reactions, reverse_index)` where:
+
+      - ``reactions`` maps reaction id → dict with shape::
+
+            {
+              "id": str,
+              "group": str,              # derived from source file stem
+              "source": bool,            # `source: true` (non-reversible)
+              "priority": int | None,
+              "impact": str | None,      # Low/Medium/High — ADMIN tag
+              "quantized": bool,
+              "conserve_energy": bool,
+              "min_temp": float | None,
+              "max_temp": float | None,
+              "required_mixer_categories": list[str],
+              "reactants": {rid: {"amount": float, "catalyst": bool}},
+              "products":  {rid: float},
+              "effects":   list[dict],    # `!type:...` side effects
+            }
+
+      - ``reverse_index`` maps reagent id → list of reaction ids that
+        list that reagent as a non-catalyst product. Used by Phase 1's
+        reagent detail card to render a "Produced by" cross-link.
+
+    Reactions carry no in-tree `group:` field — the in-game guidebook
+    groups them by filename (`medicine.yml`, `botany.yml`, `drinks.yml`,
+    etc.), which we mirror here by using the stem as the group label.
+    Callers can still query by id (`GuideReactionEmbed`) or by group
+    (`GuideReactionGroupEmbed Group="medicine"`).
+    """
+    out: dict[str, dict] = {}
+    reverse: dict[str, list[str]] = {}
+    proto_dir = repo / "Resources" / "Prototypes" / "Recipes" / "Reactions"
+    if not proto_dir.is_dir():
+        return out, reverse
+    for yml in sorted(proto_dir.rglob("*.yml")):
+        group = yml.stem  # e.g. "medicine"
+        try:
+            docs = yaml.load(
+                yml.read_text(encoding="utf-8"), Loader=_TagRecordingLoader
+            )
+        except yaml.YAMLError:
+            continue
+        if not isinstance(docs, list):
+            continue
+        for raw in docs:
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "reaction":
+                continue
+            rid = raw.get("id")
+            if not isinstance(rid, str) or not rid:
+                continue
+
+            # Reactants: mapping reagent → {amount, catalyst}. Some entries
+            # are `{amount: 1, catalyst: true}` dicts; shorthand scalar
+            # (`Carbon: 1`) is theoretically possible but unused today.
+            reactants_raw = raw.get("reactants") or {}
+            reactants: dict[str, dict] = {}
+            if isinstance(reactants_raw, dict):
+                for k, v in reactants_raw.items():
+                    if not isinstance(k, str):
+                        continue
+                    if isinstance(v, dict):
+                        amt = v.get("amount", 1)
+                        cat = bool(v.get("catalyst") or False)
+                    else:
+                        amt, cat = v, False
+                    try:
+                        amt_f = float(amt) if amt is not None else 1.0
+                    except (TypeError, ValueError):
+                        amt_f = 1.0
+                    reactants[k] = {"amount": amt_f, "catalyst": cat}
+
+            # Products: mapping reagent → scalar count.
+            products_raw = raw.get("products") or {}
+            products: dict[str, float] = {}
+            if isinstance(products_raw, dict):
+                for k, v in products_raw.items():
+                    if not isinstance(k, str):
+                        continue
+                    try:
+                        products[k] = float(v) if v is not None else 0.0
+                    except (TypeError, ValueError):
+                        products[k] = 0.0
+
+            # Side effects (e.g. `- !type:Explosion`, `- !type:CreateGas`).
+            effects_raw = raw.get("effects") or []
+            effects: list[dict] = []
+            if isinstance(effects_raw, list):
+                for e in effects_raw:
+                    if isinstance(e, dict):
+                        effects.append(e)
+
+            # Mixer categories: list of strings like ["Electrolysis"],
+            # ["Centrifuge"], ["Stir"], etc. Optional.
+            mixers_raw = raw.get("requiredMixerCategories") or []
+            mixers: list[str] = []
+            if isinstance(mixers_raw, list):
+                for m in mixers_raw:
+                    if isinstance(m, str):
+                        mixers.append(m)
+
+            def _opt_float(v: object) -> float | None:
+                try:
+                    return float(v) if v is not None else None
+                except (TypeError, ValueError):
+                    return None
+
+            def _opt_int(v: object) -> int | None:
+                try:
+                    return int(v) if v is not None else None
+                except (TypeError, ValueError):
+                    return None
+
+            entry = {
+                "id": rid,
+                "group": group,
+                "source": bool(raw.get("source") or False),
+                "priority": _opt_int(raw.get("priority")),
+                "impact": (
+                    raw.get("impact")
+                    if isinstance(raw.get("impact"), str)
+                    else None
+                ),
+                "quantized": bool(raw.get("quantized") or False),
+                "conserve_energy": bool(raw.get("conserveEnergy") or False),
+                "min_temp": _opt_float(raw.get("minTemp")),
+                "max_temp": _opt_float(raw.get("maxTemp")),
+                "required_mixer_categories": mixers,
+                "reactants": reactants,
+                "products": products,
+                "effects": effects,
+            }
+            out[rid] = entry
+
+            # Build reverse index: every produced reagent points back to
+            # this reaction. Only true products count, not catalysts —
+            # catalysts aren't produced. (SpawnEntity side effects also
+            # don't produce reagents.)
+            for pid in products:
+                reverse.setdefault(pid, []).append(rid)
+
+    # Stable sort each reverse-index list by reaction id for deterministic
+    # output across runs. Same reaction id may appear multiple times if a
+    # reaction lists the same product twice (never happens in tree today,
+    # but be defensive).
+    for rid_list in reverse.values():
+        rid_list.sort()
+
+    return out, reverse
+
+
 def load_research(repo: Path) -> tuple[dict[str, dict], dict[str, dict]]:
     """Scan Resources/Prototypes/Research for disciplines + technologies.
 
@@ -1349,6 +1507,8 @@ _SELF_CLOSING_XML_TAGS = {
     "GuideEntityEmbed",
     "GuideReagentEmbed",
     "GuideReagentGroupEmbed",
+    "GuideReactionEmbed",
+    "GuideReactionGroupEmbed",
     "GuideLawsetListEmbed",
     "GuideMicrowaveGroupEmbed",
     "GuideTechDisciplineEmbed",
@@ -1406,6 +1566,11 @@ _TECHNOLOGIES: dict[str, dict] = {}
 _LAWSETS: dict[str, dict] = {}
 _LAWS: dict[str, dict] = {}
 _LOCALE: dict[str, str] = {}
+# vs-05o.2: reactions + reverse "produced by" index. `_REAGENT_TO_REACTIONS`
+# maps reagent id → list of reaction ids that produce it, populated by
+# `load_reactions`. Consumed by `_reagent_detail_view` for the cross-link.
+_REACTIONS: dict[str, dict] = {}
+_REAGENT_TO_REACTIONS: dict[str, list[str]] = {}
 
 
 def _loc(key: str | None, fallback: str | None = None) -> str:
@@ -1432,6 +1597,7 @@ def _fallback_pill(elem: ET.Element) -> str:
     label_src = (
         attrs.get("Entity")
         or attrs.get("Reagent")
+        or attrs.get("Reaction")
         or attrs.get("Group")
         or attrs.get("Discipline")
         or attrs.get("Lawset")
@@ -2190,6 +2356,23 @@ def _reagent_detail_view(rid: str) -> str | None:
             "</div>"
         )
 
+    # vs-05o.2: "Produced by" cross-link to reactions that yield this reagent.
+    produced_by = _REAGENT_TO_REACTIONS.get(rid) or []
+    if produced_by:
+        items: list[str] = []
+        for react_id in produced_by:
+            rx = _REACTIONS.get(react_id)
+            if not rx:
+                continue
+            items.append(f"<li>{_reaction_summary_li(rx)}</li>")
+        if items:
+            sections.append(
+                '<div class="reagent-section reagent-produced-by">'
+                "<h4>Produced by</h4>"
+                '<ul class="produced-by-list">' + "".join(items) + "</ul>"
+                "</div>"
+            )
+
     # Related tools footer
     sections.append(
         '<div class="reagent-related">'
@@ -2234,6 +2417,420 @@ def _render_reagent_group_embed(elem: ET.Element) -> str:
         "<th>Description</th>"
         "<th>Effects</th>"
         "<th>Thresholds</th>"
+        "</tr></thead>"
+        "<tbody>" + "".join(rows) + "</tbody></table></div>"
+    )
+
+
+# ---------------------------------------------------------------------------
+# vs-05o.2 — reaction embeds + cross-linking
+# ---------------------------------------------------------------------------
+#
+# A reaction dict (produced by `load_reactions`) has the shape:
+#
+#     {
+#       "id": "Bicaridine",
+#       "group": "medicine",
+#       "source": False,
+#       "priority": None,
+#       "impact": "Medium",            # or None
+#       "quantized": False,
+#       "min_temp": 370.0,             # or None
+#       "max_temp": None,
+#       "required_mixer_categories": [],
+#       "reactants": {"Inaprovaline": {"amount": 1.0, "catalyst": False},
+#                     "Carbon": {"amount": 1.0, "catalyst": False}},
+#       "products":  {"Bicaridine": 2.0},
+#       "effects":   [ {"__type__": "Explosion", ...}, ... ],
+#     }
+#
+# Rendering produces:
+#
+#   - `_reaction_summary_li`: short one-line "A + B + C → D (2u)" for
+#     the reagent card's "Produced by" cross-link section.
+#   - `_reaction_card_view`: a vertical card analogous to the reagent
+#     detail view — header, temp/mixer badges, reactant/catalyst rows,
+#     product rows, side-effect list.
+#   - `_render_reaction_group_embed`: grouped table, one row per reaction.
+#
+# Temperature badge, catalyst row, mixer hint, and side-effect list all
+# render only when populated. Catalysts are displayed distinct from
+# reactants (they aren't consumed).
+
+
+def _reagent_display_name(rid: str) -> str:
+    """Resolve a reagent id to its localized name, falling back to the id.
+
+    Handles the common pattern `reagent-name-<lower>` that SS14 uses.
+    """
+    r = _REAGENTS.get(rid)
+    if r:
+        return _loc(r["name_key"], rid)
+    return _loc(f"reagent-name-{rid.lower()}", rid)
+
+
+def _reaction_summary_li(reaction: dict) -> str:
+    """Compact one-line summary for cross-link lists.
+
+    Example output: "<strong>Bicaridine</strong>: Inaprovaline + Carbon
+    (+ 540K) &rarr; Bicaridine (2u)". The reaction id links to the
+    parent embed's scroll anchor if future pages surface one; for now
+    it's plain bold text.
+    """
+    reactants = reaction.get("reactants") or {}
+    products = reaction.get("products") or {}
+    parts: list[str] = []
+    catalysts: list[str] = []
+    for rid, data in reactants.items():
+        label = _reagent_display_name(rid)
+        amt = data.get("amount", 1.0)
+        piece = f"{html.escape(label)} {_fmt_num(amt)}u"
+        if data.get("catalyst"):
+            catalysts.append(piece)
+        else:
+            parts.append(piece)
+    lhs = " + ".join(parts) if parts else "&mdash;"
+    if catalysts:
+        lhs += " <em>(cat: " + " + ".join(catalysts) + ")</em>"
+    prod_parts: list[str] = []
+    for rid, amt in products.items():
+        prod_parts.append(
+            f"{html.escape(_reagent_display_name(rid))} {_fmt_num(amt)}u"
+        )
+    rhs = " + ".join(prod_parts) if prod_parts else "&mdash;"
+    badges: list[str] = []
+    min_t = reaction.get("min_temp")
+    max_t = reaction.get("max_temp")
+    if min_t is not None:
+        badges.append(f"≥{_fmt_num(min_t)}K")
+    if max_t is not None:
+        badges.append(f"≤{_fmt_num(max_t)}K")
+    for mixer in reaction.get("required_mixer_categories") or []:
+        badges.append(html.escape(mixer))
+    badge_html = ""
+    if badges:
+        badge_html = (
+            ' <span class="reaction-badges">'
+            + " · ".join(f'<span class="badge">{b}</span>' for b in badges)
+            + "</span>"
+        )
+    return (
+        f"<strong>{html.escape(reaction['id'])}</strong>: "
+        f"{lhs} &rarr; {rhs}{badge_html}"
+    )
+
+
+def _reaction_temp_badge(reaction: dict) -> str:
+    """Render minTemp / maxTemp as small pill badges, or empty string.
+
+    SS14 uses Kelvin for chemistry temperatures (room temp ≈ 293K, body
+    temp ≈ 310K, hot plate ≈ 370K, plasma fire ≈ 540K). We pass through
+    the raw Kelvin value; the wiki consistently does the same.
+    """
+    parts: list[str] = []
+    mn = reaction.get("min_temp")
+    mx = reaction.get("max_temp")
+    if mn is not None:
+        parts.append(
+            f'<span class="reaction-badge reaction-badge-temp">'
+            f"min {_fmt_num(mn)}K</span>"
+        )
+    if mx is not None:
+        parts.append(
+            f'<span class="reaction-badge reaction-badge-temp">'
+            f"max {_fmt_num(mx)}K</span>"
+        )
+    return "".join(parts)
+
+
+def _reaction_impact_badge(reaction: dict) -> str:
+    """Admin-visibility impact tag: Low / Medium / High. Empty if absent."""
+    impact = reaction.get("impact")
+    if not impact:
+        return ""
+    slug = re.sub(r"[^a-z0-9]+", "-", impact.lower()).strip("-") or "unknown"
+    return (
+        f'<span class="reaction-badge reaction-badge-impact '
+        f'reaction-badge-impact-{slug}">{html.escape(impact)}</span>'
+    )
+
+
+def _reaction_mixer_badges(reaction: dict) -> str:
+    """Tool hint: chemistry-dispenser / centrifuge / electrolyzer / etc.
+
+    Most reactions have no mixer requirement (the default mix-on-contact
+    behavior). When `requiredMixerCategories` is set, render each entry
+    as its own badge — `Electrolysis`, `Centrifuge`, `Stir` are the
+    common tags.
+    """
+    mixers = reaction.get("required_mixer_categories") or []
+    if not mixers:
+        return ""
+    return "".join(
+        f'<span class="reaction-badge reaction-badge-mixer">'
+        f"Requires: {html.escape(m)}</span>"
+        for m in mixers
+    )
+
+
+def _reaction_reagent_cell(rid: str, amount: float) -> str:
+    """Inline chip showing a reagent with its swatch + name + amount.
+
+    Mirrors `_render_entity_cell` but for reagents — no sprite, just the
+    color swatch if the reagent is indexed. Unknown reagents fall back
+    to the bare id text.
+    """
+    r = _REAGENTS.get(rid)
+    label = _reagent_display_name(rid)
+    color = r.get("color") if r else None
+    swatch = ""
+    if isinstance(color, str) and _COLOR_OK.match(color.strip()):
+        swatch = (
+            f'<span class="reagent-swatch" '
+            f'style="background:{html.escape(color.strip())}"></span>'
+        )
+    return (
+        f'<span class="reaction-reagent-chip">'
+        f"{swatch}"
+        f'<span class="reaction-reagent-name">{html.escape(label)}</span> '
+        f'<span class="ingredient-count">{_fmt_num(amount)}u</span>'
+        f"</span>"
+    )
+
+
+def _reaction_card_view(rid: str) -> str | None:
+    """Rich single-reaction layout for `GuideReactionEmbed`.
+
+    Header: reaction id + group pill + impact/temp/mixer badges.
+    Sections: Reactants, Catalysts (if any), Products, Side effects.
+    """
+    rx = _REACTIONS.get(rid)
+    if rx is None:
+        return None
+
+    # Header
+    badges: list[str] = [
+        _reaction_temp_badge(rx),
+        _reaction_impact_badge(rx),
+        _reaction_mixer_badges(rx),
+    ]
+    if rx.get("source"):
+        badges.append(
+            '<span class="reaction-badge reaction-badge-source">'
+            "source (one-way)</span>"
+        )
+    if rx.get("quantized"):
+        badges.append(
+            '<span class="reaction-badge reaction-badge-quantized">'
+            "quantized</span>"
+        )
+    group_html = ""
+    grp = rx.get("group") or ""
+    if grp:
+        slug = re.sub(r"[^a-z0-9]+", "-", grp.lower()).strip("-") or "unknown"
+        group_html = (
+            f'<span class="reagent-group reaction-group '
+            f'reaction-group-{slug}">{html.escape(grp)}</span>'
+        )
+    header = (
+        '<div class="reaction-card-header">'
+        '<div class="reaction-card-heading">'
+        f'<h3 class="reaction-card-name">{html.escape(rx["id"])}</h3>'
+        f"{group_html}"
+        "</div>"
+        f'<div class="reaction-badges">{"".join(badges)}</div>'
+        "</div>"
+    )
+
+    sections: list[str] = [header]
+
+    # Reactants (non-catalyst)
+    reactants = rx.get("reactants") or {}
+    cat_rows: list[str] = []
+    react_rows: list[str] = []
+    for r_id, data in reactants.items():
+        cell = _reaction_reagent_cell(r_id, float(data.get("amount", 1.0)))
+        if data.get("catalyst"):
+            cat_rows.append(f"<li>{cell}</li>")
+        else:
+            react_rows.append(f"<li>{cell}</li>")
+    if react_rows:
+        sections.append(
+            '<div class="reagent-section reaction-reactants">'
+            "<h4>Reactants</h4>"
+            f'<ul class="reaction-reagent-list">{"".join(react_rows)}</ul>'
+            "</div>"
+        )
+    if cat_rows:
+        sections.append(
+            '<div class="reagent-section reaction-catalysts">'
+            "<h4>Catalysts <small>(not consumed)</small></h4>"
+            f'<ul class="reaction-reagent-list">{"".join(cat_rows)}</ul>'
+            "</div>"
+        )
+
+    # Products
+    prod_rows: list[str] = []
+    for pid, amt in (rx.get("products") or {}).items():
+        prod_rows.append(f"<li>{_reaction_reagent_cell(pid, float(amt))}</li>")
+    if prod_rows:
+        sections.append(
+            '<div class="reagent-section reaction-products">'
+            "<h4>Products</h4>"
+            f'<ul class="reaction-reagent-list">{"".join(prod_rows)}</ul>'
+            "</div>"
+        )
+
+    # Side-effects (reuses Phase 1's _render_effect — Explosion, CreateGas,
+    # SpawnEntity, PopupMessage, etc.)
+    effects = rx.get("effects") or []
+    if effects:
+        items: list[str] = []
+        for effect in effects:
+            text = _render_effect_for_reaction(effect)
+            if text:
+                items.append(f"<li>{html.escape(text)}</li>")
+        if items:
+            sections.append(
+                '<div class="reagent-section reaction-effects">'
+                "<h4>Side effects</h4>"
+                f'<ul class="effect-list">{"".join(items)}</ul>'
+                "</div>"
+            )
+
+    return '<div class="reaction-card">' + "".join(sections) + "</div>"
+
+
+def _render_effect_for_reaction(effect: dict) -> str:
+    """Reaction-side effect renderer.
+
+    Phase 1's `_render_effect` handles metabolism effects (HealthChange,
+    Vomit, Jitter, plant adjustments, etc.). Reactions additionally use
+    a small set of side-effect types that don't appear on reagents:
+
+      - SpawnEntity    — drops a world entity (FoodMeat, SheetPlastic1)
+      - CreateGas      — vents gas into the atmos system
+      - Explosion      — detonates (ChlorineTrifluoride, Phlogiston)
+
+    We interpret those here, then fall through to the shared renderer.
+    """
+    etype = effect.get("__type__") or ""
+    if etype == "SpawnEntity":
+        ent = effect.get("entity") or "an entity"
+        count = effect.get("number")
+        if count is not None:
+            return f"spawns {ent} x{_fmt_num(count)}"
+        return f"spawns {ent}"
+    if etype == "CreateGas":
+        gas = effect.get("gas") or "gas"
+        multi = effect.get("multiplier")
+        if multi is not None:
+            return f"releases {gas} (x{_fmt_num(multi)})"
+        return f"releases {gas}"
+    if etype == "Explosion":
+        kind = effect.get("explosionType") or "Default"
+        maxi = effect.get("maxIntensity")
+        if maxi is not None:
+            return (
+                f"causes an Explosion ({kind}, max intensity {_fmt_num(maxi)})"
+            )
+        return f"causes an Explosion ({kind})"
+    if etype == "EmpPulse":
+        return "emits an EMP pulse"
+    if etype == "AreaReactionEffect":
+        proto = effect.get("prototypeId") or effect.get("prototype") or ""
+        if proto:
+            return f"produces an area effect ({proto})"
+        return "produces an area reaction effect"
+    # Fall through to the shared renderer for anything it handles.
+    return _render_effect(effect)
+
+
+def _render_reaction_embed(elem: ET.Element) -> str:
+    rid = elem.attrib.get("Reaction") or ""
+    card = _reaction_card_view(rid)
+    if card is None:
+        return _fallback_pill(elem)
+    return card
+
+
+def _render_reaction_group_embed(elem: ET.Element) -> str:
+    group = elem.attrib.get("Group") or ""
+    # Match case-insensitively since authors may write `Group="Medicine"`
+    # (human-readable) even though our filename-stem groups are lowercase.
+    g_lower = group.lower()
+    matches = [
+        rx
+        for rx in _REACTIONS.values()
+        if (rx.get("group") or "").lower() == g_lower
+    ]
+    if not matches:
+        return _fallback_pill(elem)
+    matches.sort(key=lambda rx: rx["id"].lower())
+    rows: list[str] = []
+    for rx in matches:
+        reactants = rx.get("reactants") or {}
+        cat_parts: list[str] = []
+        react_parts: list[str] = []
+        for r_id, data in reactants.items():
+            cell = _reaction_reagent_cell(r_id, float(data.get("amount", 1.0)))
+            if data.get("catalyst"):
+                cat_parts.append(cell)
+            else:
+                react_parts.append(cell)
+        reactants_html = (
+            "<br>".join(react_parts) if react_parts else "<em>&mdash;</em>"
+        )
+        catalysts_html = (
+            "<br>".join(cat_parts) if cat_parts else "<em>&mdash;</em>"
+        )
+        product_parts: list[str] = []
+        for pid, amt in (rx.get("products") or {}).items():
+            product_parts.append(_reaction_reagent_cell(pid, float(amt)))
+        products_html = (
+            "<br>".join(product_parts) if product_parts else "<em>&mdash;</em>"
+        )
+        badges: list[str] = []
+        mn = rx.get("min_temp")
+        mx = rx.get("max_temp")
+        if mn is not None:
+            badges.append(
+                f'<span class="reaction-badge reaction-badge-temp">'
+                f"min {_fmt_num(mn)}K</span>"
+            )
+        if mx is not None:
+            badges.append(
+                f'<span class="reaction-badge reaction-badge-temp">'
+                f"max {_fmt_num(mx)}K</span>"
+            )
+        for mixer in rx.get("required_mixer_categories") or []:
+            badges.append(
+                f'<span class="reaction-badge reaction-badge-mixer">'
+                f"{html.escape(mixer)}</span>"
+            )
+        badges_html = (
+            "".join(badges)
+            if badges
+            else '<span class="reaction-none">&mdash;</span>'
+        )
+        rows.append(
+            "<tr>"
+            f'<td class="reaction-id">{html.escape(rx["id"])}</td>'
+            f'<td class="reaction-reactants">{reactants_html}</td>'
+            f'<td class="reaction-catalysts">{catalysts_html}</td>'
+            f'<td class="reaction-products">{products_html}</td>'
+            f'<td class="reaction-gates">{badges_html}</td>'
+            "</tr>"
+        )
+    return (
+        '<div class="reaction-group-wrap">'
+        '<table class="embed-table reaction-table reaction-group-table">'
+        "<thead><tr>"
+        "<th>Reaction</th>"
+        "<th>Reactants</th>"
+        "<th>Catalysts</th>"
+        "<th>Products</th>"
+        "<th>Temp / Mixer</th>"
         "</tr></thead>"
         "<tbody>" + "".join(rows) + "</tbody></table></div>"
     )
@@ -2427,6 +3024,8 @@ def _render_embed(elem: ET.Element) -> str:
       - `GuideEntityEmbed` → sprite `<img>` (vs-mlg) or text pill fallback
       - `GuideReagentEmbed` → single-row reagent table (vs-3o7)
       - `GuideReagentGroupEmbed` → reagent list table (vs-3o7)
+      - `GuideReactionEmbed` → single reaction card (vs-05o.2)
+      - `GuideReactionGroupEmbed` → grouped reaction table (vs-05o.2)
       - `GuideMicrowaveGroupEmbed` → recipe table (vs-3o7)
       - `GuideTechDisciplineEmbed` → technology list table (vs-3o7)
       - `GuideLawsetListEmbed` → ordered lawset + laws (vs-3o7)
@@ -2444,6 +3043,10 @@ def _render_embed(elem: ET.Element) -> str:
         return _render_reagent_embed(elem)
     if tag == "GuideReagentGroupEmbed":
         return _render_reagent_group_embed(elem)
+    if tag == "GuideReactionEmbed":
+        return _render_reaction_embed(elem)
+    if tag == "GuideReactionGroupEmbed":
+        return _render_reaction_group_embed(elem)
     if tag == "GuideMicrowaveGroupEmbed":
         return _render_microwave_group_embed(elem)
     if tag == "GuideTechDisciplineEmbed":
@@ -2454,6 +3057,7 @@ def _render_embed(elem: ET.Element) -> str:
     label_src = (
         attrs.get("Entity")
         or attrs.get("Reagent")
+        or attrs.get("Reaction")
         or attrs.get("Group")
         or attrs.get("Discipline")
         or attrs.get("Lawset")
@@ -3207,6 +3811,124 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
   font-family: ui-monospace, SFMono-Regular, monospace;
 }
 
+/* vs-05o.2: reaction embeds — single card + group table */
+.reaction-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  margin: 0.75rem 0 1.25rem;
+}
+.reaction-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.reaction-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.reaction-card-name {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--fg);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+.reaction-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+}
+.reaction-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.05em 0.55em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.reaction-badge-temp { color: #8cd8ff; }
+.reaction-badge-mixer { color: #ffd280; }
+.reaction-badge-source { color: #c5c5c5; }
+.reaction-badge-quantized { color: #b0b0b0; }
+.reaction-badge-impact-high { color: #ff9090; border-color: #a55; }
+.reaction-badge-impact-medium { color: #ffd280; border-color: #a85; }
+.reaction-badge-impact-low { color: #8cd8ff; border-color: #588; }
+.reaction-reagent-list {
+  margin: 0.25rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.93rem;
+  line-height: 1.4;
+}
+.reaction-reagent-list li { margin: 0.15rem 0; }
+.reaction-reagent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+.reaction-reagent-chip .reagent-swatch {
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid var(--border);
+}
+.reaction-reagent-name { color: var(--fg); }
+.reaction-catalysts h4 small {
+  font-size: 0.72rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--dim);
+  margin-left: 0.35rem;
+  font-weight: normal;
+}
+
+/* "Produced by" section inside the reagent detail card */
+.reagent-produced-by .produced-by-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+.reagent-produced-by .produced-by-list li { margin: 0.25rem 0; }
+.reagent-produced-by .badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.05em 0.5em;
+  font-size: 0.72rem;
+  color: var(--dim);
+  margin-left: 0.2em;
+  white-space: nowrap;
+}
+
+/* Grouped reaction table */
+.reaction-group-wrap { overflow-x: auto; }
+.reaction-group-table td {
+  vertical-align: top;
+  font-size: 0.9rem;
+}
+.reaction-group-table .reaction-id {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--fg);
+}
+.reaction-group-table .reaction-gates {
+  font-size: 0.78rem;
+  white-space: normal;
+}
+.reaction-group-table .reaction-none {
+  color: var(--dim);
+  font-style: italic;
+}
+
 /* Responsive: collapse reagent-group-table extra columns on narrow widths */
 @media (max-width: 720px) {
   .reagent-group-table thead th:nth-child(3),
@@ -3220,6 +3942,12 @@ pre.raw { white-space: pre-wrap; background: var(--panel); padding: 1rem; border
   }
   .recipe-table thead th:nth-child(3),
   .recipe-table tbody td:nth-child(3) {
+    display: none;
+  }
+  /* vs-05o.2: drop the Catalysts column on narrow widths; catalysts
+     stay readable inside the single-reaction card view. */
+  .reaction-group-table thead th:nth-child(3),
+  .reaction-group-table tbody td:nth-child(3) {
     display: none;
   }
 }
@@ -3634,6 +4362,7 @@ def _resolve_xml_path(repo: Path, text_path: str) -> Path | None:
 def render_site(repo: Path, out: Path) -> int:
     global _ACTIVE_SPRITE_CACHE
     global _REAGENTS, _MICROWAVE_RECIPES, _METAMORPH_RECIPES
+    global _REACTIONS, _REAGENT_TO_REACTIONS
     global _DISCIPLINES, _TECHNOLOGIES
     global _LAWSETS, _LAWS, _LOCALE
     entries = load_entries(repo)
@@ -3681,6 +4410,30 @@ def render_site(repo: Path, out: Path) -> int:
     except Exception as exc:
         print(f"  WARN: metamorph scan failed ({exc})", file=sys.stderr)
         _METAMORPH_RECIPES = {}
+    try:
+        # vs-05o.2: reactions + reverse index for reagent cross-links.
+        _REACTIONS, _REAGENT_TO_REACTIONS = load_reactions(repo)
+        n_temp = sum(
+            1
+            for rx in _REACTIONS.values()
+            if rx.get("min_temp") is not None or rx.get("max_temp") is not None
+        )
+        n_cat = sum(
+            1
+            for rx in _REACTIONS.values()
+            if any(
+                d.get("catalyst") for d in (rx.get("reactants") or {}).values()
+            )
+        )
+        print(
+            f"  indexed {len(_REACTIONS)} reaction(s) "
+            f"({n_temp} temp-gated, {n_cat} catalyzed), "
+            f"reverse index covers {len(_REAGENT_TO_REACTIONS)} reagent(s)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"  WARN: reaction scan failed ({exc})", file=sys.stderr)
+        _REACTIONS, _REAGENT_TO_REACTIONS = {}, {}
     try:
         _DISCIPLINES, _TECHNOLOGIES = load_research(repo)
         print(
