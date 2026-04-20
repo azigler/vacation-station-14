@@ -3415,36 +3415,34 @@ code { font-family: ui-monospace, SFMono-Regular, monospace; }
 .toc a:hover { background: var(--panel-soft); text-decoration: none; }
 .toc a.current { background: var(--panel-soft); color: var(--accent); }
 
-/* vs-dnz: collapsible sidebar sections (<details> per parent) + nav controls */
+/* vs-dnz: collapsible sidebar sections (<details> per parent).
+ * Marker is a CSS `::before` chevron inline with the label — no separate
+ * toggle button, no native ::marker on its own line. Clicking anywhere
+ * on the summary toggles the section (native <details> behavior);
+ * clicking the link inside navigates via the partial-swap JS. */
 .toc details { margin: 0; }
 .toc details > summary {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 0.15rem;
-  cursor: default;
+  gap: 0.35rem;
+  cursor: pointer;
 }
 .toc details > summary::-webkit-details-marker { display: none; }
 .toc details > summary::marker { content: ""; }
-.toc .toc-toggle {
+.toc details > summary::before {
+  content: "\\25B8"; /* ▸ */
   flex: 0 0 auto;
-  width: 1.1rem;
-  height: 1.1rem;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: 0;
-  color: var(--dim);
-  cursor: pointer;
-  font-size: 0.8rem;
+  display: inline-block;
+  font-size: 0.75em;
   line-height: 1;
-  border-radius: 3px;
+  color: var(--dim);
   transition: transform 150ms ease, color 120ms ease;
 }
-.toc .toc-toggle::before { content: "\\25B8"; /* ▸ */ }
-.toc details[open] > summary > .toc-toggle { transform: rotate(90deg); }
-.toc details[open] > summary > .toc-toggle::before { color: var(--accent); }
-.toc .toc-toggle:hover { color: var(--accent); background: var(--panel-soft); }
+.toc details[open] > summary::before {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
 .toc details > summary > a { flex: 1 1 auto; min-width: 0; }
 .toc details > ul {
   overflow: hidden;
@@ -3458,7 +3456,7 @@ code { font-family: ui-monospace, SFMono-Regular, monospace; }
 }
 @media (prefers-reduced-motion: reduce) {
   .toc details > ul { transition: none; }
-  .toc .toc-toggle { transition: none; }
+  .toc details > summary::before { transition: none; }
 }
 .toc-controls {
   display: flex;
@@ -4072,23 +4070,6 @@ GUIDEBOOK_NAV_JS = """/* vs-dnz: guidebook sidebar + partial-nav enhancement */
     writeState(state);
   }
 
-  function wireTocToggleButtons() {
-    /* Chevron button: toggle the parent <details> open state. We
-       listen on the root (event delegation) so re-running this after
-       a content swap is cheap. */
-    if (!NAV_ROOT) return;
-    NAV_ROOT.addEventListener("click", function (ev) {
-      var btn = ev.target && ev.target.closest
-        ? ev.target.closest(".toc-toggle") : null;
-      if (!btn) return;
-      var d = btn.closest("details[data-section-id]");
-      if (!d) return;
-      ev.preventDefault();
-      ev.stopPropagation();
-      d.open = !d.open;
-    });
-  }
-
   function wireCollapseAll() {
     var buttons = document.querySelectorAll(".toc-controls [data-toc-action]");
     for (var i = 0; i < buttons.length; i++) {
@@ -4218,7 +4199,6 @@ GUIDEBOOK_NAV_JS = """/* vs-dnz: guidebook sidebar + partial-nav enhancement */
        force-opened active-ancestor sections before paint; here we only
        wire event listeners. */
     wireDetailsToggle();
-    wireTocToggleButtons();
     wireCollapseAll();
     wireNav();
   }
@@ -4308,16 +4288,14 @@ def build_toc(
 
         children_html = "<ul>" + "".join(parts) + "</ul>"
         # Parent: wrap the link + children UL in a <details> so the
-        # whole subtree collapses. The <summary> holds the link so
-        # clicking the text navigates; a separate chevron button
-        # controls open/close without triggering navigation.
+        # whole subtree collapses. The <summary> holds the link; a CSS
+        # `::before` chevron sits inline with the label (no separate
+        # toggle button). Clicking the summary toggles the section;
+        # clicking the link inside navigates via the partial-swap JS.
         return (
             f'<li class="toc-parent">'
             f'<details data-section-id="{sid}">'
-            f"<summary>"
-            f'<button class="toc-toggle" type="button" aria-label="Toggle section" tabindex="-1"></button>'
-            f"{link}"
-            f"</summary>"
+            f"<summary>{link}</summary>"
             f"{children_html}"
             f"</details>"
             f"</li>"

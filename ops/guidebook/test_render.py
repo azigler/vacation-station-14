@@ -465,8 +465,11 @@ def test_build_toc_wraps_parents_in_details_with_section_id() -> None:
     assert "data-nav-link" in toc
     # Active entry is marked with aria-current="page"
     assert 'aria-current="page"' in toc
-    # Chevron button for parent-section toggling
-    assert 'class="toc-toggle"' in toc
+    # Parent summary has no separate toggle button — chevron is a CSS
+    # ::before on summary; clicking the summary toggles the section
+    # natively, clicking the link inside navigates via partial-swap JS.
+    assert 'class="toc-toggle"' not in toc
+    assert "<summary>" in toc
 
 
 def test_build_toc_leaf_has_no_details_wrapper() -> None:
