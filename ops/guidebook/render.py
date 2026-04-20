@@ -3434,7 +3434,7 @@ code { font-family: ui-monospace, SFMono-Regular, monospace; }
   content: "\\25B8"; /* ▸ */
   flex: 0 0 auto;
   display: inline-block;
-  font-size: 0.75em;
+  font-size: 1.2em;
   line-height: 1;
   color: var(--dim);
   transition: transform 150ms ease, color 120ms ease;
