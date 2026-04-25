@@ -15,7 +15,10 @@ NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=read-only
 PrivateTmp=true
-ReadWritePaths=/opt/ss14-watchdog/instances/vacation-station/data/replays
+# Leading '-' makes the path optional — systemd skips the bind-mount if the
+# dir doesn't exist yet (no replays recorded). rotate.sh already exits 0
+# cleanly in that case; the unit shouldn't fail at namespace setup.
+ReadWritePaths=-/opt/ss14-watchdog/instances/vacation-station/data/replays
 
 # Environment overrides (optional)
 # Environment=REPLAY_ROOT=/opt/ss14-watchdog/instances/vacation-station/data/replays
