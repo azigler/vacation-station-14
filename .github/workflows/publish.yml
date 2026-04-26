@@ -4,16 +4,38 @@ concurrency:
   group: publish
   cancel-in-progress: true
 
+# VS - start
+# VS - vs-2f8.1: explicit trigger policy.
+# VS -
+# VS - We are intentionally workflow_dispatch-only (no push-to-main trigger,
+# VS - no schedule) until H2 — the first end-to-end test of the publish
+# VS - pipeline against our self-hosted Robust.Cdn — passes. Reasoning:
+# VS -   1. PUBLISH_TOKEN must be minted on the live CDN and registered as
+# VS -      a GH Actions secret first (H1, human work). Until then any push
+# VS -      trigger would 401-storm the workflow run history.
+# VS -   2. We want manual gate-keeping on the very first publish so we can
+# VS -      verify CI -> CDN manifest -> watchdog Manifest fetch -> launcher
+# VS -      delta download in a controlled run before automating it.
+# VS -   3. Once H2 is signed off (vs-2f8.1 acceptance), flip this to
+# VS -      `push: branches: [main]` + keep workflow_dispatch.
+# VS -
+# VS - The `schedule` block is left commented for the same reason. Upstream
+# VS - SS14 ran this daily; we'll evaluate cadence after launch.
+# VS - end
 on:
   workflow_dispatch:
   # schedule:
-   # - cron: '0 10 * * *'
+  # - cron: '0 10 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # VS - guard scoped to space-wizards's repo by `github.repository ==`,
+    # VS - so it's a no-op on azigler/vacation-station-14 (we use `main`,
+    # VS - not `master`). Left in place so an upstream-sw re-checkout of
+    # VS - this file stays a clean diff-of-comment-only.
     - name: Fail if we are attempting to run on the master branch
       if: ${{GITHUB.REF_NAME == 'master' && github.repository == 'space-wizards/space-station-14'}}
       run: exit 1

@@ -8,8 +8,11 @@
 #       config.toml        (seeded from the repo's config.toml.example
 #                           if not already present — operator must then
 #                           edit it to fill in the postgres password)
-#       binaries/          (UpdateType: Local drop target; stays empty
-#                           until the operator publishes a build here)
+#
+# vs-2f8.1 retired the legacy `binaries/` drop target — Manifest mode now
+# pulls builds from our Robust.Cdn (https://ss14.zig.computer/cdn/), so
+# the operator never hand-publishes into the instance dir. The watchdog
+# downloads versioned builds into its own working directory.
 #
 # Idempotent. Re-runs do NOT overwrite existing config.toml — that file
 # holds the DB password and must not be clobbered.
@@ -24,7 +27,6 @@ set -euo pipefail
 WATCHDOG_ROOT="${WATCHDOG_ROOT:-/opt/ss14-watchdog}"
 INSTANCE_NAME="${INSTANCE_NAME:-vacation-station}"
 INSTANCE_DIR="${WATCHDOG_ROOT}/instances/${INSTANCE_NAME}"
-BINARIES_DIR="${INSTANCE_DIR}/binaries"
 
 SS14_USER="${SS14_USER:-ss14}"
 SS14_GROUP="${SS14_GROUP:-ss14}"
@@ -47,7 +49,6 @@ fi
 
 echo ">>> Creating instance layout under ${INSTANCE_DIR}..."
 install -d -o "${SS14_USER}" -g "${SS14_GROUP}" -m 0755 "${INSTANCE_DIR}"
-install -d -o "${SS14_USER}" -g "${SS14_GROUP}" -m 0755 "${BINARIES_DIR}"
 
 TARGET_CONFIG="${INSTANCE_DIR}/config.toml"
 if [ -f "${TARGET_CONFIG}" ]; then
@@ -63,7 +64,8 @@ fi
 echo ""
 echo "Instance bootstrap complete."
 echo "  Instance dir: ${INSTANCE_DIR}"
-echo "  Binaries dir: ${BINARIES_DIR}"
 echo ""
-echo "Next: drop a published Robust.Server build into ${BINARIES_DIR}"
-echo "      (UpdateType: Local), then 'systemctl start ss14-watchdog'."
+echo "Next: ensure ops/watchdog/appsettings.yml.example's UpdateType: Manifest"
+echo "      block is in /opt/ss14-watchdog/appsettings.yml, then"
+echo "      'systemctl start ss14-watchdog'. The watchdog will download the"
+echo "      latest build from https://ss14.zig.computer/cdn/ on first run."

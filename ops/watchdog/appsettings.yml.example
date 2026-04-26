@@ -83,22 +83,22 @@ Servers:
       ApiPort: 1212
 
       # Update provider:
-      #   Local    — operator drops new builds into
-      #              instances/vacation-station/binaries/ manually.
-      #              Good for day 1 before we publish a CDN.
-      #   Manifest — fetch from a Robust.Cdn-served manifest URL. Switch
-      #              to this once we stand up a build/publish pipeline;
-      #              see docs/OPERATIONS.md for the migration path.
-      UpdateType: Local
-      # Local provider still needs an Updates block — CurrentVersion is a
-      # free-form string the watchdog compares against to decide whether to
-      # restart on deploy. Bump it (or the contents of binaries/) when you
-      # roll a new build.
+      #   Manifest — fetch versioned builds from our self-hosted Robust.Cdn
+      #              service (vs-3mv deployed; vs-2f8.1 wired the publish
+      #              pipeline). The watchdog hashes + verifies each download
+      #              and starts the server from the manifest's newest build.
+      #              CurrentVersion does not apply in this mode — newest
+      #              manifest entry wins.
+      #   Local    — legacy: operator drops a Robust.Server build into
+      #              instances/<name>/binaries/ manually. Retired once
+      #              Manifest stabilised; kept here as a fallback if the
+      #              CDN is ever down.
+      UpdateType: Manifest
       Updates:
-        CurrentVersion: "1"
-      # When switching to Manifest later, replace the block above with:
+        ManifestUrl: https://ss14.zig.computer/cdn/fork/vacation-station/manifest
+      # Local-mode fallback (only set UpdateType: Local above):
       # Updates:
-      #   ManifestUrl: https://cdn.example.com/vacation-station/manifest.json
+      #   CurrentVersion: "1"
 
       # Seconds to wait for the game server to respond before the
       # watchdog considers it hung and restarts it.

@@ -42,6 +42,7 @@ AGPL notice-retention requirements.
 | `external/document-simu/` | [yagwog/RMC14-document-simu](https://github.com/yagwog/RMC14-document-simu) | MIT | `ops/document-simu/` | vs-v69 |
 | `external/ss14-admin/` | [space-wizards/SS14.Admin](https://github.com/space-wizards/SS14.Admin) | MIT | `ops/ss14-admin/` | vs-35d |
 | `external/nurseshark/` | [azigler/nurseshark](https://github.com/azigler/nurseshark) | AGPL-3.0 | `ops/nurseshark/` | vs-ygn (first-party VS14 tool; data pipeline reads VS14 `Resources/` via `sources.yml`; daily rebuild at 05:30 UTC) |
+| `external/robust-cdn/` | [space-wizards/Robust.Cdn](https://github.com/space-wizards/Robust.Cdn) | MIT | `ops/robust-cdn/` | vs-3mv (service deploy) + vs-2f8.1 (CI publish wiring). Fully integrated, CI-driven: fork-id `vacation-station`, manifest URL `https://ss14.zig.computer/cdn/fork/vacation-station/manifest`, watchdog `UpdateType: Manifest` in `/opt/ss14-watchdog/appsettings.yml`. Publish auth is `Manifest.Forks.vacation-station.UpdateToken` (overridden via env `CDN_UPDATE_TOKEN`); GitHub Actions sends it as `PUBLISH_TOKEN` secret. |
 
 ## Not yet added as remotes (candidates)
 

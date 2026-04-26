@@ -4,11 +4,19 @@ concurrency:
   group: publish-testing
   cancel-in-progress: true
 
+# VS - start
+# VS - vs-2f8.1: cron re-enabled now that we publish to our own self-hosted
+# VS - Robust.Cdn (https://ss14.zig.computer/cdn/, fork-id "vacation-station").
+# VS - Andrew's 2026-04-16 :wrench: commit (aae75db752) disabled this as a
+# VS - stepping-stone — H2 (end-to-end test) gates re-enabling it in CI. Until
+# VS - PUBLISH_TOKEN is minted (H1) and the manual workflow_dispatch run is
+# VS - verified end-to-end, scheduled runs would only emit auth failures.
+# VS - end
 on:
   workflow_dispatch:
-  # VS - disabled scheduled runs; we publish via our own watchdog, not Robust.Cdn
-  # schedule:
-  # - cron: '0 10 * * *'
+  schedule:
+    # VS - cron re-enabled per vs-2f8.1; daily 10:00 UTC matches upstream cadence.
+    - cron: '0 10 * * *'
 
 jobs:
   build:
@@ -41,7 +49,11 @@ jobs:
       run: dotnet run --project Content.Packaging client --no-wipe-release
 
     - name: Publish version
-      run: Tools/publish_multi_request.py --fork-id wizards-testing
+      # VS - dropped --fork-id wizards-testing; default FORK_ID in the script
+      # VS - is now "vacation-station" (vs-2f8.1). We don't run a separate
+      # VS - testing fork — staging happens via workflow_dispatch + manual
+      # VS - watchdog inspection before promotion.
+      run: Tools/publish_multi_request.py
       env:
         PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
         GITHUB_REPOSITORY: ${{ vars.GITHUB_REPOSITORY }}

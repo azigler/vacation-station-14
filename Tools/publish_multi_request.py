@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
+# VS - start
+# VS - Repointed at our self-hosted Robust.Cdn (vs-2f8.1). The file is also
+# VS - now ruff-formatted (sorted imports, broken-up call args), so future
+# VS - `git checkout upstream-sw/master -- Tools/publish_multi_request.py`
+# VS - re-syncs need to re-apply the ROBUST_CDN_URL + FORK_ID change AND
+# VS - re-run ruff to keep the diff scoped to intent. The intent change is
+# VS - the two CONFIGURATION PARAMETERS lines below.
+# VS - end
 
 import argparse
-import requests
 import os
 import subprocess
-from typing import Iterable
+from collections.abc import Iterable
+
+import requests
 
 PUBLISH_TOKEN = os.environ["PUBLISH_TOKEN"]
 VERSION = os.environ["GITHUB_SHA"]
@@ -15,8 +24,13 @@ RELEASE_DIR = "release"
 # CONFIGURATION PARAMETERS
 # Forks should change these to publish to their own infrastructure.
 #
-ROBUST_CDN_URL = "https://wizards.cdn.spacestation14.com/"
-FORK_ID = "wizards"
+# VS - repointed defaults at our self-hosted Robust.Cdn instance (vs-2f8.1).
+# VS - upstream values were "https://wizards.cdn.spacestation14.com/" + "wizards".
+# VS - the workflow's --fork-id flag still overrides FORK_ID; ROBUST_CDN_URL is
+# VS - the only env-independent default (no override flag).
+ROBUST_CDN_URL = "https://ss14.zig.computer/cdn/"
+FORK_ID = "vacation-station"
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -36,10 +50,12 @@ def main():
         "version": VERSION,
         "engineVersion": get_engine_version(),
     }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    resp = session.post(f"{ROBUST_CDN_URL}fork/{fork_id}/publish/start", json=data, headers=headers)
+    headers = {"Content-Type": "application/json"}
+    resp = session.post(
+        f"{ROBUST_CDN_URL}fork/{fork_id}/publish/start",
+        json=data,
+        headers=headers,
+    )
     resp.raise_for_status()
     print("Publish successfully started, adding files...")
 
@@ -49,21 +65,25 @@ def main():
             headers = {
                 "Content-Type": "application/octet-stream",
                 "Robust-Cdn-Publish-File": os.path.basename(file),
-                "Robust-Cdn-Publish-Version": VERSION
+                "Robust-Cdn-Publish-Version": VERSION,
             }
-            resp = session.post(f"{ROBUST_CDN_URL}fork/{fork_id}/publish/file", data=f, headers=headers)
+            resp = session.post(
+                f"{ROBUST_CDN_URL}fork/{fork_id}/publish/file",
+                data=f,
+                headers=headers,
+            )
 
         resp.raise_for_status()
 
     print("Successfully pushed files, finishing publish...")
 
-    data = {
-        "version": VERSION
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    resp = session.post(f"{ROBUST_CDN_URL}fork/{fork_id}/publish/finish", json=data, headers=headers)
+    data = {"version": VERSION}
+    headers = {"Content-Type": "application/json"}
+    resp = session.post(
+        f"{ROBUST_CDN_URL}fork/{fork_id}/publish/finish",
+        json=data,
+        headers=headers,
+    )
     resp.raise_for_status()
 
     print("SUCCESS!")
@@ -75,11 +95,17 @@ def get_files_to_publish() -> Iterable[str]:
 
 
 def get_engine_version() -> str:
-    proc = subprocess.run(["git", "describe","--tags", "--abbrev=0"], stdout=subprocess.PIPE, cwd="RobustToolbox", check=True, encoding="UTF-8")
+    proc = subprocess.run(
+        ["git", "describe", "--tags", "--abbrev=0"],
+        stdout=subprocess.PIPE,
+        cwd="RobustToolbox",
+        check=True,
+        encoding="UTF-8",
+    )
     tag = proc.stdout.strip()
     assert tag.startswith("v")
-    return tag[1:] # Cut off v prefix.
+    return tag[1:]  # Cut off v prefix.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

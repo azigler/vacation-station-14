@@ -288,7 +288,8 @@ Each game-server instance lives under
 ├── instances/
 │   └── vacation-station/
 │       ├── config.toml         # game-server config (secrets — not in git)
-│       └── binaries/           # Local provider drop target
+│       ├── bin/                # Manifest provider working dir (auto-managed)
+│       └── data/               # game-server runtime data (auto-managed)
 └── logs/                       # watchdog-managed runtime logs
 ```
 
@@ -303,8 +304,9 @@ This creates the directories, then seeds `config.toml` from
 present). Re-running does **not** clobber an existing `config.toml`.
 
 After bootstrap, fill in the Postgres password in
-`/opt/ss14-watchdog/instances/vacation-station/config.toml` and drop a
-published `Robust.Server` build into the `binaries/` directory.
+`/opt/ss14-watchdog/instances/vacation-station/config.toml` and start
+the watchdog — the Manifest provider (vs-2f8.1) will download the
+latest build from `https://ss14.zig.computer/cdn/` automatically.
 
 ### First-run verification
 
@@ -340,24 +342,27 @@ pstree -p "$(systemctl show -p MainPID --value ss14-watchdog)"   # child back
 
 ### Update providers
 
-We ship with `UpdateType: Local` to avoid a CDN dependency on day 1.
-Operator publishes builds manually into
-`/opt/ss14-watchdog/instances/vacation-station/binaries/`, then restarts
-the instance via the admin API (or `systemctl restart ss14-watchdog`).
+We ship with `UpdateType: Manifest` (vs-2f8.1) — the watchdog fetches
+versioned builds from our self-hosted Robust.Cdn at
+`https://ss14.zig.computer/cdn/fork/vacation-station/manifest`. Each
+restart cycle re-checks the manifest, verifies hashes, and starts the
+server from the newest entry.
 
-Once we stand up a build/publish pipeline (Robust.Cdn + object storage),
-migrate to `UpdateType: Manifest`:
+The publish pipeline is GitHub Actions → Robust.Cdn:
 
-1. Stop publishing into `binaries/` — the Manifest provider downloads
-   into its own versioned directory.
-2. In `appsettings.yml`, flip the instance's `UpdateType` to `Manifest`
-   and add an `Updates.ManifestUrl` pointing at the CDN.
-3. Restart the watchdog. It will fetch the latest manifest, verify
-   hashes, and start the server from the downloaded build.
-4. Tear out the `Local` `binaries/` drop target once Manifest has been
-   driving restarts cleanly for a release cycle.
+1. `.github/workflows/publish.yml` (workflow_dispatch) builds + packages
+   the server and client.
+2. `Tools/publish_multi_request.py` POSTs the build files to
+   `https://ss14.zig.computer/cdn/fork/vacation-station/publish/...`
+   using the `PUBLISH_TOKEN` GH Actions secret.
+3. The CDN exposes the new build via the manifest URL above.
+4. Watchdog picks up the new manifest on its next restart cycle (or
+   poll interval) and downloads the delta.
 
-Track the CDN/Manifest work as a separate bead.
+Local-mode fallback is still supported by the watchdog; revert the
+`UpdateType` and `Updates` block in `appsettings.yml` per
+`ops/watchdog/appsettings.yml.example`. Reach for it only if the CDN
+is genuinely unreachable — Manifest is the canonical path post vs-2f8.1.
 
 ### Log aggregation (vs-2p3)
 
