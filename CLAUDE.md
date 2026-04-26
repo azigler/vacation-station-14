@@ -163,6 +163,25 @@ git fetch upstream-dv     # Delta-V cherry-pick source
 Conflict bias when cherry-picking: keep our `_VS/` edits, merge
 `_<other-fork>/` carefully (preserve upstream author's intent).
 
+## Bead Title Convention
+
+The global `/beads` skill prescribes `<scope>: <action>` titles where
+scope is the area of work. VS14 layers one local convention on top:
+
+- **`human:` prefix** = bead is **atomic and fully human-executed**
+  (no agent component). Use for single-scope handoffs that block an
+  `ops:` / `legal:` / `arch:` bead where the agent does everything
+  else. This makes "what needs me?" greppable in `br ready`.
+- For larger mixed work, keep the **area prefix** (`ops:`, `legal:`,
+  `arch:`, etc.) and split out atomic human follow-ups as separate
+  `human:` beads when the agent half completes — see
+  `vs-2f8.1` → `vs-2f8.10` + `vs-2f8.11` for the canonical pattern
+  (agent does CI wiring under `ops:`; human halves split into atomic
+  `human:` beads with `blocks-on` deps).
+- **Don't** retitle large multi-deliverable human work to `human:`
+  just because it's human-led — the area prefix stays more
+  informative. Split into atomic pieces if you want `human:` markers.
+
 ## Commit Convention
 
 ```
