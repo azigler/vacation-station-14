@@ -12,7 +12,7 @@ community where rejection raises the odds of a downstream fork.
 Pairs with:
 - `vs-2sr` — `CONTRIBUTING.md` (contributor-facing hygiene rules reflecting this skill)
 - `vs-f0l` — scheduled PR triage workflow + auto-merge policy (CI automates the easy-win branch of this tree)
-- `/commit`, `/upstream-sync`, `/review`, `/orchestrator`
+- `/commit`, `/upstream-sync`, `/check`, `/orchestrator`
 
 ## Philosophy
 
