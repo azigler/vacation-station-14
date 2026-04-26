@@ -292,7 +292,10 @@ investigation).
 - Don't edit other `.example` files expecting a running service to pick
   up changes. Edit the populated copy.
 - Don't bind prod Prometheus / Loki / Grafana / watchdog admin API to a
-  public interface. Grafana goes out through nginx (vs-2y8, live on
-  `ss14.zig.computer`); everything else stays loopback.
+  public interface. The watchdog admin API is fronted by nginx at
+  `https://ss14.zig.computer/watchdog/` (vs-2y8); Prometheus / Loki /
+  Grafana stay loopback-only and operators SSH-tunnel to reach
+  Grafana. See `docs/OPERATIONS.md` "Operator access" + `docs/NETWORKING.md`
+  for the (currently unused) public-Grafana vhost template.
 - Don't use dev-stack credentials (`vs14 / dev-only-insecure`, `admin /
   admin`) anywhere near prod.

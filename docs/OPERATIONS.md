@@ -256,10 +256,11 @@ Template: `ops/watchdog/appsettings.yml.example` (installed to
   manager immediately. Never commit the populated `appsettings.yml` —
   treat it like the postgres password.
 - **`BaseUrl` / `Urls`** — default to localhost-only (`127.0.0.1:5000`).
-  To control the watchdog from a remote operator box, front it with
-  Caddy (see `docs/NETWORKING.md`) + HTTP basic auth or client certs, or
-  SSH-tunnel `localhost:5000`. Do not bind the admin API to a public
-  interface without a proxy + TLS.
+  Our production host fronts this through nginx at
+  `https://ss14.zig.computer/watchdog/` (see
+  `ops/nginx/ss14.zig.computer.conf`); for ad-hoc remote access,
+  SSH-tunnel `localhost:5000` instead. Do not bind the admin API to a
+  public interface without a proxy + TLS.
 - **Serilog** — Console sink lands in `journalctl -u ss14-watchdog`;
   File sink rolls daily to `/var/log/ss14-watchdog/watchdog-*.log` with
   14-day retention. The Loki sink is pre-wired but commented — enable
@@ -330,9 +331,10 @@ pstree -p "$(systemctl show -p MainPID --value ss14-watchdog)"   # child back
 
 ### Firewall
 
-- **Port 5000 (watchdog admin API)** — localhost only by default. If you
-  front with Caddy for remote admin, open `80/tcp` + `443/tcp` and let
-  Caddy terminate TLS; do **not** open 5000 to the public internet.
+- **Port 5000 (watchdog admin API)** — localhost only by default. We
+  front it with nginx at `/watchdog/` (already in
+  `ops/nginx/ss14.zig.computer.conf`), so `80/tcp` + `443/tcp` carry
+  remote admin traffic; do **not** open 5000 to the public internet.
 - **Port 1212 (UDP + TCP)** — game netcode + status API, must be public.
   See `docs/NETWORKING.md` for the full UFW + cloud-firewall procedure.
 
@@ -456,8 +458,9 @@ systemctl list-timers vs14-cookbook-build.timer
 Vacation Station 14 ships a self-hosted Prometheus + Loki + Grafana stack in
 `ops/observability/`, co-located with the game server. Metrics come from
 Robust.Server's native Prometheus endpoint on `localhost:44880`; logs come
-from the server and watchdog via Serilog's Loki sink. Grafana provides the
-UI and is fronted by Caddy for HTTPS.
+from the server and watchdog via Serilog's Loki sink. Grafana stays on
+`127.0.0.1:3200` and is reached via SSH port-forward (no public exposure
+today; see "Network topology" + "Operator access" below).
 
 Dashboards are auto-provisioned from `ops/observability/grafana/dashboards/`
 (see the "Dashboards" subsection below). Alerting is explicitly out of scope.
@@ -545,7 +548,7 @@ Sample Loki query (LogQL):
 Grafana login:
 
 ```bash
-xdg-open http://localhost:3200        # or reach via Caddy HTTPS
+xdg-open http://localhost:3200        # local; or SSH-forward from a remote box (see "Operator access")
 # User: admin
 # Password: contents of ops/observability/secrets/grafana_admin_password.txt
 ```
@@ -578,30 +581,31 @@ On the host, only `127.0.0.1` is bound:
 |------------|--------------------|-------------------------------------|
 | Prometheus | `127.0.0.1:9090`   | Operator-only debug UI              |
 | Loki       | `127.0.0.1:3100`   | SS14 server + watchdog push         |
-| Grafana    | `127.0.0.1:3200`   | Dashboards; fronted by Caddy + TLS  |
+| Grafana    | `127.0.0.1:3200`   | Dashboards; SSH-tunnel for operators |
 
 Prometheus reaches the SS14 metrics endpoint via `host.docker.internal`, the
 Docker host-gateway alias — the container sees the host as a regular
 hostname. `docker-compose.yml` wires this with `extra_hosts`.
 
-Firewall: nothing new is public. Grafana only reaches the outside world via
-the Caddy reverse proxy below, which terminates TLS on 443. Prometheus,
-Loki, and Grafana's direct ports do NOT need to be opened in ufw or the
-cloud firewall. See `docs/NETWORKING.md` for the full firewall recipe.
+Firewall: nothing new is public. Prometheus, Loki, and Grafana stay on
+loopback; operators SSH-tunnel to reach Grafana. Their direct ports do
+NOT need to be opened in ufw or the cloud firewall. See
+`docs/NETWORKING.md` for the full firewall recipe (and an nginx vhost
+template if/when we choose to expose Grafana publicly).
 
-### Caddy reverse-proxy snippet
+### Operator access
 
-Add to `/etc/caddy/Caddyfile` (and reload Caddy):
+Reach Grafana from a remote box via SSH port-forward:
 
+```bash
+ssh -L 3200:127.0.0.1:3200 ubuntu@ss14.zig.computer
+# then in your local browser:
+xdg-open http://localhost:3200
 ```
-grafana.yourdomain.com {
-    reverse_proxy 127.0.0.1:3200
-}
-```
 
-Caddy's automatic Let's Encrypt flow takes care of TLS. Point a DNS `A`
-record at the host, ensure 80/tcp and 443/tcp are open (ACME HTTP-01), and
-log in to Grafana over HTTPS.
+If we ever want a public Grafana endpoint (e.g. for a community-stats
+dashboard), `docs/NETWORKING.md` has an nginx vhost template plus
+`certbot --nginx` flow for adding a `grafana.<domain>` subdomain.
 
 ### Retention
 
