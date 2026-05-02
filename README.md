@@ -2,15 +2,27 @@
 
 The SS14 server for hanging out.
 
-Vacation Station 14 (VS14) is a curated
+Vacation Station 14 (VS14) is a casual SS14 hangout server focused on
+collaboration and creativity. The codebase is a curated
 [Space Station 14](https://github.com/space-wizards/space-station-14)
-derivative, built with AI-assisted development. The codebase starts from a
-pure SS14 base; features from sibling forks (Delta-V, Frontier, Einstein
-Engines, etc.) are cherry-picked selectively into directory-prefixed
-subsystems (`_VS/`, `_DV/`, `_NF/`, `_SL/`, `_EE/`, …) for clear attribution.
+derivative — a pure SS14 base, with features from sibling forks (Delta-V,
+Frontier, RMC-14, HardLight, Starlight, etc.) cherry-picked selectively
+into directory-prefixed subsystems (`_VS/`, `_DV/`, `_NF/`, `_RMC/`,
+`_HL/`, `_SL/`, `_CP/`) for clear attribution.
 
 See [contributing guidelines](CONTRIBUTING.md) and [LEGAL.md](LEGAL.md) for
 details.
+
+## About the server
+
+For the player- and community-facing identity of VS14:
+
+- [`docs/community/positioning.md`](docs/community/positioning.md) — the
+  short and long versions of what VS14 is
+- [`docs/community/about.md`](docs/community/about.md) — the longer about
+  page
+- [`docs/community/rules.md`](docs/community/rules.md) — server rules
+- [`docs/community/admin/`](docs/community/admin/) — admin team docs
 
 ## Building
 

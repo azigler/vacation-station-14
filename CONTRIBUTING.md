@@ -53,7 +53,7 @@ authorship of any line. Pick the right prefix for your change:
 | _unprefixed_ `Content.*` | Pure SS14 upstream (MIT) | Do not add new files here. Edit existing files only when modifying upstream behavior, and annotate inline (see below). |
 | `_DV/` | Delta-V cherry-picks | Only for code imported from Delta-V. Preserve the upstream author. |
 | `_NF/` | Frontier cherry-picks | Only for code imported from Frontier. |
-| `_EE/`, `_Starlight/`, `_Corvax/`, ... | Other sibling forks | One prefix per upstream, per the attribution table in [README.md](README.md#upstream-attribution). |
+| `_RMC/`, `_HL/`, `_SL/`, `_CP/`, `_EE/`, `_CX/`, ... | Other sibling forks | One prefix per upstream, per the attribution table in [README.md](README.md#upstream-attribution). |
 
 New content paths:
 
