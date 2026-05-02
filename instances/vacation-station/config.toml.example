@@ -20,7 +20,7 @@ pg_password = "REPLACE WITH ACTUAL PASSWORD"  # from your password manager
 # -----------------------------------------------------------------------------
 
 [game]
-hostname = "Vacation Station 14"
+hostname = "[EN][LRP] Vacation Station 14 | Casual creativity and collaboration"
 
 [net]
 tickrate = 30
