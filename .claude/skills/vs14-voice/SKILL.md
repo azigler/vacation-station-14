@@ -26,11 +26,11 @@ the saccharine.
 
 ## AI is invisible plumbing
 
-VS14 is **not** an AI-first server. AI tooling helps Andrew run the
-server (drafting docs, dispatching agent work, reviewing code) the
-same way `git`, `nginx`, and his IDE do — it's infrastructure, not
-a flavor. Players see a thoughtful human-run server. Recruits see
-a singular maintainer making considered calls.
+VS14 is **not** an AI-first server. AI tooling helps the maintainer
+run the server (drafting docs, dispatching agent work, reviewing
+code) the same way `git`, `nginx`, and an IDE do — it's
+infrastructure, not a flavor. Players see a thoughtful human-run
+server. Recruits see a singular maintainer making considered calls.
 
 In writing:
 
@@ -42,9 +42,12 @@ In writing:
   read it.
 - **Commit-trailer co-authorship is fine** — git history isn't
   the player surface.
-- **Andrew is the singular operator and trust-anchor.** Where
-  workflows funnel through one person, name him explicitly. Don't
-  hide behind "the team" plural when the team is one.
+- **There is one maintainer. Refer to them as "the maintainer" in
+  player-facing copy — singular role, no name.** Don't hide behind
+  "the team" plural when the team is one. The maintainer's actual
+  name belongs in git history, GitHub repo metadata, and
+  contributor-facing docs (CONTRIBUTING.md, LEGAL.md), not in
+  rules, about pages, MOTD, or Discord onboarding.
 
 ## The 12 anti-patterns
 
@@ -127,7 +130,7 @@ specificity, and uneven rhythm are the antidotes.
 *This document specifies the rules that need to be followed.*
 *These rules apply at all times, including between rounds.*
 *By connecting to this server, you agree to...* Replace with how
-Andrew would actually phrase it.
+the maintainer would actually phrase it.
 
 ### 12. Pre-codifying speculative process
 
@@ -163,12 +166,15 @@ capture our intent, but they can't anticipate every situation.
 Don't try to rules-lawyer the gaps." Underspecified is better
 than exhaustive when the audience is a small community.
 
-### Maintainer as explicit trust-anchor
+### Maintainer as singular, unnamed trust-anchor
 
-Where workflows funnel through Andrew today and a future-team
-tomorrow, name Andrew explicitly. *"The maintainer keeps the
-canonical copy."* *"The maintainer publishes redacted versions."*
-This is honest about today and forward-looking about tomorrow.
+Where workflows funnel through one person today and a future-team
+tomorrow, refer to "the maintainer" — singular role, no name.
+*"The maintainer keeps the canonical copy."* *"The maintainer
+publishes redacted versions."* This is honest about today and
+forward-looking about tomorrow. The maintainer's actual name
+stays in git history, GitHub repo metadata, and contributor-
+facing docs — not in player-facing copy.
 
 ## When to break voice
 
