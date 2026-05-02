@@ -41,10 +41,9 @@ or anywhere else.
 (ERP), no sexual emotes, no shock content (graphic gore beyond
 what the game depicts, etc.).
 
-**A4. You must be at least 13 (16 in the EEA per GDPR), and act
-it.** Underage players are removed when discovered. Players whose
-behavior reads as significantly younger than that may also be
-removed.
+**A4. You must be at least 16, and act it.** Underage players are
+removed when discovered. Players whose behavior reads as significantly
+younger than that may also be removed.
 
 **A5. No ban evasion.** If you're banned and create a new account
 to play, both accounts get permabanned. Appeal through /appeals

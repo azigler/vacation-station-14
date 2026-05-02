@@ -16,7 +16,7 @@ Vacation Station 14 is a casual Space Station 14 server. We aim
 for relaxed rounds with light roleplay, focused less on violence
 and more on collaboration and creativity. The community we're
 building values supporting each other as much as winning the
-round. SFW server, 13+ players welcome, hub-listed via the
+round. SFW server, 16+ players welcome, hub-listed via the
 Wizards' Den.
 
 That paragraph is the lens. Every piece of copy inherits from it —

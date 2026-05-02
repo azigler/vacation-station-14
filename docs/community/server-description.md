@@ -17,7 +17,7 @@ panel's size — about 50–60 words.
 > co-op vibe, and a unique fork curated from many sibling
 > stations. The community lives across both Discord and the
 > game — drop in, share the space, take care of it together.
-> SFW, 13+, hub-listed via the Wizards' Den.
+> SFW, 16+, hub-listed via the Wizards' Den.
 
 ## Related
 

@@ -15,7 +15,7 @@ Vacation Station 14 is a casual SS14 hangout server. Light roleplay,
 creativity over violence, and a chosen-family vibe where players
 share the space and take care of it together. A unique fork curated
 from many sibling stations, with events that bridge Discord and the
-game. SFW, 13+, hub-listed via the Wizards' Den.
+game. SFW, 16+, hub-listed via the Wizards' Den.
 
 ## Long
 
@@ -37,7 +37,7 @@ extends past any single round.
 The community is casual and chosen-family — closer to a co-op than
 a crew. We share the space, take care of it together, and trust
 players to bring the bit. Roleplay can go in any direction; the
-only hard line is no NSFW content. SFW server, 13+ welcome,
+only hard line is no NSFW content. SFW server, 16+ welcome,
 Wizards' Den hub-listed.
 
 ## Related
