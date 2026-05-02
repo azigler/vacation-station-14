@@ -20,7 +20,18 @@ pg_password = "REPLACE WITH ACTUAL PASSWORD"  # from your password manager
 # -----------------------------------------------------------------------------
 
 [game]
+# Hostname follows hub-listing convention: [LANG][RP-tier] Name | Tagline.
+# Source for the name + tagline: docs/community/positioning.md.
 hostname = "[EN][LRP] Vacation Station 14 | Casual creativity and collaboration"
+# Server description shown in the launcher info panel when a player clicks
+# into VS14. Source: docs/community/server-description.md.
+desc = "Vacation Station 14 is a casual SS14 hangout server focused on collaboration and creativity. Light roleplay, chosen-family co-op vibe, and a unique fork curated from many sibling stations. The community lives across both Discord and the game — drop in, share the space, take care of it together. SFW, 13+, hub-listed via the Wizards' Den."
+
+[chat]
+# MOTD broadcast to each player when they join the lobby. Admins can
+# override at runtime via the `set-motd` command. Source for this
+# default: docs/community/motd.md.
+motd = "Welcome to Vacation Station 14 — a casual SS14 server focused on collaboration and creativity. Have fun, take care of the space, and drop in any time."
 
 [net]
 tickrate = 30
