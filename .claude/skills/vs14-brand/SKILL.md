@@ -235,26 +235,49 @@ web/                   # (forthcoming via vs-2dr)
 `assets/brand/iterations/` is gitignored. Only finals get
 committed.
 
-## Typography (open question)
+## Typography (locked 2026-05-03)
 
-The brand prompt focuses on rendered assets — but VS14 also needs
-typography for the website (vs-2dr) and any in-image text overlays.
-The retro-pixel direction reframes the type pairings:
+**Display: VT323**, **body: Atkinson Hyperlegible**.
 
-- NOT generic (no Inter, Roboto, Lato, Open Sans, Montserrat —
-  these read as AI-default)
-- Readable / WCAG-compliant
-- With personality
+Pairing rationale: VT323 is the most diegetic display choice — a
+CRT-terminal monospace that looks like text the brand's CRT TV
+would actually display, in a single weight. Atkinson Hyperlegible
+(Braille Institute) compensates with maximum body legibility +
+distinct unambiguous letterforms (lowercase l vs uppercase I,
+0 vs O), which the retro display font lacks at small sizes.
 
-Candidate type pairings to evaluate when website-time comes:
+The contrast IS the brand: photorealistic CRT framing pixel-art
+interior (assets), CRT-terminal display framing hyperlegible
+body (typography). Same move at two different surfaces.
 
-- Display: Press Start 2P (NES-era pixel font) / VT323 (CRT
-  terminal) / Major Mono Display / Recoleta (warm contrast pair)
-- Body: Atkinson Hyperlegible / Public Sans / DM Sans / Comfortaa
+```
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 
-A pixel-display font for headlines paired with a clean readable
-body font gives the retro-game-on-modern-website contrast the
-brand wants. Decision deferred until vs-2dr Phase 1.
+--font-display: 'VT323', monospace;       /* headlines, banners, big titles */
+--font-body: 'Atkinson Hyperlegible', sans-serif;  /* paragraphs, UI, microcopy */
+```
+
+Reach for the body font for: paragraphs, button labels, form
+inputs, status meta, any text that needs to be skim-readable.
+Reach for the display font for: hero headlines, section banners,
+big CTAs, stylized accent labels. Don't use VT323 for body copy
+— monospace tires the eye over long passages.
+
+Anti-patterns:
+- Pairing VT323 with Inter / Roboto / Open Sans / Lato /
+  Montserrat — defeats the purpose; reverts the body to
+  AI-default sans
+- Setting display font in italic / bold weights it doesn't have
+  (VT323 is single-weight only — fake-bolding via stroke is ugly)
+- Using display font under 24px — pixel terminal letters need
+  size to read
+
+Other candidates considered + rejected: Pixelify Sans (modern
+pixel — close second), Press Start 2P (too retro for body-adjacent
+contexts), DM Serif Display (contrast pair — shifts brand toward
+"thoughtful zine" instead of "casual hangout console"), Bungee
+(80s neon, drifts away from NES era), Major Mono Display
+(modernist — too design-school for the casual server tone).
 
 ## Anti-patterns specific to brand work
 
