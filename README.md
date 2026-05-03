@@ -102,9 +102,6 @@ with per-service config under `ops/<name>/`. See [`docs/upstream-sync.md`](docs/
 for the full table (cookbook at `/recipes/`, MapViewer + MapServer at
 `/maps/`, document-simu at `/writer/`, SS14.Admin at `/admin/`).
 
-Additional cherry-pick sources (Einstein Engines `_EE/`, Corvax `_CX/`)
-will be added as remotes when Phase 5 curation targets them.
-
 ### Modification convention
 
 Changes to files NOT in an `_<fork>/` subdirectory are annotated inline:
@@ -118,9 +115,6 @@ public const bool AllowGuestConnect = true;
 // for easy review + merge-conflict resolution
 // VS - end
 ```
-
-YAML uses `# VS - ...` instead of `// VS - ...`. Same rules for `// DV`,
-`// NF`, etc. when cherry-picking a modification from a sibling fork.
 
 ### Assets
 
