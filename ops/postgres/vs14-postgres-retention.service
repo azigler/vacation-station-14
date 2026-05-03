@@ -1,0 +1,29 @@
+[Unit]
+Description=Vacation Station 14 — nightly PostgreSQL retention prune
+Documentation=file:///opt/vacation-station/docs/OPERATIONS.md
+Requires=postgresql.service
+After=postgresql.service ss14-backup.service
+
+[Service]
+Type=oneshot
+User=postgres
+Group=postgres
+
+# Path is set at install time; default assumes the repo is deployed to
+# /opt/vacation-station. Override via drop-in if your layout differs.
+ExecStart=/opt/vacation-station/ops/postgres/retention.sh
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+# Read-only (not hidden) so symlinks like /opt/vacation-station →
+# /home/ubuntu/vacation-station-14 resolve. The script only reads the
+# repo path; all writes go through the unix socket to postgres itself.
+ProtectHome=read-only
+PrivateTmp=true
+
+# Environment overrides (optional)
+# Environment=PG_DB=vacation_station
+# Environment=CONNECTION_LOG_DAYS=30
+# Environment=IPINTEL_CACHE_DAYS=30
+# Environment=PLAYER_INACTIVE_DAYS=365
