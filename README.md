@@ -13,8 +13,6 @@
 
 # Vacation Station 14
 
-The SS14 server for hanging out.
-
 Vacation Station 14 (VS14) is a casual SS14 hangout server focused on
 collaboration and creativity. The codebase is a curated
 [Space Station 14](https://github.com/space-wizards/space-station-14)
