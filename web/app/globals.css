@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/*
+ * Vacation Station 14 brand tokens — see .claude/skills/vs14-brand/SKILL.md
+ *
+ * NES palette (locked 2026-05-03 via vs-qkr concept-C):
+ *   royal blue, mustard yellow, vermillion red, pixel white.
+ *
+ * Typography (locked 2026-05-03):
+ *   VT323 (display, headlines) + Atkinson Hyperlegible (body).
+ *
+ * Tailwind 4 uses CSS-first @theme config — adding tokens here exposes
+ * them as utility classes (bg-brand-blue, font-display, etc.). There is
+ * no tailwind.config.ts in Tailwind 4; the @theme block IS the config.
+ */
+@theme {
+	--color-brand-blue: #1d4ed8;
+	--color-brand-yellow: #facc15;
+	--color-brand-red: #dc2626;
+	--color-brand-white: #ffffff;
+
+	--font-display: var(--font-display), monospace;
+	--font-body: var(--font-body), sans-serif;
+}
+
+:root {
+	--vs-blue: #1d4ed8;
+	--vs-yellow: #facc15;
+	--vs-red: #dc2626;
+	--vs-white: #ffffff;
+}
+
+body {
+	background: var(--vs-blue);
+	color: var(--vs-white);
+}
