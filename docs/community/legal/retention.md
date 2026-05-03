@@ -14,15 +14,15 @@ The Service is operated by **azigler** ("the operator"). Contact:
 
 | Data | Retention | Purpose | Deletion mechanism | Storage |
 |---|---|---|---|---|
-| Hub username (player record) | While account active + 1 year | Ban-history continuity | Database prune query | Database |
-| Discord ID and username | Indefinite while member | Identify and route Discord users | Manual on leave or DSAR | Database + community-bot cache |
+| Hub username (player record) | Up to 1 year after last activity | Continuity for returning players | Database prune query | Database |
+| Discord ID and username | Indefinite while member | Identify and route Discord users | Manual on leave or DSAR | Database |
 | IP address (connection) | 30 days | Ban-evasion detection; abuse mitigation | Log rotation | System logs |
-| Chat logs (IC, OOC, ahelp) | 30 days | Moderation; appeals review | Database prune cron | Database |
+| IP intelligence cache | 30 days | Cached VPN / proxy verdicts to avoid re-querying upstream services | Database prune cron | Database |
+| Ahelp transcripts (admin-player chat) | Indefinite | Moderation audit trail; appeals review | Manual only | Database |
 | Round replays (raw) | 14 days | Round reconstruction; moderation; debug | Filesystem cron | Watchdog instance data directory |
 | Round replays (metadata) | 180 days | Statistics | Filesystem cron | Same as raw; metadata-only after raw deletion |
 | Admin actions (bans, warns, role changes) | Indefinite | Legal record of moderation decisions; ban appeals | Manual only | Database |
 | Connection events (join/leave/duration) | 30 days | Statistics; abuse pattern detection | Database prune cron | Database |
-| Discord messages cache | 30 days | Moderation context | Community-bot cache eviction | Community-bot cache |
 | Server logs (Loki) | 30 days | Diagnose crashes and performance | Loki retention rule | Loki ingestion |
 | Server logs (journald) | 30 days | Diagnose crashes and performance | Journald rotation | System journal |
 | Watchdog file logs | 30 days | Service supervision and crash analysis | Logrotate | Watchdog log directory |
@@ -30,9 +30,25 @@ The Service is operated by **azigler** ("the operator"). Contact:
 | Website request logs | 14 days | Abuse mitigation; debugging | Logrotate | Webserver log directory |
 | Incident reports (security events) | 1 year | Audit; cross-incident pattern detection | Manual archive | Maintainer-held archive |
 
-The numbers in this table are maximum retention. Data is deleted
-at the end of its window without exception, subject to the
-policies below.
+In-game IC and OOC chat are captured in round replays — see the
+replay rows above. Replay retention governs that data; there is no
+separate chat-log table.
+
+The Service does not maintain a local cache of Discord messages.
+Discord stores all messages on their infrastructure per Discord's
+own privacy policy.
+
+The numbers in this table are maximum retention. Data is deleted at
+the end of its window without exception, subject to the policies
+below.
+
+## Definitions
+
+- **Account active**: a player account is considered active if its
+  `last_seen` timestamp is within the past 1 year. Beyond 1 year
+  of inactivity, the player record is pruned. Ban records are
+  preserved separately under the permanent-identifier policy
+  regardless of activity.
 
 ## Permanent identifier retention (ban evasion)
 
@@ -64,10 +80,11 @@ When a user exercises the right to data deletion under GDPR / CCPA:
    on the next nightly prune. Active sessions terminated. Chat
    logs, replays, and connection records associated with that user
    are deleted out-of-cycle within 7 days.
-2. **Discord data** — the operator's local cache (community-bot
-   memory) is wiped within 24 hours. Discord retains its own
-   records per Discord's privacy policy; the operator cannot
-   delete those.
+2. **Discord data** — Discord ID and username are deleted from
+   the Service's database. Discord messages and account data are
+   stored on Discord's infrastructure, not the Service; deletion
+   of those records must be requested from Discord directly per
+   their privacy policy.
 3. **Backups** — database backups are not selectively edited.
    User-marked-for-deletion records roll out of backups as the
    28-day window passes; this is an acceptable delay under GDPR's

@@ -32,19 +32,21 @@ In short:
 
 | Data | Source | Why | Retention |
 |---|---|---|---|
-| Hub username | SS14 launcher (Wizards' Den OAuth) or guest | Identify you in-game; gate moderation actions | While account is active, plus 1 year for ban-history continuity |
+| Hub username | SS14 launcher (Wizards' Den OAuth) or guest | Identify you in-game; gate moderation actions | Up to 1 year after last activity |
 | Discord ID and username | Discord (when you join our Discord) | Identify you in Discord; sync with in-game role | Indefinite while member; deleted on request |
 | IP address | Game-server connection / website request | Ban-evasion detection; abuse mitigation | 30 days |
+| IP intelligence cache | Upstream IP-intel service (queried on connection) | Detect VPN / proxy connections without re-querying upstream every time | 30 days |
 
 ### Activity data
 
 | Data | Source | Why | Retention |
 |---|---|---|---|
-| Chat logs (in-character, out-of-character, ahelp) | Game server | Moderation; appeals review | 30 days |
+| In-game chat (IC, OOC) | Game server | Captured inside round replays | Governed by replay retention (see below) |
+| Ahelp transcripts (admin-player chat) | Game server | Moderation audit trail; appeals review | Indefinite |
 | Round replays | Game server | Round reconstruction; moderation; bug debugging | 14 days raw / 180 days metadata |
 | Connection events (join, leave, time on server) | Game server | Statistics; abuse pattern detection | 30 days |
 | Admin actions (bans, warns, role changes) | Game server / Discord | Legal record of moderation decisions; ban appeals | Indefinite |
-| Discord messages in our channels | Discord | Moderation context | Per Discord retention; we cache 30 days for moderation review |
+| Discord messages | Discord | Read on demand via the Discord API | Stored only by Discord per their privacy policy; the Service does not maintain a local cache |
 
 ### Operational data
 
@@ -108,13 +110,16 @@ We respond within 30 days.
 
 ### Caveats on deletion
 
-- **Admin records** (bans, warns, sanction history) are retained
-  even after a deletion request, because they form the legal record
-  of moderation decisions and the basis of any ban appeal. Your
-  username is preserved in those records; ancillary content (chat,
-  replays) is deleted.
-- **Cached Discord data** is deleted from our systems on request,
-  but Discord retains its own records per their privacy policy.
+- **Admin records** (bans, warns, sanction history, ahelp
+  transcripts) are retained even after a deletion request, because
+  they form the legal record of moderation decisions and the basis
+  of any ban appeal. Your username is preserved in those records;
+  ancillary content (in-game chat captured in replays, replays from
+  unrelated rounds) is deleted.
+- **Discord data** is stored on Discord's infrastructure, not on
+  the Service. To delete Discord data, request deletion from
+  Discord directly per their privacy policy. Your Discord ID and
+  username in our database are deleted on DSAR request.
 
 ## Children
 
