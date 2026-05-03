@@ -1,0 +1,32 @@
+<Document>
+# About This Guidebook
+
+This guidebook is also our wiki.
+
+There's no separate wiki software. The same source renders in two places:
+
+- [bold]In-game[/bold], the page you're reading right now.
+- [bold]On the website[/bold], at [color=cyan]ss14.zig.computer/guidebook/[/color], rebuilt nightly from the same files.
+
+When the source changes, both surfaces update.
+
+## Editing pages
+
+Edits are git PRs against the [color=cyan]vacation-station-14[/color] repository on GitHub. There's no separate editor login, no review queue, no wiki-specific account.
+
+The community pages live under:
+
+- [color=lime]Resources/ServerInfo/Guidebook/_VS/Community/[/color] — the page bodies (XML).
+- [color=lime]Resources/Prototypes/_VS/Guidebook/community.yml[/color] — the entry registry that wires pages into the menu.
+- [color=lime]Resources/Locale/en-US/_VS/guidebook/community.ftl[/color] — the menu labels.
+
+CONTRIBUTING.md has a short "Adding guidebook pages" section with the full flow. The format is the SS14 [color=cyan]Document[/color] markup — markdown-ish text with a few inline tags ([color=lime][bold][/bold][/color], [color=lime][color=#hex][/color][/color], [color=lime][textlink][/color]). Look at any existing page for a working example.
+
+## Pages we'd love help with
+
+- Per-department deep-dives written from a VS14-casual angle (not strict-RP).
+- Recurring-event explainers once those events run.
+- "How to host a round event" notes — bar nights, music shows, theatre, all the stuff that makes the hangout work.
+
+If you're not sure whether a page belongs, open a draft PR or a GitHub issue and ask. We fix-merge over reject — if the core's good, we'll absorb it and smooth the edges.
+</Document>
