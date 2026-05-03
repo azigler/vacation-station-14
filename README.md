@@ -1,3 +1,11 @@
+<p align="center">
+  <img src="assets/brand/finals/logo-primary.png" alt="Vacation Station 14" width="600" />
+</p>
+
+<p align="center">
+  <img src="assets/brand/finals/shield-readme.png" alt="Vacation Station 14" width="500" />
+</p>
+
 # Vacation Station 14
 
 The SS14 server for hanging out.
