@@ -755,6 +755,184 @@ shrunken dashboard on the next poll.
   `label_values(ss14_round_length{job="gameservers"}, server)`, defaulting
   to `vacation-station` to match the label set in `prometheus.yml`.
 
+## Retention enforcement
+
+Five mechanisms enforce the windows committed to in
+[`docs/community/legal/retention.md`](./community/legal/retention.md)
+(the policy source of truth). The table below tracks each commitment
+to its enforcement; the subsections detail how to verify each.
+
+| Policy row | Mechanism | Where |
+|---|---|---|
+| Connection events 30d | `vs14-postgres-retention.timer` | `ops/postgres/retention.sh` |
+| IP intelligence cache 30d | `vs14-postgres-retention.timer` | `ops/postgres/retention.sh` |
+| Player record 1y inactive | `vs14-postgres-retention.timer` (excluding banned users) | `ops/postgres/retention.sh` |
+| Ahelp transcripts indefinite | No prune (intentional) | — |
+| Admin actions indefinite | No prune (intentional) | — |
+| Round replays raw 14d / metadata 180d | `ss14-replay-rotate.timer` | `ops/replays/rotate.sh` |
+| Database backups 28d | `ss14-backup.timer` | `ops/postgres/backup.sh` |
+| Loki ingestion 30d | Loki compactor `retention_period: 720h` | `ops/observability/loki-config.yml` |
+| Journald 30d | `MaxRetentionSec=30day` | `/etc/systemd/journald.conf` |
+| Watchdog file logs 30d | Serilog `retainedFileCountLimit: 30` | `/opt/ss14-watchdog/appsettings.yml` |
+| Webserver logs 14d | nginx logrotate `rotate 14` | `/etc/logrotate.d/nginx` |
+
+### Postgres prune timer
+
+`ops/postgres/retention.sh` runs nightly via
+`vs14-postgres-retention.timer` at 03:30 UTC (15 minutes after the
+backup at 03:15, so the prune happens against a freshly backed-up
+database). The script wraps three `DELETE` statements in a single
+transaction:
+
+- `connection_log` — `WHERE time < NOW() - INTERVAL '30 days'`
+- `ipintel_cache` — `WHERE time < NOW() - INTERVAL '30 days'`
+- `player` — `WHERE last_seen_time < NOW() - INTERVAL '1 year' AND
+  user_id NOT IN (SELECT user_id FROM ban_player)`
+
+The `ban_player` join in the player prune is critical — it preserves
+the permanent-identifier policy from
+`docs/community/legal/retention.md`. Banned users' records are kept
+regardless of activity so ban-evasion checks remain effective.
+
+The script intentionally does NOT touch `admin_messages` (ahelp) or
+`admin_log` (admin actions); both are indefinite per policy.
+
+Install the units:
+
+```bash
+sudo install -m0644 ops/postgres/vs14-postgres-retention.service /etc/systemd/system/
+sudo install -m0644 ops/postgres/vs14-postgres-retention.timer   /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now vs14-postgres-retention.timer
+```
+
+Verify:
+
+```bash
+systemctl list-timers vs14-postgres-retention.timer
+sudo journalctl -u vs14-postgres-retention.service --since '1 day ago'
+```
+
+Manual run (smoke test after schema change or troubleshooting):
+
+```bash
+sudo systemctl start vs14-postgres-retention.service
+```
+
+Or directly under the postgres role:
+
+```bash
+sudo -u postgres /opt/vacation-station/ops/postgres/retention.sh
+```
+
+Knobs (override via systemd drop-in):
+
+| Env | Default | Effect |
+|---|---|---|
+| `PG_DB` | `vacation_station` | Target database |
+| `CONNECTION_LOG_DAYS` | `30` | `connection_log` window |
+| `IPINTEL_CACHE_DAYS` | `30` | `ipintel_cache` window |
+| `PLAYER_INACTIVE_DAYS` | `365` | Player inactivity threshold |
+
+### Journald 30-day retention
+
+`/etc/systemd/journald.conf` sets `MaxRetentionSec=30day` under the
+`[Journal]` section. Apply:
+
+```bash
+sudo $EDITOR /etc/systemd/journald.conf       # uncomment + set MaxRetentionSec=30day
+sudo systemctl restart systemd-journald
+```
+
+Apply retroactively to existing logs (one-shot):
+
+```bash
+sudo journalctl --vacuum-time=30d
+```
+
+Verify:
+
+```bash
+sudo grep MaxRetentionSec /etc/systemd/journald.conf
+journalctl --disk-usage
+```
+
+### Watchdog Serilog file retention
+
+`/opt/ss14-watchdog/appsettings.yml` is gitignored (it holds the API
+token). The Serilog `File` sink is configured with
+`retainedFileCountLimit: 30` to match the policy's 30-day window
+(rolling daily, so the count maps 1:1 to days). To change:
+
+```bash
+sudo $EDITOR /opt/ss14-watchdog/appsettings.yml
+# under Serilog.WriteTo.File.Args, set retainedFileCountLimit: 30
+
+sudo systemctl restart ss14-watchdog.service
+```
+
+`PersistServers: true` keeps the `Robust.Server` child running across
+the watchdog restart — players are not disconnected. Verify:
+
+```bash
+sudo grep -A4 "Name: File" /opt/ss14-watchdog/appsettings.yml | grep retainedFileCountLimit
+systemctl is-active ss14-watchdog.service
+```
+
+### Replay rotation
+
+See [Cookbook → What's on disk](#whats-on-disk) and
+`ops/replays/rotate.sh`. The `ss14-replay-rotate.timer` runs at 04:30
+UTC daily, deleting raw replay zips older than 14 days (after
+extracting metadata sidecars) and metadata sidecars older than 180
+days. Both windows match the policy.
+
+### Database backup rotation
+
+`ops/postgres/backup.sh` enforces backup retention itself: 7 daily +
+4 weekly = 28-day window. See [PostgreSQL → Backups](#backups).
+
+### Loki ingestion retention
+
+`retention_period: 720h` (30 days) in
+`ops/observability/loki-config.yml`, with `retention_enabled: true`.
+The compactor runs every 10 minutes. See
+[Observability → Retention](#retention).
+
+### Verifying the policy table
+
+To audit reality against
+[`docs/community/legal/retention.md`](./community/legal/retention.md),
+walk each row of the policy's retention schedule and confirm the
+mechanism is active:
+
+```bash
+# postgres retention timer
+systemctl list-timers vs14-postgres-retention.timer
+sudo journalctl -u vs14-postgres-retention.service -n 30
+
+# replay rotation timer
+systemctl list-timers ss14-replay-rotate.timer
+
+# database backup timer
+systemctl list-timers ss14-backup.timer
+
+# journald retention
+sudo grep MaxRetentionSec /etc/systemd/journald.conf
+
+# watchdog file retention
+sudo grep -A4 "Name: File" /opt/ss14-watchdog/appsettings.yml | grep retainedFileCountLimit
+
+# loki retention
+grep -A2 retention_period ops/observability/loki-config.yml
+
+# nginx access/error log rotation
+grep -E "rotate|daily" /etc/logrotate.d/nginx
+```
+
+If any row of the policy table doesn't match a mechanism above, file a
+new bead — drift between policy and enforcement is a compliance bug.
+
 ## Maps (SS14.MapViewer)
 
 The player-facing interactive map browser at
