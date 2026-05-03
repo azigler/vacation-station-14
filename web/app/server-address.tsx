@@ -43,7 +43,7 @@ export function ServerAddressBox() {
 					type="button"
 					onClick={handleCopy}
 					aria-label={copied ? "Copied" : "Copy server address"}
-					className="font-display border-l-2 border-brand-yellow bg-brand-yellow px-4 py-3 text-base text-brand-blue transition-colors hover:bg-brand-white focus:outline-none focus:ring-4 focus:ring-brand-yellow/60 sm:text-lg"
+					className="font-display cursor-pointer border-l-2 border-brand-yellow bg-brand-yellow px-4 py-3 text-base text-brand-blue transition-colors hover:bg-brand-white focus:outline-none focus:ring-4 focus:ring-brand-yellow/60 sm:text-lg"
 				>
 					{copied ? "✓ Copied" : "Copy"}
 				</button>

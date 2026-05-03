@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ContentPage } from "@/components/ContentPage";
 import { SiteShell } from "@/components/SiteShell";
+import { ServerAddressBox } from "../server-address";
 
 export const metadata: Metadata = {
 	title: "Connect — Vacation Station 14",
@@ -8,7 +9,6 @@ export const metadata: Metadata = {
 		"How to download the SS14 launcher, register a Wizden account, and join Vacation Station 14.",
 };
 
-const SERVER_URI = "ss14://ss14.zig.computer:1212";
 const LAUNCHER_URL = "https://spacestation14.com/about/nightly/";
 const ACCOUNT_URL = "https://account.spacestation14.com";
 
@@ -26,23 +26,18 @@ export default function ConnectPage() {
 			>
 				<section>
 					<h2 className="mt-10 font-display text-3xl leading-tight text-brand-yellow">
-						Direct connect
+						Server address
 					</h2>
 					<p className="mt-4 font-body text-base leading-relaxed text-brand-white/90 sm:text-lg">
-						If the launcher is already installed and signed in, this link drops
-						you straight onto the server:
+						Once the launcher is installed and signed in, paste this into the{" "}
+						<strong className="font-bold text-brand-white">
+							Direct Connect
+						</strong>{" "}
+						dialog (or just search "Vacation Station 14" in the server browser):
 					</p>
-					<p className="mt-4">
-						<a
-							href={SERVER_URI}
-							className="inline-block rounded border-2 border-brand-yellow bg-brand-yellow px-5 py-3 font-display text-2xl text-brand-blue hover:bg-brand-blue hover:text-brand-yellow"
-						>
-							Launch SS14 → ss14.zig.computer:1212
-						</a>
-					</p>
-					<p className="mt-2 font-body text-sm text-brand-white/70">
-						The browser will prompt you to open the SS14 launcher.
-					</p>
+					<div className="mt-6">
+						<ServerAddressBox />
+					</div>
 				</section>
 
 				<section>
@@ -114,7 +109,7 @@ export default function ConnectPage() {
 								Find the server
 							</strong>{" "}
 							in the launcher's server browser — search "Vacation Station 14" —
-							or use the direct-connect button above.
+							or paste the address above into <strong>Direct Connect</strong>.
 						</li>
 					</ol>
 				</section>
@@ -135,8 +130,9 @@ export default function ConnectPage() {
 							<strong className="font-bold text-brand-white">
 								Server doesn't show up in the hub list.
 							</strong>{" "}
-							The hub pings every ~60 seconds; wait a moment and refresh, or use
-							the direct-connect link above.
+							The hub pings every ~60 seconds; wait a moment and refresh, or
+							paste the server address above into{" "}
+							<strong>Direct Connect</strong>.
 						</li>
 						<li>
 							<strong className="font-bold text-brand-white">
