@@ -1,5 +1,5 @@
 ---
-description: VS14 brand identity — visual lens for logos, icons, hero illustrations, splash art, social cards, and any rendered asset. Embodies the maintainer-pinned Frutiger Aero × Silicon Dreams aesthetic with autumn coral palette and ground-level rolling-hills composition. Load whenever generating, evaluating, or iterating on VS14 visual assets via /openrouter (nano-banana) or by hand. Pairs with /impeccable for design craft and /vs14-voice for written-content discipline.
+description: VS14 brand identity — visual lens for logos, icons, hero illustrations, splash art, social cards, and any rendered asset. Embodies the maintainer-locked retro 8-bit + CRT-bezel aesthetic — pixel-art native, NES-era palette, vintage hardware framing. Load whenever generating, evaluating, or iterating on VS14 visual assets via /openrouter (nano-banana) or by hand. Pairs with /impeccable for design craft and /vs14-voice for written-content discipline.
 ---
 
 # VS14 brand
@@ -12,23 +12,30 @@ This is the **machine-readable** brand source. The
 [/vs14-voice](../vs14-voice/SKILL.md) skill is the written-content
 equivalent.
 
-## Maintainer-pinned aesthetic (locked 2026-05-03 via vs-7ns interview)
+## Maintainer-locked aesthetic (locked 2026-05-03 via vs-qkr concept-C exploration)
 
-- **Frutiger Aero × Silicon Dreams** — late-1990s / early-2000s
-  3D-render surrealism (Bryce-3D, Poser) crossed with Frutiger
-  Aero's grounded optimistic photorealism (dewy water beads,
-  glossy leaves, soft volumetric light).
-- **Autumn coral + earthy pastels + aquatics** — soft coral, rust,
-  sage, teal, aquamarine. Earthy with jewel-tone undertones. Never
-  neon, never corporate-slick.
-- **Stardew Valley adjacent** — autumnal warmth, hand-finished
-  feel. Stardew is a tonal reference, NOT a treatment reference —
-  no pixel art.
-- **Ground-up rolling hills, NEVER cosmic** — this is the inversion
-  of the SS14 space-sim trope. The work is anchored on earth,
-  looking up at land or down at dewy ground. No starfields, no
-  planets, no checker-floor surrealism (Silicon Dreams' biggest
-  motif we're dropping).
+- **Retro 8-bit + CRT bezel** — late-1980s / early-1990s console
+  video-game art, NES-era chunky pixel art rendered diegetically
+  on a CRT television. The CRT bezel is the brand wrapper —
+  every asset reads as if photographed FROM a vintage screen,
+  not generated as a flat illustration.
+- **NES palette** — royal blue, pixel white, mustard-yellow drop
+  shadow, vermillion red accent. Bold and saturated, never neon,
+  never pastel, never AAA-game polish.
+- **Pixel-art is the native genre** — SS14 IS rendered in pixel
+  art in-game. The brand aligns with that genre instead of
+  fighting it with a 3D-render lens. The contrast IS the brand:
+  photorealistic CRT bezel framing NES-resolution pixel-art
+  interior.
+- **Cosmic IS allowed inside the screen** — starfields, pixel
+  rockets, pixel space-stations all read as native habitat at
+  NES resolution, not corporate sci-fi cliché. The earlier
+  "never cosmic" rule was specific to the abandoned 3D-render
+  lens; in pixel-art, the cosmic is part of the genre.
+- **Stardew-adjacent warmth, hand-finished feel** — casual,
+  nostalgic, fun. The energy of finding an old console at a
+  thrift store and being surprised it still works. Tonal
+  reference, not treatment reference.
 
 ## The base prompt (the "lens")
 
@@ -36,27 +43,39 @@ Every asset prompt prepends this block. It's the stable identity
 that keeps generated assets visually consistent over time.
 
 ```
-Aesthetic: Frutiger Aero meets Silicon Dreams 3D-render era — late
-1990s and early 2000s software-box surrealism, but anchored to the
-earth instead of cosmic space. Soft autumn coral and rust tones
-blended with sage, teal, and aquamarine. Earthy pastel palette with
-jewel-tone undertones — never neon, never corporate-slick.
+Aesthetic: late 1980s / early 1990s console video game, NES-era
+chunky pixel art rendered diegetically on a CRT television. The
+CRT bezel is the brand wrapper — every asset reads as if
+photographed FROM a vintage screen, not generated as a flat
+illustration. The contrast between photorealistic CRT hardware
+and NES-resolution pixel-art interior IS the brand.
 
-Composition: ground-level perspective looking up at rolling autumnal
-hills under a soft golden-hour sky. Dewy moss, glossy leaves with
-water beads, fallen leaves, occasional ripe apple or fungal cluster.
-Subtle lens flare from a low warm sun. NEVER cosmic, NEVER space,
-NEVER starfields — the work is anchored on earth, looking up at the
-land or down at the ground.
+Palette: NES royal blue (#1d4ed8 / #2563eb range), pixel white,
+mustard-yellow drop shadow (#facc15 / #eab308 range), vermillion
+red accent (#dc2626 / #b91c1c range). Bold, saturated, never
+neon, never pastel. Black starfield backgrounds inside the
+screen are welcome. The CRT bezel is warm-gray plastic with
+subtle highlights — soft-finished, not chrome.
 
-Rendering: 3D-rendered with that Bryce-3D / Poser late-90s feel —
-slightly glossy plastic surfaces, raytraced reflections in dewdrops,
-soft volumetric light. Hand-finished, with intentional imperfection
-(not AAA-polished, not AI-clean).
+Composition: anchored on the CRT screen as the brand wrapper.
+Inside the screen: pixel-art subjects at NES resolution (chunky,
+1-2px detail max, no anti-aliasing within the pixel grid). The
+TV sits in a mild 3/4 perspective on a warm desk surface,
+optionally with an NES-era controller in the foreground for
+specificity. The screen has subtle phosphor glow and faint
+horizontal scanlines — the hardware is visible.
 
-Mood: dreamy but grounded. Optimistic but earnest. Cozy but not
-twee. The feeling of taking a slow walk on a low-stakes autumn day.
-Stardew-adjacent warmth without the pixel-art treatment.
+Rendering: photorealistic CRT (subtle phosphor glow, faint
+scanlines, slight curvature, warm vignette at corners) framing
+NES-era pixel-art content. Pixel content is rendered at LOW
+resolution and stays low — no smoothing, no anti-aliasing
+within the pixel grid, no high-poly 3D shading on supposedly
+pixel objects.
+
+Mood: nostalgic, casual, fun. The energy of finding an old
+console at a thrift store and being surprised it still works.
+Stardew-adjacent autumnal warmth, but in pixel-art-native genre
+rather than 3D-render-of-pixel-art aesthetic.
 ```
 
 ## Universal anti-patterns
@@ -65,52 +84,81 @@ Any asset prompt should also include this block (or quote it
 back when reviewing a generated asset):
 
 ```
-AVOID: cyan-on-dark, neon, AAA-game polish, corporate gradients,
-generic AI aesthetic, space / starfields / cosmos, military imagery,
-checker-floor surrealism, Y2K chrome, gradient text, glassmorphism,
-Inter / Helvetica typography readouts inside the image, pixel art,
-hands with six fingers, AI-shape watermarks.
+AVOID: smooth-shaded 3D models, AAA-game polish, raytraced
+reflections, motion-blur cosmic rendering, glowing energy
+effects, generic AI sci-fi, military imagery, Y2K chrome,
+glassmorphism, gradient text, corporate gradients, neon
+accents, cyan-on-dark dashboards, Inter / Helvetica typography
+readouts inside the image, hands with six fingers, AI-shape
+watermarks, anti-aliasing within the pixel grid (kills NES
+authenticity), vector / flat illustration without the CRT
+frame (loses the genre wrapper), Frutiger Aero (the abandoned
+direction), pastel coral / sage / aquamarine (the abandoned
+palette), 3D-rendered glossy plastic / chrome / glass surfaces.
 ```
 
 ## Asset composition templates
 
 Each asset type adds a composition block on top of the lens.
 
-### Logo (1:1)
+### Logo (horizontal, ~5:3 — primary)
 
-> A circular emblem composition. The rolling hill silhouette wraps
-> the lower curve of the frame. Wordmark-friendly negative space at
-> the top of the frame for the words "Vacation Station 14" to be
-> overlaid. A single focal motif (a leaf / a dewdrop / a fallen
-> apple / a fungal cluster) anchors the center. Soft golden-hour
-> palette throughout.
+The primary logo is the inner-screen rectangle of the canonical
+brand image — NES-era pixel-art "VACATION STATION 14" wordmark
+in chunky white letters with mustard-yellow drop shadow, set in
+a slight italic-feel forward angle. To the right: a pixel rocket
+and a pixel space-station emerging from the wordmark. To the
+left: vermillion red horizontal ribbon stripes (vintage arcade
+box-art). Royal blue gradient bottom, black starfield top.
+Composition fills the image edge-to-edge.
+
+The canonical version lives at `assets/brand/finals/logo-primary.png`
+(cropped from the concept-C 5-concept exploration batch). Use it
+as the **style ref** for every downstream asset prompt.
+
+### Logo (full bezel — 4:3 hero variant)
+
+Same wordmark composition as above but rendered inside the full
+CRT bezel + NES controller in foreground on a warm desk surface.
+Used as hero illustration / social card / launcher splash.
 
 ### Icon (1:1)
 
-> A single object floating gently in a soft pastel-mist void —
-> [the chef's hat / a wrench / a beaker / a fish / a microwave /
-> a potted plant]. Same palette, lighting, and rendering as the
-> logo for visual consistency. The object reads at small sizes
-> (32px tile).
+A CRT TV in mild 3/4 perspective, screen displaying a single
+NES-era pixel object: pixel chef's hat, pixel wrench, pixel
+beaker, pixel fish, pixel microwave, pixel potted plant, pixel
+toolbox, pixel jukebox, etc. Same warm-gray bezel, faint
+scanlines, mustard-yellow accent on the bezel border or stand.
+Object reads at small sizes (32px tile).
+
+### Shield / badge (3:1 to 5:1)
+
+GitHub-shields.io-style, but rendered in NES pixel-art aesthetic.
+Two-tone blocky rectangle with chunky pixel text — NES royal
+blue background, pixel-white label text, mustard-yellow drop
+shadow on key letters. Optional thin 1px CRT-scanline overlay
+for genre-coherence. Used for README badges + website chip rows.
 
 ### Hero illustration (16:9 or 21:9)
 
-> A wide ground-level vista. Rolling autumn hills under a soft
-> sky. A small structure or meandering path leading the eye into
-> the distance. Negative space in the upper-left for a headline
-> overlay. Subtle motion or atmospheric depth.
+Full CRT scene — bezel + screen + controller + warm desk
+surface, optional second-person POV (player's hand on the
+controller). Screen content varies by use case (logo for
+landing page, in-game pixel scene for feature panels). Negative
+space in the upper-left or above the TV for headline overlay.
 
 ### Background tile (seamless)
 
-> A subtle dewy-moss texture. Repeatable / seamless. Low contrast
-> so text reads on top. Soft sage-coral wash. No focal subject —
-> this is texture, not subject.
+Subtle horizontal CRT-scanline overlay at low opacity, OR
+NES-era dot-matrix dither in royal blue. Repeatable / seamless.
+Low contrast so text reads on top. NOT a focal subject — this
+is texture, not subject.
 
 ### Social card (1.91:1, OpenGraph dims)
 
-> The hero composition compressed: rolling hills + path or focal
-> structure on the right two-thirds; left third reserved for
-> wordmark + tagline overlay. Same palette and rendering.
+The hero composition compressed: CRT TV + controller on the
+right two-thirds; left third reserved for wordmark + tagline
+overlay in the same NES palette.
 
 ## Generation flow
 
@@ -118,27 +166,53 @@ Each asset type adds a composition block on top of the lens.
    from autonomous loops. See /openrouter cost discipline.
 2. **Compose the prompt**: `<brand base prompt>` + `<asset
    composition>` + `AVOID block`. Adjust subject specifics to taste.
-3. **Render at 1K** for iteration (~$0.004 per image). Save to
+3. **Pass `assets/brand/finals/logo-primary.png` as `--ref`** —
+   the canonical style anchor. For downstream assets, this is
+   non-negotiable; text prompts alone collapse to AI defaults.
+4. **Render at 1K** for iteration (~$0.07 per image). Save to
    `assets/brand/iterations/<asset>-vN.png`.
-4. **Iterate**: review with the user, refine the composition or
+5. **Iterate**: review with the user, refine the composition or
    palette emphasis, re-render. Don't loop without explicit ask.
-5. **When a candidate is approved**, render the final at 2K or 4K
+6. **When a candidate is approved**, render the final at 2K or 4K
    and **promote** to:
+   - `assets/brand/finals/` — committed, canonical
    - `Resources/Textures/_VS/branding/` — in-game use (RSI sprites
      where appropriate; PNG for splash / loading)
    - `web/public/branding/` — website use (when vs-2dr ships)
    - GitHub repo social card — via repo Settings → Social preview
 
-## Cost reference (nano-banana 2)
+## Multi-ref pattern (load-bearing)
+
+For any asset other than the primary logo itself:
+
+```bash
+~/.claude/skills/openrouter/openrouter-image.sh \
+  "<brand base prompt> <asset composition> <subject> <AVOID block>" \
+  ./assets/brand/iterations/<asset>-vN.png \
+  --ref ./assets/brand/finals/logo-primary.png \
+  --ref ./Resources/Textures/<sprite>.rsi/icon.png \
+  --aspect 1:1 --size 1K
+```
+
+Style ref FIRST (logo-primary), content ref SECOND (the SS14
+sprite or other subject). Order matters — first ref tends to
+dominate the aesthetic.
+
+## Cost reference (nano-banana 2 — measured 2026-05-03)
 
 | Size | Approx cost / image |
 |---|---|
-| 1K (default) | ~$0.004 |
-| 2K | ~$0.012 |
-| 4K | ~$0.04 |
+| 1K (default) | ~$0.07 |
+| 2K | ~$0.20 (estimate; scales with output token count) |
+| 4K | ~$0.50+ (estimate) |
 
-Iterate at 1K. Only render finals at 2K-4K once a direction is
-locked.
+Image-output tokens are billed at roughly $61/M, far higher than
+the model card's $3/M output rate suggests. Iterate at 1K; only
+render finals at 2K-4K once a direction is locked. ~14 images per
+USD at 1K.
+
+The iteration arc that landed on concept-C consumed ~$4.65 across
+~66 generations. Future corpus regens should fit in <$1.
 
 ## File-storage convention
 
@@ -146,6 +220,8 @@ locked.
 assets/
   brand/
     iterations/        # noisy iteration output (gitignored)
+      old-frutiger-finals/   # archived prior-direction assets
+      concepts/              # 5-concept exploration batch
     finals/            # selected candidates (committed)
 Resources/
   Textures/
@@ -163,7 +239,7 @@ committed.
 
 The brand prompt focuses on rendered assets — but VS14 also needs
 typography for the website (vs-2dr) and any in-image text overlays.
-The maintainer's interview pinned:
+The retro-pixel direction reframes the type pairings:
 
 - NOT generic (no Inter, Roboto, Lato, Open Sans, Montserrat —
   these read as AI-default)
@@ -172,13 +248,13 @@ The maintainer's interview pinned:
 
 Candidate type pairings to evaluate when website-time comes:
 
-- Display: Frutiger (the actual font, since the aesthetic is named
-  after it) / Recoleta / DM Serif Display / Atkinson Hyperlegible
+- Display: Press Start 2P (NES-era pixel font) / VT323 (CRT
+  terminal) / Major Mono Display / Recoleta (warm contrast pair)
 - Body: Atkinson Hyperlegible / Public Sans / DM Sans / Comfortaa
 
-Decision deferred until vs-2dr Phase 1 / vs-7ns logo lands. The
-typeface should harmonize with the chosen logo, not the other way
-around.
+A pixel-display font for headlines paired with a clean readable
+body font gives the retro-game-on-modern-website contrast the
+brand wants. Decision deferred until vs-2dr Phase 1.
 
 ## Anti-patterns specific to brand work
 
@@ -194,6 +270,13 @@ around.
 - **Final-as-finished.** A candidate that passes maintainer review
   is "approved for promotion to finals/", not "the brand is done."
   The lens is the brand. Assets are applications of the lens.
+- **Skipping the multi-ref pattern.** Text prompts alone collapse
+  to AI defaults. Without `logo-primary.png` as a style ref,
+  generations drift back toward generic-AI pixel art rather than
+  the specific NES + CRT-bezel direction.
+- **Anti-aliasing within the pixel grid.** A common AI-default
+  drift — the model wants to "smooth" the pixel content. Call
+  this out explicitly in every prompt; the AVOID block names it.
 
 ## See also
 
@@ -203,5 +286,7 @@ around.
   design library (typography, color, motion, accessibility)
 - [/vs14-voice](../vs14-voice/SKILL.md) — written-content lens;
   parallel skill for copy
-- vs-7ns — current brand-identity bead; carries the aesthetic
-  interview answers in --notes
+- vs-7ns — current brand-identity bead; carries the locked
+  aesthetic notes
+- vs-qkr — sub-bead carrying the iteration log + concept-C
+  lock-in rationale
