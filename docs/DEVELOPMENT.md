@@ -436,6 +436,7 @@ Quick pattern: new C# code goes in `Content.Server/_VS/FeatureName/`, new protot
 |---------|-----|
 | `RobustToolbox/` is empty | `git submodule update --init --recursive` or `python RUN_THIS.py` |
 | CI fails with "RobustToolbox submodule modified" | `git checkout upstream/master RobustToolbox` |
+| `git@github.com: Permission denied (publickey)` during `git submodule update --init --recursive` or noisy after `git merge` | One-time per machine: `git config --global url."https://github.com/".insteadOf "git@github.com:"`. See [`upstream-sync.md`](upstream-sync.md#one-time-setup-sshhttps-rewrite-for-nested-submodules) for why repo-local config does not propagate. |
 | CRLF line ending error | `dos2unix <file>` or configure editor for LF |
 | `System.DllNotFoundException: SharpFont.FT` | `sudo apt install libfreetype6` |
 | libssl version mismatch | `export CLR_OPENSSL_VERSION_OVERRIDE=48` |
