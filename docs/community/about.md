@@ -49,6 +49,12 @@ Three ways to find VS14:
 
 Players don't need GitHub or Discord accounts to play.
 
+The in-game guidebook (press <kbd>F1</kbd> → guidebook button, or
+read it on the web at
+[ss14.zig.computer/guidebook/](https://ss14.zig.computer/guidebook/))
+doubles as the VS14 wiki — same source, two surfaces. Edits are
+git PRs against this repo, no separate wiki software.
+
 ## Contributing
 
 Contributions are welcome:
@@ -59,6 +65,8 @@ Contributions are welcome:
   for the namespace and attribution rules. We lean fix-merge over
   reject; we'd rather take your idea and finish it than hand it back
   over a missing semicolon.
+- **Guidebook / wiki edits** — same flow, see the "Adding Guidebook
+  Pages" section in CONTRIBUTING.md.
 - **Cherry-pick suggestions** — if a sibling fork shipped something
   you'd like to see here, open a PR or a discussion with the
   upstream SHA.

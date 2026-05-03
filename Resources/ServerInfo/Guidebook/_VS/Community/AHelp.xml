@@ -1,0 +1,38 @@
+<Document>
+# How to Ahelp
+
+"Ahelp" is short for *admin help* — the in-game channel for talking to the maintainer. Press [color=yellow][bold][keybind="OpenAHelp"][/bold][/color] to open it.
+
+## When to ahelp
+
+- You think someone broke a rule.
+- You're stuck on something the game can't explain — bug, weird interaction, you can't tell if you're allowed to do a thing.
+- Something rules-adjacent happened to you and you'd like a quick read.
+- You want to report harassment, slurs, doxxing, or anything in the [textlink="always-on community rules" link="DefaultRuleset"/] tier.
+
+If you're not sure whether something is ahelp-worthy, ahelp anyway. Better one extra ping than a quiet bad situation.
+
+## What to include
+
+Three things make an ahelp easy to act on:
+
+- [bold]What happened.[/bold] Short and concrete: "X attacked me unprovoked at the bar," not "X is being weird."
+- [bold]Where, roughly.[/bold] Department, room, or coords if you have them.
+- [bold]Who's involved.[/bold] Other players' character names if you know them.
+
+Screenshots help if it's visual. You don't need to write an essay — three sentences is plenty.
+
+## What to expect
+
+VS14 has one maintainer. They might respond in seconds, they might respond after the round ends, they might respond the next day. The ticket sticks around either way; nothing gets dropped.
+
+If the round's still going and the situation is actively unsafe (someone's actively harassing you, you're being chain-murdered), say so explicitly so it gets prioritized.
+
+Don't [color=#EB2D3A][bold]disconnect mid-conversation[/bold][/color] without saying so. "I have to log, can we follow up later" is fine. Silent exits make resolution harder.
+
+## What ahelp isn't
+
+- [bold]It's not the appeals process.[/bold] If you're already banned and want to dispute it, head to /appeals on the website. The in-game channel doesn't reach you when you're banned out.
+- [bold]It's not a rules debate.[/bold] Ahelp is for situations, not for arguing rule wording. If you think a rule is wrong, raise it after the round in Discord or on GitHub.
+- [bold]It's not OOC chat.[/bold] Don't ahelp to ask whether someone wants to RP a thing — that's metacomms-adjacent and wastes admin attention.
+</Document>

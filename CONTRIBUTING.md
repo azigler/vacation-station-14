@@ -184,6 +184,54 @@ The rules below exist so a small PR stays small to review.
 8. **Declare AI assistance** in the PR body if you used it. This is
    for transparency, not gatekeeping.
 
+## Adding Guidebook / Wiki Pages
+
+The in-game guidebook **is** the VS14 wiki. The same source renders
+in-game (press <kbd>F1</kbd> → guidebook button, or
+<kbd>OpenGuidebook</kbd> keybind) and on the website at
+[ss14.zig.computer/guidebook/](https://ss14.zig.computer/guidebook/),
+rebuilt nightly. There is no separate wiki software, no separate
+editor login. Edits are PRs against this repo.
+
+VS14 community pages live under three paths:
+
+```
+Resources/Prototypes/_VS/Guidebook/community.yml          # entry registry (menu wiring)
+Resources/ServerInfo/Guidebook/_VS/Community/*.xml        # page bodies
+Resources/Locale/en-US/_VS/guidebook/community.ftl        # menu labels
+```
+
+Upstream-curated pages (auto-rendered systems content, default
+ruleset, etc.) live in the unprefixed `Resources/Prototypes/Guidebook/`
+and `Resources/ServerInfo/Guidebook/` trees. **Don't edit those for
+community content** — add to the `_VS/` tree instead, so the curation
+boundary stays legible and upstream syncs stay clean.
+
+To add a page:
+
+1. Drop a new `.xml` file under
+   `Resources/ServerInfo/Guidebook/_VS/Community/` using the SS14
+   `<Document>` markup. Existing pages are the working examples;
+   inline tags like `[bold]`, `[color=#hex]`, `[textlink]`,
+   `[keybind]`, and `<GuideEntityEmbed>` are documented across the
+   upstream `Resources/ServerInfo/Guidebook/` tree.
+2. Register it as a `guideEntry` in
+   `Resources/Prototypes/_VS/Guidebook/community.yml` (or a new
+   sibling YAML). Pick an `id`, a `name` (the locale key), and a
+   `text` path. Add it to the parent's `children:` list if it
+   should nest.
+3. Add the locale label to
+   `Resources/Locale/en-US/_VS/guidebook/community.ftl` keyed by
+   the `name` field from step 2.
+4. Run `dotnet run --project Content.YAMLLinter` to validate the
+   prototype additions.
+5. Open a PR. The next nightly rebuild surfaces the page on the
+   website; in-game updates land with the next server build.
+
+Voice for community pages should match the rest of the
+player-facing copy (rules, about page, MOTD): casual, concrete,
+no moralizing closers. If in doubt, keep it short.
+
 ## Bundled Services
 
 Services VS14 deploys alongside the game (cookbook at `/recipes/`,

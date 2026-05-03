@@ -69,10 +69,17 @@ def load_entries(repo: Path) -> dict[str, dict]:
     """Parse `guideEntry` prototypes into a dict keyed by id.
 
     Each entry: {id, name, text (xml path), children, parent, priority}.
+
+    Scans the upstream `Resources/Prototypes/Guidebook/` tree plus any
+    `_<FORK>/Guidebook/` sibling trees that VS14 (or other forks) layer
+    on top — the in-game prototype manager recursively loads
+    `Resources/Prototypes/`, so we mirror that here.
     """
-    proto_dir = repo / "Resources" / "Prototypes" / "Guidebook"
+    proto_root = repo / "Resources" / "Prototypes"
     entries: dict[str, dict] = {}
-    for yml in sorted(proto_dir.glob("*.yml")):
+    yml_paths: list[Path] = list(proto_root.glob("Guidebook/*.yml"))
+    yml_paths.extend(proto_root.glob("_*/Guidebook/**/*.yml"))
+    for yml in sorted(yml_paths):
         docs = yaml.safe_load(yml.read_text(encoding="utf-8")) or []
         for raw in docs:
             if not isinstance(raw, dict) or raw.get("type") != "guideEntry":
@@ -94,19 +101,28 @@ def load_entries(repo: Path) -> dict[str, dict]:
 
 
 def load_labels(repo: Path) -> dict[str, str]:
-    """Parse `guide-entry-<key> = <label>` from the guidebook fluent file."""
-    ftl = repo / "Resources" / "Locale" / "en-US" / "guidebook" / "guides.ftl"
+    """Parse `guide-entry-<key> = <label>` from the guidebook fluent files.
+
+    Scans the upstream `Resources/Locale/en-US/guidebook/` tree plus any
+    `_<FORK>/guidebook/` sibling trees that VS14 (or other forks) layer
+    on top — Fluent's runtime concats every `.ftl` it finds, so we mirror
+    that here.
+    """
+    locale_root = repo / "Resources" / "Locale" / "en-US"
     labels: dict[str, str] = {}
-    if not ftl.exists():
-        return labels
-    current_key: str | None = None
-    for line in ftl.read_text(encoding="utf-8").splitlines():
-        m = re.match(r"^([a-zA-Z0-9_-]+)\s*=\s*(.*)$", line)
-        if m:
-            current_key = m.group(1)
-            labels[current_key] = m.group(2).strip()
-        elif current_key and line.startswith(" "):
-            labels[current_key] += " " + line.strip()
+    ftl_paths: list[Path] = list(locale_root.glob("guidebook/*.ftl"))
+    ftl_paths.extend(locale_root.glob("_*/guidebook/**/*.ftl"))
+    for ftl in sorted(ftl_paths):
+        if not ftl.exists():
+            continue
+        current_key: str | None = None
+        for line in ftl.read_text(encoding="utf-8").splitlines():
+            m = re.match(r"^([a-zA-Z0-9_-]+)\s*=\s*(.*)$", line)
+            if m:
+                current_key = m.group(1)
+                labels[current_key] = m.group(2).strip()
+            elif current_key and line.startswith(" "):
+                labels[current_key] += " " + line.strip()
     return labels
 
 

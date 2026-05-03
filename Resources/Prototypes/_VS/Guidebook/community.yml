@@ -1,0 +1,48 @@
+# VS - VS14 community guidebook entries
+#
+# Hand-curated player-facing pages that complement upstream's
+# auto-rendered systems content. Sub-tree separated from the
+# default newplayer / SS14 / rules entries via the _VS path
+# discipline. Same source renders in-game and at /guidebook/
+# on the website (vs-1e5).
+#
+# Priority sits at 1 so the "Welcome to VS14" entry shows up
+# directly under "New? Start here!" (priority 0) and above the
+# rules/SS14/References blocks (priority 10/20/30).
+
+- type: guideEntry
+  id: VSCommunity
+  name: guide-entry-vs-community
+  priority: 1
+  text: "/ServerInfo/Guidebook/_VS/Community/Welcome.xml"
+  children:
+  - VSAbout
+  - VSRoles
+  - VSAHelp
+  - VSEtiquette
+  - VSWiki
+
+- type: guideEntry
+  id: VSAbout
+  name: guide-entry-vs-about
+  text: "/ServerInfo/Guidebook/_VS/Community/About.xml"
+
+- type: guideEntry
+  id: VSRoles
+  name: guide-entry-vs-roles
+  text: "/ServerInfo/Guidebook/_VS/Community/Roles.xml"
+
+- type: guideEntry
+  id: VSAHelp
+  name: guide-entry-vs-ahelp
+  text: "/ServerInfo/Guidebook/_VS/Community/AHelp.xml"
+
+- type: guideEntry
+  id: VSEtiquette
+  name: guide-entry-vs-etiquette
+  text: "/ServerInfo/Guidebook/_VS/Community/Etiquette.xml"
+
+- type: guideEntry
+  id: VSWiki
+  name: guide-entry-vs-wiki
+  text: "/ServerInfo/Guidebook/_VS/Community/Wiki.xml"
