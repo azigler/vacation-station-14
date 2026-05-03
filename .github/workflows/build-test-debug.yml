@@ -25,6 +25,13 @@ jobs:
     - name: Checkout Master
       uses: actions/checkout@v4.2.2
 
+    - name: Configure git to use HTTPS for submodules
+      # VS - some recursively-pulled SS14 submodules (e.g. external/mapserver/
+      # SS14.GithubApiHelper) declare git@github.com: SSH URLs that the
+      # runner can't authenticate. Rewrite to HTTPS at git-config level.
+      run: |
+        git config --global url.https://github.com/.insteadOf git@github.com:
+
     - name: Setup Submodule
       run: |
         git submodule update --init --recursive

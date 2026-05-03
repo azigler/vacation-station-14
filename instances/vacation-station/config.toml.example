@@ -82,7 +82,7 @@ server_url = "ss14://ss14.zig.computer"
 [infolinks]
 website = "https://ss14.zig.computer/"
 github = "https://github.com/azigler/vacation-station-14"
-# wiki = "https://ss14.zig.computer/rules"   # point at rules until a wiki exists (vs-3e3, vs-352)
+wiki = "https://ss14.zig.computer/guidebook/"   # in-game guidebook static render (vs-1e5); SS14 launcher hub surfaces this as the "Wiki" link
 # discord = "https://discord.gg/YOUR_INVITE" # set once Discord server exists (vs-2l2)
 
 # -----------------------------------------------------------------------------
