@@ -3,7 +3,12 @@
 </p>
 
 <p align="center">
-  <img src="assets/brand/finals/shield-readme.png" alt="Vacation Station 14" width="500" />
+  <img src="assets/brand/finals/shield-readme.png" alt="Vacation Station 14" height="20" />
+  <a href="LICENSE-AGPLv3.txt"><img src="https://img.shields.io/badge/license-AGPLv3-blue?style=flat-square" alt="License: AGPLv3" /></a>
+  <a href="https://github.com/azigler/vacation-station-14/actions/workflows/build-test-debug.yml"><img src="https://img.shields.io/github/actions/workflow/status/azigler/vacation-station-14/build-test-debug.yml?branch=main&style=flat-square&label=build" alt="Build status" /></a>
+  <a href="https://github.com/azigler/vacation-station-14/commits/main"><img src="https://img.shields.io/github/last-commit/azigler/vacation-station-14?style=flat-square" alt="Last commit" /></a>
+  <img src="https://img.shields.io/badge/.NET-10-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET 10" />
+  <a href="https://github.com/space-wizards/RobustToolbox"><img src="https://img.shields.io/badge/engine-RobustToolbox-2D9CDB?style=flat-square" alt="Engine: RobustToolbox" /></a>
 </p>
 
 # Vacation Station 14
