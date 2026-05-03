@@ -86,6 +86,44 @@ Once we fork a service (modify it), the directory migrates from
 `external/<name>/` → `services/<name>/` per the policy in
 [`CONTRIBUTING.md`](../CONTRIBUTING.md#bundled-services).
 
+### One-time setup: SSH→HTTPS rewrite for nested submodules
+
+Some `external/<name>/` services declare nested submodules with
+SSH URLs (e.g. `external/mapserver/.gitmodules` declares
+`git@github.com:juliangiebel/SS14.GithubApiHelper.git`). On a
+fresh clone — and on every `git merge` (the upstream `post-merge`
+hook reruns `git submodule update --init --recursive`) — git will
+try to clone those over SSH and fail unless the runner has a
+GitHub SSH key on file.
+
+**Fix once per machine** (mirrors the CI workflow's pre-checkout step):
+
+```bash
+git config --global url."https://github.com/".insteadOf "git@github.com:"
+```
+
+This must be **user-global** (`~/.gitconfig`) — not repo-local.
+Repo-local `insteadOf` is *not* inherited by the nested submodule's
+gitdir scope during recursive clone, so the rewrite has to live in a
+config scope every gitdir can see (global or system). Once set, both
+`git submodule update --init --recursive` and post-merge auto-syncs
+work cleanly. Verify with:
+
+```bash
+git config --list --show-origin | grep -i insteadof
+# expected: file:/home/<you>/.gitconfig  url.https://github.com/.insteadof=git@github.com:
+```
+
+If you can't or won't set a global config, you can pass the rewrite
+inline for one command: `git -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init --recursive`. That works
+but doesn't help the upstream `post-merge` hook (which runs without
+the `-c` flag), so global config is the pragmatic answer.
+
+The CI side already handles this in
+`.github/workflows/build-test-debug.yml` via a `Configure git to use
+HTTPS for submodules` step — leave that step alone; it covers the
+ephemeral runner case where no `~/.gitconfig` exists.
+
 ## Adding a new upstream
 
 1. Add the remote:
