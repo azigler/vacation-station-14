@@ -1,12 +1,16 @@
 name: Build & Test Debug
 
 on:
-  push:
-    branches: [ master, staging, stable ]
+  # VS - dev-cost discipline: no per-commit builds during pre-launch.
+  # Nightly cron + manual dispatch + PR builds give enough signal
+  # without burning Actions minutes on every push. See vs-kmz.
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC nightly (~22:00-23:00 PT)
+  workflow_dispatch:
   merge_group:
   pull_request:
     types: [ opened, reopened, synchronize, ready_for_review ]
-    branches: [ master, staging, stable ]
+    branches: [ main, master, staging, stable ]
 
 jobs:
   build:
