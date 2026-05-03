@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Image from "next/image";
 import { SiteShell } from "@/components/SiteShell";
+import { ServerAddressBox } from "./server-address";
 import { ServerStatusCard } from "./server-status";
 
 /**
@@ -19,10 +20,6 @@ import { ServerStatusCard } from "./server-status";
  *   - brand tokens: web/app/globals.css @theme
  *   - brand assets: web/public/brand/ (and prepared/ for dept badges)
  */
-
-const SS14_HOST = "ss14.zig.computer";
-const SS14_PORT = 1212;
-const SS14_LAUNCHER_URI = `ss14://${SS14_HOST}:${SS14_PORT}`;
 
 // Department badges, displayed under the hero. PNGs live at
 // web/public/brand/prepared/badge-<key>.png. Source is ~600x228;
@@ -119,14 +116,12 @@ export default function Home() {
 						{tagline}
 					</p>
 
-					{/* Connect CTAs — primary launcher link + secondary instructions */}
-					<div className="mt-2 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
-						<a
-							href={SS14_LAUNCHER_URI}
-							className="font-display inline-block bg-brand-yellow px-8 py-3 text-2xl text-brand-blue shadow-[4px_4px_0_0_rgba(220,38,38,1)] transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0_0_rgba(220,38,38,1)] focus:outline-none focus:ring-4 focus:ring-brand-yellow/60 sm:text-3xl"
-						>
-							Connect via Launcher
-						</a>
+					{/* Connect — copy the server address into the SS14 launcher.
+					    Originally a `ss14://` deep-link button, but the launcher
+					    doesn't reliably register that scheme as an OS protocol
+					    handler. The copy box is the next-best UX. */}
+					<div className="mt-2 flex flex-col items-center gap-4">
+						<ServerAddressBox />
 						<a
 							href="/connect"
 							className="font-body inline-block border-2 border-brand-white/80 px-6 py-3 text-base text-brand-white transition-colors hover:border-brand-yellow hover:text-brand-yellow focus:outline-none focus:ring-4 focus:ring-brand-white/40 sm:text-lg"
@@ -134,15 +129,6 @@ export default function Home() {
 							First time? Read setup
 						</a>
 					</div>
-
-					{/* Address fine-print under the buttons so it's diagnosable
-					    even if the launcher protocol isn't installed yet. */}
-					<p className="font-body text-xs text-brand-white/60 sm:text-sm">
-						<span className="font-bold">Server address:</span>{" "}
-						<code className="font-mono">
-							{SS14_HOST}:{SS14_PORT}
-						</code>
-					</p>
 				</section>
 
 				{/* Live server status */}
