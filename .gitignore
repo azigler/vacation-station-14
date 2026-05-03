@@ -324,3 +324,6 @@ package-lock.json
 # Keeps secrets (POSTGRES_PASSWORD, OIDC creds) out of the repo.
 ops/ss14-admin/.env
 ops/ss14-admin/appsettings.yml
+
+# brand asset iteration noise (vs-7ns / vs14-brand skill) — only finals/ are committed
+assets/brand/iterations/
