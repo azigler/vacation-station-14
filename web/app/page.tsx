@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Image from "next/image";
+import { SiteShell } from "@/components/SiteShell";
 import { ServerStatusCard } from "./server-status";
 
 /**
@@ -22,12 +23,11 @@ import { ServerStatusCard } from "./server-status";
 const SS14_HOST = "ss14.zig.computer";
 const SS14_PORT = 1212;
 const SS14_LAUNCHER_URI = `ss14://${SS14_HOST}:${SS14_PORT}`;
-const GITHUB_URL = "https://github.com/AndrewZigler/vacation-station-14";
 
 // Department badges, displayed under the hero. PNGs live at
-// web/public/brand/prepared/badge-<key>.png — height clamped via the
-// container row class; widths preserve the painted aspect ratio
-// (~600x228 source).
+// web/public/brand/prepared/badge-<key>.png. Source is ~600x228;
+// we render at h-10 (40px) so the chunky pixel text stays legible
+// and aspect ratio is preserved by next/image with w-auto.
 const DEPT_BADGES: ReadonlyArray<{ key: string; label: string }> = [
 	{ key: "command", label: "Command" },
 	{ key: "security", label: "Security" },
@@ -41,28 +41,14 @@ const DEPT_BADGES: ReadonlyArray<{ key: string; label: string }> = [
 
 // Already-served services on the same host — proxied by nginx, NOT
 // internal Next.js routes. Use plain <a href> with trailing slashes
-// so requests hit nginx, not the Next router.
+// so requests hit nginx, not the Next router. Same set lives in
+// SiteShell's nav for compact navigation.
 const TOOLS: ReadonlyArray<{ href: string; label: string; blurb: string }> = [
 	{ href: "/recipes/", label: "Cookbook", blurb: "browse recipes" },
 	{ href: "/guidebook/", label: "Guidebook", blurb: "in-game wiki" },
 	{ href: "/maps/", label: "Maps", blurb: "station blueprints" },
 	{ href: "/writer/", label: "Writer", blurb: "lore + fanfic tools" },
 	{ href: "/nurseshark/", label: "Nurseshark", blurb: "data dashboards" },
-];
-
-// Top-of-page nav. The /rules /about /connect /credits pages are
-// owned by vs-u5j; we link to them now so they exist as the routes
-// land. GitHub is external.
-const NAV_LINKS: ReadonlyArray<{
-	href: string;
-	label: string;
-	external?: boolean;
-}> = [
-	{ href: "/rules", label: "Rules" },
-	{ href: "/about", label: "About" },
-	{ href: "/connect", label: "Connect" },
-	{ href: "/credits", label: "Credits" },
-	{ href: GITHUB_URL, label: "GitHub", external: true },
 ];
 
 /**
@@ -111,10 +97,8 @@ export default function Home() {
 	const elevator = readPositioningElevator();
 
 	return (
-		<>
-			<TopNav />
-
-			<main className="flex flex-1 flex-col items-center gap-12 px-4 py-8 sm:gap-16 sm:px-6 sm:py-12 lg:py-16">
+		<SiteShell>
+			<div className="flex flex-1 flex-col items-center gap-12 px-4 py-8 sm:gap-16 sm:px-6 sm:py-12 lg:py-16">
 				{/* Hero */}
 				<section
 					aria-label="Hero"
@@ -169,6 +153,30 @@ export default function Home() {
 					<ServerStatusCard />
 				</section>
 
+				{/* Tools — already-served nginx-proxied services. Prominent
+				    above the dept badges so visitors discover them early. */}
+				<section
+					aria-label="Tools and services"
+					className="flex w-full max-w-3xl flex-col items-center gap-4"
+				>
+					<h2 className="font-display text-2xl text-brand-yellow sm:text-3xl">
+						Around the station
+					</h2>
+					<ul className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+						{TOOLS.map((t) => (
+							<li key={t.href}>
+								<a
+									href={t.href}
+									className="font-body inline-flex items-baseline gap-1 border border-brand-white/40 px-3 py-1.5 text-sm text-brand-white transition-colors hover:border-brand-yellow hover:bg-brand-blue/40 hover:text-brand-yellow sm:text-base"
+								>
+									<span className="font-bold">{t.label}</span>
+									<span className="text-brand-white/60">— {t.blurb}</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+
 				{/* Dept-badge row — "what kinds of stations live here" */}
 				<section
 					aria-label="Departments"
@@ -189,8 +197,7 @@ export default function Home() {
 									alt={`${b.label} department badge`}
 									width={600}
 									height={228}
-									className="h-5 w-auto"
-									sizes="(max-width: 640px) 80px, 120px"
+									className="h-10 w-auto"
 								/>
 								<span className="sr-only">{b.label}</span>
 							</li>
@@ -209,89 +216,7 @@ export default function Home() {
 						</p>
 					</section>
 				)}
-
-				{/* Tools — already-served nginx-proxied services */}
-				<section
-					aria-label="Tools and services"
-					className="flex w-full max-w-3xl flex-col items-center gap-4"
-				>
-					<h2 className="font-display text-xl text-brand-yellow sm:text-2xl">
-						Around the station
-					</h2>
-					<ul className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-						{TOOLS.map((t) => (
-							<li key={t.href}>
-								<a
-									href={t.href}
-									className="font-body inline-flex items-baseline gap-1 border border-brand-white/40 px-3 py-1.5 text-sm text-brand-white transition-colors hover:border-brand-yellow hover:bg-brand-blue/40 hover:text-brand-yellow sm:text-base"
-								>
-									<span className="font-bold">{t.label}</span>
-									<span className="text-brand-white/60">— {t.blurb}</span>
-								</a>
-							</li>
-						))}
-					</ul>
-				</section>
-			</main>
-
-			<Footer />
-		</>
-	);
-}
-
-function TopNav() {
-	return (
-		<nav
-			aria-label="Primary"
-			className="w-full border-b-2 border-brand-yellow/60 bg-brand-blue"
-		>
-			<div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-3 sm:flex-row sm:justify-between sm:gap-4 sm:py-4">
-				<a
-					href="/"
-					className="font-display text-2xl text-brand-yellow transition-colors hover:text-brand-white sm:text-3xl"
-				>
-					VS14
-				</a>
-				<ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:gap-x-6">
-					{NAV_LINKS.map((link) => (
-						<li key={link.href}>
-							<a
-								href={link.href}
-								className="font-display text-lg text-brand-white transition-colors hover:text-brand-yellow sm:text-xl"
-								{...(link.external
-									? { target: "_blank", rel: "noopener noreferrer" }
-									: {})}
-							>
-								{link.label}
-							</a>
-						</li>
-					))}
-				</ul>
 			</div>
-		</nav>
-	);
-}
-
-function Footer() {
-	return (
-		<footer className="mt-12 w-full border-t-2 border-brand-yellow/60 bg-brand-blue/80">
-			<div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
-				<p className="font-body text-sm text-brand-white/80">
-					<span className="font-bold">Vacation Station 14</span> — casual
-					hangout server.
-				</p>
-				<p className="font-body text-xs text-brand-white/60">
-					AGPL-3.0 + MIT ·{" "}
-					<a
-						href={GITHUB_URL}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-brand-white/80 underline-offset-2 hover:text-brand-yellow hover:underline"
-					>
-						source on GitHub
-					</a>
-				</p>
-			</div>
-		</footer>
+		</SiteShell>
 	);
 }

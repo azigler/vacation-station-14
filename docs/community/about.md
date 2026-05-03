@@ -1,8 +1,7 @@
 # About VS14
 
-Vacation Station 14 (VS14) is a casual Space Station 14 server. The
-30-second pitch lives on the [positioning page](./positioning.md);
-this page is the longer story — what kind of project this is, how
+Vacation Station 14 (VS14) is a casual Space Station 14 server.
+This page is the longer story — what kind of project this is, how
 the fork is put together, and how to find your way in.
 
 ## A low-RP hangout, run as a small project
@@ -22,20 +21,14 @@ the open-source SS13 successor by the Space Wizards Federation. The
 base is pure upstream SS14 — we don't carry our own copy of the
 engine or the core content. Around that base, we cherry-pick curated
 content from sibling forks and stations, each scoped to its own
-directory prefix:
+directory prefix so the attribution chain stays legible.
 
-- **`_VS/`** — original VS14 content (clothing, recipes, small
-  systems written here)
-- **`_DV/`** — Delta-V Station picks (mid-RP refinements, cosmetics)
-- **`_NF/`** — Frontier Station picks (commerce, exploration)
-- **`_RMC/`** — RMC-14 picks (combat, scenario content)
-- **`_HL/`** — HardLight Sector picks (a meta-aggregator that itself
-  pulls from ~20 forks)
-- … and others per [the upstream-sync table](../upstream-sync.md).
-
-Each prefix is both a content boundary and a license boundary — see
-[LEGAL.md](../../LEGAL.md) for the full attribution chain. Cherry-
-picks land with original-author preservation.
+Each prefix is both a content boundary and a license boundary —
+cherry-picks land with original-author preservation. The full
+attribution chain lives in
+[LEGAL.md](https://github.com/azigler/vacation-station-14/blob/main/LEGAL.md);
+the per-upstream table is in
+[upstream-sync.md](https://github.com/azigler/vacation-station-14/blob/main/docs/upstream-sync.md).
 
 This curated approach is the differentiator. Most SS14 servers run
 one upstream's content. VS14 picks the best subsystems from each
@@ -61,7 +54,8 @@ Players don't need GitHub or Discord accounts to play.
 Contributions are welcome:
 
 - **Player feedback** — open a Discord thread or a GitHub issue.
-- **Code or content PRs** — see [CONTRIBUTING.md](../../CONTRIBUTING.md)
+- **Code or content PRs** — see
+  [CONTRIBUTING.md](https://github.com/azigler/vacation-station-14/blob/main/CONTRIBUTING.md)
   for the namespace and attribution rules. We lean fix-merge over
   reject; we'd rather take your idea and finish it than hand it back
   over a missing semicolon.
@@ -74,8 +68,9 @@ Contributions are welcome:
 VS14 inherits SS14 upstream's MIT base, with an AGPLv3 sublicense
 layered on at our [Flavor A boundary commit](https://github.com/azigler/vacation-station-14/commit/86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d)
 (2026-04-12). New `_VS/` code is AGPLv3. Per-fork subsystem licenses
-follow each fork's terms — see [LEGAL.md](../../LEGAL.md) for the
-table.
+follow each fork's terms — see
+[LEGAL.md](https://github.com/azigler/vacation-station-14/blob/main/LEGAL.md)
+for the table.
 
 Assets are CC-BY-SA 3.0 unless noted; some content is CC-BY-NC-SA
 3.0 (compliant while VS14 stays non-monetized).
