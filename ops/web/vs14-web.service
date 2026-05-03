@@ -1,0 +1,40 @@
+[Unit]
+# Vacation Station 14 — Next.js web app on :3300.
+#
+# Serves the apex (https://ss14.zig.computer/) via nginx reverse-proxy.
+# Built by ops/web/build.sh; the running service consumes web/.next/
+# produced by `next build`. Bun is invoked by absolute path because the
+# ss14 user has no shell profile that adds ~/.bun/bin/ to PATH.
+#
+# Rebuild flow (after `git pull` lands new web/ code):
+#   sudo -u ss14 /opt/vacation-station/ops/web/build.sh
+#   sudo systemctl restart vs14-web.service
+Description=Vacation Station 14 web (Next.js on :3300)
+Documentation=file:///opt/vacation-station/web/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ss14
+Group=ss14
+WorkingDirectory=/home/ubuntu/vacation-station-14/web
+ExecStart=/home/ubuntu/.bun/bin/bun run start
+Restart=on-failure
+RestartSec=5
+
+Environment=NODE_ENV=production
+Environment=PORT=3300
+
+# Reasonable hardening — Next.js needs to read its build output and
+# write to /tmp; no other system writes required.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -44,9 +44,51 @@ bun run build      # next build — TS + lint + bundle
 bun run start      # next start -p 3300 (serves the build output)
 ```
 
-Production deploy is wired in a later sub-bead (vs-2dr.5). Don't deploy
-this scaffold raw to ss14.zig.computer until that lands — it's
-intentionally minimal until the home page (vs-2dr.2) is in.
+### Production deploy
+
+Live at https://ss14.zig.computer/ via the apex `location /` block in
+[`ops/nginx/ss14.zig.computer.conf`](../ops/nginx/ss14.zig.computer.conf),
+which reverse-proxies to `vs14-web.service` on `127.0.0.1:3300`. The
+service is defined at
+[`ops/web/vs14-web.service`](../ops/web/vs14-web.service) and runs
+`bun run start` as the `ss14` system user with
+`WorkingDirectory=/home/ubuntu/vacation-station-14/web` (= `/opt/vacation-station/web`
+via the host's `/opt` symlink).
+
+Build output (`web/.next/`) is gitignored — it's regenerated via
+[`ops/web/build.sh`](../ops/web/build.sh), which runs
+`bun install --frozen-lockfile && bun run build` against the deploy
+clone. Both build and service use bun by absolute path
+(`/home/ubuntu/.bun/bin/bun`) since the `ss14` user has no shell
+profile that would add `~/.bun/bin/` to `PATH`.
+
+**Rebuild + reload after a content change:**
+
+```bash
+cd /opt/vacation-station && git pull --rebase
+sudo -u ss14 /opt/vacation-station/ops/web/build.sh
+sudo systemctl restart vs14-web.service
+```
+
+(The `git pull` step is a no-op on the host where `/opt/vacation-station`
+is symlinked to the dev checkout — the orchestrator's merge handles
+"deploy" implicitly there. Real second-clone hosts run all three.)
+
+**Bring-up from scratch (one-time per host):**
+
+```bash
+sudo install -m 0644 ops/web/vs14-web.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo -u ss14 /opt/vacation-station/ops/web/build.sh   # populate web/.next/
+sudo systemctl enable --now vs14-web.service
+sudo install -m 0644 ops/nginx/ss14.zig.computer.conf /etc/nginx/sites-available/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+There's no daily timer — the service is a long-running `next start`
+process, not a oneshot like the static-site builders. A future bead
+may add an automated rebuild-on-`git pull` trigger; for now rebuilds
+are an explicit ops gesture.
 
 ## Brand integration
 
