@@ -16,10 +16,9 @@
 Vacation Station 14 (VS14) is a casual SS14 hangout server focused on
 collaboration and creativity. The codebase is a curated
 [Space Station 14](https://github.com/space-wizards/space-station-14)
-derivative — a pure SS14 base, with features from sibling forks (Delta-V,
-Frontier, RMC-14, HardLight, Starlight, etc.) cherry-picked selectively
-into directory-prefixed subsystems (`_VS/`, `_DV/`, `_NF/`, `_RMC/`,
-`_HL/`, `_SL/`, `_CP/`) for clear attribution.
+derivative — a pure SS14 base, with features from sibling forks
+cherry-picked selectively into directory-prefixed subsystems for clear
+attribution.
 
 See [contributing guidelines](CONTRIBUTING.md) and [LEGAL.md](LEGAL.md) for
 details.
