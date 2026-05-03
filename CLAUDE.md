@@ -18,12 +18,13 @@ reset commit `86a6f6a3bee0c6ac62c1dabfe6e38d79c6c00d2d` (2026-04-12).
   - `_HL/` — HardLight Sector cherry-picks (meta-aggregator — itself pulls from ~20 forks)
   - `_SL/` — Starlight cherry-picks (modified-MIT middle period + MIT otherwise, sublicensed AGPLv3)
   - `_CP/` — Crystall Punk 14 cherry-picks (MIT, sublicensed AGPLv3; fantasy/magic-RP reframing)
+  - `_WF/` — Wayfarer 14 cherry-picks (Frontier-derived fork; AGPL-3.0 + MIT post-boundary split; notable mechanics: shift summaries, persistent community goals)
   - `_EE/`, `_CX/`, … — other upstreams per curation plan (Einstein Engines, Corvax, …)
   - Unprefixed `Content.*` = pure SS14 upstream, MIT
 - **Remotes**: `origin` (VS14), `upstream-sw` (space-wizards/space-station-14),
-  `upstream-dv`, `upstream-nf`, `upstream-rmc`, `upstream-hl`. More added per
-  Phase 5 curation output. No single remote is "the" upstream. See
-  `docs/upstream-sync.md` for the full table.
+  `upstream-dv`, `upstream-nf`, `upstream-rmc`, `upstream-hl`, `upstream-wf`.
+  More added per Phase 5 curation output. No single remote is "the" upstream.
+  See `docs/upstream-sync.md` for the full table.
 
 ## Code Conventions
 

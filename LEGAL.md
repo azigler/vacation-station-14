@@ -52,6 +52,7 @@ HEAD.
 | `Content.*` unprefixed | Space Station 14 | [space-wizards/space-station-14](https://github.com/space-wizards/space-station-14) | MIT (see [LICENSE.TXT](LICENSE.TXT)) | checkout-as-of Phase 1 |
 | `RobustToolbox/` (submodule) | RobustToolbox engine | [space-wizards/RobustToolbox](https://github.com/space-wizards/RobustToolbox) | MIT | submodule pin |
 | `_DV/` _(pending Phase 5)_ | Delta-V Station | [DeltaV-Station/Delta-v](https://github.com/DeltaV-Station/Delta-v) | AGPL-3.0 + MIT | cherry-pick |
+| `_WF/` _(pending Phase 5)_ | Wayfarer 14 | [project-wayfarer/wayfarer-14](https://github.com/project-wayfarer/wayfarer-14) | AGPL-3.0 + MIT | cherry-pick |
 
 Additional rows added per Phase 5 curation — one row per upstream
 we adopt. Until a row is added, that subdirectory does not exist in
@@ -99,6 +100,13 @@ MUST be preserved in any redistribution.
   Preserve the upstream MIT notice in the repo; no middle-period
   carveout.
 - **`_DV/` code**: AGPLv3 (matches Delta-V's post-boundary license).
+- **`_WF/` code** (Wayfarer 14; introduced in Phase 5): AGPL-3.0
+  for current upstream content, MIT for older Wayfarer / Frontier
+  pre-boundary content (Wayfarer is a Frontier-derived fork; same
+  dual-license pattern as Delta-V). Sublicense to AGPLv3 in
+  combined distribution; preserve the Wayfarer + Frontier
+  attribution chain via `git log --follow` per the per-cherry-pick
+  attribution discipline below.
 - **Unprefixed Content.* code**: MIT (SS14 upstream), sublicensed
   as AGPLv3 when combined with our modifications. Do not remove
   the MIT notice.
@@ -182,9 +190,9 @@ upstream or when an existing upstream's license changes.
 | VS14 (authored, this repo) | [`LICENSE-AGPLv3.txt`](LICENSE-AGPLv3.txt) | AGPLv3 (post-Flavor-A boundary commit `86a6f6a3`) | 2026-04-12 |
 
 Additional upstreams (`_NF/` Frontier, `_RMC/` RMC-14, `_HL/`
-HardLight, `_SL/` Starlight, `_CP/` Crystall Punk 14, `_EE/`
-Einstein Engines, `_CX/` Corvax) get new rows when their first
-cherry-pick lands in Phase 5.
+HardLight, `_SL/` Starlight, `_CP/` Crystall Punk 14, `_WF/`
+Wayfarer 14, `_EE/` Einstein Engines, `_CX/` Corvax) get new rows
+when their first cherry-pick lands in Phase 5.
 
 ### RobustToolbox's tri-license
 
