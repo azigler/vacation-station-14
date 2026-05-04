@@ -56,7 +56,7 @@ below lists `prod / dev` pairs.
 | Loki        | services-flake `loki.loki1`             | docker compose `grafana/loki`                   | `3100` / `3101` (loopback)   | `ops/observability/loki-config.yml`                |
 | Grafana     | services-flake `grafana.graf1`          | docker compose `grafana/grafana`                | `3200` / `3201` (loopback)   | `ops/observability/grafana/`                       |
 | Watchdog    | — (don't run in dev)                    | systemd `ss14-watchdog.service`                 | `5000` (loopback, prod only) | `ops/watchdog/ss14-watchdog.service`, `appsettings.yml.example` |
-| SS14 server | `dotnet run --project Content.Server`   | child of watchdog                               | `1212` / `1213` tcp+udp, `44880` / `44881` metrics | `instances/vacation-station/config.toml.example` (dev overlay materialized to `.data/vacation-station/config.toml` on `nix run .#dev-services`) |
+| SS14 server | services-flake `ss14-server` (dotnet run, vs-1ya) | child of watchdog                               | `1212` / `1213` tcp+udp, `44880` / `44881` metrics | `instances/vacation-station/config.toml.example` (dev overlay materialized to `.data/vacation-station/config.toml` on `nix run .#dev-services`) |
 | DB backup   | —                                       | systemd `ss14-backup.timer` → `ss14-backup.service` | — (prod only)            | `ops/postgres/backup.sh`, `ss14-backup.{service,timer}` |
 | nginx       | —                                       | systemd `nginx.service`                         | `80`, `443` (prod only)      | `ops/nginx/<host>.conf` → `/etc/nginx/sites-available/` (see `.claude/skills/nginx/SKILL.md`) |
 

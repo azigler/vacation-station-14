@@ -41,19 +41,29 @@ nix store cache.
 
 ## Dev services stack
 
-Zero-sudo postgres + prometheus + loki + grafana, reading the SAME configs
-we ship in `ops/observability/` (with small in-memory dev overlays).
+Zero-sudo postgres + prometheus + loki + grafana **+ the SS14 game server
+itself**, reading the SAME configs we ship in `ops/observability/` (with
+small in-memory dev overlays).
 
 ```bash
 nix run .#dev-services    # process-compose TUI; F10 to exit
 ```
 
-| Service    | Endpoint                | Dev creds                       |
-|------------|-------------------------|---------------------------------|
-| Postgres   | `localhost:5433`        | `vs14 / dev-only-insecure`      |
-| Prometheus | `http://localhost:9091` | —                               |
-| Loki       | `http://localhost:3101` | —                               |
-| Grafana    | `http://localhost:3201` | `admin / admin`                 |
+| Service    | Endpoint                          | Dev creds                       |
+|------------|-----------------------------------|---------------------------------|
+| Postgres   | `localhost:5433`                  | `vs14 / dev-only-insecure`      |
+| Prometheus | `http://localhost:9091`           | —                               |
+| Loki       | `http://localhost:3101`           | —                               |
+| Grafana    | `http://localhost:3201`           | `admin / admin`                 |
+| SS14       | `ss14://localhost:1213` (metrics 44881) | —                         |
+
+The game-server entry (`ss14-server` process, vs-1ya) wraps `dotnet run
+--project Content.Server` against the materialized dev `config.toml`. It
+depends on `ss14-dev-config` (one-shot config materialize) completing and
+`pg1` (postgres) being healthy, so the schema-migration pass on first
+boot doesn't race the DB. process-compose supervises the dotnet process
+directly — there is no watchdog in dev. A crash auto-restarts up to 5
+times; after that bring the stack back up with another `nix run`.
 
 Dev ports are `prod + 1` via `devPortOffset = 1` in `flake.nix` — the dev
 stack is designed to coexist with a live prod stack on the same host
