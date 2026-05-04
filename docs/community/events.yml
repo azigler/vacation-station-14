@@ -1,0 +1,85 @@
+# VS14 community events — source of truth
+#
+# Everything that ends up on the website's /events page, the iCal feed
+# at /events.ics, and (Phase 2) Discord scheduled events comes from
+# this file. One YAML document, one list under `events:`, one entry
+# per event.
+#
+# # Schema
+#
+# Each entry has:
+#
+#   id           Required. URL-safe slug (lowercase, kebab-case). Used
+#                as the iCal UID and the entry's stable identity. Don't
+#                change after publishing — it'll detach from any
+#                already-synced calendar subscriptions.
+#
+#   title        Required. Short human-readable name. Shows on the
+#                website card and in Discord/iCal as the event title.
+#
+#   start        Required. ISO 8601 UTC timestamp with the trailing Z
+#                (e.g. `2026-06-01T22:00:00Z`). Always UTC — converting
+#                to local time happens at the rendering layer.
+#
+#   end          Required. ISO 8601 UTC timestamp, after `start`. Used
+#                to sort events into upcoming vs past and to compute
+#                duration on the website card.
+#
+#   description  Required. One or two sentences. Plain text — no
+#                markdown. Discord and iCal embed it verbatim.
+#
+#   tags         Optional list. Free-form lowercase strings. Common
+#                values: `social`, `dev`, `tournament`, `roundtype`,
+#                `launch`, `holiday`. Used as filter chips on /events.
+#
+#   discord_event_id  Optional. Set by the Phase 2 Discord-bot sync
+#                (vs-2l2 + follow-up sub-bead) once the matching
+#                Discord Scheduled Event is created. Don't set by hand
+#                — it's the bot's handle for keeping the two surfaces
+#                in lockstep.
+#
+# # Adding a new event
+#
+# 1. Pick a slug (`launch-night`, `summer-tournament-q3`, etc.). Keep
+#    it short, lowercase, kebab-case.
+# 2. Convert your local start/end times to UTC. The launcher and most
+#    players are international, so UTC is the only sane shared frame.
+# 3. Append a new entry to the `events:` list below.
+# 4. Commit. The /events page rebuilds from this file at deploy time;
+#    /events.ics regenerates per-request with a 5-minute edge cache.
+# 5. (Phase 2) The discord-bot will pick up the new entry on its next
+#    sync pass and create the matching Discord Scheduled Event,
+#    writing the resulting ID back into `discord_event_id`.
+#
+# # Time format
+#
+# Always ISO 8601 UTC, always with the trailing `Z`. Examples:
+#   2026-06-01T22:00:00Z   (10pm UTC)
+#   2026-12-31T23:59:00Z   (one minute before midnight UTC)
+#
+# Don't mix timezones. Don't omit the `Z`. The website parses these
+# as UTC and lets each visitor's browser format them locally.
+#
+# # Phase 2 — Discord sync (deferred)
+#
+# Once the discord-bot (vs-2l2) lands and the calendar follow-up
+# sub-bead picks this up, the bot will read this file as the source
+# of truth and mirror entries to Discord Scheduled Events. The
+# bot owns `discord_event_id` — don't edit it manually.
+
+events:
+  # example: remove or replace before launch night
+  - id: launch-night
+    title: Launch night
+    start: 2026-06-01T22:00:00Z
+    end: 2026-06-02T02:00:00Z
+    description: First public round on VS14. Drop in for the inaugural shift, meet the community, and help us shake out the launch-day bugs.
+    tags: [social, launch]
+
+  # example: remove or replace once the real cadence kicks in
+  - id: weekly-shift-pilot
+    title: Weekly shift pilot
+    start: 2026-06-08T22:00:00Z
+    end: 2026-06-09T01:00:00Z
+    description: Pilot run of the regular Sunday-evening shift. Casual round, light roleplay, all departments welcome.
+    tags: [social, roundtype]

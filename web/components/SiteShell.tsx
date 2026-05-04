@@ -22,6 +22,7 @@ const NAV_PRIMARY: ReadonlyArray<{
 }> = [
 	{ href: "/rules", label: "Rules" },
 	{ href: "/about", label: "About" },
+	{ href: "/events", label: "Events" },
 	{ href: "/connect", label: "Connect" },
 	{ href: GITHUB_URL, label: "GitHub", external: true },
 ];
