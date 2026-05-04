@@ -283,9 +283,61 @@
             mkdir -p "$target_dir"
             install -m 0644 ${ss14ConfigDev} "$target"
             echo "[vs14-dev-config] wrote $target (dev ports: game=${toString devGamePort}, metrics=${toString devMetricsPort}, pg=${toString devPostgresPort}, loki=${toString devLokiPort})"
-            echo "[vs14-dev-config] run the dev game server with:"
-            echo "[vs14-dev-config]   dotnet run --project Content.Server -- --config-file $target --data-dir .data/vacation-station"
           '';
+
+          # --- Dev SS14 game-server runner (vs-1ya) ------------------------
+          # process-compose entry that boots the game server itself, on top of
+          # the materialize-config one-shot. We wrap `dotnet run` in a
+          # writeShellApplication so the runtime PATH includes the same
+          # `dotnet-sdk_10` the dev shell pins — `nix run .#dev-services`
+          # inherits the user's interactive PATH, but we don't want the dev
+          # server to silently fall back to a system `dotnet` if the caller
+          # invoked nix-run from outside the flake env.
+          #
+          # The server reads the dev config materialized to
+          # .data/vacation-station/config.toml (dev ports + dev-literal pg
+          # password). It does NOT use the watchdog — process-compose itself
+          # supervises the dotnet process. Restart-on-failure is enabled so
+          # an in-game `restart` console command (or a crash) bounces it
+          # cleanly without bringing the whole stack down.
+          #
+          # `--cvar net.port=1213`: the prod config relies on the engine's
+          # default `net.port = 1212` (Robust.Shared/CVars.cs) for the UDP
+          # netcode bind, which matches the [status].bind port. Our dev
+          # config rewrites [status].bind to *:1213 and [metrics].port to
+          # 44881, but `[net]` only has `tickrate = 30` — no `port` setting,
+          # so the netcode would still default to 1212 and collide with prod
+          # on the same host. Passing the cvar on the CLI is the engine's
+          # documented override path and avoids a dev-only `[net] port = X`
+          # block that would drift from the prod template shape.
+          #
+          # Pre-build Content.Client: the engine packages a hybrid ACZ
+          # client zip at /info time (StatusHost.Acz.Sources). It reads the
+          # client DLLs from `bin/Content.Client/`, and bombs out with a
+          # `DirectoryNotFoundException` for `Content.Client.dll` if the
+          # client wasn't built. `dotnet run --project Content.Server`
+          # alone only produces server bins. The build is incremental so
+          # subsequent boots just re-link the existing artifacts. We do
+          # this BEFORE `dotnet run` so the client artifacts exist by the
+          # time the server's StatusHost initializes.
+          ss14DevServerRun = pkgs.writeShellApplication {
+            name = "vs14-dev-server-run";
+            runtimeInputs = [ pkgs.dotnet-sdk_10 ];
+            text = ''
+              set -euo pipefail
+              echo "[vs14-dev-server] pre-building Content.Client (required for hybrid ACZ packaging)"
+              dotnet build Content.Client --nologo --verbosity quiet
+              echo "[vs14-dev-server] launching: dotnet run --project Content.Server"
+              echo "[vs14-dev-server]   --config-file .data/vacation-station/config.toml"
+              echo "[vs14-dev-server]   --data-dir .data/vacation-station"
+              echo "[vs14-dev-server]   --cvar net.port=${toString devGamePort}"
+              echo "[vs14-dev-server] dev game port: ${toString devGamePort}, metrics port: ${toString devMetricsPort}"
+              exec dotnet run --project Content.Server -- \
+                --config-file .data/vacation-station/config.toml \
+                --data-dir .data/vacation-station \
+                --cvar net.port=${toString devGamePort}
+            '';
+          };
         in
         {
           devShells.default = import ./shell.nix { inherit pkgs; };
@@ -393,18 +445,38 @@
             };
 
             # One-shot: materialize the dev game-server config.toml into
-            # .data/vacation-station/ every time the stack boots. The game
-            # server itself is NOT launched here (building dotnet + wiring
-            # the watchdog-less dev launch is tracked under vs-2f8.7.1);
-            # contributors run `dotnet run --project Content.Server -- ...`
-            # manually against the materialized config. See
-            # docs/DEVELOPMENT.md "Running dev on the same box as prod".
+            # .data/vacation-station/ every time the stack boots. Keep it
+            # first so the config file exists before the game server boots.
+            # Idempotent: rerunning just overwrites the previous dev config.
             settings.processes.ss14-dev-config = {
               command = "${ss14DevConfigMaterialize}/bin/vs14-dev-config-materialize";
               availability.restart = "no";
               # Not a long-running service — process-compose marks this
-              # Completed after the script exits 0. Keep it first so the
-              # config file exists before anyone pokes at the stack.
+              # Completed after the script exits 0.
+            };
+
+            # Long-running: the dev SS14 game server itself (vs-1ya). Boots
+            # after the config is materialized AND postgres is healthy so
+            # the schema-migration pass on first run doesn't race the DB.
+            # Listens on dev ports (1213 game, 44881 metrics) per the
+            # materialized config. process-compose supervises this directly
+            # — there's no watchdog in dev. Contributors no longer have to
+            # run `dotnet run --project Content.Server -- ...` in a side
+            # terminal; the TUI shows ss14-server alongside the services.
+            settings.processes.ss14-server = {
+              command = "${ss14DevServerRun}/bin/vs14-dev-server-run";
+              depends_on = {
+                ss14-dev-config.condition = "process_completed_successfully";
+                pg1.condition = "process_healthy";
+              };
+              # Dev iteration: a crashing server should bounce, not kill the
+              # whole stack. Five attempts is plenty for the "I edited a YAML
+              # prototype and broke parse" loop. process-compose's TUI lets
+              # you manually restart at any time anyway.
+              availability = {
+                restart = "on_failure";
+                max_restarts = 5;
+              };
             };
           };
         };
