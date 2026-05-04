@@ -1,10 +1,15 @@
 name: RSI Validator
 
 on:
-  push:
-    branches: [ master, staging, stable ]
-  merge_group:
+  # VS - dev-cost discipline: no per-commit builds during pre-launch.
+  # Nightly cron + manual dispatch + PR builds give enough signal
+  # without burning Actions minutes on every push. See vs-kmz.
+  schedule:
+    - cron: '0 7 * * *'   # 07:00 UTC nightly
+  workflow_dispatch:
   pull_request:
+    types: [ opened, reopened, synchronize, ready_for_review ]
+    branches: [ main, master, staging, stable ]
     paths:
       - '**.rsi/**'
 
@@ -14,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
+      - name: Configure git to use HTTPS for submodules
+        # VS - some recursively-pulled SS14 submodules (e.g. external/mapserver/
+        # SS14.GithubApiHelper) declare git@github.com: SSH URLs that the
+        # runner can't authenticate. Rewrite to HTTPS at git-config level.
+        run: |
+          git config --global url.https://github.com/.insteadOf git@github.com:
       - name: Setup Submodule
         run: git submodule update --init
       - name: Pull engine updates
