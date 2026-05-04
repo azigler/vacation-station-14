@@ -325,5 +325,9 @@ package-lock.json
 ops/ss14-admin/.env
 ops/ss14-admin/appsettings.yml
 
+# Maintainer's local credentials bag — production secrets the maintainer
+# keeps in-tree as a personal password-manager equivalent. Never tracked.
+.env.secrets
+
 # brand asset iteration noise (vs-7ns / vs14-brand skill) — only finals/ are committed
 assets/brand/iterations/
