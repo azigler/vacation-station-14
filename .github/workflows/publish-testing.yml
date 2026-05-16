@@ -5,18 +5,18 @@ concurrency:
   cancel-in-progress: true
 
 # VS - start
-# VS - vs-2f8.1: cron re-enabled now that we publish to our own self-hosted
-# VS - Robust.Cdn (https://ss14.zig.computer/cdn/, fork-id "vacation-station").
-# VS - Andrew's 2026-04-16 :wrench: commit (aae75db752) disabled this as a
-# VS - stepping-stone — H2 (end-to-end test) gates re-enabling it in CI. Until
-# VS - PUBLISH_TOKEN is minted (H1) and the manual workflow_dispatch run is
-# VS - verified end-to-end, scheduled runs would only emit auth failures.
+# VS - 2026-05-16: cron DISABLED again. The vs-2f8.1 re-enable was premature —
+# VS - PUBLISH_TOKEN (vs-2f8.10) is still unminted, so the nightly run has
+# VS - been auth-failing every day. Workflow_dispatch stays available for
+# VS - manual smoke-testing. Re-enable the cron block below as part of
+# VS - vs-2f8.11 (end-to-end CDN publish test) — that bead owns the
+# VS - verification gate before scheduled publishing resumes.
 # VS - end
 on:
   workflow_dispatch:
-  schedule:
-    # VS - cron re-enabled per vs-2f8.1; daily 10:00 UTC matches upstream cadence.
-    - cron: '0 10 * * *'
+  # VS - schedule disabled pending vs-2f8.10 (token mint) + vs-2f8.11 (e2e verify).
+  # schedule:
+  #   - cron: '0 10 * * *'
 
 jobs:
   build:
