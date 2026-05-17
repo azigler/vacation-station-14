@@ -1,9 +1,9 @@
-# Session handoff — 2026-05-04 (session 56c26bf8 cont.)
+# Session handoff — 2026-05-04 (session 56c26bf8 cont., refreshed 2026-05-17)
 
 ## State at offboard
 
 - **Current branch**: main
-- **Last commit**: `df3007ba57` — `:lock: gitignore: ignore .env.secrets (maintainer-local credentials bag)`
+- **Last commit**: `76530ddb11` — `:wrench: ci: disable Publish Testing daily cron — PUBLISH_TOKEN unminted`
 - **Open beads**: ~23 (5 ready, 0 in-progress, 4 deferred ❄)
 - **In-flight subagents**: none
 - **Dirty files**: none (clean working tree)
@@ -33,13 +33,17 @@ This session continued from `2026-05-02 (session 56c26bf8)` after compaction. Tw
 - Deleted `~/research-ss14/` after content was preserved (commits `fffa30c0af` + `df3007ba57`)
 - Transcript JSONL at `~/.claude/projects/-home-ubuntu-research-ss14/f5409d02-*.jsonl` STAYS — bead notes reference it for any deeper future archaeology
 
+**Phase C — Post-offboard follow-up** (2026-05-16, small touchup):
+- Disabled the daily 10:00 UTC cron in `.github/workflows/publish-testing.yml` (commit `76530ddb11`). vs-2f8.1's re-enable was premature — `PUBLISH_TOKEN` is still unminted (vs-2f8.10 pending), so every nightly run since had been auth-failing. `workflow_dispatch` stays wired for manual smoke-testing
+- vs-2f8.11 got a note: re-enabling the cron belongs in THAT bead's close-commit, after the manual workflow_dispatch run verifies end-to-end
+
 ## What's next
 
 Three top picks for the next session, in order of leverage:
 
-1. **vs-tks** (Discord gating + age-verification interview) — `human:` prefix, but agentic prep work valuable: synthesize an interview script from the freshly-attached community-research notes, draft 6-8 questions for the maintainer to ask peers. Unblocks vs-2l2 → vs-z7v.
-2. **vs-ddu.5** (Phase 4 ecosystem study) — `HUMAN — do not auto-execute`, but the orchestrator can pre-structure the per-upstream cells (DV/NF/RMC/HL/SL/CP/WF/EE/CX) using the now-attached research as starting nucleus. Single highest-leverage unlock (bv flagged it as blocking 3 downstream).
-3. **vs-2f8.10 / vs-2f8.11** (CDN publish atomic human follow-ups) — `human:` prefixed; quick if maintainer has time. Unblocks vs-17n.
+1. **vs-2f8.10 / vs-2f8.11** (CDN publish atomic human follow-ups) — bumped to top after cron disable. .10 is "mint PUBLISH_TOKEN + register GH Actions secret" (~10 min), .11 is "manual workflow_dispatch run end-to-end, then re-enable cron in publish-testing.yml in the same close-commit." Unblocks vs-17n AND restores nightly publishing.
+2. **vs-tks** (Discord gating + age-verification interview) — `human:` prefix, but agentic prep work valuable: synthesize an interview script from the freshly-attached community-research notes, draft 6-8 questions for the maintainer to ask peers. Unblocks vs-2l2 → vs-z7v.
+3. **vs-ddu.5** (Phase 4 ecosystem study) — `HUMAN — do not auto-execute`, but the orchestrator can pre-structure the per-upstream cells (DV/NF/RMC/HL/SL/CP/WF/EE/CX) using the now-attached research as starting nucleus. Single highest-leverage unlock (bv flagged it as blocking 3 downstream).
 
 Lower-leverage agentic-only options: vs-1yd (Discord shield badge in README).
 
@@ -47,7 +51,8 @@ Lower-leverage agentic-only options: vs-1yd (Discord shield badge in README).
 
 - **`.env.secrets` is now the local password manager.** `.gitignored` at root line 330. Contains 3 prod creds (postgres / watchdog ApiToken / grafana admin). If a credential rotates, update both the live config (per OPERATIONS.md rotation table) AND `.env.secrets` in the same change. **Never commit it.**
 - **Don't reintroduce time leaks** in vs-tks Discord interview prep — vs14-voice rule: no specific cadences/cooldowns/audit windows in admin-side commitments.
-- **vs-2f8.2 stays trigger-deferred** — don't auto-execute; fires on first contributor PR / 2026-05-17 sweep / pre-launch sweep.
+- **vs-2f8.2 trigger-date is here.** The deferral named "2026-05-17 sweep" as one of three triggers — that date arrived. Don't auto-execute, but the next session should surface vs-2f8.2 to the maintainer for a fire-or-re-defer decision.
+- **publish-testing cron is OFF** as of 2026-05-16. The schedule block is commented out in `.github/workflows/publish-testing.yml`; only `workflow_dispatch` is live. Re-enable belongs in vs-2f8.11's close-commit, AFTER PUBLISH_TOKEN mint (vs-2f8.10) and a verified manual workflow_dispatch run.
 - **vs-i9u / vs-qd5 are blocks-on vs-ddu.5** — don't try to ship them ahead of Phase 4.
 - **vs-xvp.6 is blocks-on vs-xvp** (maintainer's in-game Nurseshark feedback loop) — don't auto-execute.
 - **bv alert is info-only** — vs-ddu.5 cascade is the structural bottleneck, not a hygiene problem. Clears when Phase 4 runs.
