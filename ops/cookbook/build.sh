@@ -33,6 +33,17 @@
 
 set -euo pipefail
 
+# Ensure nvm-installed node toolchain is on PATH for timer-spawned
+# invocations (systemd timers get a minimal default PATH that excludes
+# /home/ubuntu/.nvm/.../bin). Idempotent: skipped when npm is already
+# resolvable (interactive shells via .zshrc init). See vs-9an.
+if ! command -v npm >/dev/null 2>&1; then
+  newest_node_bin=$(ls -1dt /home/ubuntu/.nvm/versions/node/*/bin 2>/dev/null | head -1)
+  if [ -n "${newest_node_bin:-}" ]; then
+    export PATH="${newest_node_bin}:${PATH}"
+  fi
+fi
+
 REPO_ROOT="${REPO_ROOT:-/opt/vacation-station}"
 COOKBOOK_SOURCE_DIR="${COOKBOOK_SOURCE_DIR:-/var/lib/vs14-cookbook-source}"
 COOKBOOK_SOURCE_URL="${COOKBOOK_SOURCE_URL:-https://github.com/azigler/vacation-station-14}"
