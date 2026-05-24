@@ -160,3 +160,22 @@ auto_record = true
 auto_record_name = "{year}/{month}/round_{round}-{day}T{hour}{minute}Z.zip"
 # Keep admin channel out of training data
 record_admin_chat = false
+
+# -----------------------------------------------------------------------------
+# ADMIN
+# -----------------------------------------------------------------------------
+
+[admin]
+# SS14's `/status` endpoint subtracts admin sessions from the publicly-
+# reported player count by default — upstream's `admin.admins_count_in_playercount`
+# cvar defaults to false (Content.Shared/CCVar/CCVars.Admin.cs:171). Wizard's
+# Den convention so admins don't farm hub-listed activity by idling in their
+# own server. For VS14 (and any personal / small-community fork where the
+# maintainer is admin AND frequently the only or first player) this default
+# makes the launcher's player count pin at 0 whenever the maintainer is
+# the only one on — `(PlayerCount - ActiveAdmins.Count) = 0`.
+#
+# Flip to true: admins count in the publicly-reported total. Trade-off:
+# the hub will see admin sessions as real activity. For a community fork
+# without hub-position incentives, that's fine.
+admins_count_in_playercount = true
