@@ -31,6 +31,7 @@ using Content.Shared.IoC;
 using Content.Shared.Kitchen;
 using Content.Shared.Players.PlayTimeTracking;
 using Content.Shared.Players.RateLimiting;
+using Robust.Shared.Network;
 
 namespace Content.Server.IoC;
 
@@ -47,6 +48,12 @@ internal static class ServerContentIoC
         deps.Register<RecipeManager, RecipeManager>();
         deps.Register<INodeGroupFactory, NodeGroupFactory>();
         deps.Register<IConnectionManager, ConnectionManager>();
+        // SS14-fork (spec dotfiles-9g1 §4.3): register the wrapper-aware
+        // IRemoteAddressOverride. The cvar net.use_wrapper_remote_address
+        // (default false) gates the actual UDS traffic — the impl
+        // short-circuits to null when the cvar is off, so registering
+        // unconditionally is safe on non-wrapper deployments.
+        deps.Register<IRemoteAddressOverride, Ss14WrapperRemoteAddressOverride>();
         deps.Register<ServerUpdateManager>();
         deps.Register<IAdminManager, AdminManager>();
         deps.Register<ISharedAdminManager, AdminManager>();
