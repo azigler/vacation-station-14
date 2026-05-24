@@ -57,3 +57,58 @@ Lower-leverage agentic-only options: vs-1yd (Discord shield badge in README).
 - **vs-xvp.6 is blocks-on vs-xvp** (maintainer's in-game Nurseshark feedback loop) — don't auto-execute.
 - **bv alert is info-only** — vs-ddu.5 cascade is the structural bottleneck, not a hygiene problem. Clears when Phase 4 runs.
 - **Research-ss14 folder is gone** — bead notes are now the canonical record. Transcript JSONL persists at `~/.claude/projects/-home-ubuntu-research-ss14/`; cite it from notes when deeper archaeology is needed.
+
+---
+
+## Infrastructure migration — zig-zone arc (2026-05-23 → 2026-05-24)
+
+**This is not a vs14 work session.** Out-of-band, the operator + agent ran a multi-phase infra migration ("zig-zone") that significantly changed where vs14 services live. The vs14 code is unchanged; the deployment layout is dramatically different.
+
+**Before you touch ops/, postgres, nginx, the docker-composes, or any service unit — read these references:**
+
+- **Runbook** — `~/explore/.claude/skills/zig-zone/SKILL.md` (private). Topology, what runs where, ACL, recovery cheatsheet, 22 hard-won gotchas (#15–#22 are from this arc; #18 + #21 + #22 are vs14-specific).
+- **Beads** — dotfiles repo, NOT vs14's beads:
+  - `dotfiles-phe` — the zig-zone spec (3 scrutinize rounds; SHIPped)
+  - `dotfiles-ozk` — Phase 2: Ollama + Phoenix → pico
+  - `dotfiles-991` — Phase 3: postgres + vs14-web + obs containers + reef-router
+  - `dotfiles-76s` — vs14-mapserver ARM64 native build (the `docker build --platform linux/arm64` fix)
+  - `dotfiles-hdo` — Phase 4: SS14 + watchdog tried on pico, ROLLED BACK (canonical SS14 reverse-proxy architecture: don't UDP-proxy)
+  - `dotfiles-ier` — research bead for the 0/30 counter bug (closed: was `admin.admins_count_in_playercount = false` default, not proxy-related)
+  - `dotfiles-52c` — OPEN: future plan to move SS14 to pico via home-router DNAT
+  - `dotfiles-q0c` — 7 of 8 vs14/ss14 timers ported to pico launchd
+
+### What changed for vs14 deployment
+
+| Service | Where it ran before | Where it runs now | Notes |
+|---|---|---|---|
+| **postgres@17** (vacation_station, vacation_station_mapserver) | zig-computer localhost:5432 | **pico** localhost:5432 + tailnet `pico.tailfb4637.ts.net:5432` (allowed from zig-computer's tailnet IP only via pg_hba) | DB migrated via `pg_dump -Fc` + `pg_restore`. SS14 game server on zig-computer now talks postgres over tailnet. |
+| **vs14-web.service** (Next.js :3300) | zig-computer systemd | **pico** `~/Library/LaunchAgents/com.zig.vs14-web.plist` | Bound to pico tailnet IP; zig-computer nginx proxies → pico:3300. |
+| **6 obs containers** (prometheus, loki, grafana, cdn, mapserver, ss14-admin) | zig-computer Docker | **pico** Colima Docker — all native ARM64 | mapserver + ss14-admin needed `docker build --platform linux/arm64 --no-cache` to produce real arm64 images (compose's default build silently picks amd64 even with DOCKER_DEFAULT_PLATFORM env — gotcha #18). |
+| **Static dirs** /var/www/vs14-{recipes,guidebook,writer,maps} + external/nurseshark/dist | zig-computer disk | **pico** `/Users/pico/var/www/` + nurseshark dist on pico clone | nginx on pico (port 8080) serves the static paths; nginx on zig-computer proxies `/` → pico. |
+| **Build/maintenance timers** (cookbook, guidebook, writer, nurseshark, map-render, ss14-backup, postgres-retention) — 7 of 8 | zig-computer systemd timers | **pico** launchd plists (installed by `~/dotfiles/vs14/install-timers.sh`) | Times stayed in PDT-equivalent of original UTC schedules. Build scripts work unchanged via `/opt/vacation-station → /Users/pico/vacation-station-14` symlink on pico. |
+| **ss14-watchdog + Robust.Server + ss14-replay-rotate** | zig-computer | **STAYS on zig-computer** | Phase 4 SS14-on-pico attempted then rolled back. SS14's intrinsic source-IP-coupling (ban_address, GeoIP, ipintel_cache, admin logs) requires direct UDP delivery from the public IP. nginx UDP-proxying it = total loss of moderation. See dotfiles-52c for the future home-router DNAT path. |
+| **reef-router** (granola webhook on :7575) | zig-computer | **pico** `~/Library/LaunchAgents/com.zig.reef-router.plist` | zig-computer nginx adds a `listen 7575` server block that proxies to pico. Granola webhook URL unchanged externally. |
+
+### Two clones of `vacation-station-14`
+
+The git tree is now cloned in TWO places that can drift:
+
+- **zig-computer**: `/home/ubuntu/vacation-station-14` (this repo). Touched at: `.env.secrets` (live), `/opt/ss14-watchdog/instances/vacation-station/config.toml` (live, NOT in this tree — it's a separate watchdog instance config).
+- **pico**: `/Users/pico/vacation-station-14`. Touched at: docker-compose.override.yml files in ops/ss14-admin/ + ops/observability/ (gitignored), patched appsettings.yml urls (ss14-admin), built static dirs (cookbook/guidebook/writer/nurseshark output now goes to pico's /Users/pico/var/www/).
+
+**When you `git pull` here, also pull on pico** for any change that touches `ops/*/build.sh`, `external/*` submodules used by build pipelines, or web/ — otherwise the timers + vs14-web will be running stale. SSH: `tailscale ssh pico@pico "cd /Users/pico/vacation-station-14 && git pull && git submodule update"`.
+
+### vs14-specific gotchas captured in the zig-zone runbook
+
+- **#18** — `docker-compose build` silently picks amd64 on Apple Silicon. Use bare `docker build --platform linux/arm64 --no-cache` for mapserver / ss14-admin rebuilds.
+- **#19** — macOS Homebrew nginx as `nobody` can't traverse `/Users/<user>/` (mode 700). Set `user pico staff;` at top of nginx.conf.
+- **#20** — macOS Colima can't bind ports to the macOS host's tailnet IP directly. Use `0.0.0.0:PORT:PORT` + container-internal 0.0.0.0 bind.
+- **#21** — ASP.NET Core appsettings.yml `urls:` overrides `ASPNETCORE_URLS`. For ss14-admin we patched `urls: "http://0.0.0.0:5427/"` on pico's clone.
+- **#22** — SS14 hides admins from `/status` players count by default. We applied `[admin] admins_count_in_playercount = true` to the live `/opt/ss14-watchdog/instances/vacation-station/config.toml` on zig-computer. **Consider whether the source `Resources/ConfigPresets/Build/development.toml` or whichever default config template should also carry this** — currently it's a live-edit only.
+
+### Open vs14-impacting items in dotfiles beads (not vs14's beads)
+
+- `dotfiles-52c` (P3) — future SS14 → pico via home-router DNAT + DDNS. Build artifacts already on pico awaiting this. Read for the alternatives matrix (PROXY protocol, TPROXY) if you're ever curious whether there's a simpler path.
+- `dotfiles-st2` (P3) — iPhone Termius shows broken nerdfont glyphs via Tailscale SSH; workaround = connect to public IP. Doesn't affect anything vs14 except admin-from-phone.
+
+If you're picking up vs14 work — none of this BLOCKS your work, just don't be surprised when `systemctl status vs14-web` says inactive on zig-computer, or `psql vacation_station` from zig-computer prompts for password (it now goes over tailnet to pico).
