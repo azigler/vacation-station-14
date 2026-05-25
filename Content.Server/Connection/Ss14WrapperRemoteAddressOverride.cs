@@ -115,12 +115,12 @@ namespace Content.Server.Connection
         ///     via a stub UDS server in
         ///     <c>Ss14WrapperRemoteAddressOverrideTests</c>.
         /// </remarks>
-        internal static IPEndPoint? LookupViaSocket(string sockPath, string protocol, int localPort)
+        internal static IPEndPoint? LookupViaSocket(string sockPath, string protocol, int localPort, int timeoutMs = ReadTimeoutMs)
         {
             using var sock = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified)
             {
-                ReceiveTimeout = ReadTimeoutMs,
-                SendTimeout = ReadTimeoutMs,
+                ReceiveTimeout = timeoutMs,
+                SendTimeout = timeoutMs,
             };
 
             sock.Connect(new UnixDomainSocketEndPoint(sockPath));

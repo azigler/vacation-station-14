@@ -193,10 +193,15 @@ namespace Content.Tests.Connection
                 });
 
             var results = new IPEndPoint?[10];
+            // CI thread-pool contention can exceed the production 200ms
+            // ReceiveTimeout under 10-way Parallel.For load; this test
+            // asserts correctness (no cross-contamination), not timeout
+            // shape — so pass a generous timeout. LookupViaSocket_SocketTimeout_Throws
+            // still verifies the production default fires within 2000ms.
             Parallel.For(0, 10, i =>
             {
                 results[i] = Ss14WrapperRemoteAddressOverride.LookupViaSocket(
-                    stub.Path, "udp", 33001 + i);
+                    stub.Path, "udp", 33001 + i, timeoutMs: 5000);
             });
 
             Assert.Multiple(() =>
