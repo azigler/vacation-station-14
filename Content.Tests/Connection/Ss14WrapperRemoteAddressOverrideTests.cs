@@ -283,19 +283,39 @@ namespace Content.Tests.Connection
         {
             public string Path { get; }
             private readonly Socket _listener;
-            private readonly CancellationTokenSource _cts = new();
-            private readonly Task _serveLoop;
+            private readonly ManualResetEventSlim _serveReady = new(false);
+            private readonly Thread _serveThread;
+            private readonly Func<string, string?> _replyFor;
+            private readonly Action<string>? _recordRequest;
+            private readonly Action<byte[]>? _recordRawBytes;
+            private readonly int _holdConnectionMs;
+            private volatile bool _disposed;
 
             private StubUdsServer(string path, Func<string, string?> replyFor,
                 Action<string>? recordRequest, Action<byte[]>? recordRawBytes,
                 int holdConnectionMs)
             {
                 Path = path;
+                _replyFor = replyFor;
+                _recordRequest = recordRequest;
+                _recordRawBytes = recordRawBytes;
+                _holdConnectionMs = holdConnectionMs;
                 _listener = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
                 _listener.Bind(new UnixDomainSocketEndPoint(path));
                 _listener.Listen(8);
-
-                _serveLoop = Task.Run(() => ServeLoop(replyFor, recordRequest, recordRawBytes, holdConnectionMs, _cts.Token));
+                // Dedicated OS thread for the accept loop — same rationale
+                // as Ss14WrapperCvarTests.StubServer: thread-pool contention
+                // on shared CI runners can delay a Task.Run-scheduled accept
+                // by seconds. A real Thread is OS-scheduled, deterministic.
+                _serveThread = new Thread(ServeLoop)
+                {
+                    IsBackground = true,
+                    Name = "StubUdsServer-Accept",
+                };
+                _serveThread.Start();
+                // Rendezvous: don't return until the accept loop is running.
+                if (!_serveReady.Wait(TimeSpan.FromSeconds(5)))
+                    throw new TimeoutException("StubUdsServer serve thread didn't start in 5s");
             }
 
             public static StubUdsServer Start(
@@ -318,58 +338,68 @@ namespace Content.Tests.Connection
                 return new StubUdsServer(path, replyFor, recordRequest, recordRawBytes, holdConnectionMs);
             }
 
-            private async Task ServeLoop(Func<string, string?> replyFor,
-                Action<string>? recordRequest, Action<byte[]>? recordRawBytes,
-                int holdConnectionMs, CancellationToken ct)
+            private void ServeLoop()
             {
-                while (!ct.IsCancellationRequested)
+                _serveReady.Set();
+                while (!_disposed)
                 {
                     Socket client;
-                    try
-                    {
-                        client = await _listener.AcceptAsync(ct);
-                    }
-                    catch (OperationCanceledException) { break; }
+                    try { client = _listener.Accept(); }
+                    catch (SocketException) { break; }
                     catch (ObjectDisposedException) { break; }
 
-                    _ = Task.Run(async () =>
+                    // Per-client handler on its own dedicated thread — keeps
+                    // concurrent-lookup tests truly parallel (10 connects → 10
+                    // handler threads, no thread-pool contention). Threads
+                    // are background so they don't block process exit.
+                    var clientCopy = client;
+                    var handler = new Thread(() => HandleClient(clientCopy))
                     {
-                        try
-                        {
-                            using (client)
-                            {
-                                var buf = new byte[1024];
-                                var n = await client.ReceiveAsync(buf.AsMemory(), ct);
-                                if (n <= 0) return;
-
-                                var raw = new byte[n];
-                                Array.Copy(buf, raw, n);
-                                recordRawBytes?.Invoke(raw);
-
-                                var req = Encoding.ASCII.GetString(buf, 0, n).TrimEnd('\r', '\n');
-                                recordRequest?.Invoke(req);
-
-                                if (holdConnectionMs > 0)
-                                    await Task.Delay(holdConnectionMs, ct);
-
-                                var reply = replyFor(req);
-                                if (reply == null) return; // null = never reply (timeout test)
-
-                                await client.SendAsync(Encoding.ASCII.GetBytes(reply).AsMemory(), ct);
-                            }
-                        }
-                        catch { /* test-side socket errors are expected on timeout */ }
-                    }, ct);
+                        IsBackground = true,
+                        Name = "StubUdsServer-Handler",
+                    };
+                    handler.Start();
                 }
+            }
+
+            private void HandleClient(Socket client)
+            {
+                try
+                {
+                    using (client)
+                    {
+                        client.ReceiveTimeout = 2000;
+                        client.SendTimeout = 2000;
+                        var buf = new byte[1024];
+                        var n = client.Receive(buf, 0, buf.Length, SocketFlags.None);
+                        if (n <= 0) return;
+
+                        var raw = new byte[n];
+                        Array.Copy(buf, raw, n);
+                        _recordRawBytes?.Invoke(raw);
+
+                        var req = Encoding.ASCII.GetString(buf, 0, n).TrimEnd('\r', '\n');
+                        _recordRequest?.Invoke(req);
+
+                        if (_holdConnectionMs > 0)
+                            Thread.Sleep(_holdConnectionMs);
+
+                        var reply = _replyFor(req);
+                        if (reply == null) return; // null = never reply (timeout test)
+
+                        client.Send(Encoding.ASCII.GetBytes(reply));
+                    }
+                }
+                catch { /* test-side socket errors are expected on timeout */ }
             }
 
             public void Dispose()
             {
-                try { _cts.Cancel(); } catch { }
+                _disposed = true;
                 try { _listener.Close(); } catch { }
-                try { _serveLoop.Wait(TimeSpan.FromSeconds(1)); } catch { }
+                try { _serveThread.Join(TimeSpan.FromSeconds(1)); } catch { }
                 try { File.Delete(Path); } catch { }
-                _cts.Dispose();
+                _serveReady.Dispose();
             }
         }
     }

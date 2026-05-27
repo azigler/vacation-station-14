@@ -227,9 +227,9 @@ namespace Content.Tests.Connection
             public int AcceptCount => Volatile.Read(ref _acceptCount);
 
             private readonly ManualResetEventSlim _accepted = new(false);
+            private readonly ManualResetEventSlim _serveReady = new(false);
             private readonly Socket _listener;
-            private readonly CancellationTokenSource _cts = new();
-            private readonly Task _serveLoop;
+            private readonly Thread _serveThread;
 
             private StubServer(string path)
             {
@@ -237,7 +237,23 @@ namespace Content.Tests.Connection
                 _listener = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
                 _listener.Bind(new UnixDomainSocketEndPoint(path));
                 _listener.Listen(8);
-                _serveLoop = Task.Run(() => ServeLoop(_cts.Token));
+                // Dedicated OS thread, NOT Task.Run — under thread-pool
+                // contention on shared CI runners, a pool-scheduled accept
+                // loop can be queued behind hundreds of other test fixtures
+                // and not fire for seconds. A real Thread is scheduled by
+                // the OS, independent of the .NET thread pool.
+                _serveThread = new Thread(ServeLoop)
+                {
+                    IsBackground = true,
+                    Name = "StubServer-Cvar-Accept",
+                };
+                _serveThread.Start();
+                // Rendezvous: don't return until the serve thread has signaled
+                // it's about to block on Accept. Any client Connect that arrives
+                // after this point either lands in the kernel backlog (queued
+                // until Accept runs) or is taken by an already-running Accept.
+                if (!_serveReady.Wait(TimeSpan.FromSeconds(5)))
+                    throw new TimeoutException("StubServer serve thread didn't start in 5s");
             }
 
             public static StubServer Start()
@@ -252,19 +268,26 @@ namespace Content.Tests.Connection
 
             /// <summary>
             ///     Block until at least one accept has fired or the timeout
-            ///     elapses. Used to make assertions deterministic — the
-            ///     impl's Socket.Connect is synchronous but the stub's
-            ///     AcceptAsync resolves on a worker thread.
+            ///     elapses. The serve thread runs on a dedicated OS thread,
+            ///     so Accept fires within kernel-scheduling latency of
+            ///     Connect — but tests should still use a non-zero timeout
+            ///     to absorb worst-case scheduling jitter.
             /// </summary>
             public void WaitForAccept(TimeSpan timeout) => _accepted.Wait(timeout);
 
-            private async Task ServeLoop(CancellationToken ct)
+            private void ServeLoop()
             {
-                while (!ct.IsCancellationRequested)
+                // Signal readiness BEFORE the first Accept. There's a tiny
+                // race window between Set and Accept where the thread could
+                // be preempted, but on Linux UDS the kernel still queues
+                // connects up to backlog (8), so the eventual Accept drains
+                // any queued connection. Test correctness is unaffected.
+                _serveReady.Set();
+                while (true)
                 {
                     Socket client;
-                    try { client = await _listener.AcceptAsync(ct); }
-                    catch (OperationCanceledException) { break; }
+                    try { client = _listener.Accept(); }
+                    catch (SocketException) { break; }
                     catch (ObjectDisposedException) { break; }
 
                     Interlocked.Increment(ref _acceptCount);
@@ -278,12 +301,14 @@ namespace Content.Tests.Connection
 
             public void Dispose()
             {
-                try { _cts.Cancel(); } catch { }
+                // Closing the listener wakes the blocking Accept call with
+                // an ObjectDisposedException, which the loop catches and
+                // exits cleanly.
                 try { _listener.Close(); } catch { }
-                try { _serveLoop.Wait(TimeSpan.FromSeconds(1)); } catch { }
+                try { _serveThread.Join(TimeSpan.FromSeconds(1)); } catch { }
                 try { File.Delete(Path); } catch { }
-                _cts.Dispose();
                 _accepted.Dispose();
+                _serveReady.Dispose();
             }
         }
     }
