@@ -1,47 +1,69 @@
-# Session handoff — 2026-05-26 (session 76d779b6, covers 2026-05-23 prod-triage + 2026-05-25 CI-flake-fix)
+# Session handoff — 2026-06-12 (prod-outage triage + restore)
 
 ## State at offboard
 
 - **Current branch**: main
-- **Last commit**: `59ca38a116` — `:card_file_box: beads: close vs-4h1.1`
-- **Open beads**: ~27 (1 P1 epic, 11 P2, 14 P3; 1 in-progress: vs-4h1; 4 deferred ❄)
-- **In-flight subagents**: none
+- **Last commit**: `e4daf50bdb` — `:card_file_box: beads: close vs-byi — prod outage resolved, join confirmed` (this offboard commit follows)
+- **Open beads**: ~29 (1 P1 epic; new: **vs-f6i P2** queued as top pick); in-progress: vs-4h1
+- **In-flight subagents**: none (no dispatches this session — all ops work done directly per maintainer authorization)
 - **Dirty files**: none after offboard commit
-- **Markers**: `.offboard-pending` cleared by this offboard
+- **Markers**: `.offboard-pending` n/a (clean session)
 
 ## What happened this session
 
-This handoff covers two phases that bracket a session-resume — the prior session ended without offboard (left `.offboard-pending`), and this resume took on a new task. Both phases are captured here as one bracket.
+**Prod outage found and fixed (vs-byi, P1, CLOSED — maintainer confirmed join works).**
+Andrew reported "unknown server error occurred during handshake" on connect.
 
-### Phase A — 2026-05-23 prod triage (pre-resume)
-- **Fixed SS14 launcher 502** — `vs14-cdn` container had been silently exited for 4 weeks (since 2026-04-19). Root cause: `ops/cdn/` → `ops/robust-cdn/` rename during vs-2f8.1 updated the compose mount path but the live container was never recreated; on next restart docker's bind-mount of the (now missing) old path auto-created an empty *directory*, poisoning every subsequent start. Recreated container via `docker compose up -d cdn`; both `/cdn/.../manifest` and `/cdn/.../SS14.Client.zip` return 200. vs-2f8.1 was prematurely closed as "service live"; reality was outage. Discovered only when maintainer tried the launcher.
-- **Cleaned up stale `ops/cdn/`** debris dirs (root-owned, empty, both in `/opt/` and `/home/` clones).
-- **Fixed admin permissions** — `spacezig` had Host rank with only the `HOST` flag (despite the name, `HOST` is just one flag among 23 — not a superflag). Granted all 22 missing flags via SQL direct on the `vacation_station` postgres DB. Reconnect required to refresh the cached perms.
-- **Expanded vs-2f8.8** (blackbox monitoring bead) to include vs14-cdn + admin + mapserver + game-server status port — incident attached as evidence. Bead stays deferred (P3) per maintainer.
-- **Updated memory** — `project_publishing.md` now captures the silent-failure pattern (post-rename container, no monitoring).
-
-### Phase B — 2026-05-25 CI flake fix (this resume)
-- **Diagnosed Build & Test Debug failure** (run 26388756804). `Ss14WrapperRemoteAddressOverrideTests.LookupViaSocket_ConcurrentInvocations_NoCrossContamination` flaked with 4/10 `SocketException: Connection timed out`. 200ms `ReceiveTimeout` insufficient under 10-way Parallel.For on GH 2-vCPU shared runner. Not a production bug — real wrapper is co-located + sub-ms.
-- **Fixed** (vs-4h1.1, commit `c4ae0d1d90`): added optional `int timeoutMs = ReadTimeoutMs` parameter to `LookupViaSocket` (additive on already-`internal static` test seam); concurrent test now passes `timeoutMs: 5000`. Production default stays 200ms; `_SocketTimeout_Throws` still verifies the production timeout.
-- **Verified**: 4 consecutive local runs of `Ss14WrapperRemoteAddressOverrideTests` 15/15 each (344-459ms); dispatched CI run 26405020115 → ✓ success in 14m57s.
-- **Cleaned**: stray `.claude/worktrees/agent-a54bcfc4047afa256` from a cancelled dispatch (worktree hook returned cancel but actually created the worktree; manually removed + branch deleted).
+- **Root cause**: pico (Mac Studio; hosts postgres/web/CDN/obs/static since the
+  2026-05-24 zig-zone migration, commit `db90b39480`, runbook
+  `~/explore/.claude/skills/zig-zone/SKILL.md`) **rebooted ~2026-05-29 and nothing
+  restarted** — headless Mac = no GUI login = no `gui/501` launchd domain, so brew
+  services and LaunchAgents silently never load. Game server on zig-computer failed
+  every handshake at the ban check (Npgsql → pico:5432 refused). Sat silent ~2 weeks
+  (zero players since 05-25).
+- **Restored on pico** (via `ssh pico` — port-2222 alias in `~/.ssh/local`; tailscale
+  SSH from zig-computer is grammatically impossible: tagged src → user-owned dst):
+  postgres@17 (`launchctl bootstrap user/501`), colima (6 containers auto-resumed
+  healthy), nginx (`launchctl kickstart system/...` — bootstrap err 5 = already
+  loaded), vs14-web (**nohup fallback** — its agent refuses bootstrap, err 5 even
+  via sudo; NOT reboot-durable).
+- **Verified**: DB intact (round 25, zero data loss), app role connects from
+  zig-computer; public paths all 200 (/, /maps, /recipes, /guidebook, /nurseshark,
+  /admin); maintainer joined successfully. Game server needed no restart (Npgsql
+  pool recovers per-connection).
+- **Architecture confirmed for the maintainer**: game server + watchdog stay on
+  zig-computer (direct public UDP, real source IPs — Phase 4 SS14-on-pico was
+  rolled back, `dotfiles-hdo`); only the DB path crosses the tailnet, over TCP.
+  Server uses **ACZ** — CDN is not in the join path.
+- **Filed vs-f6i (P2)**: pico boot-resilience. Also updated memory
+  (`project_publishing.md`) with the pico-era failure mode + ops cheatsheet.
 
 ## What's next
 
-Three top picks, in order of leverage:
-
-1. **vs-4h1 parent close** (◐ in_progress) — vs-4h1.1 closed the CI flake; check whether the broader ss14-c2 IRemoteAddressOverride bead has any remaining acceptance gaps before closing the parent. Look at vs-q7m (scrutiny SHIP) which was the prior wave.
-2. **vs-2f8.10 / vs-2f8.11** (CDN publish atomic human follow-ups) — still pending. .10 is "mint PUBLISH_TOKEN + register GH Actions secret" (~10 min), .11 is "manual workflow_dispatch run end-to-end, then re-enable cron in publish-testing.yml in the same close-commit." Unblocks vs-17n AND restores nightly publishing.
-3. **vs-2f8.8 re-thaw decision** — blackbox monitoring bead, now scoped to include vs14-cdn after the 4-week silent outage incident. Stays deferred until 2026-07-02 per current `defer:` field, but the incident is strong evidence for earlier re-thaw. Maintainer call.
-
-Lower-leverage agentic-only options: vs-tks (Discord gating interview prep), vs-ddu.5 cell pre-structuring, vs-1yd (Discord shield badge).
+1. **vs-f6i** (queued by maintainer — top pick): make pico services reboot-proof;
+   **DB backups dead since 2026-05-24** (scariest sub-item — verify
+   `com.zig.ss14-backup` on pico actually fires, or re-enable zig-computer's
+   `ss14-backup.timer` against the tailnet DB); fix loki shipping (container binds
+   127.0.0.1:3100, watchdog ships to pico:3100 → refused); investigate vs14-web
+   bootstrap err 5; update stale docs (services SKILL.md + CLAUDE.md claim local
+   pg16 + local docker — reality is pico).
+2. **vs-2f8.8 re-thaw decision** — third consecutive silent outage; every one was
+   catchable by a single external probe. Strong evidence; maintainer call.
+3. vs-4h1 parent close check, vs-2f8.10/.11 — unchanged from prior handoff.
 
 ## Warnings / watch-outs
 
-- **`.env.secrets` is the local password manager.** `.gitignored` at root line 330. Contains 3 prod creds (postgres / watchdog ApiToken / grafana admin). If a credential rotates, update both live config AND `.env.secrets` in the same change. **Never commit it.**
-- **`ops/cdn/` is FORBIDDEN as a path.** Docker bind-mount creates empty directories there on missing-source restart, and that pattern just cost us a 4-week silent CDN outage. Always use `ops/robust-cdn/`. Memory `project_publishing.md` captures the failure shape.
-- **publish-testing cron is OFF** as of 2026-05-16. Schedule block commented in `.github/workflows/publish-testing.yml`; only `workflow_dispatch` is live. Re-enable belongs in vs-2f8.11's close-commit, AFTER PUBLISH_TOKEN mint (vs-2f8.10) and a verified manual workflow_dispatch run.
-- **vs-i9u / vs-qd5 are blocks-on vs-ddu.5** — don't try to ship them ahead of Phase 4.
-- **vs-xvp.6 is blocks-on vs-xvp** (maintainer's in-game Nurseshark feedback loop) — don't auto-execute.
-- **The worktree-create hook can cancel mid-dispatch but still create the worktree.** If a dispatch fails with "Hook cancelled," check `git worktree list` and clean up before continuing — don't assume the worktree wasn't created. (Saw this on the vs-4h1.1 dispatch attempt 2026-05-25.)
-- **No blackbox monitoring still.** vs14-cdn, admin, mapserver, nurseshark, cookbook, guidebook are all subject to the same silent-failure shape that bit us 2026-04-19 → 2026-05-23. Anything proxied by nginx → docker can die invisibly. vs-2f8.8 covers this; until thawed, treat any "service quietly stopped working" report as plausibly weeks old.
+- **vs14-web on pico runs via nohup** — dies on next pico reboot/process kill.
+  First casualty of the next incident unless vs-f6i lands.
+- **No DB backups since 2026-05-24.** Do no risky DB work before fixing this.
+- **`ssh pico` (port 2222) is the ONLY path from zig-computer to pico.** Don't
+  burn time on tailscale SSH (ACL grammar can't express it — see
+  `~/dotfiles/tailscale/acl.jsonc` comment block).
+- **Headless-Mac launchd**: `brew services start` always fails (no gui domain);
+  use `launchctl bootstrap user/501 <plist>` / `kickstart system/<label>`.
+  Bootstrap "error 5" usually = already loaded → kickstart.
+- **Two clones can drift**: changes touching `ops/*/build.sh`, build-pipeline
+  submodules, or `web/` must also be pulled on pico
+  (`/Users/pico/vacation-station-14`).
+- Prior handoff's warnings (`.env.secrets` discipline, `ops/cdn/` forbidden path,
+  publish-testing cron OFF, vs-i9u/vs-qd5/vs-xvp.6 blocks) all still stand.
