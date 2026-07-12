@@ -1,69 +1,74 @@
-# Session handoff — 2026-06-12 (prod-outage triage + restore)
+# Session handoff — 2026-07-12 6d5bf5a7 (game-server shutdown + pico rogue-stack cleanup)
 
 ## State at offboard
-
 - **Current branch**: main
-- **Last commit**: `e4daf50bdb` — `:card_file_box: beads: close vs-byi — prod outage resolved, join confirmed` (this offboard commit follows)
-- **Open beads**: ~29 (1 P1 epic; new: **vs-f6i P2** queued as top pick); in-progress: vs-4h1
-- **In-flight subagents**: none (no dispatches this session — all ops work done directly per maintainer authorization)
-- **Dirty files**: none after offboard commit
-- **Markers**: `.offboard-pending` n/a (clean session)
+- **Last commit**: `2d1c8370b0` — `:card_file_box: beads: vs-tjj CDN-hang bug + vs-f6i note …` (this offboard commit follows)
+- **Open beads**: 30 (1 P1 epic; new this session: **vs-tjj** P2 bug); in-progress: vs-4h1
+- **In-flight subagents**: none (all ops done directly, per maintainer authorization — no dispatches)
+- **Dirty files**: `.gitattributes` (M) — **NOT this session's**: a pre-existing, correct one-line
+  dedup (removes superseded `.beads/*.jsonl merge=union`, keeps `merge=jsonl-union`). Left
+  uncommitted deliberately; next session can commit it if desired.
+- **Markers**: `.offboard-pending` cleared
 
 ## What happened this session
 
-**Prod outage found and fixed (vs-byi, P1, CLOSED — maintainer confirmed join works).**
-Andrew reported "unknown server error occurred during handshake" on connect.
+Pure ops session (no code). Maintainer (Zig) asked to turn off the SS14 game server on
+zig-computer to reclaim RAM + stop it returning on reboot. That expanded into a topology
+audit and two pico fixes.
 
-- **Root cause**: pico (Mac Studio; hosts postgres/web/CDN/obs/static since the
-  2026-05-24 zig-zone migration, commit `db90b39480`, runbook
-  `~/explore/.claude/skills/zig-zone/SKILL.md`) **rebooted ~2026-05-29 and nothing
-  restarted** — headless Mac = no GUI login = no `gui/501` launchd domain, so brew
-  services and LaunchAgents silently never load. Game server on zig-computer failed
-  every handshake at the ban check (Npgsql → pico:5432 refused). Sat silent ~2 weeks
-  (zero players since 05-25).
-- **Restored on pico** (via `ssh pico` — port-2222 alias in `~/.ssh/local`; tailscale
-  SSH from zig-computer is grammatically impossible: tagged src → user-owned dst):
-  postgres@17 (`launchctl bootstrap user/501`), colima (6 containers auto-resumed
-  healthy), nginx (`launchctl kickstart system/...` — bootstrap err 5 = already
-  loaded), vs14-web (**nohup fallback** — its agent refuses bootstrap, err 5 even
-  via sudo; NOT reboot-durable).
-- **Verified**: DB intact (round 25, zero data loss), app role connects from
-  zig-computer; public paths all 200 (/, /maps, /recipes, /guidebook, /nurseshark,
-  /admin); maintainer joined successfully. Game server needed no restart (Npgsql
-  pool recovers per-connection).
-- **Architecture confirmed for the maintainer**: game server + watchdog stay on
-  zig-computer (direct public UDP, real source IPs — Phase 4 SS14-on-pico was
-  rolled back, `dotfiles-hdo`); only the DB path crosses the tailnet, over TCP.
-  Server uses **ACZ** — CDN is not in the join path.
-- **Filed vs-f6i (P2)**: pico boot-resilience. Also updated memory
-  (`project_publishing.md`) with the pico-era failure mode + ops cheatsheet.
+1. **zig-computer game server OFF (maintainer request).** `ss14-watchdog.service` (= watchdog
+   + game-server child) **stopped + `disable`d**; the game-server child orphaned on stop
+   (unit `KillMode` only kills the watchdog) so SIGTERM'd it explicitly. `ss14-replay-rotate.timer`
+   also stopped + disabled. **~1 GB RAM reclaimed**, UDP 1212 unbound. Re-enable ONLY on explicit
+   request: `sudo systemctl enable --now ss14-watchdog.service`.
+
+2. **Verified the zig-computer ↔ pico split** (Zig didn't remember it). zig-computer
+   (`51.81.33.136`) = public TLS edge only: nginx vhost `ss14.zig.computer.conf` routes
+   `/instances/ /client.zip /watchdog/` → local watchdog `:5000`, **everything else →
+   `pico.tailfb4637.ts.net:8080`**. pico (headless Mac, `ssh pico` port 2222, tailnet
+   `100.72.47.4`) holds ALL content+state: 6 colima containers (cdn/mapserver/ss14-admin/
+   grafana/loki/prometheus), native postgres (LIVE `vacation_station` DB the server uses),
+   vs14-web, static builds. zig-computer also has a **stale local postgres** (127.0.0.1:5432,
+   `vacation_station`+`_mapserver` DBs) that nothing uses.
+
+3. **Rogue 2nd game server on pico — SHUT DOWN.** Digging into a `/cdn/` outage found a native
+   launchd stack (`com.zig.ss14-watchdog` → `Robust.Server`, + `com.zig.ss14-wrapper`) — the
+   never-torn-down Phase-4 "SS14-on-pico" leftover — running since Jun 28, **~3 GB RAM + 14.6%
+   CPU**, joinable by nobody. `launchctl bootout gui/501/…` + `disable`d both (plists remain at
+   `~/Library/LaunchAgents/`, disabled). pico 27G→24G used, load 2.6→1.4.
+
+4. **Hung vs14-cdn container — RESTARTED.** Showed "Up 4 weeks" but app dead (`curl :8087`
+   timed out) → `/cdn/` returned 000. `docker restart vs14-cdn` → `/cdn/` now fast 404 (healthy;
+   empty until publish flow lands). Same class as the April CDN outage.
+
+5. **Recorded:** filed **vs-tjj** (CDN-hang bug → re-thaw vs-2f8.8 monitoring as the guard);
+   noted **vs-f6i** (don't re-enable the disabled pico agents); updated memory
+   (`project_publishing.md` + `MEMORY.md`) so the intentionally-off servers aren't misread as
+   an outage.
+
+Verified all pico-served public paths 200 throughout (`/ /maps /admin /nurseshark /recipes /guidebook`).
 
 ## What's next
 
-1. **vs-f6i** (queued by maintainer — top pick): make pico services reboot-proof;
-   **DB backups dead since 2026-05-24** (scariest sub-item — verify
-   `com.zig.ss14-backup` on pico actually fires, or re-enable zig-computer's
-   `ss14-backup.timer` against the tailnet DB); fix loki shipping (container binds
-   127.0.0.1:3100, watchdog ships to pico:3100 → refused); investigate vs14-web
-   bootstrap err 5; update stale docs (services SKILL.md + CLAUDE.md claim local
-   pg16 + local docker — reality is pico).
-2. **vs-2f8.8 re-thaw decision** — third consecutive silent outage; every one was
-   catchable by a single external probe. Strong evidence; maintainer call.
-3. vs-4h1 parent close check, vs-2f8.10/.11 — unchanged from prior handoff.
+1. **vs-f6i** (pico boot-resilience) — still the top ops item. Now also carries: game server is
+   intentionally off, and the two pico game-server agents are intentionally `disable`d — do NOT
+   re-enable them when wiring boot-resilience. Backup (`com.zig.ss14-backup`) left intact.
+2. **vs-tjj / vs-2f8.8 re-thaw** — the CDN hang (2nd occurrence) would've been caught by a single
+   blackbox HTTP probe; vs-2f8.8 was scoped to exclude the CDN. Expand it to cover vs14-cdn.
+3. **Optional cleanup** — the stale local postgres on zig-computer (`vacation_station` DBs nothing
+   uses). Offered to Zig; not chosen this session.
 
 ## Warnings / watch-outs
 
-- **vs14-web on pico runs via nohup** — dies on next pico reboot/process kill.
-  First casualty of the next incident unless vs-f6i lands.
-- **No DB backups since 2026-05-24.** Do no risky DB work before fixing this.
-- **`ssh pico` (port 2222) is the ONLY path from zig-computer to pico.** Don't
-  burn time on tailscale SSH (ACL grammar can't express it — see
-  `~/dotfiles/tailscale/acl.jsonc` comment block).
-- **Headless-Mac launchd**: `brew services start` always fails (no gui domain);
-  use `launchctl bootstrap user/501 <plist>` / `kickstart system/<label>`.
-  Bootstrap "error 5" usually = already loaded → kickstart.
-- **Two clones can drift**: changes touching `ops/*/build.sh`, build-pipeline
-  submodules, or `web/` must also be pulled on pico
-  (`/Users/pico/vacation-station-14`).
-- Prior handoff's warnings (`.env.secrets` discipline, `ops/cdn/` forbidden path,
-  publish-testing cron OFF, vs-i9u/vs-qd5/vs-xvp.6 blocks) all still stand.
+- **BOTH game servers are now intentionally OFF + disabled** (zig-computer `ss14-watchdog.service`;
+  pico native launchd stack). A future `/onboard` must NOT "restore" them as an outage — the
+  memory + this note say so explicitly. Re-enable only on explicit request.
+- While the zig-computer server is off, the public site's `/client.zip` `/instances/` `/watchdog/`
+  paths return 502 (they proxy the local watchdog `:5000`). Expected — the launcher client-download
+  is down until the watchdog runs again.
+- CDN is healthy but **empty** — publish flow gated on `vs-2f8.10` (PUBLISH_TOKEN) + `vs-2f8.11`.
+- `ssh pico` (port 2222) is the ONLY path from zig-computer to pico; tailscale SSH is grammatically
+  impossible. On headless pico use `launchctl bootstrap/bootout gui/501` (or `user/501`), never
+  `brew services`.
+- Prior handoff's DB-backup warning still stands (no confirmed backups since 2026-05-24 until
+  vs-f6i lands) — do no risky DB work first.
