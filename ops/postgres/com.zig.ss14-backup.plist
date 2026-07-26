@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Vacation Station 14 — nightly postgres backup, macOS/launchd flavour.
+
+  Deployed at ~/Library/LaunchAgents/com.zig.ss14-backup.plist on pico, the
+  application host. The systemd pair beside this file (ss14-backup.service /
+  .timer) is the Linux equivalent; both drive the same ops/postgres/backup.sh
+  through the /opt/vacation-station symlink.
+
+  CHECKED IN 2026-07-26 (vs14d-jms). It previously existed only on pico, which
+  is how a two-month failure stayed invisible: nothing in the repo described
+  the job that was actually running, so nothing in the repo could be wrong
+  about it either.
+
+  ABOUT THE PATH BELOW. It is NOT the bug that made this job exit 127, and it
+  was already correct: /opt/homebrew/bin is where brew's postgresql@17 symlinks
+  pg_dump. The 127 came from backup.sh calling `sha256sum`, a GNU coreutils
+  command macOS does not ship and pico does not have installed. The PATH is
+  still explicit and still load-bearing — launchd gives a job no login shell,
+  so nothing from .zshrc is present — it just was not the defect.
+
+  Failure surfaces through bin/backup-health.sh in ~/vs14d, which reads the
+  STATUS.json this job writes. `launchctl list`'s exit-code column is not a
+  reporting channel; that is the lesson this whole bead is about.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.zig.ss14-backup</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/vacation-station/ops/postgres/backup.sh</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+    <key>PATH</key><string>/opt/homebrew/bin:/Users/pico/.bun/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>BACKUP_DIR</key><string>/Users/pico/backups/vacation-station</string>
+    </dict>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>20</integer>
+        <key>Minute</key><integer>15</integer>
+
+    </dict>
+    <key>StandardOutPath</key><string>/tmp/com.zig.ss14-backup.log</string>
+    <key>StandardErrorPath</key><string>/tmp/com.zig.ss14-backup.log</string>
+</dict>
+</plist>

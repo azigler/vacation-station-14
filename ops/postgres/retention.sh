@@ -17,14 +17,29 @@
 #   - ban / ban_player / ban_address /     — permanent identifiers
 #     ban_hwid / ban_role / unban
 #
-# Intended to be driven by vs14-postgres-retention.timer. Runs as the
-# 'postgres' system user (peer auth via unix socket — no password).
+# Driven by vs14-postgres-retention.timer on Linux and by launchd on pico (see
+# com.zig.vs14-postgres-retention.plist in this directory), both through the
+# /opt/vacation-station symlink. Unlike its sibling backup.sh it uses nothing
+# but psql, so it survived the GNU-vs-BSD portability bug that broke backups
+# for two months (vs14d-jms) — it has been exiting 0 nightly throughout.
+#
+# OUTCOME CONTRACT (added with vs14d-jms). The last line of every run,
+# including a crash, is
+#
+#     RETENTION_RESULT=<ok|failed>
+#
+# mirrored into $STATE_DIR/retention-STATUS.json and appended to
+# $STATE_DIR/retention-ledger.jsonl. This job was NOT broken; it gets the
+# contract anyway, because "it exits 0 today" is not the same claim as "someone
+# would notice if it stopped," and the second claim is the one that failed here.
 #
 # Knobs:
 #   PG_DB                — database name (default: vacation_station)
 #   CONNECTION_LOG_DAYS  — connection_log retention window (default: 30)
 #   IPINTEL_CACHE_DAYS   — ipintel_cache retention window (default: 30)
 #   PLAYER_INACTIVE_DAYS — player inactivity window (default: 365)
+#   STATE_DIR            — where the verdict is recorded
+#                          (default: /var/backups/vacation-station)
 
 set -euo pipefail
 
@@ -32,6 +47,34 @@ PG_DB="${PG_DB:-vacation_station}"
 CONNECTION_LOG_DAYS="${CONNECTION_LOG_DAYS:-30}"
 IPINTEL_CACHE_DAYS="${IPINTEL_CACHE_DAYS:-30}"
 PLAYER_INACTIVE_DAYS="${PLAYER_INACTIVE_DAYS:-365}"
+STATE_DIR="${STATE_DIR:-/var/backups/vacation-station}"
+
+VERDICT="failed"
+DETAIL="aborted before reaching a terminal path"
+
+finish() {
+    local rc=$?
+    if [ "${rc}" -ne 0 ] && [ "${VERDICT}" = "ok" ]; then
+        VERDICT="failed"
+        DETAIL="exit ${rc} after the prune was accepted"
+    fi
+    DETAIL="${DETAIL//\"/\'}"
+    DETAIL="${DETAIL//$'\n'/ }"
+
+    local ts line
+    ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    line="$(printf '{"ts":"%s","host":"%s","job":"vs14-postgres-retention","db":"%s","verdict":"%s","exit":%s,"detail":"%s"}' \
+        "${ts}" "$(hostname -s)" "${PG_DB}" "${VERDICT}" "${rc}" "${DETAIL}")"
+
+    if [ -d "${STATE_DIR}" ]; then
+        printf '%s\n' "${line}" >"${STATE_DIR}/retention-STATUS.json" || true
+        printf '%s\n' "${line}" >>"${STATE_DIR}/retention-ledger.jsonl" || true
+    fi
+
+    printf 'RETENTION_RESULT=%s\n' "${VERDICT}"
+    exit "${rc}"
+}
+trap finish EXIT
 
 echo ">>> Retention prune for ${PG_DB}"
 echo "    connection_log:      keep ${CONNECTION_LOG_DAYS} days"
@@ -41,6 +84,7 @@ echo "    player (inactive):   keep ${PLAYER_INACTIVE_DAYS} days (banned users e
 # Use a single transaction so a partial failure doesn't leave the DB
 # in a half-pruned state. RETURNING into a temp aggregate gives us
 # row counts for the journal log without an extra query.
+DETAIL="psql prune transaction failed"
 psql -d "${PG_DB}" --no-psqlrc --quiet --set ON_ERROR_STOP=1 <<SQL
 \set CONNECTION_LOG_DAYS ${CONNECTION_LOG_DAYS}
 \set IPINTEL_CACHE_DAYS ${IPINTEL_CACHE_DAYS}
@@ -85,4 +129,6 @@ SELECT 'player:         ' || COUNT(*) || ' rows pruned' AS result FROM pruned
 COMMIT;
 SQL
 
+VERDICT="ok"
+DETAIL="prune transaction committed"
 echo ">>> Retention prune complete."

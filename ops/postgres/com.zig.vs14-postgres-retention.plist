@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Vacation Station 14 — nightly postgres retention prune, macOS/launchd flavour.
+
+  Deployed at ~/Library/LaunchAgents/com.zig.vs14-postgres-retention.plist on
+  pico. Fires 15 minutes after com.zig.ss14-backup so the night's dump is
+  already on disk before any row is deleted — a prune that runs first would
+  destroy data the backup has not yet captured.
+
+  STATE OF THIS JOB (audited 2026-07-26, vs14d-jms). Healthy, and has been
+  throughout: last exit 0, and every run in its log reports a committed
+  transaction. It escaped its sibling's portability bug because it shells out
+  to nothing but psql — no coreutils, no findutils, nothing GNU-only. Reported
+  rather than fixed, because there was nothing to fix.
+
+  STATE_DIR was added so retention writes its verdict next to the backup's,
+  where bin/backup-health.sh in ~/vs14d can read both. Without it the script
+  falls back to the Linux default /var/backups/vacation-station, which does not
+  exist on macOS — the status write would have been silently skipped, which is
+  the exact class of quiet the contract exists to end.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.zig.vs14-postgres-retention</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/vacation-station/ops/postgres/retention.sh</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+    <key>PATH</key><string>/opt/homebrew/bin:/Users/pico/.bun/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>STATE_DIR</key><string>/Users/pico/backups/vacation-station</string>
+    </dict>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>20</integer>
+        <key>Minute</key><integer>30</integer>
+
+    </dict>
+    <key>StandardOutPath</key><string>/tmp/com.zig.vs14-postgres-retention.log</string>
+    <key>StandardErrorPath</key><string>/tmp/com.zig.vs14-postgres-retention.log</string>
+</dict>
+</plist>
