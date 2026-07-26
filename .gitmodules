@@ -30,7 +30,7 @@
 	ignore = dirty
 [submodule "external/ss14-admin"]
 	path = external/ss14-admin
-	url = https://github.com/space-wizards/SS14.Admin
+	url = https://github.com/azigler/SS14.Admin.git
 	branch = master
 	ignore = dirty
 [submodule "external/nurseshark"]
