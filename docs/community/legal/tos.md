@@ -6,7 +6,7 @@
 
 By connecting to or using the Vacation Station 14 game server, the
 Vacation Station 14 Discord server, or the website at
-ss14.zig.computer (collectively, "the Service"), you agree to these
+vs14.zig.computer (collectively, "the Service"), you agree to these
 Terms of Service ("Terms"). If you do not agree, do not use the
 Service.
 

@@ -257,8 +257,8 @@ Template: `ops/watchdog/appsettings.yml.example` (installed to
   treat it like the postgres password.
 - **`BaseUrl` / `Urls`** — default to localhost-only (`127.0.0.1:5000`).
   Our production host fronts this through nginx at
-  `https://ss14.zig.computer/watchdog/` (see
-  `ops/nginx/ss14.zig.computer.conf`); for ad-hoc remote access,
+  `https://vs14.zig.computer/watchdog/` (see
+  `~/vs14d/ops/nginx/vs14.zig.computer.conf`); for ad-hoc remote access,
   SSH-tunnel `localhost:5000` instead. Do not bind the admin API to a
   public interface without a proxy + TLS.
 - **Serilog** — Console sink lands in `journalctl -u ss14-watchdog`;
@@ -306,7 +306,7 @@ present). Re-running does **not** clobber an existing `config.toml`.
 After bootstrap, fill in the Postgres password in
 `/opt/ss14-watchdog/instances/vacation-station/config.toml` and start
 the watchdog — the Manifest provider (vs-2f8.1) will download the
-latest build from `https://ss14.zig.computer/cdn/` automatically.
+latest build from `https://vs14.zig.computer/cdn/` automatically.
 
 ### First-run verification
 
@@ -335,7 +335,7 @@ pstree -p "$(systemctl show -p MainPID --value ss14-watchdog)"   # child back
 
 - **Port 5000 (watchdog admin API)** — localhost only by default. We
   front it with nginx at `/watchdog/` (already in
-  `ops/nginx/ss14.zig.computer.conf`), so `80/tcp` + `443/tcp` carry
+  `~/vs14d/ops/nginx/vs14.zig.computer.conf`), so `80/tcp` + `443/tcp` carry
   remote admin traffic; do **not** open 5000 to the public internet.
 - **Port 1212 (UDP + TCP)** — game netcode + status API, must be public.
   See `docs/NETWORKING.md` for the full UFW + cloud-firewall procedure.
@@ -344,7 +344,7 @@ pstree -p "$(systemctl show -p MainPID --value ss14-watchdog)"   # child back
 
 We ship with `UpdateType: Manifest` (vs-2f8.1) — the watchdog fetches
 versioned builds from our self-hosted Robust.Cdn at
-`https://ss14.zig.computer/cdn/fork/vacation-station/manifest`. Each
+`https://vs14.zig.computer/cdn/fork/vacation-station/manifest`. Each
 restart cycle re-checks the manifest, verifies hashes, and starts the
 server from the newest entry.
 
@@ -353,7 +353,7 @@ The publish pipeline is GitHub Actions → Robust.Cdn:
 1. `.github/workflows/publish.yml` (workflow_dispatch) builds + packages
    the server and client.
 2. `Tools/publish_multi_request.py` POSTs the build files to
-   `https://ss14.zig.computer/cdn/fork/vacation-station/publish/...`
+   `https://vs14.zig.computer/cdn/fork/vacation-station/publish/...`
    using the `PUBLISH_TOKEN` GH Actions secret.
 3. The CDN exposes the new build via the manifest URL above.
 4. Watchdog picks up the new manifest on its next restart cycle (or
@@ -377,7 +377,7 @@ in `config.toml`. See the "Observability" section below for bring-up.
 recipe + crafting reference site that parses SS14 prototypes directly from a
 repo clone. Vacation Station 14 vendors it as a submodule and serves the
 generated static files at
-[`https://ss14.zig.computer/recipes/`](https://ss14.zig.computer/recipes/).
+[`https://vs14.zig.computer/recipes/`](https://vs14.zig.computer/recipes/).
 
 ### What's on disk
 
@@ -603,7 +603,7 @@ template if/when we choose to expose Grafana publicly).
 Reach Grafana from a remote box via SSH port-forward:
 
 ```bash
-ssh -L 3200:127.0.0.1:3200 ubuntu@ss14.zig.computer
+ssh -L 3200:127.0.0.1:3200 ubuntu@vs14.zig.computer
 # then in your local browser:
 xdg-open http://localhost:3200
 ```
@@ -936,7 +936,7 @@ new bead — drift between policy and enforcement is a compliance bug.
 ## Maps (SS14.MapViewer)
 
 The player-facing interactive map browser at
-`https://ss14.zig.computer/maps/` is a static build of
+`https://vs14.zig.computer/maps/` is a static build of
 [SS14.MapViewer][mv-upstream], populated by tiles rendered locally
 via the `Content.MapRenderer` tool already in the repo. No backend,
 no DB — just a nightly-ish (weekly, Sunday 04:30 UTC) rebuild timer
@@ -975,7 +975,7 @@ sudo systemctl enable --now vs14-mapviewer-build.timer
 ```
 
 The nginx `/maps/` location is already committed in
-`ops/nginx/ss14.zig.computer.conf`; no vhost changes are needed to
+`~/vs14d/ops/nginx/vs14.zig.computer.conf`; no vhost changes are needed to
 enable MapViewer.
 
 ### Force-rebuild
@@ -1245,7 +1245,7 @@ reads that file so a single run can announce a batch of merges.
 The [SS14.Admin](https://github.com/space-wizards/SS14.Admin) web admin panel
 is bundled as-is per the vs-19h decision matrix. The submodule lives at
 `external/ss14-admin/` and is deployed via docker-compose from
-`ops/ss14-admin/`. nginx fronts it at `https://ss14.zig.computer/admin/`.
+`ops/ss14-admin/`. nginx fronts it at `https://vs14.zig.computer/admin/`.
 
 ### Layout
 
@@ -1291,14 +1291,15 @@ sudoedit /etc/vacation-station/admin-db.env      # add POSTGRES_PASSWORD=
 # Bring the stack up (idempotent). Run from the prod clone:
 cd /opt/vacation-station && sudo ./ops/ss14-admin/install.sh
 
-# Publish the nginx location block:
-sudo ./ops/nginx/install.sh
+# Publish the nginx location block: NOT in this repo any more. The edge vhost
+# is owned by ~/vs14d/ops/nginx/ and /admin/ is routed by pico's nginx.
+# See ops/nginx/README.md.
 ```
 
 Smoke test:
 
 ```bash
-curl -sSI https://ss14.zig.computer/admin/ | head -5
+curl -sSI https://vs14.zig.computer/admin/ | head -5
 # Expected: 302 to central.spacestation14.io/web/... (OIDC redirect)
 ```
 
@@ -1322,7 +1323,7 @@ OIDC, which succeeds at the auth layer but fails the admin check in
 SS14.Admin. That failed login is enough to register their hub UUID in the
 `player` table, from which we seed a god-level admin row by hand.
 
-1. **Log in once** at `https://ss14.zig.computer/admin/` with the target
+1. **Log in once** at `https://vs14.zig.computer/admin/` with the target
    Wizden account. Expect an "access denied" style page — that is correct.
 2. **Harvest the UUID** from the container logs; the OIDC `sub` claim is
    the hub UUID. The logs never print the client secret, only the
@@ -1391,7 +1392,7 @@ file at container start.
 | Symptom | Check |
 |---|---|
 | OIDC redirects to `http://...` | `X-Forwarded-Proto` missing or `ForwardProxies` in appsettings doesn't include the source IP. nginx sets the header; appsettings trusts `127.0.0.1` + `172.16.0.0/12`. |
-| `/admin/` returns 404 | nginx `location /admin/` block missing. Re-run `sudo ops/nginx/install.sh`. |
+| `/admin/` returns 404 | nginx `location /admin/` block missing. It lives on pico's nginx, not in this repo — see `ops/nginx/README.md`. |
 | Container restarts on startup | Almost always a missing env var. `docker compose logs ss14-admin` — if it complains about `Auth:ClientId` or `ConnectionStrings:DefaultConnection` being empty, re-check `/etc/vacation-station/admin-oauth.env` and `/etc/vacation-station/admin-db.env`. |
 | Migrations fail with permission error | `GRANT CREATE ON SCHEMA public TO vs14;` — do not make `vs14` a superuser. |
 | Login loops back to `/admin/signin-oidc` | User's UUID isn't in the `admin` table. Follow the bootstrap flow above. |

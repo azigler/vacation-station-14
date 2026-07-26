@@ -9,8 +9,9 @@
 #   4. docker compose pull/build/up -d, then waits for healthy.
 #   5. Prints the container status. Does NOT echo secrets.
 #
-# nginx route install is separate — run `sudo ops/nginx/install.sh`
-# after the vhost template changes land.
+# nginx route install is separate, and is NOT in this repo — the edge
+# vhost lives in ~/vs14d/ops/nginx/ and /admin/ is routed by pico's
+# nginx. See ops/nginx/README.md.
 #
 # Usage:
 #     ./ops/ss14-admin/install.sh
@@ -99,5 +100,5 @@ echo ">>> Next steps:"
 echo "    - First admin bootstrap: log in once via the browser, then"
 echo "      run the UUID-harvest flow documented in docs/OPERATIONS.md"
 echo "      (SS14.Admin section)."
-echo "    - nginx: ensure ops/nginx/install.sh has been run since the"
-echo "      /admin/ location block was added."
+echo "    - nginx: the /admin/ location block is not in this repo."
+echo "      See ops/nginx/README.md for where it lives."

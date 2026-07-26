@@ -28,7 +28,7 @@ RELEASE_DIR = "release"
 # VS - upstream values were "https://wizards.cdn.spacestation14.com/" + "wizards".
 # VS - the workflow's --fork-id flag still overrides FORK_ID; ROBUST_CDN_URL is
 # VS - the only env-independent default (no override flag).
-ROBUST_CDN_URL = "https://ss14.zig.computer/cdn/"
+ROBUST_CDN_URL = "https://vs14.zig.computer/cdn/"
 FORK_ID = "vacation-station"
 
 

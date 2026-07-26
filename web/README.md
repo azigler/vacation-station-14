@@ -46,9 +46,11 @@ bun run start      # next start -p 3300 (serves the build output)
 
 ### Production deploy
 
-Live at https://ss14.zig.computer/ via the apex `location /` block in
-[`ops/nginx/ss14.zig.computer.conf`](../ops/nginx/ss14.zig.computer.conf),
-which reverse-proxies to `vs14-web.service` on `127.0.0.1:3300`. The
+Live at https://vs14.zig.computer/ via the apex `location /` block in the
+edge vhost — which lives in the operator repo at
+`~/vs14d/ops/nginx/vs14.zig.computer.conf`, not here (see
+[`ops/nginx/README.md`](../ops/nginx/README.md)) — and
+reverse-proxies to `vs14-web.service` on `127.0.0.1:3300`. The
 service is defined at
 [`ops/web/vs14-web.service`](../ops/web/vs14-web.service) and runs
 `bun run start` as the `ss14` system user with
@@ -81,7 +83,7 @@ sudo install -m 0644 ops/web/vs14-web.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo -u ss14 /opt/vacation-station/ops/web/build.sh   # populate web/.next/
 sudo systemctl enable --now vs14-web.service
-sudo install -m 0644 ops/nginx/ss14.zig.computer.conf /etc/nginx/sites-available/
+sudo install -m 0644 ~/vs14d/ops/nginx/vs14.zig.computer.conf /etc/nginx/sites-available/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 

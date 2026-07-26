@@ -11,7 +11,7 @@
 # Prerequisites (not handled here — one-time host setup):
 #   - `ss14` system user + group exist (see setup.watchdog.sh)
 #   - Repo is checked out or symlinked at /opt/vacation-station
-#   - nginx vhost ops/nginx/ss14.zig.computer.conf is live and aliases
+#   - nginx vhost ~/vs14d/ops/nginx/vs14.zig.computer.conf is live and aliases
 #     /recipes/ → /var/www/vs14-recipes/
 #   - Node.js + npm on PATH for the ss14 user (the build.sh call
 #     inherits the service's env; install node via apt or nvm

@@ -15,7 +15,7 @@ import { useState } from "react";
  * Bead: vs-2dr (post-Phase-1 polish)
  */
 
-const SS14_HOST = "ss14.zig.computer";
+const SS14_HOST = "vs14.zig.computer";
 const SS14_PORT = 1212;
 const SERVER_ADDRESS = `${SS14_HOST}:${SS14_PORT}`;
 

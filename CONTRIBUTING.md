@@ -189,7 +189,7 @@ The rules below exist so a small PR stays small to review.
 The in-game guidebook **is** the VS14 wiki. The same source renders
 in-game (press <kbd>F1</kbd> → guidebook button, or
 <kbd>OpenGuidebook</kbd> keybind) and on the website at
-[ss14.zig.computer/guidebook/](https://ss14.zig.computer/guidebook/),
+[vs14.zig.computer/guidebook/](https://vs14.zig.computer/guidebook/),
 rebuilt nightly. There is no separate wiki software, no separate
 editor login. Edits are PRs against this repo.
 

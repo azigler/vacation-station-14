@@ -35,7 +35,7 @@ observability + a growing set of static-site + admin services behind
 the nginx edge. See `docs/upstream-sync.md` for the full submodule
 list + landed-via beads. Current inventory of fronted services:
 
-- **vs-2y8** — nginx edge on `ss14.zig.computer` (DONE 2026-04-12)
+- **vs-2y8** — nginx edge on `vs14.zig.computer` (DONE 2026-04-12)
 - **vs-1vy** — `/recipes/` ss14-cookbook daily static build
 - **vs-1e5** — `/guidebook/` in-game Guidebook daily static render
 - **vs-v69** — `/writer/` RMC14-document-simu
@@ -62,7 +62,7 @@ below lists `prod / dev` pairs.
 
 Prod game-server port `1212/tcp+udp` is open on the public firewall; dev
 `1213/tcp+udp` is also open so launchers can direct-connect to a dev
-server running on the same host (`ss14://ss14.zig.computer:1213`). Prod
+server running on the same host (`ss14://vs14.zig.computer:1213`). Prod
 observability ports are loopback-only (reached via nginx); dev
 observability stays loopback, reachable via SSH tunnel if needed.
 
@@ -72,7 +72,7 @@ Nightly oneshot + timer pairs that regenerate static web content
 from the live VS14 checkout. All run as `ss14:ss14`, all follow the
 same `ops/<name>/build.sh` + `vs14-<name>-build.{service,timer}`
 pattern. All served through the same nginx vhost
-(`ops/nginx/ss14.zig.computer.conf`).
+(`~/vs14d/ops/nginx/vs14.zig.computer.conf`).
 
 | Path prefix         | Tool                  | Unit                              | Timer slot    | Serve root                                    | Landed via |
 |---------------------|-----------------------|-----------------------------------|---------------|-----------------------------------------------|------------|
@@ -101,7 +101,7 @@ be running simultaneously.
 | Validate a `prometheus.yml` change        | dev    | ephemeral, fast reset, can't break prod      |
 | Test a DB migration                       | dev    | same schema, disposable creds                |
 | Iterate on a Grafana dashboard            | dev    | scratchpad, then export JSON into the repo   |
-| Playtest a content change against a peer  | dev    | ship them `ss14://ss14.zig.computer:1213` while prod stays on `:1212` |
+| Playtest a content change against a peer  | dev    | ship them `ss14://vs14.zig.computer:1213` while prod stays on `:1212` |
 | Investigate a live bug                    | prod   | dev repro rarely matches real traffic        |
 | Test a Discord webhook                    | prod   | scratch channel; real webhook mechanics      |
 | Rotate a credential                       | prod   | dev creds are literal                        |
@@ -280,7 +280,7 @@ investigation).
   `9091` / etc. into configs or docs.
 - Don't bind dev Prometheus / Loki / Grafana to a public interface. The
   dev SS14 game port `1213/tcp+udp` is intentionally open at the host
-  firewall so peers can `ss14://ss14.zig.computer:1213` into a local
+  firewall so peers can `ss14://vs14.zig.computer:1213` into a local
   playtest; dev observability stays loopback (reach it via SSH tunnel or
   local browser only).
 - Don't commit anything from `.data/`, `ops/observability/.env`, or
@@ -293,7 +293,7 @@ investigation).
   up changes. Edit the populated copy.
 - Don't bind prod Prometheus / Loki / Grafana / watchdog admin API to a
   public interface. The watchdog admin API is fronted by nginx at
-  `https://ss14.zig.computer/watchdog/` (vs-2y8); Prometheus / Loki /
+  `https://vs14.zig.computer/watchdog/` (vs-2y8); Prometheus / Loki /
   Grafana stay loopback-only and operators SSH-tunnel to reach
   Grafana. See `docs/OPERATIONS.md` "Operator access" + `docs/NETWORKING.md`
   for the (currently unused) public-Grafana vhost template.

@@ -95,7 +95,7 @@ Servers:
       #              CDN is ever down.
       UpdateType: Manifest
       Updates:
-        ManifestUrl: https://ss14.zig.computer/cdn/fork/vacation-station/manifest
+        ManifestUrl: https://vs14.zig.computer/cdn/fork/vacation-station/manifest
       # Local-mode fallback (only set UpdateType: Local above):
       # Updates:
       #   CurrentVersion: "1"

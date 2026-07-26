@@ -6,7 +6,7 @@ This privacy policy describes what data the Vacation Station 14
 service ("the Service") collects, why it is collected, how long it
 is kept, and what rights you have over your data. It applies to the
 game server, the Discord server, and the website at
-ss14.zig.computer.
+vs14.zig.computer.
 
 The Service is operated by **azigler** ("the operator") as a
 personal, non-commercial project. Contact for any privacy concern:

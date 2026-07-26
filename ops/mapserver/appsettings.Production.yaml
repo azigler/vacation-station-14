@@ -28,7 +28,7 @@ Processing:
 
 Server:
     CorsOrigins:
-        - "https://ss14.zig.computer"
+        - "https://vs14.zig.computer"
     Language: "en-US"
 
 # MapServer defaults to `Content.MapRenderer.exe` (Windows); on Linux

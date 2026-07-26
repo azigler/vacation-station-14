@@ -1,7 +1,7 @@
 [Unit]
 # Vacation Station 14 — Next.js web app on :3300.
 #
-# Serves the apex (https://ss14.zig.computer/) via nginx reverse-proxy.
+# Serves the apex (https://vs14.zig.computer/) via nginx reverse-proxy.
 # Built by ops/web/build.sh; the running service consumes web/.next/
 # produced by `next build`. Bun is invoked by absolute path because the
 # ss14 user has no shell profile that adds ~/.bun/bin/ to PATH.

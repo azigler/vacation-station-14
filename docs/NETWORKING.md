@@ -140,9 +140,10 @@ usually fine.
 
 This host runs a system-wide nginx edge for multiple projects (see
 `.claude/skills/nginx/SKILL.md` for the general handbook). Per-project
-vhosts live in each project's `ops/nginx/`; VS14's lives at
-`ops/nginx/ss14.zig.computer.conf` and installs into
-`/etc/nginx/sites-available/`.
+vhosts live in each project's `ops/nginx/`. **VS14's vhost is NOT in this
+repo** — it is owned by the operator repo at
+`~/vs14d/ops/nginx/vs14.zig.computer.conf` and installs into
+`/etc/nginx/sites-available/`. See `ops/nginx/README.md` for why it moved.
 
 **What nginx proxies (HTTP/HTTPS only):**
 - `/cdn/` — Robust.Cdn (vs-3mv + vs-2f8.1); manifest + delta downloads for the launcher under Manifest mode. Canonical client download path post-launch.
@@ -164,17 +165,20 @@ sudo ufw allow 'Nginx Full'
 ```
 
 ### Install the VS14 vhost
+
+The template lives in the operator repo, not here:
+
 ```bash
-sudo install -m 0644 ops/nginx/ss14.zig.computer.conf \
-    /etc/nginx/sites-available/ss14.zig.computer.conf
-sudo ln -sf /etc/nginx/sites-available/ss14.zig.computer.conf \
-    /etc/nginx/sites-enabled/ss14.zig.computer.conf
+sudo install -m 0644 ~/vs14d/ops/nginx/vs14.zig.computer.conf \
+    /etc/nginx/sites-available/vs14.zig.computer.conf
+sudo ln -sf /etc/nginx/sites-available/vs14.zig.computer.conf \
+    /etc/nginx/sites-enabled/vs14.zig.computer.conf
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### Issue + install a Let's Encrypt cert
 ```bash
-sudo certbot --nginx -d ss14.zig.computer
+sudo certbot --nginx -d vs14.zig.computer
 ```
 
 certbot edits the live vhost at `/etc/nginx/sites-available/...` in place to
@@ -188,7 +192,7 @@ So the `build.download_url` the game server advertises is the HTTPS URL:
 
 ```yaml
 # /opt/ss14-watchdog/appsettings.yml
-BaseUrl: https://ss14.zig.computer/
+BaseUrl: https://vs14.zig.computer/
 Urls: http://127.0.0.1:5000   # loopback-only; nginx fronts it
 ```
 
@@ -205,7 +209,7 @@ sudo ufw delete allow 5000/tcp
 Players connect via:
 
 ```
-ss14://ss14.zig.computer
+ss14://vs14.zig.computer
 ```
 
 That's the default `ss14://` scheme on port 1212. `ss14s://` (port 443, TLS-
@@ -215,8 +219,8 @@ non-trivial engine config and is not used here.
 ### Verify
 
 ```bash
-curl -I https://ss14.zig.computer/client.zip         # 200 + TLS chain valid
-curl http://ss14.zig.computer:1212/info              # game-protocol /info, cleartext
+curl -I https://vs14.zig.computer/client.zip         # 200 + TLS chain valid
+curl http://vs14.zig.computer:1212/info              # game-protocol /info, cleartext
 curl --max-time 3 http://51.81.33.136:5000/ || echo "refused (expected post-cutover)"
 ```
 

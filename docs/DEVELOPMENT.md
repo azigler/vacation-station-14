@@ -237,7 +237,7 @@ The dev stack's ports (5433 / 9091 / 3101 / 3201 / 1213 / 44881) are all
 prod-port + 1, so you can run the full `nix run .#dev-services`
 observability stack AND a `dotnet run` dev game server alongside a live
 prod stack without port collisions. Concrete example (what ships on
-`ss14.zig.computer` today):
+`vs14.zig.computer` today):
 
 | Thing                 | Prod (docker / systemd)         | Dev (services-flake)               |
 |-----------------------|---------------------------------|------------------------------------|
@@ -249,7 +249,7 @@ prod stack without port collisions. Concrete example (what ships on
 | SS14 metrics endpoint | `:44880`                        | `:44881`                           |
 
 The dev SS14 server is reachable from any SS14 launcher by direct-connect
-at `ss14://ss14.zig.computer:1213` (firewall already opens this port).
+at `ss14://vs14.zig.computer:1213` (firewall already opens this port).
 Prod keeps advertising on the public hub at `:1212`; dev is private
 direct-connect only (its `[hub] advertise = false`).
 
@@ -261,7 +261,7 @@ Workflow when iterating on the same box as prod:
    -- --config-file .data/vacation-station/config.toml --data-dir
    .data/vacation-station`.
 3. In a launcher on any machine: Direct Connect →
-   `ss14://ss14.zig.computer:1213`.
+   `ss14://vs14.zig.computer:1213`.
 4. Browse dev Grafana at `http://localhost:3201` (or through an SSH
    tunnel if you're offbox; don't publish dev Grafana publicly — prod
    Grafana is the only Grafana behind nginx/OIDC).

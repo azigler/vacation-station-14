@@ -4,7 +4,7 @@
 # Renders the in-game Guidebook (Resources/ServerInfo/Guidebook/*.xml +
 # Resources/Prototypes/Guidebook/*.yml) into a static HTML site and
 # rsyncs it into /var/www/vs14-guidebook/ for nginx to serve at
-# https://ss14.zig.computer/guidebook/.
+# https://vs14.zig.computer/guidebook/.
 #
 # Idempotent; safe to re-run. Driven by vs14-guidebook-build.timer
 # (daily, 05:15 UTC). Manual:

@@ -10,7 +10,7 @@
 #                           edit it to fill in the postgres password)
 #
 # vs-2f8.1 retired the legacy `binaries/` drop target — Manifest mode now
-# pulls builds from our Robust.Cdn (https://ss14.zig.computer/cdn/), so
+# pulls builds from our Robust.Cdn (https://vs14.zig.computer/cdn/), so
 # the operator never hand-publishes into the instance dir. The watchdog
 # downloads versioned builds into its own working directory.
 #
@@ -68,4 +68,4 @@ echo ""
 echo "Next: ensure ops/watchdog/appsettings.yml.example's UpdateType: Manifest"
 echo "      block is in /opt/ss14-watchdog/appsettings.yml, then"
 echo "      'systemctl start ss14-watchdog'. The watchdog will download the"
-echo "      latest build from https://ss14.zig.computer/cdn/ on first run."
+echo "      latest build from https://vs14.zig.computer/cdn/ on first run."

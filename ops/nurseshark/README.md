@@ -1,7 +1,7 @@
 # ops/nurseshark — Nurseshark static-site deploy (vs-ygn)
 
 Builds and deploys the first-party chemistry/medical/cryo companion
-web app at `https://ss14.zig.computer/nurseshark/`.
+web app at `https://vs14.zig.computer/nurseshark/`.
 
 Source lives in the `external/nurseshark/` submodule
 ([azigler/nurseshark](https://github.com/azigler/nurseshark), AGPLv3).
@@ -26,12 +26,12 @@ directly out of the submodule's `dist/` (no `rsync` into
 
 ```bash
 sudo ./ops/nurseshark/install.sh         # systemd unit + timer
-sudo ./ops/nginx/install.sh              # nginx vhost (/nurseshark/ block)
+# nginx: the /nurseshark/ block is not in this repo — see ops/nginx/README.md
 sudo systemctl start vs14-nurseshark-build.service
 journalctl -u vs14-nurseshark-build.service -f
 ```
 
-After the first build completes, `curl -I https://ss14.zig.computer/nurseshark/`
+After the first build completes, `curl -I https://vs14.zig.computer/nurseshark/`
 should return `200 OK`.
 
 ## Critical invariant — VITE_BASE_PATH (vs-ygn.1)
@@ -58,7 +58,10 @@ so the gate stays in sync.
 
 ## nginx (vs-ygn.2)
 
-`ops/nginx/ss14.zig.computer.conf` fronts the static bundle:
+nginx fronts the static bundle. **The vhost is not in this repo** — the edge
+lives at `~/vs14d/ops/nginx/vs14.zig.computer.conf` and the `/nurseshark/`
+location block itself is on pico's nginx (see `ops/nginx/README.md`). What
+that block does:
 
 - `alias /opt/vacation-station/external/nurseshark/dist/;`
 - `try_files $uri $uri/ /nurseshark/index.html;` — SPA fallback so
@@ -70,9 +73,9 @@ so the gate stays in sync.
   daily rebuilds ship fresh content; clients see updates within
   minutes of a build completing.
 
-Re-run `sudo ./ops/nginx/install.sh` after editing the vhost template.
-Don't `install` directly over `/etc/nginx/sites-available/...` —
-certbot's `:443` block gets clobbered (see `vs-15s`).
+Edit and reload it where it lives, not here. Don't `install` directly over
+`/etc/nginx/sites-available/...` — certbot's `:443` block gets clobbered
+(see `vs-15s`).
 
 ## Timer cadence
 
@@ -106,17 +109,17 @@ honoring it. Both:
 ### HTTP 404 on a deep-link but 200 on `/nurseshark/`
 
 nginx's `try_files` fallback to `/nurseshark/index.html` is missing.
-Re-install the vhost:
+Fix it where the block lives (pico's nginx — see `ops/nginx/README.md`),
+then:
 
 ```bash
-sudo ./ops/nginx/install.sh
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
 Confirm with:
 ```bash
-curl -I https://ss14.zig.computer/nurseshark/reagents/Bicaridine   # want 200
+curl -I https://vs14.zig.computer/nurseshark/reagents/Bicaridine   # want 200
 ```
 
 ### Build failed on `git pull`

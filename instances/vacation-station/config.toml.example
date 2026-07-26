@@ -71,7 +71,7 @@ advertise = false
 tags = "lang:en,region:na"
 
 # The URL clients use to connect back, as advertised to the hub.
-server_url = "ss14://ss14.zig.computer"
+server_url = "ss14://vs14.zig.computer"
 
 # -----------------------------------------------------------------------------
 # INFOLINKS — shown in the launcher's server browser as clickable links
@@ -80,9 +80,9 @@ server_url = "ss14://ss14.zig.computer"
 # -----------------------------------------------------------------------------
 
 [infolinks]
-website = "https://ss14.zig.computer/"
+website = "https://vs14.zig.computer/"
 github = "https://github.com/azigler/vacation-station-14"
-wiki = "https://ss14.zig.computer/guidebook/"   # in-game guidebook static render (vs-1e5); SS14 launcher hub surfaces this as the "Wiki" link
+wiki = "https://vs14.zig.computer/guidebook/"   # in-game guidebook static render (vs-1e5); SS14 launcher hub surfaces this as the "Wiki" link
 # discord = "https://discord.gg/YOUR_INVITE" # set once Discord server exists (vs-2l2)
 
 # -----------------------------------------------------------------------------

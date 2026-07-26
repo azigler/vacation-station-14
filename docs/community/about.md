@@ -51,7 +51,7 @@ Players don't need GitHub or Discord accounts to play.
 
 The in-game guidebook (press <kbd>F1</kbd> → guidebook button, or
 read it on the web at
-[ss14.zig.computer/guidebook/](https://ss14.zig.computer/guidebook/))
+[vs14.zig.computer/guidebook/](https://vs14.zig.computer/guidebook/))
 doubles as the VS14 wiki — same source, two surfaces. Edits are
 git PRs against this repo, no separate wiki software.
 

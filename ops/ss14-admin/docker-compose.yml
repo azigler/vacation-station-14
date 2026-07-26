@@ -9,7 +9,7 @@
 #   - Host networking so the container reaches host postgres at
 #     127.0.0.1:5432 (same pattern as ops/observability's mapserver).
 #   - ASP.NET Core binds to 127.0.0.1:5427 on the host — loopback only.
-#     nginx fronts /admin/ at https://ss14.zig.computer/admin/.
+#     nginx fronts /admin/ at https://vs14.zig.computer/admin/.
 #   - PathBase=/admin so SS14.Admin generates correct links behind the
 #     path-based proxy. ForwardProxies includes the docker bridge + loopback
 #     so OIDC redirect URIs get HTTPS from X-Forwarded-Proto.

@@ -4,7 +4,7 @@
 # Drives the vanilla arimah/ss14-cookbook (vendored as a submodule at
 # external/cookbook) against a sibling read-only VS14 clone, then
 # rsyncs the static output into nginx's alias target at
-# /var/www/vs14-recipes/ (see ops/nginx/ss14.zig.computer.conf).
+# /var/www/vs14-recipes/ (see ~/vs14d/ops/nginx/vs14.zig.computer.conf).
 #
 # Idempotent: safe to re-run. Driven by vs14-cookbook-build.timer
 # (daily) or by hand:
@@ -98,7 +98,7 @@ cat > "${COOKBOOK_DIR}/.env" <<EOF
 COOKBOOK_BASE_PATH=${COOKBOOK_BASE_PATH}
 COOKBOOK_REPO_URL=${COOKBOOK_REPO_URL}
 COOKBOOK_TRUSTED_HOSTS=
-COOKBOOK_CANONICAL_URL=https://ss14.zig.computer${COOKBOOK_BASE_PATH}
+COOKBOOK_CANONICAL_URL=https://vs14.zig.computer${COOKBOOK_BASE_PATH}
 EOF
 
 # --- 4. npm ci + build + recipe gen ---

@@ -1654,9 +1654,9 @@ def _fallback_pill(elem: ET.Element) -> str:
 # a bead to add interpretive rendering.
 #
 # Nurseshark cross-link: single-reagent detail views get a "Related tools"
-# footer linking to https://ss14.zig.computer/nurseshark/reagents/<id>.
+# footer linking to https://vs14.zig.computer/nurseshark/reagents/<id>.
 
-_NURSESHARK_REAGENT_URL = "https://ss14.zig.computer/nurseshark/reagents"
+_NURSESHARK_REAGENT_URL = "https://vs14.zig.computer/nurseshark/reagents"
 
 
 def _damage_label(key: str) -> str:

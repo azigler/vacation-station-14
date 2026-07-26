@@ -9,11 +9,11 @@
 # Prereqs (one-time host setup):
 #   - `ss14` system user + group
 #   - Repo at /opt/vacation-station (symlink into /home/ubuntu/... OK)
-#   - nginx vhost ops/nginx/ss14.zig.computer.conf installed with
-#     /nurseshark/ → /opt/vacation-station/external/nurseshark/dist/
-#     alias (install via `sudo ./ops/nginx/install.sh` — NEVER a bare
-#     `install` over /etc/nginx/sites-available/, which clobbers
-#     certbot's :443 block; see vs-15s)
+#   - nginx serving /nurseshark/ →
+#     /opt/vacation-station/external/nurseshark/dist/. That location
+#     block is NOT in this repo: the edge vhost lives in
+#     ~/vs14d/ops/nginx/vs14.zig.computer.conf and the per-path
+#     routing is on pico's nginx. See ops/nginx/README.md.
 #   - Node.js + npm on PATH for the ss14 user (same requirement as
 #     ops/cookbook; install via apt or nvm system-wide). Node >= 20.
 

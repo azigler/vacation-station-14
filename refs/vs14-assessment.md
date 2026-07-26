@@ -217,7 +217,7 @@ worktree to 1.7 GB. `bin/`+`obj/` are gitignored and were left in place
 Two hosts, and the split is not obvious from the repo:
 
 - **zig-computer** (this box, public IP `51.81.33.136`) — public TLS edge
-  only. nginx vhost `ss14.zig.computer.conf`. Everything except
+  only. nginx vhost `vs14.zig.computer.conf`. Everything except
   `/instances/ /client.zip /watchdog/` is proxied to pico.
 - **pico** (headless Mac, tailnet `100.72.47.4`, `ssh pico` port 2222,
   up 58 days) — holds **all** content and state: the live postgres, the
@@ -318,9 +318,9 @@ full state-snapshot recording of every round — **has zero data in it.**
 
 ### 4.5 🟡 The 503'd nginx locations [M]
 
-`/etc/nginx/sites-available/ss14.zig.computer.conf` returns honest 503s on
+`/etc/nginx/sites-available/vs14.zig.computer.conf` returns honest 503s on
 `/instances/`, `/client.zip`, `/watchdog/`, annotated `TABLED 2026-07-25`.
-[M] Confirmed live: `curl https://ss14.zig.computer/client.zip` → **503**.
+[M] Confirmed live: `curl https://vs14.zig.computer/client.zip` → **503**.
 Restoration is documented inline (delete three blocks, uncomment the proxy
 blocks below, `nginx -t && systemctl reload nginx`). This is tidy, not
 rotted — it is the one piece of the stand-down that was done carefully.

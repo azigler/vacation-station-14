@@ -1,6 +1,6 @@
 # Guidebook Parity — status per Guide*Embed type
 
-Living doc: what the static guidebook at `https://ss14.zig.computer/guidebook/`
+Living doc: what the static guidebook at `https://vs14.zig.computer/guidebook/`
 renders for each in-game `Guide*Embed` XML tag, vs what the source YAML
 actually carries. Updated as beads close.
 

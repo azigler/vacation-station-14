@@ -17,6 +17,14 @@ import { loadEvents } from "../events/events-source";
  * — that's the contract that lets calendar apps update events in
  * place rather than duplicating them.
  *
+ * DO NOT rewrite the `ss14.zig.computer` in UID_DOMAIN to the current
+ * public hostname (`vs14.zig.computer`, cut over 2026-07-26). An
+ * iCalendar UID is an opaque permanent identifier, not a URL — RFC 5545
+ * only requires global uniqueness, and nothing ever resolves it. Change
+ * it and every already-subscribed calendar sees a brand-new event and
+ * duplicates the entire feed. The domain part is frozen at the value it
+ * was first published under, deliberately and permanently.
+ *
  * Date format: VCALENDAR uses `YYYYMMDDTHHMMSSZ` (no dashes, no
  * colons). We convert from ISO 8601 in `formatICalDate`.
  *
@@ -29,6 +37,7 @@ import { loadEvents } from "../events/events-source";
 export const dynamic = "force-dynamic";
 
 const PRODID = "-//Vacation Station 14//Community Events//EN";
+// Frozen on purpose — see the UID note in the module docblock above.
 const UID_DOMAIN = "ss14.zig.computer";
 
 /**

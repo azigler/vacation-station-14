@@ -196,7 +196,7 @@ services:
   # ---------------------------------------------------------------------------
   # Stores VS14's Robust.Server + Content.Client builds, serves manifest
   # + delta downloads. Watchdog flips UpdateType to Manifest pointing at
-  # https://ss14.zig.computer/cdn/; launcher fetches delta updates
+  # https://vs14.zig.computer/cdn/; launcher fetches delta updates
   # instead of re-downloading 192 MB per version.
   #
   # Data (SQLite DB + manifest + blob store) persists via named volumes.

@@ -58,7 +58,7 @@
           # Single source of truth for the prod↔dev port offset. Every dev
           # service binds at `prod + devPortOffset` so a dev stack can run
           # alongside the production docker-compose + systemd stack on the
-          # same box (e.g. ss14.zig.computer). If you change this constant,
+          # same box (e.g. vs14.zig.computer). If you change this constant,
           # every dev port shifts in lockstep — don't spray new ports into
           # the flake by hand.
           devPortOffset = 1;

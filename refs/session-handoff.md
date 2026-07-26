@@ -23,7 +23,7 @@ audit and two pico fixes.
    request: `sudo systemctl enable --now ss14-watchdog.service`.
 
 2. **Verified the zig-computer ↔ pico split** (Zig didn't remember it). zig-computer
-   (`51.81.33.136`) = public TLS edge only: nginx vhost `ss14.zig.computer.conf` routes
+   (`51.81.33.136`) = public TLS edge only: nginx vhost `vs14.zig.computer.conf` routes
    `/instances/ /client.zip /watchdog/` → local watchdog `:5000`, **everything else →
    `pico.tailfb4637.ts.net:8080`**. pico (headless Mac, `ssh pico` port 2222, tailnet
    `100.72.47.4`) holds ALL content+state: 6 colima containers (cdn/mapserver/ss14-admin/

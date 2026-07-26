@@ -9,11 +9,10 @@
 # Prereqs (one-time host setup):
 #   - `ss14` system user + group
 #   - Repo at /opt/vacation-station (symlink OK)
-#   - nginx vhost ops/nginx/ss14.zig.computer.conf installed with
-#     /guidebook/ → /var/www/vs14-guidebook/ alias (install via
-#     `sudo ./ops/nginx/install.sh` — NEVER a bare `install` over
-#     /etc/nginx/sites-available/, which clobbers certbot's :443
-#     block; see vs-15s)
+#   - nginx serving /guidebook/ → /var/www/vs14-guidebook/. That
+#     location block is NOT in this repo: the edge vhost lives in
+#     ~/vs14d/ops/nginx/vs14.zig.computer.conf and the per-path
+#     routing is on pico's nginx. See ops/nginx/README.md.
 #   - python3 + pyyaml + python3-pil on PATH for the ss14 user
 #     (Pillow is used by render.py to slice directional RSI spritesheets
 #     into single-frame PNGs — without it directional sprites fall back

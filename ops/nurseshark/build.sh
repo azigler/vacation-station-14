@@ -4,8 +4,8 @@
 # Builds the first-party chemistry/medical/cryo companion app (Vite +
 # React, TypeScript) from the external/nurseshark submodule and serves
 # it out of that submodule's dist/ directory. nginx fronts the output
-# at https://ss14.zig.computer/nurseshark/ (see
-# ops/nginx/ss14.zig.computer.conf).
+# at https://vs14.zig.computer/nurseshark/ (see
+# ~/vs14d/ops/nginx/vs14.zig.computer.conf).
 #
 # Unlike ops/cookbook and ops/guidebook, nurseshark does NOT use a
 # sibling source clone — the submodule itself embeds the VS14 parent
@@ -33,7 +33,7 @@
 # --- vs-ygn.2: nginx SPA fallback is nginx-side ---
 # This script produces the artifact; nginx's `try_files $uri $uri/
 # /nurseshark/index.html` handles BrowserRouter deep-links. See the
-# /nurseshark/ location block in ops/nginx/ss14.zig.computer.conf.
+# /nurseshark/ location block in ~/vs14d/ops/nginx/vs14.zig.computer.conf.
 
 set -euo pipefail
 
@@ -123,7 +123,7 @@ log "dist/index.html references ${EXPECTED} — base path baked in cleanly"
 # nginx does NOT need a reload here. The vhost points at dist/ via
 # `alias`, so fresh files are served as soon as the atomic rename that
 # `vite build` performs completes. Reloading nginx is an install-time
-# concern (when the vhost template itself changes) — handled by
-# ops/nginx/install.sh.
+# concern (when the vhost template itself changes) — and the vhost is
+# not in this repo; see ops/nginx/README.md.
 
 log "done."

@@ -6,7 +6,7 @@ This guidebook is also our wiki.
 There's no separate wiki software. The same source renders in two places:
 
 - [bold]In-game[/bold], the page you're reading right now.
-- [bold]On the website[/bold], at [color=cyan]ss14.zig.computer/guidebook/[/color], rebuilt nightly from the same files.
+- [bold]On the website[/bold], at [color=cyan]vs14.zig.computer/guidebook/[/color], rebuilt nightly from the same files.
 
 When the source changes, both surfaces update.
 

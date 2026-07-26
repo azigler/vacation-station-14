@@ -9,7 +9,7 @@
 # output files regardless of exit code.
 #
 # Output: WebP images at /var/www/vs14-maps/rendered/<MapName>/<MapName>-N.webp
-# (served by nginx at https://ss14.zig.computer/maps/rendered/).
+# (served by nginx at https://vs14.zig.computer/maps/rendered/).
 #
 # Runs weekly under vs14-map-render.timer as the ss14 user. Manual:
 #   sudo systemctl start vs14-map-render.service
