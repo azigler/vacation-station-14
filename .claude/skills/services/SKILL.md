@@ -35,7 +35,8 @@ observability + a growing set of static-site + admin services behind
 the nginx edge. See `docs/upstream-sync.md` for the full submodule
 list + landed-via beads. Current inventory of fronted services:
 
-- **vs-2y8** — nginx edge on `vs14.zig.computer` (DONE 2026-04-12)
+- **vs-2y8** — nginx edge, built 2026-04-12 on `ss14.zig.computer`; that host
+  was renamed to `vs14.zig.computer` on 2026-07-26 (DONE)
 - **vs-1vy** — `/recipes/` ss14-cookbook daily static build
 - **vs-1e5** — `/guidebook/` in-game Guidebook daily static render
 - **vs-v69** — `/writer/` RMC14-document-simu
