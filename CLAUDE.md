@@ -191,8 +191,15 @@ scope is the area of work. VS14 layers one local convention on top:
 Optional body.
 
 Bead: <bead-id>
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+Co-Authored-By: <the trailer your harness specifies>
 ```
+
+**Never hardcode the model in the trailer.** Your harness states the exact
+`Co-Authored-By` line for the model you are actually running as (in the git
+guidance of your system prompt) — use that verbatim. A model name pinned in
+this file is copied into real commit history and misattributes every commit
+made under a newer model; this line said "Claude Opus 4.6" until 2026-07-25,
+two generations stale. Same rule as `/commit`.
 
 Always push after commit unless in a worktree branch.
 
