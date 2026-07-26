@@ -331,3 +331,4 @@ ops/ss14-admin/appsettings.yml
 
 # brand asset iteration noise (vs-7ns / vs14-brand skill) — only finals/ are committed
 assets/brand/iterations/
+.claude/worktrees/

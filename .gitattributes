@@ -63,4 +63,3 @@ Resources/Maps/**.yml merge=mapping-merge-driver
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 .beads/*.jsonl merge=jsonl-union
-.beads/*.jsonl merge=union
