@@ -3,7 +3,7 @@
 **Nix is the primary dev path.** It pins the entire build + ops toolchain
 (`dotnet-sdk_10`, `shellcheck`, `yamllint`, `promtool`, `loki`, `grafana-cli`,
 …), and `services-flake` boots a local postgres/prometheus/loki/grafana stack
-without docker or sudo. See [`/nix` skill](../.claude/skills/nix/SKILL.md)
+without docker or sudo. See the `/nix` skill in the operator repo (`vs14d/.claude/skills/nix/SKILL.md`)
 for the concise reference.
 
 ## Quick Start (Nix)
@@ -42,7 +42,7 @@ server-only shell with just the build toolchain + ops-validation tools.
   `ops/observability/docker-compose.yml` for dev observability.
 - **Windows** — no native nix on Windows. Use WSL2 (subsection below).
 
-See `.claude/skills/nix/SKILL.md` for the full platform-support matrix.
+See `vs14d/.claude/skills/nix/SKILL.md` for the full platform-support matrix.
 
 ### Windows (via WSL2)
 
@@ -357,12 +357,9 @@ them and is not appropriate for a production host.
 │   ├── Textures/_VS/         Our sprites
 │   └── Audio/_VS/            Our sounds
 ├── RobustToolbox/           Engine submodule (don't modify)
-├── .claude/                 AI-assisted development harness
 │   ├── skills/              Pipeline skills (orient, spec, impl, etc.)
 │   └── settings.json        Hook configuration
-├── hooks/                   Hook scripts (session, lint, commit checks)
 ├── docs/                    Documentation
-├── CLAUDE.md                Project conventions
 ├── CONTRIBUTING.md          Contribution guidelines
 └── LEGAL.md                 Licensing details
 ```
@@ -411,7 +408,8 @@ VS14 tracks multiple upstreams, each with its own integration mode
 (engine submodule, scoped base-content refresh, sibling-fork cherry-
 pick, deploy-as-is submodule). The authoritative per-upstream table
 lives in [`upstream-sync.md`](upstream-sync.md); the per-mode
-workflow lives in [`.claude/skills/upstream-sync/SKILL.md`](../.claude/skills/upstream-sync/SKILL.md).
+workflow lives in `vs14d/.claude/skills/upstream-sync/SKILL.md`, and is now
+automated by the Green-keeper loop (`vs14d/refs/greenkeeper-loop.md`).
 
 Conflict resolution bias:
 - `_VS/` — keep ours
@@ -426,7 +424,7 @@ Conflict resolution bias:
 
 ## Writing New Content
 
-See `.claude/skills/prototype/SKILL.md` for YAML conventions and `.claude/skills/spec/SKILL.md` for the formal spec workflow.
+See `vs14d/.claude/skills/prototype/SKILL.md` for YAML conventions.
 
 Quick pattern: new C# code goes in `Content.Server/_VS/FeatureName/`, new prototypes in `Resources/Prototypes/_VS/Category/`, localization in `Resources/Locale/en-US/_VS/category.ftl`.
 
