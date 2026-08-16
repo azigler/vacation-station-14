@@ -100,19 +100,43 @@ docker run "${docker_common[@]}" "${IMAGE}" \
     -c "set -e; dotnet build Content.MapRenderer -c Release -v minimal" \
     || die "Content.MapRenderer build failed (SDK/toolchain problem — see log above)"
 
+# Per-map outcome accounting. Three outcomes, and only one of them blocks:
+#   produced — a new map dir appeared: rendered.
+#   declined — no new dir, but the renderer said 'Creating images for 0 maps'
+#              with a clean pass: it EXCLUDES this yml by design (arenas/debug/
+#              salvage are utility maps, measured 2026-08-16). Logged, never
+#              gates — so adding a real map later keeps full protection.
+#   FAILED   — no new dir and no decline marker: crash/OOM/toolchain. Blocks
+#              the publish (Stage 4), because rsync --delete would replace the
+#              last good set with a hole.
 REQUESTED_COUNT=0
+FAILED_COUNT=0
+DECLINED_COUNT=0
+FAILED_MAPS=""
+MAP_RUN_LOG="$(mktemp /tmp/map-render-permap.XXXXXX)"
 # shellcheck disable=SC2086  # intentional word-splitting of MAP_LIST
 for MAP in ${MAP_LIST}; do
     REQUESTED_COUNT=$((REQUESTED_COUNT + 1))
     log "rendering ${MAP} (${REQUESTED_COUNT})"
-    # Renderer exit code is still unreliable per upstream; per-map success is
-    # judged by output presence in Stage 4's count. '|| true' keeps one bad
-    # map from aborting the loop; the publish gate decides what it means.
+    dirs_before=$(find "${VS14_SOURCE_DIR}/Resources/MapImages" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
     docker run "${docker_common[@]}" "${IMAGE}" \
         -c "./bin/Content.MapRenderer/Content.MapRenderer \
             --format ${OUTPUT_FORMAT} --viewer -f ${MAP} || true" \
-        || log "docker run failed for ${MAP} (counted by the publish gate)"
+        > "${MAP_RUN_LOG}" 2>&1 || true
+    cat "${MAP_RUN_LOG}"
+    dirs_after=$(find "${VS14_SOURCE_DIR}/Resources/MapImages" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${dirs_after}" -gt "${dirs_before}" ]; then
+        :
+    elif grep -q "Creating images for 0 maps" "${MAP_RUN_LOG}"; then
+        DECLINED_COUNT=$((DECLINED_COUNT + 1))
+        log "${MAP}: renderer declined (utility map, no images by design)"
+    else
+        FAILED_COUNT=$((FAILED_COUNT + 1))
+        FAILED_MAPS="${FAILED_MAPS} ${MAP}"
+        log "${MAP}: FAILED (no output, no decline marker)"
+    fi
 done
+rm -f "${MAP_RUN_LOG}"
 
 # Stage 4 — verify + publish
 # ---------------------------------------------------------------------------
@@ -134,12 +158,11 @@ fi
 # map dir over the live site). Full set or no publish. MIN_RENDERED_DIRS is
 # the deliberate override for a known-broken map (set it in the plist, with a
 # comment saying which map and why).
-MIN_RENDERED_DIRS="${MIN_RENDERED_DIRS:-${REQUESTED_COUNT}}"
-if [ "${RENDERED_DIRS}" -lt "${MIN_RENDERED_DIRS}" ]; then
-    die "partial render: ${RENDERED_DIRS}/${REQUESTED_COUNT} map dirs produced (gate ${MIN_RENDERED_DIRS}) — NOT publishing; last good set stays live"
+if [ "${FAILED_COUNT}" -gt 0 ]; then
+    die "partial render: ${FAILED_COUNT} map(s) FAILED (${FAILED_MAPS# }) — ${RENDERED_DIRS} produced, ${DECLINED_COUNT} declined of ${REQUESTED_COUNT} requested. NOT publishing; last good set stays live"
 fi
 
-log "rendered ${RENDERED_COUNT} map image(s) across ${RENDERED_DIRS}/${REQUESTED_COUNT} maps"
+log "rendered ${RENDERED_COUNT} image(s): ${RENDERED_DIRS} maps produced, ${DECLINED_COUNT} declined by the renderer, 0 failed (${REQUESTED_COUNT} requested)"
 
 # Publish directly with --delete (simpler than the staging-rename
 # dance, which tripped on .prev-cleanup permissions). Rsync is
