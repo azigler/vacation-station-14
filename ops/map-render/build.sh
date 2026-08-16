@@ -72,38 +72,48 @@ fi
 log "rendering ${MAP_LIST}"
 
 # ---------------------------------------------------------------------------
-# Stage 3 — clear stale output, build + run renderer in docker
+# Stage 3 — clear stale output, build ONCE, then render PER MAP in docker
 # ---------------------------------------------------------------------------
+# Rewritten 2026-08-16 (picod bd-204 follow-on): the single all-maps renderer
+# process accumulated heap across maps and got SIGKILLed inside the 8GiB
+# colima VM mid-run; its `|| true` + the any-output publish gate then rsync
+# --delete'd a 1-map partial set over the live maps. Now: the BUILD's exit
+# code is respected (SDK-class failures die here, loudly), each map renders
+# in its own container process (peak memory = one map), and Stage 4 refuses
+# to publish anything less than the full requested set.
 
 rm -rf "${VS14_SOURCE_DIR}/Resources/MapImages"
 
-# shellcheck disable=SC2086  # intentional word-splitting of MAP_LIST
-docker run --rm \
-    --user "$(id -u):$(id -g)" \
-    --entrypoint sh \
-    -v "${VS14_SOURCE_DIR}:/work" \
-    -w /work \
-    -e DOTNET_CLI_HOME=/tmp \
-    -e HOME=/tmp \
-    --ulimit core=0:0 \
-    "${IMAGE}" \
-    -c "
-        set -e
-        echo '[map-render:container] build'
-        dotnet build Content.MapRenderer -c Release -v minimal
-        echo '[map-render:container] render'
-        # Exit code of the renderer is ignored; output presence is what
-        # matters. '|| true' keeps the outer docker exit code clean.
-        ./bin/Content.MapRenderer/Content.MapRenderer \
-            --format ${OUTPUT_FORMAT} \
-            --viewer \
-            -f ${MAP_LIST} \
-            || true
-    "
-DOCKER_RC=$?
-log "docker exit code: ${DOCKER_RC} (ignored; output presence is what counts)"
+docker_common=(
+    --rm
+    --user "$(id -u):$(id -g)"
+    --entrypoint sh
+    -v "${VS14_SOURCE_DIR}:/work"
+    -w /work
+    -e DOTNET_CLI_HOME=/tmp
+    -e HOME=/tmp
+    --ulimit core=0:0
+)
 
-# ---------------------------------------------------------------------------
+log "building Content.MapRenderer"
+docker run "${docker_common[@]}" "${IMAGE}" \
+    -c "set -e; dotnet build Content.MapRenderer -c Release -v minimal" \
+    || die "Content.MapRenderer build failed (SDK/toolchain problem — see log above)"
+
+REQUESTED_COUNT=0
+# shellcheck disable=SC2086  # intentional word-splitting of MAP_LIST
+for MAP in ${MAP_LIST}; do
+    REQUESTED_COUNT=$((REQUESTED_COUNT + 1))
+    log "rendering ${MAP} (${REQUESTED_COUNT})"
+    # Renderer exit code is still unreliable per upstream; per-map success is
+    # judged by output presence in Stage 4's count. '|| true' keeps one bad
+    # map from aborting the loop; the publish gate decides what it means.
+    docker run "${docker_common[@]}" "${IMAGE}" \
+        -c "./bin/Content.MapRenderer/Content.MapRenderer \
+            --format ${OUTPUT_FORMAT} --viewer -f ${MAP} || true" \
+        || log "docker run failed for ${MAP} (counted by the publish gate)"
+done
+
 # Stage 4 — verify + publish
 # ---------------------------------------------------------------------------
 
@@ -112,12 +122,24 @@ if [ ! -d "${RENDER_OUT}" ]; then
     die "no ${RENDER_OUT} dir produced — renderer didn't start"
 fi
 
-RENDERED_COUNT=$(find "${RENDER_OUT}" -type f -name '*.webp' -o -name '*.png' 2>/dev/null | wc -l)
+RENDERED_COUNT=$(find "${RENDER_OUT}" -type f -name '*.webp' -o -name '*.png' 2>/dev/null | wc -l | tr -d ' ')
+RENDERED_DIRS=$(find "${RENDER_OUT}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
 if [ "${RENDERED_COUNT}" -eq 0 ]; then
     die "no map images produced — renderer failed before writing anything"
 fi
 
-log "rendered ${RENDERED_COUNT} map image(s)"
+# THE PUBLISH GATE (bd-204 follow-on): publishing uses rsync --delete, so a
+# partial render must never reach the serve root — it would REPLACE the last
+# good full set (measured 2026-08-16: a SIGKILLed run published one near-empty
+# map dir over the live site). Full set or no publish. MIN_RENDERED_DIRS is
+# the deliberate override for a known-broken map (set it in the plist, with a
+# comment saying which map and why).
+MIN_RENDERED_DIRS="${MIN_RENDERED_DIRS:-${REQUESTED_COUNT}}"
+if [ "${RENDERED_DIRS}" -lt "${MIN_RENDERED_DIRS}" ]; then
+    die "partial render: ${RENDERED_DIRS}/${REQUESTED_COUNT} map dirs produced (gate ${MIN_RENDERED_DIRS}) — NOT publishing; last good set stays live"
+fi
+
+log "rendered ${RENDERED_COUNT} map image(s) across ${RENDERED_DIRS}/${REQUESTED_COUNT} maps"
 
 # Publish directly with --delete (simpler than the staging-rename
 # dance, which tripped on .prev-cleanup permissions). Rsync is
