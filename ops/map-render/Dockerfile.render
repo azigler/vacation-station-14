@@ -1,0 +1,7 @@
+# vs14-mapserver render image (bd-204, 2026-08-16). The old vs14-mapserver:latest
+# was a local 2026-05-23 SDK-9 build of the upstream ss14.mapserver Dockerfile;
+# build.sh only needs an SDK + the renderer's native deps (the old image's apt
+# layer: libfreetype6 procps), not the MapServer app — so this replaces it with
+# a plain SDK base. Bump the tag here when upstream global.json moves again.
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+RUN apt-get update -y && apt-get -y install --no-install-recommends procps libfreetype6 && rm -rf /var/lib/apt/lists/*
