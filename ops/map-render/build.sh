@@ -137,6 +137,42 @@ for MAP in ${MAP_LIST}; do
     fi
 done
 rm -f "${MAP_RUN_LOG}"
+# RETRY PASS (one, with a settle): the observed per-map failure mode is not
+# the map — it is the renderer's own 10s ProcessExited shutdown watchdog
+# killing the process before the image write flushes, under late-run VM I/O
+# pressure (pair-disposal times climb across sequential containers; measured
+# 2026-08-16: maps 17/18 rendered, then died in shutdown, no images). One
+# fresh attempt after a settle clears that class; a map that fails BOTH
+# passes is a real failure and gates the publish.
+if [ "${FAILED_COUNT}" -gt 0 ]; then
+    log "retry pass for${FAILED_MAPS} after a 30s settle"
+    sleep 30
+    RETRY_LIST="${FAILED_MAPS}"
+    FAILED_COUNT=0
+    FAILED_MAPS=""
+    MAP_RUN_LOG="$(mktemp /tmp/map-render-permap.XXXXXX)"
+    for MAP in ${RETRY_LIST}; do
+        log "retrying ${MAP}"
+        dirs_before=$(find "${VS14_SOURCE_DIR}/Resources/MapImages" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+        docker run "${docker_common[@]}" "${IMAGE}" \
+            -c "./bin/Content.MapRenderer/Content.MapRenderer \
+                --format ${OUTPUT_FORMAT} --viewer -f ${MAP} || true" \
+            > "${MAP_RUN_LOG}" 2>&1 || true
+        cat "${MAP_RUN_LOG}"
+        dirs_after=$(find "${VS14_SOURCE_DIR}/Resources/MapImages" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+        if [ "${dirs_after}" -gt "${dirs_before}" ]; then
+            log "${MAP}: rendered on retry"
+        elif grep -q "Creating images for 0 maps" "${MAP_RUN_LOG}"; then
+            DECLINED_COUNT=$((DECLINED_COUNT + 1))
+            log "${MAP}: renderer declined on retry"
+        else
+            FAILED_COUNT=$((FAILED_COUNT + 1))
+            FAILED_MAPS="${FAILED_MAPS} ${MAP}"
+            log "${MAP}: FAILED on retry too"
+        fi
+    done
+    rm -f "${MAP_RUN_LOG}"
+fi
 
 # Stage 4 — verify + publish
 # ---------------------------------------------------------------------------
