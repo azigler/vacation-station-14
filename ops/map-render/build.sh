@@ -275,4 +275,4 @@ FOOTER
 } > "${MAPS_INDEX}"
 
 log "published to ${MAPS_SERVE_ROOT}, index at ${MAPS_INDEX}"
-log "done. size: $(du -sh "${MAPS_ROOT}" 2>/dev/null | awk '{print $1}')"
+log "done. size: $(du -sh "${MAPS_SERVE_ROOT}" | awk '{print $1}')"
